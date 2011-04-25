@@ -63,7 +63,7 @@ public class SQLVersionIndex extends VectorVersionIndex implements DatabaseConst
 			int versionNumber = rs.getInt(RelVersionColNumber);
 			String versionName = rs.getString(RelVersionColName);
 			User user = users.get(rs.getInt(RelVersionColUser));
-			Provenance provenance = new ProvenanceFactory().getProvenance((byte)rs.getInt(RelVersionColProvenance), user, new NID(rs.getInt(RelVersionColNode)), rs.getString(RelVersionColSourceURL));
+			Provenance provenance = ProvenanceFactory.getProvenance((byte)rs.getInt(RelVersionColProvenance), user, new NID(rs.getInt(RelVersionColNode)), rs.getString(RelVersionColSourceURL));
 			long createTime = rs.getLong(RelVersionColTimeMilliSec);
 			this.add(new VersionImpl(versionNumber, versionName, createTime, provenance, this));
 		}

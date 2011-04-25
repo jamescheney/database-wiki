@@ -99,7 +99,7 @@ public abstract class HtmlContentGenerator {
 				page.add(indention + "<p CLASS=\"" + CSS.CSSLogin + "\">You are currently logged in as <span CLASS=\"" + CSS.CSSLogin + "\">" + _request.user().fullName() + "</span></p>");
 			} else {
 				try {
-					String loginRedirectLink = WikiServer.SpecialFolderLogin + "?" + RequestParameter.ParameterResource + "=" + URLEncoder.encode(_request.exchange().getRequestURI().toASCIIString(), "UTF-8");
+					String loginRedirectLink = WikiServer.SpecialFolderLogin + "?" + RequestParameter.ParameterResource + "=" + URLEncoder.encode(_request.getRequestURI().toASCIIString(), "UTF-8");
 					page.add(indention + "<p CLASS=\"" + CSS.CSSLogin + "\"><a CLASS=\"" + CSS.CSSLogin + "\" HREF=\"" + loginRedirectLink + "\">Login</a></p>");
 				} catch (java.io.UnsupportedEncodingException uee) {
 				}

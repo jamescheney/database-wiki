@@ -29,7 +29,7 @@ public class LineSet {
 	 * Private Variables
 	 */
 	
-	private String _indention;
+	private String _indentation;
 	private Vector<String> _lines;
 	
 	
@@ -38,7 +38,7 @@ public class LineSet {
 	 */
 	
 	public LineSet() {
-		_indention = "";
+		_indentation = "";
 		_lines = new Vector<String>();
 	}
 	
@@ -54,7 +54,7 @@ public class LineSet {
 	 */
 	
 	public void add(String line) {
-		_lines.add(_indention + line);
+		_lines.add(_indentation + line);
 	}
 	
 	public void add(LineSet lines) {
@@ -71,8 +71,8 @@ public class LineSet {
 		return _lines.iterator();
 	}
 	
-	public void setIndention(String indention) {
-		_indention = indention;
+	public void setIndentation(String indention) {
+		_indentation = indention;
 	}
 	
 	public int size() {

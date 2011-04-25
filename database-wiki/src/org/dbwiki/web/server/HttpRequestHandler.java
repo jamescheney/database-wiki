@@ -39,6 +39,8 @@ import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
+// This does not appear to be used anywhere now.  Can we remove it? -- jcheney 4/25/11.
+
 @Deprecated
 public abstract class HttpRequestHandler implements HttpHandler {
 	/*
@@ -143,7 +145,7 @@ public abstract class HttpRequestHandler implements HttpHandler {
 			this.respondTo(exchange, wikiException);
 		} catch (Exception exception) {
 			exception.printStackTrace();
-			new FatalExceptionPage(exception).send(exchange);
+			HtmlSender.send(new FatalExceptionPage(exception),exchange);
 		}
 	}
 

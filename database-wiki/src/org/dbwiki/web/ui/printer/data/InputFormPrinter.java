@@ -26,7 +26,6 @@ import org.dbwiki.web.html.HtmlLinePrinter;
 
 import org.dbwiki.web.request.WikiDataRequest;
 
-import org.dbwiki.web.request.parameter.RequestParameter;
 import org.dbwiki.web.request.parameter.RequestParameterAction;
 
 import org.dbwiki.web.ui.CSS;

@@ -24,9 +24,13 @@ package org.dbwiki.web.log;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.Map;
 
-import com.sun.net.httpserver.Headers;
-import com.sun.net.httpserver.HttpExchange;
+//import com.sun.net.httpserver.Headers;
+//import com.sun.net.httpserver.HttpExchange;
+
+import java.net.URI;
+import java.net.InetSocketAddress;
 
 public abstract class ServerLog {
 	/*
@@ -42,13 +46,36 @@ public abstract class ServerLog {
 	 * Public Methods
 	 */
 	
-	public synchronized void logRequest(HttpExchange exchange) {
+	/*
+	 * public synchronized void logRequest(HttpExchange exchange) {
+	 
 		try {
 			this.openLog();
 			this.writeln("Date = [" + new java.util.Date() + "]");
 			this.writeln("URI = [" + exchange.getRequestURI().toString() + "]");
 			this.writeln("Remote-IP = [" + exchange.getRemoteAddress().toString() + "]");
 	    	Headers requestHeaders = exchange.getRequestHeaders();
+	    	Set<String> keySet = requestHeaders.keySet();
+	    	Iterator<String> iter = keySet.iterator();
+	    	while (iter.hasNext()) {
+	    		String key = iter.next();
+	    		List<String> values = requestHeaders.get(key);
+	    		this.writeln(key + " = " + values.toString());
+	    	}
+	    	this.writeln("--");
+	    	this.closeLog();
+		} catch (Exception excpt) {
+			excpt.printStackTrace();
+		}
+	}
+	*/
+	
+	public synchronized void logRequest(URI requestURI, InetSocketAddress remoteAddress, Map<String,List<String>> requestHeaders) {
+		try {
+			this.openLog();
+			this.writeln("Date = [" + new java.util.Date() + "]");
+			this.writeln("URI = [" + requestURI.toString() + "]");
+			this.writeln("Remote-IP = [" + remoteAddress.toString() + "]");
 	    	Set<String> keySet = requestHeaders.keySet();
 	    	Iterator<String> iter = keySet.iterator();
 	    	while (iter.hasNext()) {

@@ -33,7 +33,7 @@ public class HtmlLinePrinter  {
 	 * Private Variables
 	 */
 	
-	private String _indention;
+	private String _indentation;
 	private LineSet _lines;
 	
 	
@@ -41,10 +41,10 @@ public class HtmlLinePrinter  {
 	 * Constructors
 	 */
 	
-	public HtmlLinePrinter(LineSet lines, String indention) {
+	public HtmlLinePrinter(LineSet lines, String indentation) {
 		_lines = lines;
 		
-		_indention = indention;
+		_indentation = indentation;
 	}
 	
 	public HtmlLinePrinter(LineSet lines) {
@@ -66,7 +66,7 @@ public class HtmlLinePrinter  {
 	
 	public void add(LineSet lines) {
 		for (int iLine = 0; iLine < lines.size(); iLine++) {
-			this.add(_indention + lines.get(iLine));
+			this.add(_indentation + lines.get(iLine));
 		}
 	}
 	
@@ -75,23 +75,23 @@ public class HtmlLinePrinter  {
 	}
 	
 	public void addBR() {
-		this.add(_indention + indentExtension + "<br>");
+		this.add(_indentation + indentExtension + "<br>");
 	}
 
 	public void addBUTTON(String type, String name, String src) {
-		this.add(_indention + indentExtension + "<input type=\"" + type + "\" name=\"" + name + "\" src=\"" + src + "\"/>");
+		this.add(_indentation + indentExtension + "<input type=\"" + type + "\" name=\"" + name + "\" src=\"" + src + "\"/>");
 	}
 
 	public void addBUTTON(String type, String name, String value, String src) {
-		this.add(_indention + indentExtension + "<input type=\"" + type + "\" name=\"" + name + "\" value=\"" + value + "\" src=\"" + src + "\"/>");
+		this.add(_indentation + indentExtension + "<input type=\"" + type + "\" name=\"" + name + "\" value=\"" + value + "\" src=\"" + src + "\"/>");
 	}
 	
 	public void addHIDDEN(String name, String value) {
-		this.add(_indention + indentExtension + "<input value=\"" + value + "\" name=\"" + name +"\" type=\"hidden\"/>");
+		this.add(_indentation + indentExtension + "<input value=\"" + value + "\" name=\"" + name +"\" type=\"hidden\"/>");
 	}
 	
 	public void addLINE(String line) {
-		this.add(_indention + indentExtension + line);
+		this.add(_indentation + indentExtension + line);
 	}
 	
 	public void addOPTION(String label, String value, boolean selected) {
@@ -101,7 +101,7 @@ public class HtmlLinePrinter  {
 		} else {
 			line = "<option value=\"" + value + "\">" + label + "</option>";
 		}
-		this.add(_indention + indentExtension + line);
+		this.add(_indentation + indentExtension + line);
 	}
 	
 	
@@ -111,11 +111,11 @@ public class HtmlLinePrinter  {
 			line = line + " CHECKED";
 		}
 		line = line + "/>" + label;
-		this.add(_indention + indentExtension + line);
+		this.add(_indentation + indentExtension + line);
 	}
 
 	public void addSPAN(String text, String cssClass) {
-		this.add(_indention + indentExtension + "<span class=\"" + cssClass + "\">" + text + "</span>");
+		this.add(_indentation + indentExtension + "<span class=\"" + cssClass + "\">" + text + "</span>");
 	}
 
 	public String attachSPAN(String prefix, String text, String cssClass) {
@@ -124,30 +124,30 @@ public class HtmlLinePrinter  {
 
 	public void addTEXTAREA(String name, String cols, String rows, boolean wrap, String value) {
 		if (!wrap) {
-			this.add(_indention + indentExtension + "<textarea name=\"" + name + "\" cols=" + cols + " rows=" + rows + " wrap=OFF>" + value + "</textarea>");
+			this.add(_indentation + indentExtension + "<textarea name=\"" + name + "\" cols=" + cols + " rows=" + rows + " wrap=OFF>" + value + "</textarea>");
 		} else {
-			this.add(_indention + indentExtension + "<textarea name=\"" + name + "\" cols=" + cols + " rows=" + rows + ">" + value + "</textarea>");
+			this.add(_indentation + indentExtension + "<textarea name=\"" + name + "\" cols=" + cols + " rows=" + rows + ">" + value + "</textarea>");
 		}
 	}
 
 	public void addTEXTAREA(String name, String cols, String value) {
-		this.add(_indention + indentExtension + "<textarea name=\"" + name + "\" cols=" + cols + " style=height:1.2em>" + value + "</textarea>");
+		this.add(_indentation + indentExtension + "<textarea name=\"" + name + "\" cols=" + cols + " style=height:1.2em>" + value + "</textarea>");
 	}
 
 	public void addTEXTBOX(String name) {
-		this.add(_indention + indentExtension + "<input type=\"text\" name=\"" + name + "\"/>");
+		this.add(_indentation + indentExtension + "<input type=\"text\" name=\"" + name + "\"/>");
 	}
 	
 	public void addFILE(String name) {
-		this.add(_indention + indentExtension + "<input type=\"file\" name=\"" + name + "\"/>");
+		this.add(_indentation + indentExtension + "<input type=\"file\" name=\"" + name + "\"/>");
 	}
 	public void addSCRIPTSubmitForm(String scriptName, String formName) {
-		this.add(_indention + indentExtension + "<script type=\"text/javascript\">");
-		this.add(_indention + indentExtension + "function " + scriptName + "()");
-		this.add(_indention + indentExtension + "{");
-		this.add(_indention + indentExtension + indentExtension + "document." + formName + ".submit();");
-		this.add(_indention + indentExtension + "}");
-		this.add(_indention + indentExtension + "</script>");
+		this.add(_indentation + indentExtension + "<script type=\"text/javascript\">");
+		this.add(_indentation + indentExtension + "function " + scriptName + "()");
+		this.add(_indentation + indentExtension + "{");
+		this.add(_indentation + indentExtension + indentExtension + "document." + formName + ".submit();");
+		this.add(_indentation + indentExtension + "}");
+		this.add(_indentation + indentExtension + "</script>");
 	}
 	
 	public void closeCENTER() {
@@ -155,7 +155,7 @@ public class HtmlLinePrinter  {
 	}
 
 	public void closeDIV() {
-		this.add(_indention + indentExtension + "</div>");
+		this.add(_indentation + indentExtension + "</div>");
 	}
 
 	public void closeFORM() {
@@ -171,7 +171,7 @@ public class HtmlLinePrinter  {
 	}
 
 	public void closePARAGRAPH() {
-		this.add(_indention + indentExtension + "</p>");
+		this.add(_indentation + indentExtension + "</p>");
 	}
 
 	public void closeSELECT() {
@@ -199,12 +199,12 @@ public class HtmlLinePrinter  {
 	}
 	
 	public void h1(String text, String cssClass) {
-		this.add(_indention + indentExtension + "<h1 class=\"" + cssClass + "\">" + text + "</h1>");
+		this.add(_indentation + indentExtension + "<h1 class=\"" + cssClass + "\">" + text + "</h1>");
 	}
 
 	
 	public void h1(String target, String text, String cssClass) {
-		this.add(_indention + indentExtension + "<h1 class=\"" + cssClass + "\"><a class=\"" + cssClass + "\" href=\"" + target + "\">" + text + "</a></h1>");
+		this.add(_indentation + indentExtension + "<h1 class=\"" + cssClass + "\"><a class=\"" + cssClass + "\" href=\"" + target + "\">" + text + "</a></h1>");
 	}
 
 	public LineSet lines() {
@@ -212,7 +212,7 @@ public class HtmlLinePrinter  {
 	}
 	
 	public void link(String target, String text, String cssClass) {
-		this.add(_indention + indentExtension + this.getLink(target, text, cssClass));
+		this.add(_indentation + indentExtension + this.getLink(target, text, cssClass));
 	}
 
 	public void linkWithTitle(String target, String title, String text, String cssClass) {
@@ -220,7 +220,7 @@ public class HtmlLinePrinter  {
 		if (cssClass != null) {
 			line = line + " class=\"" + cssClass + "\"";
 		}
-		this.add(_indention + indentExtension + line + " href=\"" + target + "\" title=\"" + title + "\">" + text + "</a> ");
+		this.add(_indentation + indentExtension + line + " href=\"" + target + "\" title=\"" + title + "\">" + text + "</a> ");
 	}
 
 	public void linkWithOnClick(String target, String onclick, String text, String cssClass) {
@@ -228,11 +228,11 @@ public class HtmlLinePrinter  {
 		if (cssClass != null) {
 			line = line + " class=\"" + cssClass + "\"";
 		}
-		this.add(_indention + indentExtension + line + " href=\"" + target + "\" onclick=\"" + onclick + "\">" + text + "</a> ");
+		this.add(_indentation + indentExtension + line + " href=\"" + target + "\" onclick=\"" + onclick + "\">" + text + "</a> ");
 	}
 
 	public void linkWithAddition(String target, String text, String addition, String cssClass) {
-		this.add(_indention + indentExtension + this.getLink(target, text, addition, cssClass));
+		this.add(_indentation + indentExtension + this.getLink(target, text, addition, cssClass));
 	}
 
 	public void link(String target, String text) {
@@ -240,11 +240,11 @@ public class HtmlLinePrinter  {
 	}
 
 	public void listITEM(String text, String cssClass) {
-		this.add(_indention + indentExtension + "<li class=\"" + cssClass + "\">" + text + "</li>");
+		this.add(_indentation + indentExtension + "<li class=\"" + cssClass + "\">" + text + "</li>");
 	}
 
 	public void listITEM(String target, String text, String cssClass) {
-		this.add(_indention + indentExtension + "<li class=\"" + cssClass + "\"><a class=\"" + cssClass + "\" href=\"" + target + "\">" + text + "</a></li>");
+		this.add(_indentation + indentExtension + "<li class=\"" + cssClass + "\"><a class=\"" + cssClass + "\" href=\"" + target + "\">" + text + "</a></li>");
 	}
 
 	public void openCENTER() {
@@ -252,7 +252,7 @@ public class HtmlLinePrinter  {
 	}
 
 	public void openDIVID(String cssClass, String style) {
-		this.add(_indention + indentExtension + "<div id=\"" + cssClass + "\" style=\"display:" + style + "\">");
+		this.add(_indentation + indentExtension + "<div id=\"" + cssClass + "\" style=\"display:" + style + "\">");
 	}
 	
 	public void openFORM(String name, String method, String action, String onChange) {
@@ -276,7 +276,7 @@ public class HtmlLinePrinter  {
 	}
 
 	public void openPARAGRAPH(String cssClass) {
-		this.add(_indention + indentExtension + "<p class=\"" + cssClass + "\">");
+		this.add(_indentation + indentExtension + "<p class=\"" + cssClass + "\">");
 	}
 	
 	public void openSELECT(String name) {
@@ -320,11 +320,11 @@ public class HtmlLinePrinter  {
 	} 
 
 	public void paragraph(String target, String text, String cssClass) {
-		this.add(_indention + indentExtension + "<p class=\"" + cssClass + "\"><a class=\"" + cssClass + "\" href=\"" + target + "\">" + text + "</a></p>");
+		this.add(_indentation + indentExtension + "<p class=\"" + cssClass + "\"><a class=\"" + cssClass + "\" href=\"" + target + "\">" + text + "</a></p>");
 	}
 	
 	public void paragraph(String text, String cssClass) {
-		this.add(_indention + indentExtension + "<p class=\"" + cssClass + "\">" + text + "</p>");
+		this.add(_indentation + indentExtension + "<p class=\"" + cssClass + "\">" + text + "</p>");
 	}
 	
 	public void row(String target, String text, String cssClass) {
@@ -335,7 +335,7 @@ public class HtmlLinePrinter  {
 			line = line + text;
 		}
 		line = line + "</td></tr>";
-		this.add(_indention + indentExtension + line);
+		this.add(_indentation + indentExtension + line);
 	}
 
 	public void row(String text, String cssClass) {
@@ -347,7 +347,7 @@ public class HtmlLinePrinter  {
 	}
 	
 	public void text(String text) {
-		this.add(_indention + indentExtension + text);
+		this.add(_indentation + indentExtension + text);
 	}
 	
 	
@@ -356,8 +356,8 @@ public class HtmlLinePrinter  {
 	 */
 	
 	private void closeElement(String line) {
-		this.add(_indention + "</" + line + ">");
-		_indention = _indention.substring(0, _indention.length() - indentExtension.length());
+		this.add(_indentation + "</" + line + ">");
+		_indentation = _indentation.substring(0, _indentation.length() - indentExtension.length());
 	}
 
 	private String getLink(String target, String text, String cssClass) {
@@ -385,8 +385,8 @@ public class HtmlLinePrinter  {
 	}
 	
 	private void openElement(String line) {
-		_indention = _indention + indentExtension;
-		this.add(_indention + line);
+		_indentation = _indentation + indentExtension;
+		this.add(_indentation + line);
 	}
 
 	private void openTableElement(String elementName, String cssClass) {

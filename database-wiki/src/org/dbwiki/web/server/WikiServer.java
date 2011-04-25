@@ -170,7 +170,7 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 	 */
 	
 	public WikiServer(Properties properties) throws org.dbwiki.exception.WikiException {
-		super(org.dbwiki.lib.IO.getFile(properties.getProperty(propertyDirectory)));
+		super(new File(properties.getProperty(propertyDirectory)));
 		
 		// Web Server Properties
 		_backlog = Integer.parseInt(properties.getProperty(propertyBacklog));
@@ -182,14 +182,14 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 			if (serverLogValue.equalsIgnoreCase(propertyLogFileValueSTDOUT)) {
 				_serverLog = new StandardOutServerLog();
 			} else {
-				_serverLog = new FileServerLog(org.dbwiki.lib.IO.getFile(serverLogValue));
+				_serverLog = new FileServerLog(new File(serverLogValue));
 			}
 		}
 
 		if (properties.getProperty(propertyFormTemplate) != null) {
 			_formTemplate = null;
 			try {
-				File file = org.dbwiki.lib.IO.getFile(properties.getProperty(propertyFormTemplate));
+				File file = new File(properties.getProperty(propertyFormTemplate));
 				if (file.exists()) {
 					_formTemplate = file.toURI().toURL();
 				}
@@ -201,7 +201,7 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 		if (properties.getProperty(propertyHomepageTemplate) != null) {
 			_homepageTemplate = null;
 			try {
-				File file = org.dbwiki.lib.IO.getFile(properties.getProperty(propertyHomepageTemplate));
+				File file = new File(properties.getProperty(propertyHomepageTemplate));
 				if (file.exists()) {
 					_homepageTemplate = file.toURI().toURL();
 				}
@@ -313,13 +313,13 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 			String path = exchange.getRequestURI().getPath();
 			if (path.equals("/")) {
 				if (_serverLog != null) {
-					_serverLog.logRequest(exchange);
+					_serverLog.logRequest(exchange.getRequestURI(),exchange.getRemoteAddress(),exchange.getResponseHeaders());
 				}
 				this.respondTo(exchange);
 			} else if ((path.startsWith(SpecialFolderDatabaseWikiStyle + "/")) && (path.endsWith(".css"))) {
 	    		this.sendCSSFile(path.substring(SpecialFolderDatabaseWikiStyle.length() + 1, path.length() - 4), exchange);
 			} else if (path.equals(SpecialFolderLogin)) {
-				new RedirectPage(new ServerRequest(this, exchange).parameters().get(RequestParameter.ParameterResource).value()).send(exchange);
+				HtmlSender.send(new RedirectPage(new ServerRequest(this, exchange).parameters().get(RequestParameter.ParameterResource).value()),exchange);
 	    	// The following code is necessary if using only a single HttpContext
 	    	// instead of multiple ones (i.e., one per Database Wiki).
 	    	//} else if (path.length() > 1) {
@@ -339,9 +339,9 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 	    		this.sendFile(exchange);
 	    	}
 		} catch (org.dbwiki.exception.WikiException wikiException) {
-				new FatalExceptionPage(wikiException).send(exchange);
+			HtmlSender.send(new FatalExceptionPage(wikiException),exchange);
 		} catch (Exception exception) {
-			new FatalExceptionPage(exception).send(exchange);
+			HtmlSender.send(new FatalExceptionPage(exception),exchange);
 		}
 	}
 
@@ -884,7 +884,7 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 				template = new File(directory().getAbsolutePath() + "/html/server.html").toURI().toURL();
 			}
 		}
-		new HtmlTemplateDecorator().decorate(template, responseHandler).send(exchange);
+		HtmlSender.send(new HtmlTemplateDecorator().decorate(template, responseHandler),exchange);
 	}
 	
 	private void sendCSSFile(String name, HttpExchange exchange) throws java.io.IOException, org.dbwiki.exception.WikiException {
@@ -896,7 +896,7 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 			wikiID = Integer.valueOf(name.substring(0, pos));
 			fileVersion = Integer.valueOf(name.substring(pos + 1));
 		} catch (Exception exception ) {
-			new FileNotFoundPage(exchange.getRequestURI().getPath()).send(exchange);
+			HtmlSender.send(new FileNotFoundPage(exchange.getRequestURI().getPath()),exchange);
 			return;
 		}
 		

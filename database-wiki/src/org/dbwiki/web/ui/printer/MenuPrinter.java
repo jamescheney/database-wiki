@@ -108,9 +108,9 @@ public abstract class MenuPrinter implements HtmlContentPrinter {
 		String dbHomeLink = _request.wri().databaseIdentifier().databaseHomepage();
 		String resource = null;
 		try {
-			resource = "&" + RequestParameter.ParameterResource + "=" + URLEncoder.encode(_request.exchange().getRequestURI().toASCIIString(), "UTF-8");
+			resource = "&" + RequestParameter.ParameterResource + "=" + URLEncoder.encode(_request.getRequestURI().toASCIIString(), "UTF-8");
 		} catch (java.io.UnsupportedEncodingException uee) {
-			resource = "&" + RequestParameter.ParameterResource + "=" + _request.exchange().getRequestURI().toASCIIString();
+			resource = "&" + RequestParameter.ParameterResource + "=" + _request.getRequestURI().toASCIIString();
 		}
 		printer.add("\t\t\t\t\t<li><a href=\"" + dbHomeLink + "?" + RequestParameter.ParameterLayout + resource + "\">Layout</a></li>");
 		printer.add("\t\t\t\t\t<li><a href=\"" + dbHomeLink + "?" + RequestParameter.ParameterTemplate + resource + "\">Template</a></li>");

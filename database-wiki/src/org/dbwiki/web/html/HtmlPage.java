@@ -21,6 +21,7 @@
 */
 package org.dbwiki.web.html;
 
+/*
 import java.io.BufferedWriter;
 import java.io.OutputStreamWriter;
 
@@ -28,12 +29,17 @@ import java.net.HttpURLConnection;
 
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
+*/
+
+// This is basically just a renaming of LineSet; its functionality has been moved 
+// to static methods in org.dbwiki.web.server.HtmlSender, in order to avoid 
+// dependencies on com.sun.net.httpserver -- jcheney
 
 public class HtmlPage extends LineSet {
 	/*
 	 * Public Methods
 	 */
-	
+	/*
 	public void send(HttpExchange exchange) throws java.io.IOException {
 		this.send(exchange, HttpURLConnection.HTTP_OK);
 	}
@@ -49,4 +55,5 @@ public class HtmlPage extends LineSet {
     	}
     	out.close();
 	}
+	*/
 }

@@ -31,10 +31,6 @@ public final class IO {
 	 * Static Methods
 	 */
 	
-	public static File getFile(String name) {
-		return new File(name);
-	}
-
 	public static Properties loadProperties(File file) throws java.io.IOException {
 		Properties properties = new Properties();
 		FileInputStream in = new FileInputStream(file);

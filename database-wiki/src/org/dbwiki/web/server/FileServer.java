@@ -151,7 +151,7 @@ public abstract class FileServer implements HttpHandler {
 			this.sendData(exchange, contentType, new FileInputStream(file));
 		} else {
 			System.out.println("File Not Found: " + path);
-			new FileNotFoundPage(path).send(exchange);
+			HtmlSender.send(new FileNotFoundPage(path),exchange);
 		}
 	}
 	

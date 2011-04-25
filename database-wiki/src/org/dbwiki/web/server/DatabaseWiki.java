@@ -261,7 +261,7 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 	    		_server.sendFile(exchange);
 			} else {
 				if (_server.serverLog() != null) {
-					_server.serverLog().logRequest(exchange);
+					_server.serverLog().logRequest(exchange.getRequestURI(),exchange.getRemoteAddress(),exchange.getResponseHeaders());
 				}
 				RequestURL url = new RequestURL(exchange, _database.identifier().linkPrefix());
 				if (url.isDataRequest()) {
@@ -273,13 +273,13 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 		} catch (org.dbwiki.exception.WikiException wikiException) {
 			wikiException.printStackTrace();
 			try {
-				new HtmlTemplateDecorator().decorate(_template, new ExceptionContentGenerator(this, wikiException)).send(exchange);
+				HtmlSender.send(new HtmlTemplateDecorator().decorate(_template, new ExceptionContentGenerator(this, wikiException)),exchange);
 			} catch (org.dbwiki.exception.WikiException exception) {
-				new FatalExceptionPage(exception).send(exchange);
+				HtmlSender.send(new FatalExceptionPage(exception),exchange);
 			}
 		} catch (Exception exception) {
 			exception.printStackTrace();
-			new FatalExceptionPage(exception).send(exchange);
+			HtmlSender.send(new FatalExceptionPage(exception),exchange);
 		}
 	}
 
@@ -675,7 +675,7 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 		}
 		
 		// Send the resulting page to the user.
-		page.send(request.exchange());
+		HtmlSender.send(page,request.exchange());
 	}
 
 	private void respondToPageRequest(WikiPageRequest request) throws java.io.IOException, org.dbwiki.exception.WikiException {
@@ -687,7 +687,7 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 		RequestParameterAction action = new RequestParameterActionCancel();
 		if (request.type().isDelete()) {
 			request.wiki().wiki().delete((PageIdentifier)request.wri().resourceIdentifier());
-			new RedirectPage(request.wri().databaseIdentifier().databaseHomepage()).send(request.exchange());
+			HtmlSender.send(new RedirectPage(request.wri().databaseIdentifier().databaseHomepage()),request.exchange());
 			return;
 		} else if (request.type().isAction()) {
 			action = RequestParameter.actionParameter(request.parameters().get(RequestParameter.ParameterAction));
@@ -740,7 +740,7 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 		} else {
 			throw new WikiRequestException(WikiRequestException.InvalidRequest, request.exchange().getRequestURI().toASCIIString());
 		}
-		new HtmlTemplateDecorator().decorate(_template, contentGenerator).send(request.exchange());
+		HtmlSender.send(new HtmlTemplateDecorator().decorate(_template, contentGenerator),request.exchange());
 	}
 	
 	private synchronized void updateConfigurationFile(WikiRequest request) throws org.dbwiki.exception.WikiException {

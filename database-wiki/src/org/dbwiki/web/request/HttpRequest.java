@@ -30,6 +30,8 @@ import org.dbwiki.web.request.parameter.RequestParameterList;
 
 import com.sun.net.httpserver.HttpExchange;
 
+import java.net.URI;
+
 public abstract class HttpRequest {
 	/*
 	 * Public Constants
@@ -93,7 +95,11 @@ public abstract class HttpRequest {
 	}
 	
 	public String toString() {
-		return _url.exchange().getRequestURI().toASCIIString();
+		return getRequestURI().toASCIIString();
+	}
+	
+	public URI getRequestURI() {
+		return exchange().getRequestURI();
 	}
 
 	public RequestType type() {

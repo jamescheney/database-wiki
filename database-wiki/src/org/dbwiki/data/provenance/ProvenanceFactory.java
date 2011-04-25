@@ -32,7 +32,7 @@ public class ProvenanceFactory {
 	 * Public Methods
 	 */
 	
-	public Provenance getProvenance(byte type, User user, ResourceIdentifier identifier, String sourceURL) throws org.dbwiki.exception.WikiException {
+	public static Provenance getProvenance(byte type, User user, ResourceIdentifier identifier, String sourceURL) throws org.dbwiki.exception.WikiException {
 		switch (type) {
 		case Provenance.ProvenanceTypeActivate:
 			return new ProvenanceActivate(user, identifier);
