@@ -80,7 +80,7 @@ public class SchemaPathPrinter implements HtmlContentPrinter {
 					target = target + "?" + versionParameter.toURLString();
 				}
 				String link = entity.label();
-				// FIXME:
+				// FIXME #schema
 				// perhaps this should use the layouter, but currently
 				// the treatment of data nodes is hard-coded.
 				// It isn't obvious what the code does or how to adapt it

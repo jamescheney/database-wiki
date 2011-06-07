@@ -122,7 +122,7 @@ public class DatabaseReader implements DatabaseConstants {
 					int entity = rs.getInt(ViewDataColNodeEntity);
 					int parent = rs.getInt(ViewDataColNodeParent);
 					if (entity != RelDataColEntityValUnknown) {
-						// FIXME: This seems to assume that the nodes are in parent-child order.
+						// FIXME #database: This seems to assume that the nodes are in parent-child order.
 						// The following logic seems rather fragile.
 						// It isn't at all clear that things will
 						// work properly if a child node is encountered

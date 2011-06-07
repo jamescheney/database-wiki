@@ -26,7 +26,7 @@ import org.dbwiki.data.provenance.Provenance;
 /** Interface to Version information.
  * A Version is a struct containing a name, number, TimestampPrinter, Provenance, and time
  * The name is basically a date-time string stored in the database.
- * FIXME #time: Eliminate version names
+ * FIXME #time: Eliminate version names, recalculate from _time instead
  * @author jcheney
  *
  */

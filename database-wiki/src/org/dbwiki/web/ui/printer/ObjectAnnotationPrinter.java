@@ -35,7 +35,7 @@ import org.dbwiki.web.ui.CSS;
 
 /** 
  * Printer that emits object annotations along with a mini-form for adding annotations
- * FIXME: This might be better 
+ * FIXME #annotations: This might be better handled in Annotation class
  * @author jcheney
  *
  */

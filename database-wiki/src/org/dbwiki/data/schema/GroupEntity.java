@@ -113,7 +113,7 @@ public class GroupEntity extends Entity {
 		return buf.toString();
 	}
 	
-	// FIXME: Evil hack to deal with irregularity of schema parser
+	// FIXME #schemaparsing: Evil hack to deal with irregularity of schema parser
 	public void printToBuf(StringBuffer buf,String indentation) {
 
 		if (children().size() >= 1) {

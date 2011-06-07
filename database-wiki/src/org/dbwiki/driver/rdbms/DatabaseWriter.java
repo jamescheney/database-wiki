@@ -62,7 +62,7 @@ import org.dbwiki.user.User;
  * This class is basically always used 
  * in RDBMSDatabase (and once in DatabaseImportHandler) by creating a new instance and 
  * calling a single method. That is, its methods are morally just being used statically.
- * 
+ * FIXME #document_this
  * @author jcheney
  *
  */
@@ -78,7 +78,9 @@ public class DatabaseWriter implements DatabaseConstants {
 	/*
 	 * Public Methods
 	 */
-	
+	/** Using a query, insert an annotation to identified node.
+	 * 
+	 */
 	public void insertAnnotation(NodeIdentifier identifier, Annotation annotation) throws org.dbwiki.exception.WikiException {
 		try {
 			PreparedStatement pStmtInsertAnnotation = _con.prepareStatement(
@@ -102,6 +104,12 @@ public class DatabaseWriter implements DatabaseConstants {
 		}
 	}
 
+	/** Via query, insert a new entity with a given version.
+	 * 
+	 * @param entity
+	 * @param version
+	 * @throws org.dbwiki.exception.WikiException
+	 */
 	public void insertEntity(Entity entity, Version version) throws org.dbwiki.exception.WikiException {
 		User user = version.provenance().user();
 		TimeSequence timestamp = new TimeSequence(version);
@@ -150,6 +158,13 @@ public class DatabaseWriter implements DatabaseConstants {
 		}
 	}
 	
+	/**
+	 * Adds a new time interval to an identified resource. 
+	 * TODO: Check for interval overlap, complain if violated.
+	 * @param identifier
+	 * @param interval
+	 * @throws org.dbwiki.exception.WikiException
+	 */
 	public void insertTimestamp(ResourceIdentifier identifier, TimeInterval interval)
 	throws org.dbwiki.exception.WikiException {
 		try {
@@ -184,8 +199,15 @@ public class DatabaseWriter implements DatabaseConstants {
 		}
 	}
 
+	/** 
+	 * Inserts a time interval to be associated with a schema node.
+	 * @param id
+	 * @param interval
+	 * @throws org.dbwiki.exception.WikiException
+	 */
 	// yuck... we should really share the code of 
 	// insertTimestamp and insertSchemaTimestamp somehow
+	// FIXME: Make schema nodes identifiable via ResourceIdentifiers?
 	public void insertSchemaTimestamp(int id, TimeInterval interval)
 	throws org.dbwiki.exception.WikiException {
 		try {
@@ -215,6 +237,13 @@ public class DatabaseWriter implements DatabaseConstants {
 		}
 	}
 	
+	/** Inserts a database wiki root node.
+	 * 
+	 * @param node
+	 * @param version
+	 * @return
+	 * @throws org.dbwiki.exception.WikiException
+	 */
 	public ResourceIdentifier insertRootNode(DocumentGroupNode node, Version version) throws org.dbwiki.exception.WikiException {
 		try {
 			RDBMSDatabaseGroupNode root = this.insertGroupNode((GroupEntity)node.entity(), null, -1, new TimeSequence(version.number(), _database.versionIndex()));
@@ -232,6 +261,14 @@ public class DatabaseWriter implements DatabaseConstants {
 		}
 	}
 
+	/** Inserts a database wiki node with given version and id
+	 * 
+	 * @param identifier
+	 * @param node
+	 * @param version
+	 * @return
+	 * @throws org.dbwiki.exception.WikiException
+	 */
 	public ResourceIdentifier insertNode(NodeIdentifier identifier, DocumentNode node, Version version) throws org.dbwiki.exception.WikiException {
 		RDBMSDatabaseGroupNode parent = (RDBMSDatabaseGroupNode)DatabaseReader.get(_con, _database, identifier);
 		
@@ -257,6 +294,12 @@ public class DatabaseWriter implements DatabaseConstants {
 		return nodeIdentifier;
 	}
 
+	/** Update the time interval starting at interval.start() associated with an identified resource with a new end.
+	 * FIXME: Check here and complain if there are multiple intervals starting at "start" 
+	 * @param identifier
+	 * @param interval
+	 * @throws org.dbwiki.exception.WikiException
+	 */
 	public void updateTimestamp(ResourceIdentifier identifier, TimeInterval interval) throws org.dbwiki.exception.WikiException {
 		try {
 			int timestamp = getTimestamp(identifier);
@@ -469,7 +512,7 @@ public class DatabaseWriter implements DatabaseConstants {
 	    return nodeID;
 	}
 	
-	private RDBMSDatabaseTextNode insertTextNode(RDBMSDatabaseAttributeNode parent, int entry, TimeSequence timestamp, String value) throws java.sql.SQLException, org.dbwiki.exception.WikiException {
+	private  RDBMSDatabaseTextNode insertTextNode(RDBMSDatabaseAttributeNode parent, int entry, TimeSequence timestamp, String value) throws java.sql.SQLException, org.dbwiki.exception.WikiException {
 		return new RDBMSDatabaseTextNode(this.insertNode(null, parent, entry, timestamp, value), parent, timestamp, value);
 	}
 

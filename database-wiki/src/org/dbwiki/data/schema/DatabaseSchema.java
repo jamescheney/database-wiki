@@ -55,25 +55,7 @@ public class DatabaseSchema {
 	 * Public Methods
 	 */
 	
-	/** Adds the root node.  Should be called only once when the schema is created 
-	 * 
-	 */
-	public void addRoot(GroupEntity entity, String label) throws org.dbwiki.exception.WikiException {
-		assert(_idMap.size() == 0);
-		// root entity
-		_root = entity;
-		add(entity);
-			
-	}
 	
-	/** Adds the root node, using label as root label
-	 * 
-	 * @param entity
-	 * @throws org.dbwiki.exception.WikiException
-	 */
-	public void addRoot(GroupEntity entity) throws org.dbwiki.exception.WikiException {
-		addRoot(entity,entity.label());
-	}
 	
 	/** Adds a non-root entity.  Should only be called after addRoot. 
 	 * 
@@ -91,6 +73,11 @@ public class DatabaseSchema {
 //			throw new WikiFatalException("Entity with invalid id(" + entity.id() + ") added to database schema. Expected id is " + this.size());
 //		}
 
+		if(_idMap.size() == 0) {
+			_root = (GroupEntity)entity;
+			add(entity);
+		}
+		
 		assert(_idMap.size() > 0);
 		if (!isValidName(entity.label())) {
 			throw new WikiSchemaException(WikiSchemaException.SyntaxError, "Invalid entry name " + _root.label());

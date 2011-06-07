@@ -86,11 +86,7 @@ public class HtmlLinePrinter  {
 		}
 	}
 	
-	// FIXME #htmlgeneration: This is specific to DBWiki; maybe put in subclass?
-	public void addAnnotationIndicator() {
-		addIMG("/pictures/annotation.gif");
-	}
-	
+
 	public void addIMG(String src) {
 		this.text("<img src=\""+src+"\">");
 	}

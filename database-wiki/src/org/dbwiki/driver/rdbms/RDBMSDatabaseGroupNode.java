@@ -32,7 +32,7 @@ import org.dbwiki.data.schema.GroupEntity;
 import org.dbwiki.data.time.TimeSequence;
 
 /** Implementation of DatabaseGroupNode for RDBMS.  
- * Main difference seems ot be presence of NodeIdentifier
+ * Main difference seems to be presence of NodeIdentifier
  * 
  * @author jcheney
  *

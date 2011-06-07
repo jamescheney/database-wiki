@@ -36,6 +36,7 @@ import org.dbwiki.exception.WikiFatalException;
 
 /** A listing of the entries in a database.
  * Entries can be looked up by node id or by integer index in the vector.
+ * FIXME #query: Put the queries somewhere else.
  * @author jcheney
  *
  */

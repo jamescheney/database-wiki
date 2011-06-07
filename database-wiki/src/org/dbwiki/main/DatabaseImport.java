@@ -75,7 +75,6 @@ public class DatabaseImport {
 				in = inputURL.openStream();
 			}
 			
-			// FIXME #schemaparsing: Make this a method somewhere...
 			StructureParser structureParser = new StructureParser();
 			new SAXCallbackInputHandler(structureParser, false).parse(in, false, false);
 			in.close();

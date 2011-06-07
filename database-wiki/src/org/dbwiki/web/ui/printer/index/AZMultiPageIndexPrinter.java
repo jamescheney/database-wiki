@@ -40,7 +40,6 @@ import org.dbwiki.web.ui.CSS;
 
 /** 
  * Print A-Z index of entries as multiple pages, linked by bar across the top.
- * FIXME #printing: Filter out alphabet letters that aren't needed.
  * @author jcheney
  *
  */
@@ -113,11 +112,13 @@ public class AZMultiPageIndexPrinter extends IndexContentPrinter {
 	 */
 	
 	private void addContainer(DatabaseIdentifier databaseIdentifier, ContentIndexContainer container, RequestParameterVersion versionParameter, HtmlLinePrinter body) {
-		body.add("<p CLASS=\"" + CSS.CSSIndexContent + "\"><a NAME=\"" + container.key() + "\">" + container.key() + "</a></p>");
-		body.add("<ul CLASS=\"" + CSS.CSSIndexContent + "\">");
-		for (int iEntry = 0; iEntry < container.size(); iEntry++) {
-			body.add("<li>" + databaseIdentifier.getLink(container.get(iEntry), versionParameter) + "</li>");
+		if(container.size() > 0) {
+			body.add("<p CLASS=\"" + CSS.CSSIndexContent + "\"><a NAME=\"" + container.key() + "\">" + container.key() + "</a></p>");
+			body.add("<ul CLASS=\"" + CSS.CSSIndexContent + "\">");
+			for (int iEntry = 0; iEntry < container.size(); iEntry++) {
+				body.add("<li>" + databaseIdentifier.getLink(container.get(iEntry), versionParameter) + "</li>");
+			}
+			body.add("</ul>");
 		}
-		body.add("</ul>");
 	}
 }

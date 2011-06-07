@@ -25,7 +25,7 @@ import org.dbwiki.data.schema.Entity;
 
 /** Document nodes represent data that's being inserted??
  * Document nodes can be compared, and contain an entity reference.
- * FIXME: Use Node<Entity>
+ * FIXME #node: Use generic Node<Entity>
  * @author jcheney
  *
  */

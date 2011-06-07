@@ -28,7 +28,7 @@ import org.dbwiki.data.resource.NodeIdentifier;
 import org.dbwiki.data.time.TimeSequence;
 
 /** Implementation of DatabaseEntry for RDBMS.
- * 
+ * FIXME #database Is this dependent on RDBMS in any important way?  Seems not to be.
  * @author jcheney
  *
  */

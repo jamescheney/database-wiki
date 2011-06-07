@@ -138,7 +138,7 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
 
-/** Implements the server functionality for a given database. 
+/** Implements the DatabaseWiki functionality for a given database. 
  * 
  * @author jcheney
  *
@@ -194,6 +194,9 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 	 * Constructors
 	 */
 	
+	/** Create new DatabaseWiki from given data.  Used in WikiServer.getWikiListing.
+	 * 
+	 */
 	public DatabaseWiki(int id, String name, String title, WikiAuthenticator authenticator, int autoSchemaChanges, ConfigSetting setting, DatabaseConnector connector, WikiServer server) throws org.dbwiki.exception.WikiException {
 		_authenticator = authenticator;
 		_autoSchemaChanges = autoSchemaChanges;
@@ -208,7 +211,8 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 		_wiki = new SimpleWiki(name, connector, server.users());
 	}
 	
-	// HACK: pass in and use an existing connection and version index
+	// HACK: pass in and use an existing connection and version index.
+	// Used only in WikiServer.RegisterDatabase to create a new database.
 	public DatabaseWiki(int id, String name, String title, WikiAuthenticator authenticator,
 			 			int autoSchemaChanges, DatabaseConnector connector, WikiServer server,
 			 			Connection con, SQLVersionIndex versionIndex)
@@ -233,17 +237,17 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 	 * Public Methods
 	 */
 
+	/** Comparator.  Compare database wikis by title, to sort list of wikis.
+	 * 
+	 */
+ 	public int compareTo(DatabaseWiki wiki) {
+	 	return this.getTitle().compareTo(wiki.getTitle());
+	}
+	
+	
 	/* 
 	 * Getters
 	 */
-	
-//	public DatabaseWiki(int wikiID, String name, String title,
-//			WikiAuthenticator authenticator, int autoSchemaChanges,
-//			DatabaseConnector _connector, WikiServer wikiServer,
-//			Connection con, SQLVersionIndex versionIndex,
-//			org.dbwiki.web.server.SQLDatabaseSchema databaseSchema) {
-//		// TODO Auto-generated constructor stub
-//	}
 
 	public WikiAuthenticator authenticator() {
 		return _authenticator;
@@ -251,10 +255,6 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 	
 	public int getAutoSchemaChanges() {
 		return _autoSchemaChanges;
-	}
-	
-	public int compareTo(DatabaseWiki wiki) {
-		return this.getTitle().compareTo(wiki.getTitle());
 	}
 	
 	public CSSLinePrinter cssLinePrinter() {
@@ -265,10 +265,18 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 		return _database;
 	}
 	
+	
+	@Deprecated
 	public AttributeEntity displayEntity(DatabaseSchema schema) {
 		return _layouter.displayEntity(schema);
 	}
 	
+	/** Gets the string value of a template or stylesheet, for use in the editor form.
+	 * 
+	 * @param fileType
+	 * @return
+	 * @throws org.dbwiki.exception.WikiException
+	 */
 	public String getContent(int fileType) throws org.dbwiki.exception.WikiException {
 		if (fileType == WikiServerConstants.RelConfigFileColFileTypeValTemplate) {
 			return _template;
@@ -326,7 +334,10 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 	 * Setters
 	 */
 	
+	/** Sets the auto schema changes policy.
+	 */
 	public void setAutoSchemaChanges(int autoSchemaChanges) {
+		assert(autoSchemaChanges == AutoSchemaChangesNever || autoSchemaChanges == AutoSchemaChangesIgnore || autoSchemaChanges == AutoSchemaChangesAllow);
 		_autoSchemaChanges = autoSchemaChanges;
 	}
 
@@ -489,7 +500,8 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 	
 	
 	
-	/** The value is the parameter value of a ?reset=value request. The format
+	/** Reset the configuration.  
+	 * The value is the parameter value of a ?reset=value request. The format
 	 * currently is expected to be <int>_<int>_<int> and these <int>'s are
 	 * layout file version, template file version, and style sheet file version.
 	 * 

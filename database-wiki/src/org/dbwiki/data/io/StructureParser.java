@@ -238,7 +238,7 @@ public class StructureParser implements InputHandler {
 	private DatabaseSchema buildRoot(ElementNode node) throws WikiException {
 		DatabaseSchema schema = new DatabaseSchema();
 		GroupEntity rootEntity = new GroupEntity(schema.size(), node.label(), null);
-		schema.addRoot(rootEntity, node.label());
+		schema.add(rootEntity);
 		
 		for (int i = 0; i < node.children().size(); i++) {
 			buildSchema(schema, node.children().get(i), rootEntity);

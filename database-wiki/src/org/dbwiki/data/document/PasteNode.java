@@ -23,7 +23,7 @@ package org.dbwiki.data.document;
 
 /** Represents a node that is being pasted from somewhere else?
  * Similar to DocumentNode and DatabaseNode, but has PasteDatabaseInfo and key
- * FIXME: Use Node<PasteDatabaseInfo>
+ * FIXME #node: Use generic Node<PasteDatabaseInfo>
  * @author jcheney
  *
  */

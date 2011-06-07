@@ -222,7 +222,7 @@ public class SchemaParser {
 		if (!DatabaseSchema.isValidName(DatabaseSchema.getEntityName(entity.label()))) {
 			throw new WikiSchemaException(WikiSchemaException.SyntaxError, "Invalid entry name " + entryName);
 		}
-		schema.addRoot(entity,entryName);
+		schema.add(entity);
 		
 		this.parseElementBody(entryBody, entity, schema);
 

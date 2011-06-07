@@ -191,7 +191,12 @@ public class DatabaseLayouter {
 	/*
 	 * Public Methods
 	 */
-	
+	/** Get the display entity associated with this database.
+	 * This is an AttributeEntity whose value is used to display entries at the listing top-level.
+	 * Unless otherwise specified, this will be the first attribute we can find in the schema.
+	 * @param schema
+	 * @return
+	 */
 	public AttributeEntity displayEntity(DatabaseSchema schema) {
 		if (_displayEntityID >= 0) {
 			if (schema != null) {

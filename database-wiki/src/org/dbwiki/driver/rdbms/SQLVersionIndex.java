@@ -45,7 +45,7 @@ import org.dbwiki.user.User;
 import org.dbwiki.user.UserListing;
 
 /** Specialization of VectorVersionIndex to handle loading and storing version index via SQL.
- * 
+ * FIXME #database: Could avoid subclassing and place queries in query class.
  * @author jcheney
  *
  */
@@ -154,7 +154,7 @@ public class SQLVersionIndex extends VersionIndex implements DatabaseConstants {
 		statement.setInt(1, version.number());
 		statement.setString(2, version.name());
 		
-		// FIXME: #provenance Should really put this code into Provenance or Version classes 
+		// FIXME #provenance: Should really put this code into Provenance or Version classes 
 		Provenance provenance = version.provenance();
 		
 		statement.setShort(3, provenance.type());

@@ -129,6 +129,7 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 	public static final String ParameterAutoSchemaChanges = "SCHEMA_CHANGES";
 	public static final String ParameterInputFile = "INPUT_FILE";
 	public static final String ParameterName = "NAME";
+	public static final String ParameterPath = "PATH";
 	public static final String ParameterSchema = "SCHEMA";
 	public static final String ParameterTitle = "TITLE";
 		
@@ -626,6 +627,7 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 	 */
 
 	/** Creates appropriate response handler for homepage 
+	 * 
 	 */
 	private ServerResponseHandler getHomepageResponseHandler(ServerRequest request) {
 		ServerResponseHandler responseHandler = new ServerResponseHandler(request, _wikiTitle);
@@ -748,10 +750,12 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 				throw new WikiFatalException("User information is missing");
 			}
 			
+			
 			if (databaseSchema != null) {
-				// Guess a good path.  For now, use root's first child.
-				//FIXME: This should be a user-controllable parameter
+				// Guess a good path if none is given.  For now, use root's first child.
+				// FIXME #import: Make path into a form parameter
 				String path = databaseSchema.root().path();
+					
 				try {
 					registerDatabase(name, title, path, new URL(resource), databaseSchema, request.user(),
 							Integer.parseInt(authenticationMode), Integer.parseInt(autoSchemaChanges));
@@ -767,7 +771,7 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 	}
 
 	/** Creates new database with a given schema and import given data into it
-	 * 
+	 * TODO #import Move this into a separate class, to factor out common functionality with DatabaseImport
 	 * @param name - string identifying database tables
 	 * @param title - human readable title
 	 * @param path - path to entries in the document

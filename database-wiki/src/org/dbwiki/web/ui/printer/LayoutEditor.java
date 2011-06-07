@@ -156,7 +156,7 @@ public class LayoutEditor implements HtmlContentPrinter {
 	private void printDisplayLabelSelectBox(Vector<Entity> entities, HtmlLinePrinter printer) {
 		int currentDisplayEntityID = -1;
 		
-		AttributeEntity current = _request.wiki().displayEntity(_request.wiki().database().schema());
+		AttributeEntity current = _request.wiki().layouter().displayEntity(_request.wiki().database().schema());
 		if (current != null) {
 			currentDisplayEntityID = current.id();
 		}

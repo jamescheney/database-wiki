@@ -96,10 +96,8 @@ import org.dbwiki.web.request.RequestURL;
 import org.dbwiki.web.server.DatabaseWiki;
 
 
-//jcheney: How much of this is PostgreSQL specific?
-
 /** Implementation of the Database interface using a relational database.
- * 
+ * FIXME #document_this
  */
 
 public class RDBMSDatabase implements Database, DatabaseConstants {
@@ -290,7 +288,7 @@ public class RDBMSDatabase implements Database, DatabaseConstants {
 	}
 
 	public AttributeEntity getDisplayEntity() {
-		return _wiki.displayEntity(schema());
+		return _wiki.layouter().displayEntity(schema());
 	}
 	
 	public ResourceIdentifier getIdentifierForParameterString(String parameterValue) throws org.dbwiki.exception.WikiException {
@@ -544,9 +542,7 @@ public class RDBMSDatabase implements Database, DatabaseConstants {
 					}
 					activateElementNode(con, (DatabaseElementNode)node, deletedAt, version);
 				} else {
-					// FIXME : This is strange - how do we know that parent can be cast to an attribute node?
-					// It is declared as a DatabaseElementNode above, so I think the cast is guaranteed to fail!
-					assert((DatabaseAttributeNode)parent != null);
+					
 					DatabaseNodeValue values = ((DatabaseAttributeNode)parent).value();
 					if (values.size() > 1) {
 						for (int iValue = 0; iValue < values.size(); iValue++) {

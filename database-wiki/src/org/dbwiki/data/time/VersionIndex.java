@@ -133,7 +133,7 @@ public class VersionIndex {
 		String name = new SimpleDateFormat("d MMM yyyy HH:mm:ss").format(date);
 		int number = size() + 1;
 		
-		// FIXME: the need for the following hack is symptomatic of
+		// FIXME #time: the need for the following hack is symptomatic of
 		// fundamental flaws in the design of this class.
 		//
 		// HACK:
@@ -238,20 +238,23 @@ public class VersionIndex {
 		
 		Vector<Version> result = new Vector<Version>();
 		
-		// FIXME #time: What is this doing?
+		// Iterate over all versions.
 		Iterator<Version> elements = versions.values().iterator();
-		while (elements.hasNext()) {
-			Version version = elements.next();
-			boolean added = false;
-			if (result.size() > 0) {
+		while (elements.hasNext()) { 
+			Version version = elements.next(); // For each version... 
+			boolean added = false;  
+			if (result.size() > 0) { // if some versions have been added
 				for (int iVersion = 0; iVersion < result.size(); iVersion++) {
+					// add this version in place of the first modification point whose number is greater.
 					if (version.number() < result.get(iVersion).number()) {
+						// add this version in position of iVersion
 						result.add(iVersion, version);
 						added = true;
 						break;
 					}
 				}
 			}
+			// If no versions have been added then add this version.
 			if (!added) {
 				result.add(version);
 			}

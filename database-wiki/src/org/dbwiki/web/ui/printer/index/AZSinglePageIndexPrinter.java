@@ -36,7 +36,6 @@ import org.dbwiki.web.ui.CSS;
 
 /** 
  * Print A-Z index of entries as a single page.
- * FIXME #printing: Filter out alphabet letters that aren't needed.
  * @author jcheney
  *
  */
@@ -77,12 +76,14 @@ public class AZSinglePageIndexPrinter extends IndexContentPrinter {
 		
 		for (int iContainer = 0; iContainer < contentIndex.size(); iContainer++) {
 			ContentIndexContainer container = contentIndex.get(iContainer);
-			body.add("<p CLASS=\"" + CSS.CSSIndexContent + "\"><a NAME=\"" + container.key() + "\">" + container.key() + "</a></p>");
-			body.add("<ul CLASS=\"" + CSS.CSSIndexContent + "\">");
-			for (int iEntry = 0; iEntry < container.size(); iEntry++) {
-				body.add("<li>" + databaseIdentifier.getLink(container.get(iEntry), versionParameter) + "</li>");
+			if(container.size() > 0) {
+				body.add("<p CLASS=\"" + CSS.CSSIndexContent + "\"><a NAME=\"" + container.key() + "\">" + container.key() + "</a></p>");
+				body.add("<ul CLASS=\"" + CSS.CSSIndexContent + "\">");
+				for (int iEntry = 0; iEntry < container.size(); iEntry++) {
+					body.add("<li>" + databaseIdentifier.getLink(container.get(iEntry), versionParameter) + "</li>");
+				}
+				body.add("</ul>");
 			}
-			body.add("</ul>");
 		}
 	}
 }

@@ -52,6 +52,7 @@ import org.dbwiki.web.ui.printer.HtmlContentPrinter;
 /** Abstract class to print data nodes using layout
  * 5/20.  Changed so that links are generated for each node rather than inheriting.
  *     -  Changed to implement printing here.
+ * TODO #annotation: Print annotations as a "link" that takes you to the annotation editor.
  * @author jcheney
  *
  */
@@ -201,7 +202,7 @@ public class DataNodePrinter implements HtmlContentPrinter {
 		}
 		body.text(node.value());
 		if (node.hasAnnotation()) {
-			body.addAnnotationIndicator();
+			addAnnotationIndicator(body);
 		}
 		body.closeTD();
 		body.closeTR();
@@ -240,7 +241,7 @@ public class DataNodePrinter implements HtmlContentPrinter {
 					content.linkWithTitle(target, value.getTimestamp().toPrintString(), value.text(), layout.getCSS(CSS.CSSContentValueInactive));
 				}
 				if ((attribute.hasAnnotation()) || (value.hasAnnotation())) {
-					content.addAnnotationIndicator();
+					addAnnotationIndicator(content);
 				}
 			}
 		}
@@ -259,7 +260,7 @@ public class DataNodePrinter implements HtmlContentPrinter {
 				content.linkWithTitle(linkTarget, group.getTimestamp().toPrintString(), layout.getLabel(group, versionParameter), layout.getCSS(CSS.CSSContentValueInactive));
 			}
 			if (group.hasAnnotation()) {
-				content.addAnnotationIndicator();
+				addAnnotationIndicator(content);
 			}
 
 			if (layout.getShowContent() == true) {
@@ -384,7 +385,7 @@ public class DataNodePrinter implements HtmlContentPrinter {
 						content.link(target, layout.getLabel(element, versionParameter), layout.getCSS(CSS.CSSContentLabelInactive));
 					}
 					if (element.hasAnnotation()) {
-						content.addAnnotationIndicator();
+						addAnnotationIndicator(content);
 					}
 					content.closeTD();
 					content.closeTR();
@@ -398,7 +399,7 @@ public class DataNodePrinter implements HtmlContentPrinter {
 						content.link(target, layout.getLabel(element, versionParameter), layout.getCSS(CSS.CSSContentLabelInactive));
 					}
 					if (element.hasAnnotation()) {
-						content.addAnnotationIndicator();
+						addAnnotationIndicator(content);
 					}
 					content.closeTD();
 				}
@@ -521,7 +522,7 @@ public class DataNodePrinter implements HtmlContentPrinter {
 						}
 					}
 					if (hasAnnotation) {
-						content.addAnnotationIndicator();
+						addAnnotationIndicator(content);
 					}
 					content.closeTD();
 				}
@@ -538,4 +539,9 @@ public class DataNodePrinter implements HtmlContentPrinter {
 
 		return hasContent;
 	}
+	
+	private void addAnnotationIndicator(HtmlLinePrinter content) {
+		content.addIMG("/pictures/annotation.gif");
+	}
+	
 }

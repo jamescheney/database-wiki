@@ -36,7 +36,6 @@ import org.dbwiki.exception.data.WikiDataException;
  * Uses a schema to tell InputCallbackHandler how to parse things
  * Uses a root path to decide which subtrees will correspond to entries
  * A new InputCallbackHandler is called once for each such subtree.
- * FIXME #import check that root path works properly if null
  * @author jcheney
  *
  */

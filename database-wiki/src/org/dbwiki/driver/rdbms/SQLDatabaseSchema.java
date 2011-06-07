@@ -36,6 +36,7 @@ import org.dbwiki.exception.data.WikiSchemaException;
 
 /** Implementation of DatabaseSchema for RDBMS.
  * Main difference is that the constructor loads the schema from the database using queries.
+ * FIXME #database This could be implemented as a factory class instead of as a subclass if DatabaseSchema
  * @author jcheney
  *
  */
@@ -109,12 +110,7 @@ public class SQLDatabaseSchema extends DatabaseSchema implements DatabaseConstan
 				}
 			}
 			
-			// FIXME #schema: Slightly evil hack to deal with root element/path
-			if (id == 0) {
-				addRoot((GroupEntity)entity);
-			} else {
-				add(entity);
-			}
+			add(entity);
 		}
 		
 		
