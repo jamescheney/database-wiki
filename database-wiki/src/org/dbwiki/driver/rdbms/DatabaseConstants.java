@@ -49,10 +49,10 @@ public interface DatabaseConstants {
 	
 	public static final String RelDataColID        = "id";
 	public static final String RelDataColParent    = "parent";
-	public static final String RelDataColEntity    = "entity";
+	public static final String RelDataColEntity    = "schema";
 	public static final String RelDataColEntry     = "entry";
 	public static final String RelDataColValue     = "value";
-	public static final String RelDataColTimestamp = "timestamp";
+	public static final String RelDataColTimestamp = "timesequence";
 
 	public static final int RelDataColIDValUnknown        = -1;
 	public static final int RelDataColEntityValUnknown    = -1;
@@ -65,7 +65,7 @@ public interface DatabaseConstants {
 	
 	public static final String ViewDataColNodeID         = "n_id";
 	public static final String ViewDataColNodeParent     = "n_parent";
-	public static final String ViewDataColNodeEntity     = "n_entity";
+	public static final String ViewDataColNodeEntity     = "n_schema";
 	public static final String ViewDataColNodeEntry      = "n_entry";
 	public static final String ViewDataColNodeValue      = "n_value";
 	
@@ -74,8 +74,8 @@ public interface DatabaseConstants {
 	public static final String ViewDataColAnnotationUser = "a_uid";
 	public static final String ViewDataColAnnotationText = "a_text";
 	
-	public static final String ViewDataColTimestampStart = "t_int_start";
-	public static final String ViewDataColTimestampEnd   = "t_int_end";
+	public static final String ViewDataColTimestampStart = "t_start";
+	public static final String ViewDataColTimestampEnd   = "t_stop";
 
 	
 	// View Entity Count Index
@@ -105,8 +105,8 @@ public interface DatabaseConstants {
 	public static final String RelSchemaColType      = "type";
 	public static final String RelSchemaColLabel     = "name";
 	public static final String RelSchemaColParent    = "parent";
-	public static final String RelSchemaColUser      = "user_id";
-	public static final String RelSchemaColTimestamp = "timestamp";
+	public static final String RelSchemaColUser      = "uid";
+	public static final String RelSchemaColTimestamp = "timesequence";
 	
 	public static final int RelSchemaColParentValUnknown = -1;
 
@@ -118,11 +118,11 @@ public interface DatabaseConstants {
 	// Timestamp
 	//
 	
-	public static final String RelationTimestamp = "_timestamp";
+	public static final String RelationTimestamp = "_timesequence";
 	
 	public static final String RelTimestampColID    = "id";
-	public static final String RelTimestampColStart = "int_start";
-	public static final String RelTimestampColEnd   = "int_end";
+	public static final String RelTimestampColStart = "start";
+	public static final String RelTimestampColEnd   = "stop";
 
 	public static final int RelTimestampColEndValOpen = -1;
 	
@@ -133,13 +133,13 @@ public interface DatabaseConstants {
 	
 	public static final String RelationVersion = "_version";
 	
-	public static final String RelVersionColNumber       = "number";
+	public static final String RelVersionColNumber       = "id";
 	public static final String RelVersionColName         = "name";
 	public static final String RelVersionColProvenance   = "provenance";
 	public static final String RelVersionColUser         = "uid";
 	public static final String RelVersionColNode         = "node";
-	public static final String RelVersionColSourceURL    = "source_url";
-	public static final String RelVersionColTimeMilliSec = "timems";
+	public static final String RelVersionColSourceURL    = "source";
+	public static final String RelVersionColTimeMilliSec = "time";
 	
 	public static final int RelVersionColNodeValImport = -1;
 }

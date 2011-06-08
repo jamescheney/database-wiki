@@ -48,7 +48,7 @@ public interface WikiServerConstants {
 	//
 	// Database listing
 	//
-	public static final String RelationDatabase = "wiki_server_database";
+	public static final String RelationDatabase = "_database";
 	
 	public static final String RelDatabaseColAuthentication = "authentication";
 	public static final String RelDatabaseColAutoSchemaChanges = "auto_schema_changes";
@@ -68,14 +68,14 @@ public interface WikiServerConstants {
 	//
 	// Configuration Files
 	//
-	public static final String RelationConfigFile = "wiki_config_files";
+	public static final String RelationConfigFile = "_presentation";
 	
-	public static final String RelConfigFileColFileType = "file_type";
-	public static final String RelConfigFileColFileVersion = "file_version";
-	public static final String RelConfigFileColTime = "sys_time";
-	public static final String RelConfigFileColUser = "user_id";
+	public static final String RelConfigFileColFileType = "type";
+	public static final String RelConfigFileColFileVersion = "version";
+	public static final String RelConfigFileColTime = "time";
+	public static final String RelConfigFileColUser = "uid";
 	public static final String RelConfigFileColValue = "value";
-	public static final String RelConfigFileColWikiID = "wiki_id";
+	public static final String RelConfigFileColWikiID = "database";
 
 	public static final int RelConfigFileColFileTypeValCSS = 1;
 	public static final int RelConfigFileColFileTypeValLayout = 2;
@@ -87,7 +87,7 @@ public interface WikiServerConstants {
 	//
 	// User listing
 	//
-	public static final String RelationUser = "wiki_server_user";
+	public static final String RelationUser = "_user";
 
 	public static final String RelUserColFullName = "full_name";
 	public static final String RelUserColID = "id";
