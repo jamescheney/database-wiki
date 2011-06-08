@@ -57,7 +57,7 @@ public class DatabaseSchema {
 	
 	
 	
-	/** Adds a non-root entity.  Should only be called after addRoot. 
+	/** Adds an entity.  First entity to be added is expected to be root.
 	 * 
 	 * @param entity
 	 * @throws org.dbwiki.exception.WikiException
@@ -75,7 +75,6 @@ public class DatabaseSchema {
 
 		if(_idMap.size() == 0) {
 			_root = (GroupEntity)entity;
-			add(entity);
 		}
 		
 		assert(_idMap.size() > 0);
