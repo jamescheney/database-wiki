@@ -309,7 +309,7 @@ public abstract class DatabaseConnector implements DatabaseConstants, WikiServer
 					"a." + RelAnnotationColText + " " + ViewDataColAnnotationText + " " +
 				"FROM " + dbName + RelationData + " d " +
 				"LEFT OUTER JOIN " + dbName + RelationTimestamp + " t ON (d." + RelDataColTimestamp + " = " + "t." + RelTimestampColID + ") " +
-				"LEFT OUTER JOIN " + dbName + RelationAnnotation + " a ON (d." + RelDataColTimestamp + " = " + "a." + RelAnnotationColNode + ")");
+				"LEFT OUTER JOIN " + dbName + RelationAnnotation + " a ON (d." + RelDataColID + " = " + "a." + RelAnnotationColNode + ")");
 		
 		stmt.close();
 	}
