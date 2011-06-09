@@ -59,7 +59,7 @@ public interface WikiServerConstants {
 	public static final String RelDatabaseColName = "name";
 	public static final String RelDatabaseColTemplate = "template_version";
 	public static final String RelDatabaseColTitle = "title";
-	public static final String RelDatabaseColUser = "user_id";
+	public static final String RelDatabaseColUser = "uid";
 	
 	public static final int RelDatabaseColIsActiveValFalse = 0;
 	public static final int RelDatabaseColIsActiveValTrue = 1;
