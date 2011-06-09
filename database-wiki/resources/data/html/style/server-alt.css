@@ -10,7 +10,7 @@ body {
 
 table.main {
   background: #F9F9F9;
-  border: 1px solid #BCBCBC;
+  border: 1px solid #B0B0B0;
   border-spacing: 0px;
   padding: 0px;
   width: 1000px
@@ -66,6 +66,20 @@ p.headline {
   color: #080808;
   padding-left: 2em;
 }
+
+td.home_link {
+  color: #080808;
+  font-size:10px;
+  font-weight: normal;
+  padding-left: 2em;
+  text-decoration: none;
+}
+
+a.home_link:link {color: #080808; text-decoration:none; }
+a.home_link:visited {color: #080808; text-decoration:none; }
+a.home_link:active {color: #080808; text-decoration:none; }
+a.home_link:hover {color: #080808; text-decoration:none; }
+a.home_link:focus {color: #080808; text-decoration:none; }
 
 td.headline {
   font-family: Verdana, Helvetica, Geneva, Arial, SunSans-Regular, sans-serif;
@@ -190,6 +204,18 @@ table.frames {
 }
 
 td.frames {
+  border-spacing: 0px;
+  padding: 0px;
+  width: 100%;
+}
+
+table.no_frames {
+  border-spacing: 0px;
+  padding: 0px;
+  width: 100%;
+}
+
+td.no_frames {
   border-spacing: 0px;
   padding: 0px;
   width: 100%;

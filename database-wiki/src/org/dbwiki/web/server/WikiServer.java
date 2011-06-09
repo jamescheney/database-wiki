@@ -127,6 +127,7 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 	
 	public static final String ParameterAuthenticationMode = "PASSWORD";
 	public static final String ParameterAutoSchemaChanges = "SCHEMA_CHANGES";
+	public static final String ParameterEntityPath = "ENTITY_PATH";
 	public static final String ParameterInputFile = "INPUT_FILE";
 	public static final String ParameterName = "NAME";
 	public static final String ParameterPath = "PATH";
@@ -653,6 +654,7 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 		String autoSchemaChanges = request.parameters().get(ParameterAutoSchemaChanges).value();
 		String schema = request.parameters().get(ParameterSchema).value();
 		String resource = request.parameters().get(ParameterInputFile).value();
+		String entityPath = request.parameters().get(ParameterEntityPath).value();
 		DatabaseSchema databaseSchema = null;
 		
 		//
@@ -740,7 +742,7 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 			// form is re-displayed showing the error message.
 			//
 			ServerResponseHandler responseHandler = new ServerResponseHandler(request, _wikiTitle + " - Create Database Wiki");
-			responseHandler.put(HtmlContentGenerator.ContentContent, new DatabaseWikiFormPrinter(RequestParameterAction.ActionInsert, name, title, authenticationMode, autoSchemaChanges, schema, resource, message));
+			responseHandler.put(HtmlContentGenerator.ContentContent, new DatabaseWikiFormPrinter(RequestParameterAction.ActionInsert, name, title, authenticationMode, autoSchemaChanges, schema, resource, entityPath, message));
 			return responseHandler;
 		} else {
 			//
@@ -752,9 +754,14 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 			
 			
 			if (databaseSchema != null) {
-				// Guess a good path if none is given.  For now, use root's first child.
-				// FIXME #import: Make path into a form parameter
-				String path = databaseSchema.root().path();
+				// Path is either the value of the form parameter ENTITY_PATH or
+				// the path of the schema root node;
+				String path = null;
+				if (!entityPath.equals("")) {
+					path = entityPath;
+				} else {
+					path = databaseSchema.root().path();
+				}
 					
 				try {
 					registerDatabase(name, title, path, new URL(resource), databaseSchema, request.user(),

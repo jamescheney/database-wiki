@@ -62,6 +62,7 @@ public class DatabaseWikiFormPrinter implements HtmlContentPrinter {
 	private String _action;
 	private String _authentication;
 	private String _autoSchemaChanges;
+	private String _entityPath;
 	private int _message;
 	private String _name;
 	private String _resource;
@@ -73,11 +74,12 @@ public class DatabaseWikiFormPrinter implements HtmlContentPrinter {
 	 * Constructors
 	 */
 	
-	public DatabaseWikiFormPrinter(String action, String name, String title, String authentication, String autoSchemaChanges, String schema, String resource, int message) {
+	public DatabaseWikiFormPrinter(String action, String name, String title, String authentication, String autoSchemaChanges, String schema, String resource, String entityPath, int message) {
 		_action = action;
 		_authentication = authentication;
 		_autoSchemaChanges = autoSchemaChanges;
-		_message = message;
+		_entityPath = entityPath;
+				_message = message;
 		_name = name;
 		_resource = resource;
 		_schema = schema;
@@ -85,15 +87,15 @@ public class DatabaseWikiFormPrinter implements HtmlContentPrinter {
 	}
 	
 	public DatabaseWikiFormPrinter(String action, String name, String title, int authenticationMode, int autoSchemaChanges) {
-		this(action, name, title, Integer.toString(authenticationMode), Integer.toString(autoSchemaChanges), "", "", MessageNone);
+		this(action, name, title, Integer.toString(authenticationMode), Integer.toString(autoSchemaChanges), "", "", "", MessageNone);
 	}
 	
 	public DatabaseWikiFormPrinter(String action, String name, String title, String authenticationMode, String autoSchemaChanges, int message) {
-		this(action, name, title, authenticationMode, autoSchemaChanges, "", "", message);
+		this(action, name, title, authenticationMode, autoSchemaChanges, "", "", "", message);
 	}
 
 	public DatabaseWikiFormPrinter() {
-		this(RequestParameterAction.ActionInsert, "", "", Integer.toString(WikiAuthenticator.AuthenticateWriteOnly), Integer.toString(DatabaseWiki.AutoSchemaChangesIgnore), "", "", MessageNone);
+		this(RequestParameterAction.ActionInsert, "", "", Integer.toString(WikiAuthenticator.AuthenticateWriteOnly), Integer.toString(DatabaseWiki.AutoSchemaChangesIgnore), "", "", "", MessageNone);
 	}
 	
 	
@@ -279,6 +281,19 @@ public class DatabaseWikiFormPrinter implements HtmlContentPrinter {
 				printer.addTEXTAREA(WikiServer.ParameterInputFile, "90", _resource);
 				printer.closeTD();
 			}
+			printer.closeTR();
+			printer.openTR();
+			printer.openTD(CSS.CSSFormLabel);
+			printer.text("Entity path");
+			printer.closeTD();
+			printer.openTD(CSS.CSSFormControl);
+			if (_message == MessageNone) {
+				printer.addTEXTAREA(WikiServer.ParameterEntityPath, "90", _entityPath);
+			} else {
+				printer.addHIDDEN(WikiServer.ParameterEntityPath, _entityPath);
+				printer.text(_entityPath);
+			}
+			printer.closeTD();
 			printer.closeTR();
 		}
 		
