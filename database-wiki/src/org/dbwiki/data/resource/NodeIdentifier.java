@@ -42,11 +42,16 @@ public class NodeIdentifier implements ResourceIdentifier {
 	/*
 	 * Constructors
 	 */
-	
+	/** Creates a root node identifier
+	 * 
+	 */
 	public NodeIdentifier() {
 		_nodeID = -1;
 	}
 	
+	/** Creates a node identifier for a given node id
+	 * 
+	 */
 	public NodeIdentifier(int nodeID) {
 		_nodeID = nodeID;
 	}

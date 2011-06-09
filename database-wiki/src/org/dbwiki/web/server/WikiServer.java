@@ -1011,7 +1011,7 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 	 * @return
 	 * @throws org.dbwiki.exception.WikiException
 	 */
-	private String readConfigFile(int wikiID, int fileType, int fileVersion) throws org.dbwiki.exception.WikiException {
+	public String readConfigFile(int wikiID, int fileType, int fileVersion) throws org.dbwiki.exception.WikiException {
 		String value = null;
 		try {
 			Connection con = _connector.getConnection();

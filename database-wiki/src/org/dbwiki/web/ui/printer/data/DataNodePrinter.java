@@ -183,6 +183,7 @@ public class DataNodePrinter implements HtmlContentPrinter {
 			}
 		}
 		body.closeTABLE();
+		
 	}
 
 	public void printTextNode(DatabaseTextNode node, HtmlLinePrinter body) {
@@ -254,10 +255,10 @@ public class DataNodePrinter implements HtmlContentPrinter {
 		if (versionParameter.matches(group)) {
 			if (group.getTimestamp().isCurrent()) {
 				content.openTD(layout.getCSS(CSS.CSSContentValueActive));
-				content.linkWithTitle(linkTarget, group.getTimestamp().toPrintString(), layout.getLabel(group, versionParameter), layout.getCSS(CSS.CSSContentValueActive));
+				//content.linkWithTitle(linkTarget, group.getTimestamp().toPrintString(), "foo1"+layout.getLabel(group, versionParameter), layout.getCSS(CSS.CSSContentValueActive));
 			} else {
 				content.openTD(layout.getCSS(CSS.CSSContentValueInactive));
-				content.linkWithTitle(linkTarget, group.getTimestamp().toPrintString(), layout.getLabel(group, versionParameter), layout.getCSS(CSS.CSSContentValueInactive));
+				//content.linkWithTitle(linkTarget, group.getTimestamp().toPrintString(), "foo1"+layout.getLabel(group, versionParameter), layout.getCSS(CSS.CSSContentValueInactive));
 			}
 			if (group.hasAnnotation()) {
 				addAnnotationIndicator(content);

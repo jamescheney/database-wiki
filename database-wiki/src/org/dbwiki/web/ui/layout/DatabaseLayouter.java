@@ -45,7 +45,7 @@ public class DatabaseLayouter {
 	 * Public Constants
 	 */
 	
-	public static final String PropertyDisplayEntity = "DISPLAY_ENTIY";
+	public static final String PropertyDisplayEntity = "DISPLAY_ENTITY";
 	public static final String PropertyEntityDisplayOrder = "DISPLAY_ORDER";
 	public static final String PropertyEntityDisplayStyle = "DISPLAY_STYLE";
 	public static final String PropertyEntityEditWithParent = "EDIT_WITH_PARENT";
@@ -72,7 +72,9 @@ public class DatabaseLayouter {
 	/*
 	 * Constructors
 	 */
-	
+	/** Parses in a layout from a properties file.
+	 * 
+	 */
 	public DatabaseLayouter(String config) throws org.dbwiki.exception.WikiException {
 		_layouter = new Hashtable<Integer, EntityLayout>();
 		

@@ -48,7 +48,7 @@ public class ExportNodeWriter extends NodeWriter {
 	
 	public void endDatabase(Database database) throws org.dbwiki.exception.WikiException {
 		try {
-			this.writeln("</" + CopyPasteConstants.ElementLabelDatabase + ">");
+			this.writeln("</" + database.name() + ">");
 		} catch (java.io.IOException ioException) {
 			throw new WikiFatalException(ioException);
 		}

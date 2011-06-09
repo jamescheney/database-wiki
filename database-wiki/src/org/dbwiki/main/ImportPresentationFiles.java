@@ -55,10 +55,10 @@ public class ImportPresentationFiles {
 	/*
 	 * Private Constants
 	 */
-	public enum Type {
+	public enum PresentationFileType {
 		CSS(1), Layout(2), Template(3);	
 		private int _number;
-		Type(int number) {
+		PresentationFileType(int number) {
 			_number = number;
 		}
 		public int getNumber() {return _number;}
@@ -81,7 +81,7 @@ public class ImportPresentationFiles {
 		_username = username;
 	}
 		
-	public void loadPresentationFile(String filename, Type type) throws IOException, WikiException {
+	public void loadPresentationFile(String filename, PresentationFileType type) throws IOException, WikiException {
 		File inputFile = new File(filename);
 		
 		if(inputFile.exists()) {
@@ -128,9 +128,9 @@ public class ImportPresentationFiles {
 			con.setAutoCommit(false);
 
 			ImportPresentationFiles p = new ImportPresentationFiles(server, wiki, database, username);
-			p.loadPresentationFile(path + wikiName + ".css", Type.CSS);
-			p.loadPresentationFile(path + wikiName + ".layout", Type.Layout);
-			p.loadPresentationFile(path + wikiName + ".template", Type.Template);
+			p.loadPresentationFile(path + wikiName + ".css", PresentationFileType.CSS);
+			p.loadPresentationFile(path + wikiName + ".layout", PresentationFileType.Layout);
+			p.loadPresentationFile(path + wikiName + ".template", PresentationFileType.Template);
 			
 			con.close();
 		} catch (Exception exception) {

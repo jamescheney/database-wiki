@@ -181,6 +181,8 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 	private int _autoSchemaChanges;
 	private CSSLinePrinter _cssLinePrinter;
 	private int _cssVersion;
+	private int _templateVersion;
+	private int _layoutVersion;
 	private Database _database;
 	private int _id;
 	private DatabaseLayouter _layouter = null;
@@ -355,11 +357,24 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 	
 	public void reset(int layoutVersion, int templateVersion, int styleSheetVersion) throws org.dbwiki.exception.WikiException {
 		_cssVersion = styleSheetVersion;
-		_template = _server.getTemplate(this, templateVersion);
+		_layoutVersion = layoutVersion;
+		_templateVersion = templateVersion;
+		_template = _server.getTemplate(this, _templateVersion);
 		_cssLinePrinter = new CSSLinePrinter(this.id(), _cssVersion);
-		_layouter = new DatabaseLayouter(_server.getLayout(this, layoutVersion));
+		_layouter = new DatabaseLayouter(_server.getLayout(this, _layoutVersion));
 	}
 	
+	public int getLayoutVersion() {
+		return _layoutVersion;
+	}
+	
+	public int getTemplateVersion() {
+		return _templateVersion;
+	}
+	
+	public int getCSSVersion() {
+		return _cssVersion;
+	}
 	/** Dispatches HTTP interactions based on the type of the request.
 	 * Data requests are handled by respondToDataRequest
 	 * Wiki Page requests are handled by respondToPageRequest
