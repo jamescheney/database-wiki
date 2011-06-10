@@ -60,10 +60,10 @@ import org.dbwiki.data.io.SAXCallbackInputHandler;
 import org.dbwiki.data.resource.DatabaseIdentifier;
 import org.dbwiki.data.resource.PageIdentifier;
 
-import org.dbwiki.data.schema.AttributeEntity;
+import org.dbwiki.data.schema.AttributeSchemaNode;
 import org.dbwiki.data.schema.DatabaseSchema;
-import org.dbwiki.data.schema.Entity;
-import org.dbwiki.data.schema.GroupEntity;
+import org.dbwiki.data.schema.SchemaNode;
+import org.dbwiki.data.schema.GroupSchemaNode;
 
 import org.dbwiki.data.wiki.SimpleWiki;
 import org.dbwiki.data.wiki.Wiki;
@@ -110,7 +110,7 @@ import org.dbwiki.web.ui.printer.SettingsListingPrinter;
 import org.dbwiki.web.ui.printer.TimemachinePrinter;
 import org.dbwiki.web.ui.printer.VersionIndexPrinter;
 
-import org.dbwiki.web.ui.printer.data.CreateEntityFormPrinter;
+import org.dbwiki.web.ui.printer.data.CreateSchemaNodeFormPrinter;
 import org.dbwiki.web.ui.printer.data.DataMenuPrinter;
 import org.dbwiki.web.ui.printer.data.DataUpdateFormPrinter;
 import org.dbwiki.web.ui.printer.data.DataNodePrinter;
@@ -129,7 +129,7 @@ import org.dbwiki.web.ui.printer.page.PageHistoryPrinter;
 import org.dbwiki.web.ui.printer.page.PageMenuPrinter;
 import org.dbwiki.web.ui.printer.page.PageUpdateFormPrinter;
 
-import org.dbwiki.web.ui.printer.schema.EntityPrinter;
+import org.dbwiki.web.ui.printer.schema.SchemaNodePrinter;
 import org.dbwiki.web.ui.printer.schema.SchemaMenuPrinter;
 import org.dbwiki.web.ui.printer.schema.SchemaPathPrinter;
 
@@ -161,11 +161,11 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 	public static final String IndexMultiColumn     = "MULTI_COLUMN";
 	public static final String IndexPartialList     = "PARTIAL_LIST";
 	
-	public static final String ParameterEntityName  = "entity_name";
-	public static final String ParameterEntityType  = "entity_type";
-	public static final String ParameterFileContent = "file_content";
-	public static final String ParameterFileType    = "file_type";
-	public static final String ParameterWikiID      = "wiki_id";
+	public static final String ParameterSchemaNodeName = "schema_node_name";
+	public static final String ParameterSchemaNodeType = "schema_node_type";
+	public static final String ParameterFileContent    = "file_content";
+	public static final String ParameterFileType       = "file_type";
+	public static final String ParameterDatabaseID     = "database_id";
 
 
 	/*
@@ -269,8 +269,8 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 	
 	
 	@Deprecated
-	public AttributeEntity displayEntity(DatabaseSchema schema) {
-		return _layouter.displayEntity(schema);
+	public AttributeSchemaNode displaySchemaNode(DatabaseSchema schema) {
+		return _layouter.displaySchemaNode(schema);
 	}
 	
 	/** Gets the string value of a template or stylesheet, for use in the editor form.
@@ -425,11 +425,11 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 	 * @throws org.dbwiki.exception.WikiException
 	 */
 	private DocumentNode getInsertNode(WikiDataRequest request) throws org.dbwiki.exception.WikiException {
-		Entity entity = database().schema().get(Integer.parseInt(request.parameters().get(RequestParameter.ActionValueEntity).value()));
-		if (entity.isAttribute()) {
-			AttributeEntity attributeEntity = (AttributeEntity)entity;
-			DocumentAttributeNode attribute = new DocumentAttributeNode(attributeEntity);
-			RequestParameter parameter = request.parameters().get(RequestParameter.TextFieldIndicator + attributeEntity.id());
+		SchemaNode schemaNode = database().schema().get(Integer.parseInt(request.parameters().get(RequestParameter.ActionValueSchemaNode).value()));
+		if (schemaNode.isAttribute()) {
+			AttributeSchemaNode attributeSchemaNode = (AttributeSchemaNode)schemaNode;
+			DocumentAttributeNode attribute = new DocumentAttributeNode(attributeSchemaNode);
+			RequestParameter parameter = request.parameters().get(RequestParameter.TextFieldIndicator + attributeSchemaNode.id());
 			if (parameter.hasValue()) {
 				if (!parameter.value().equals("")) {
 					attribute.setValue(parameter.value());
@@ -438,16 +438,16 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 			return attribute;
 		} else {
 			Hashtable<Integer, DocumentGroupNode> groupIndex = new Hashtable<Integer, DocumentGroupNode>();
-			DocumentGroupNode root = Entity.createGroupNode((GroupEntity)entity, groupIndex);
+			DocumentGroupNode root = SchemaNode.createGroupNode((GroupSchemaNode)schemaNode, groupIndex);
 			for (int iParameter = 0; iParameter < request.parameters().size(); iParameter++) {
 				RequestParameter parameter = request.parameters().get(iParameter);
 				if ((parameter.name().startsWith(RequestParameter.TextFieldIndicator)) && (parameter.hasValue())) {
 					if (!parameter.value().equals("")) {
-						Entity childEntity = database().schema().get(Integer.parseInt(parameter.name().substring(RequestParameter.TextFieldIndicator.length())));
-						if (childEntity.isAttribute()) {
-							DocumentAttributeNode attribute = new DocumentAttributeNode((AttributeEntity)childEntity);
+						SchemaNode child = database().schema().get(Integer.parseInt(parameter.name().substring(RequestParameter.TextFieldIndicator.length())));
+						if (child.isAttribute()) {
+							DocumentAttributeNode attribute = new DocumentAttributeNode((AttributeSchemaNode)child);
 							attribute.setValue(parameter.value());
-							groupIndex.get(new Integer(attribute.entity().parent().id())).children().add(attribute);
+							groupIndex.get(new Integer(attribute.schema().parent().id())).children().add(attribute);
 						}
 					}
 				}
@@ -614,19 +614,19 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 				}
 				// Only objects may be annotated, thus this is a get request
 				isGetRequest = true;
-			} else if (action.actionEntity()) {
-				GroupEntity parent = null;
+			} else if (action.actionSchemaNode()) {
+				GroupSchemaNode parent = null;
 				if (!request.isRootRequest()) {
-					parent = (GroupEntity)((DatabaseElementNode)_database.get(request.wri().resourceIdentifier())).entity();
+					parent = (GroupSchemaNode)((DatabaseElementNode)_database.get(request.wri().resourceIdentifier())).schema();
 				}
-				_database.insertEntity(parent, request.parameters().get(ParameterEntityName).value(), Byte.parseByte(request.parameters().get(ParameterEntityType).value()), request.user());
+				_database.insertSchemaNode(parent, request.parameters().get(ParameterSchemaNodeName).value(), Byte.parseByte(request.parameters().get(ParameterSchemaNodeType).value()), request.user());
 				isGetRequest = !request.isRootRequest();
 				isIndexRequest = ! isGetRequest;
 			} else if (action.actionInsert()) {
 				DocumentNode insertNode = this.getInsertNode(request);
 				page = new RedirectPage(request, database().insertNode(request.wri().resourceIdentifier(), insertNode, request.user()));
 			} else if (action.actionUpdate()) {
-				if (request.parameters().hasParameter(ParameterWikiID)) {
+				if (request.parameters().hasParameter(ParameterDatabaseID)) {
 					// Updating a configuration file
 					this.updateConfigurationFile(request);
 					// Configuration files may be modified either while viewing the
@@ -728,9 +728,9 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 			} else if ((request.type().isCreate()) || (request.type().isEdit())) { // The case for a create or edit request
 				contentGenerator.put(DatabaseWikiContentGenerator.ContentObjectLink, new NodePathPrinter(request, _layouter));
 				contentGenerator.put(DatabaseWikiContentGenerator.ContentContent, new DataUpdateFormPrinter(request, _layouter));
-			} else if (request.type().isCreateEntity()) { // Creating a new entity.
+			} else if (request.type().isCreateSchemaNode()) { // Creating a new schema node.
 				contentGenerator.put(DatabaseWikiContentGenerator.ContentObjectLink, new NodePathPrinter(request, _layouter));
-				contentGenerator.put(DatabaseWikiContentGenerator.ContentContent, new CreateEntityFormPrinter(request));
+				contentGenerator.put(DatabaseWikiContentGenerator.ContentContent, new CreateSchemaNodeFormPrinter(request));
 			} else if ((request.type().isTimemachineChanges()) || ((request.type().isTimemachinePrevious()))) {
 				if (request.node() != null) { // Showing version index
 					contentGenerator.put(DatabaseWikiContentGenerator.ContentObjectLink, new NodePathPrinter(request, _layouter));
@@ -779,7 +779,7 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 			if (action.actionInsert()) {
 				wiki().insert(request.getWikiPage(), request.user());
 			} else if (action.actionUpdate()) {
-				if (request.parameters().hasParameter(ParameterWikiID)) {
+				if (request.parameters().hasParameter(ParameterDatabaseID)) {
 					this.updateConfigurationFile(request);
 					isGetRequest = !request.isRootRequest();
 					isIndexRequest = !isGetRequest;
@@ -848,10 +848,10 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 		boolean isIndexRequest = request.type().isIndex();
 		
 		if (request.type().isDelete()) {
-			database().deleteEntity(request.wri().resourceIdentifier(), request.user());
+			database().deleteSchemaNode(request.wri().resourceIdentifier(), request.user());
 			
-			if (request.entity().parent() != null) {
-				HtmlSender.send(new RedirectPage(request, request.entity().parent().identifier()),request.exchange());
+			if (request.schema().parent() != null) {
+				HtmlSender.send(new RedirectPage(request, request.schema().parent().identifier()),request.exchange());
 				return;
 			} else {
 				isIndexRequest = true;
@@ -863,11 +863,11 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 		// requests further, thus it has to be done here.
 		if (request.type().isAction()) {
 			RequestParameterAction action = RequestParameter.actionParameter(request.parameters().get(RequestParameter.ParameterAction));
-			GroupEntity parent = null;
-			if (action.actionEntity()) {
+			GroupSchemaNode parent = null;
+			if (action.actionSchemaNode()) {
 				if(!request.isRootRequest())
-					parent = (GroupEntity)request.entity();
-				_database.insertEntity(parent, request.parameters().get(ParameterEntityName).value(), Byte.parseByte(request.parameters().get(ParameterEntityType).value()), request.user());
+					parent = (GroupSchemaNode)request.schema();
+				_database.insertSchemaNode(parent, request.parameters().get(ParameterSchemaNodeName).value(), Byte.parseByte(request.parameters().get(ParameterSchemaNodeType).value()), request.user());
 				isGetRequest = !request.isRootRequest();
 				isIndexRequest = !isGetRequest;
 			}
@@ -901,14 +901,14 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 			contentGenerator.put(DatabaseWikiContentGenerator.ContentTimemachine, new TimemachinePrinter(request));
 			contentGenerator.put(DatabaseWikiContentGenerator.ContentMenu, new SchemaMenuPrinter(request));
 			contentGenerator.put(DatabaseWikiContentGenerator.ContentObjectLink, new SchemaPathPrinter(request, _layouter));
-			contentGenerator.put(DatabaseWikiContentGenerator.ContentContent, new EntityPrinter(request, _layouter));
+			contentGenerator.put(DatabaseWikiContentGenerator.ContentContent, new SchemaNodePrinter(request, _layouter));
 		} else if ((isIndexRequest) || (request.type().isDelete())) { // || (action.actionInsert())) {
 			contentGenerator.put(DatabaseWikiContentGenerator.ContentTimemachine, new TimemachinePrinter(request));
 			contentGenerator.put(DatabaseWikiContentGenerator.ContentMenu, new SchemaMenuPrinter(request));
-			contentGenerator.put(DatabaseWikiContentGenerator.ContentContent, new EntityPrinter(request, _layouter));
-		} else if (request.type().isCreateEntity() && request.entity().isGroup()) {
-			// FIXME #schemaversioning: only display the option to create a new entity if we're viewing a group?
-			contentGenerator.put(DatabaseWikiContentGenerator.ContentContent, new CreateEntityFormPrinter(request));
+			contentGenerator.put(DatabaseWikiContentGenerator.ContentContent, new SchemaNodePrinter(request, _layouter));
+		} else if (request.type().isCreateSchemaNode() && request.schema().isGroup()) {
+			// FIXME #schemaversioning: only display the option to create a new schema node if we're viewing a group?
+			contentGenerator.put(DatabaseWikiContentGenerator.ContentContent, new CreateSchemaNodeFormPrinter(request));
 		}
 
 
@@ -951,7 +951,7 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 	 */
 	  
 	private synchronized void updateConfigurationFile(WikiRequest request) throws org.dbwiki.exception.WikiException {
-		int wikiID = Integer.valueOf(request.parameters().get(ParameterWikiID).value());
+		int wikiID = Integer.valueOf(request.parameters().get(ParameterDatabaseID).value());
 		int fileType = Integer.valueOf(request.parameters().get(ParameterFileType).value());
 		
 		String value = null;

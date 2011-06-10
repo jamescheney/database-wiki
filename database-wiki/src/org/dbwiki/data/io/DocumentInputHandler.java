@@ -44,7 +44,7 @@ public class DocumentInputHandler implements InputHandler {
 	 * Private Variables
 	 */
 	
-	private String _entityRootPath;
+	private String _schemaNodeRootPath;
 	private Exception _exception;
 	private ImportHandler _importHandler;
 	private InputCallbackHandler _handler;
@@ -55,10 +55,9 @@ public class DocumentInputHandler implements InputHandler {
 	/*
 	 * Constructors
 	 */
-	
-	public DocumentInputHandler(DatabaseSchema schema, String entityRootPath, ImportHandler importHandler) {
+	public DocumentInputHandler(DatabaseSchema schema, String schemaNodeRootPath, ImportHandler importHandler) {
 		_schema = schema;
-		_entityRootPath = entityRootPath;
+		_schemaNodeRootPath = schemaNodeRootPath;
 		_importHandler = importHandler;
 		
 		_readPath = null;		
@@ -68,7 +67,6 @@ public class DocumentInputHandler implements InputHandler {
 	/*
 	 * Public Methods
 	 */
-	
 	public void endDocument() throws org.dbwiki.exception.WikiException {
 		if (_exception != null) {
 			throw new WikiFatalException(_exception);
@@ -82,7 +80,7 @@ public class DocumentInputHandler implements InputHandler {
 		
 		if (_handler != null) {
 			_handler.endElement();
-			if (_readPath.equals(_entityRootPath)) {
+			if (_readPath.equals(_schemaNodeRootPath)) {
 				_handler.endDocument();
 				DocumentNode inputRoot = _handler.getRootNode();
 				if (!inputRoot.isGroup()) {
@@ -121,7 +119,7 @@ public class DocumentInputHandler implements InputHandler {
 		
 		if (_handler != null) {
 			_handler.startElement(label);
-		} else if (_readPath.equals(_entityRootPath)) {
+		} else if (_readPath.equals(_schemaNodeRootPath)) {
 			_handler = new InputCallbackHandler(_schema);
 			_handler.startDocument();
 			_handler.startElement(label);

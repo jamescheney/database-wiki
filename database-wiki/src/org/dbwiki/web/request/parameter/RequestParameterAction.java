@@ -27,11 +27,11 @@ public abstract class RequestParameterAction {
 	 * Public Constants
 	 */
 	
-	public static final String ActionAnnotate = "annotate";
-	public static final String ActionCancel   = "cancel";
-	public static final String ActionEntity   = "entity";
-	public static final String ActionInsert   = "insert";
-	public static final String ActionUpdate   = "update";
+	public static final String ActionAnnotate   = "annotate";
+	public static final String ActionCancel     = "cancel";
+	public static final String ActionSchemaNode = "schema_node";
+	public static final String ActionInsert     = "insert";
+	public static final String ActionUpdate     = "update";
 	
 	
 	/*
@@ -40,7 +40,7 @@ public abstract class RequestParameterAction {
 	
 	public abstract boolean actionAnnotate();
 	public abstract boolean actionCancel();
-	public abstract boolean actionEntity();
+	public abstract boolean actionSchemaNode();
 	public abstract boolean actionInsert();
 	public abstract boolean actionUpdate();
 }

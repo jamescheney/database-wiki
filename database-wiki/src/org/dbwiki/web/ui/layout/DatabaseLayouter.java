@@ -26,9 +26,9 @@ import java.io.StringReader;
 import java.util.Hashtable;
 import java.util.Properties;
 
-import org.dbwiki.data.schema.AttributeEntity;
+import org.dbwiki.data.schema.AttributeSchemaNode;
 import org.dbwiki.data.schema.DatabaseSchema;
-import org.dbwiki.data.schema.Entity;
+import org.dbwiki.data.schema.SchemaNode;
 
 
 import org.dbwiki.exception.WikiFatalException;
@@ -45,17 +45,17 @@ public class DatabaseLayouter {
 	 * Public Constants
 	 */
 	
-	public static final String PropertyDisplayEntity = "DISPLAY_ENTITY";
-	public static final String PropertyEntityDisplayOrder = "DISPLAY_ORDER";
-	public static final String PropertyEntityDisplayStyle = "DISPLAY_STYLE";
-	public static final String PropertyEntityEditWithParent = "EDIT_WITH_PARENT";
-	public static final String PropertyEntityLabel = "LABEL";
-	public static final String PropertyEntityLabelShort = "LABEL_SHORT";
-	public static final String PropertyEntityLabelAlign = "LABEL_ALIGN";
-	public static final String PropertyEntityName  = "NAME";
-	public static final String PropertyEntityShowContent = "SHOW_CONTENT";
-	public static final String PropertyEntityStyleSheetPrefix = "CSS_PREFIX";
-	public static final String PropertyEntityTextHeight = "TEXT_HEIGHT";
+	public static final String PropertyDisplaySchema = "DISPLAY_SCHEMA";
+	public static final String PropertySchemaDisplayOrder = "DISPLAY_ORDER";
+	public static final String PropertySchemaDisplayStyle = "DISPLAY_STYLE";
+	public static final String PropertySchemaEditWithParent = "EDIT_WITH_PARENT";
+	public static final String PropertySchemaLabel = "LABEL";
+	public static final String PropertySchemaLabelShort = "LABEL_SHORT";
+	public static final String PropertySchemaLabelAlign = "LABEL_ALIGN";
+	public static final String PropertySchemaName  = "NAME";
+	public static final String PropertySchemaShowContent = "SHOW_CONTENT";
+	public static final String PropertySchemaStyleSheetPrefix = "CSS_PREFIX";
+	public static final String PropertySchemaTextHeight = "TEXT_HEIGHT";
 	
 	public static final String PropertyIndexType = "INDEX_TYPE";
 	
@@ -64,9 +64,9 @@ public class DatabaseLayouter {
 	 * Private Variables
 	 */
 	
-	private int _displayEntityID = -1;
+	private int _displaySchemaID = -1;
 	private String _indexType = DatabaseWiki.IndexFullList;
-	private Hashtable<Integer, EntityLayout> _layouter;
+	private Hashtable<Integer, SchemaLayout> _layouter;
 	
 	
 	/*
@@ -76,73 +76,73 @@ public class DatabaseLayouter {
 	 * 
 	 */
 	public DatabaseLayouter(String config) throws org.dbwiki.exception.WikiException {
-		_layouter = new Hashtable<Integer, EntityLayout>();
+		_layouter = new Hashtable<Integer, SchemaLayout>();
 		
 		if (config != null) {
 			try {
 				Properties properties = new Properties();
 				properties.load(new StringReader(config));
-				if (properties.containsKey(PropertyDisplayEntity)) {
-					_displayEntityID = Integer.parseInt(properties.getProperty(PropertyDisplayEntity));
+				if (properties.containsKey(PropertyDisplaySchema)) {
+					_displaySchemaID = Integer.parseInt(properties.getProperty(PropertyDisplaySchema));
 				} else {
-					_displayEntityID = -1;
+					_displaySchemaID = -1;
 				}
 				if (properties.containsKey(PropertyIndexType)) {
 					_indexType = properties.getProperty(PropertyIndexType);
 				} else {
 					_indexType = DatabaseWiki.IndexFullList;
 				}
-				// The following assumes that for each entity the layout definition
-				// (in property) contains a key for at least the entity name and the
-				// entity label. This assumption should be assured by the way we store
+				// The following assumes that for each schema node the layout definition
+				// (in property) contains a key for at least the schema node name and the
+				// schema node label. This assumption should be assured by the way we store
 				// layout definitions.
-				int entityID = 0;
-				while (properties.containsKey(PropertyEntityName + "_" + entityID)) {
-					String name = properties.getProperty(PropertyEntityName + "_" + entityID);
-					String label = properties.getProperty(PropertyEntityLabel + "_" + entityID);
+				int schemaID = 0;
+				while (properties.containsKey(PropertySchemaName + "_" + schemaID)) {
+					String name = properties.getProperty(PropertySchemaName + "_" + schemaID);
+					String label = properties.getProperty(PropertySchemaLabel + "_" + schemaID);
 					// Label alignment
-					String labelAlign = EntityLayout.DefaultLabelAlign;
-					if (properties.getProperty(PropertyEntityLabelAlign + "_" + entityID) != null) {
-						labelAlign = properties.getProperty(PropertyEntityLabelAlign + "_" + entityID);
+					String labelAlign = SchemaLayout.DefaultLabelAlign;
+					if (properties.getProperty(PropertySchemaLabelAlign + "_" + schemaID) != null) {
+						labelAlign = properties.getProperty(PropertySchemaLabelAlign + "_" + schemaID);
 					}
 					// Label short form
 					String labelShort = label;
-					if (properties.getProperty(PropertyEntityLabelShort + "_" + entityID) != null) {
-						labelShort = properties.getProperty(PropertyEntityLabelShort + "_" + entityID);
+					if (properties.getProperty(PropertySchemaLabelShort + "_" + schemaID) != null) {
+						labelShort = properties.getProperty(PropertySchemaLabelShort + "_" + schemaID);
 					}
 					// Display order
-					int displayOrder = entityID;
-					if (properties.getProperty(PropertyEntityDisplayOrder + "_" + entityID) != null) {
+					int displayOrder = schemaID;
+					if (properties.getProperty(PropertySchemaDisplayOrder + "_" + schemaID) != null) {
 						try {
-							displayOrder = Integer.parseInt(properties.getProperty(PropertyEntityDisplayOrder + "_" + entityID));
+							displayOrder = Integer.parseInt(properties.getProperty(PropertySchemaDisplayOrder + "_" + schemaID));
 						} catch (NumberFormatException exception) {
 						}
 					}
 					// Display style
-					String displayStyle = EntityLayout.DefaultDisplayStyle;
-					if (properties.getProperty(PropertyEntityDisplayStyle + "_" + entityID) != null) {
-						displayStyle = properties.getProperty(PropertyEntityDisplayStyle + "_" + entityID);
+					String displayStyle = SchemaLayout.DefaultDisplayStyle;
+					if (properties.getProperty(PropertySchemaDisplayStyle + "_" + schemaID) != null) {
+						displayStyle = properties.getProperty(PropertySchemaDisplayStyle + "_" + schemaID);
 					}
 					// Edit with parent
-					boolean editWithParent = EntityLayout.DefaultEditWithParent;
-					if (properties.getProperty(PropertyEntityEditWithParent + "_" + entityID) != null) {
-						editWithParent = Boolean.parseBoolean(properties.getProperty(PropertyEntityEditWithParent + "_" + entityID));
+					boolean editWithParent = SchemaLayout.DefaultEditWithParent;
+					if (properties.getProperty(PropertySchemaEditWithParent + "_" + schemaID) != null) {
+						editWithParent = Boolean.parseBoolean(properties.getProperty(PropertySchemaEditWithParent + "_" + schemaID));
 					}
 					// Show content
-					boolean showContent = EntityLayout.DefaultShowContent;
-					if (properties.getProperty(PropertyEntityShowContent + "_" + entityID) != null) {
-						showContent = Boolean.parseBoolean(properties.getProperty(PropertyEntityShowContent + "_" + entityID));
+					boolean showContent = SchemaLayout.DefaultShowContent;
+					if (properties.getProperty(PropertySchemaShowContent + "_" + schemaID) != null) {
+						showContent = Boolean.parseBoolean(properties.getProperty(PropertySchemaShowContent + "_" + schemaID));
 					}
 					// Style sheet prefix
-					String styleSheetPrefix = properties.getProperty(PropertyEntityStyleSheetPrefix + "_" + entityID);
+					String styleSheetPrefix = properties.getProperty(PropertySchemaStyleSheetPrefix + "_" + schemaID);
 					// Text height
-					int textHeight = EntityLayout.DefaultTextHeight;
+					int textHeight = SchemaLayout.DefaultTextHeight;
 					try {
-						textHeight = Integer.parseInt(properties.getProperty(PropertyEntityTextHeight + "_" + entityID));
+						textHeight = Integer.parseInt(properties.getProperty(PropertySchemaTextHeight + "_" + schemaID));
 					} catch (NumberFormatException exception) {
 					}
-					EntityLayout layout = new EntityLayout(name, label, labelAlign, labelShort, displayOrder, displayStyle, editWithParent, showContent, styleSheetPrefix, textHeight);
-	        		_layouter.put(new Integer(entityID++), layout);
+					SchemaLayout layout = new SchemaLayout(name, label, labelAlign, labelShort, displayOrder, displayStyle, editWithParent, showContent, styleSheetPrefix, textHeight);
+	        		_layouter.put(new Integer(schemaID++), layout);
 				}
 			} catch (java.io.IOException ioException) {
 				throw new WikiFatalException(ioException);
@@ -151,7 +151,7 @@ public class DatabaseLayouter {
 	}
 	
 	public DatabaseLayouter() {
-		_layouter = new Hashtable<Integer, EntityLayout>();
+		_layouter = new Hashtable<Integer, SchemaLayout>();
 	}
 	
 	
@@ -160,29 +160,29 @@ public class DatabaseLayouter {
 	 */
 	
 	public static boolean isLayoutParameter(String name) {
-		if (name.equals(PropertyDisplayEntity)) {
+		if (name.equals(PropertyDisplaySchema)) {
 			return true;
 		} else if (name.equals(PropertyIndexType)) {
 			return true;
-		} else if (name.startsWith(PropertyEntityDisplayOrder)) {
+		} else if (name.startsWith(PropertySchemaDisplayOrder)) {
 			return true;
-		} else if (name.startsWith(PropertyEntityDisplayStyle)) {
+		} else if (name.startsWith(PropertySchemaDisplayStyle)) {
 			return true;
-		} else if (name.startsWith(PropertyEntityEditWithParent)) {
+		} else if (name.startsWith(PropertySchemaEditWithParent)) {
 			return true;
-		} else if (name.startsWith(PropertyEntityLabel)) {
+		} else if (name.startsWith(PropertySchemaLabel)) {
 			return true;
-		} else if (name.startsWith(PropertyEntityLabelAlign)) {
+		} else if (name.startsWith(PropertySchemaLabelAlign)) {
 			return true;
-		} else if (name.startsWith(PropertyEntityLabelShort)) {
+		} else if (name.startsWith(PropertySchemaLabelShort)) {
 			return true;
-		} else if (name.startsWith(PropertyEntityName)) {
+		} else if (name.startsWith(PropertySchemaName)) {
 			return true;
-		} else if (name.startsWith(PropertyEntityShowContent)) {
+		} else if (name.startsWith(PropertySchemaShowContent)) {
 			return true;
-		} else if (name.startsWith(PropertyEntityStyleSheetPrefix)) {
+		} else if (name.startsWith(PropertySchemaStyleSheetPrefix)) {
 			return true;
-		} else if (name.startsWith(PropertyEntityTextHeight)) {
+		} else if (name.startsWith(PropertySchemaTextHeight)) {
 			return true;
 		} else {
 			return false;
@@ -193,24 +193,24 @@ public class DatabaseLayouter {
 	/*
 	 * Public Methods
 	 */
-	/** Get the display entity associated with this database.
-	 * This is an AttributeEntity whose value is used to display entries at the listing top-level.
+	/** Get the display schema node associated with this database.
+	 * This is an AttributeSchemaNode whose value is used to display entries at the listing top-level.
 	 * Unless otherwise specified, this will be the first attribute we can find in the schema.
 	 * @param schema
 	 * @return
 	 */
-	public AttributeEntity displayEntity(DatabaseSchema schema) {
-		if (_displayEntityID >= 0) {
+	public AttributeSchemaNode displaySchemaNode(DatabaseSchema schema) {
+		if (_displaySchemaID >= 0) {
 			if (schema != null) {
-				if (schema.size() > _displayEntityID) {
-					return (AttributeEntity)schema.get(_displayEntityID);
+				if (schema.size() > _displaySchemaID) {
+					return (AttributeSchemaNode)schema.get(_displaySchemaID);
 				}
 			}
 		} else {
 			if (schema != null) {
-				for (int iEntity = 1; iEntity < schema.size(); iEntity++) {
-					if (schema.get(iEntity).isAttribute()) {
-						return (AttributeEntity)schema.get(iEntity);
+				for (int i = 1; i < schema.size(); i++) {
+					if (schema.get(i).isAttribute()) {
+						return (AttributeSchemaNode)schema.get(i);
 					}
 				}
 			}
@@ -218,12 +218,12 @@ public class DatabaseLayouter {
 		return null;
 	}
 	
-	public EntityLayout get(Entity entity) {
-		Integer key = new Integer(entity.id());
+	public SchemaLayout get(SchemaNode schema) {
+		Integer key = new Integer(schema.id());
 		if (_layouter.containsKey(key)) {
 			return _layouter.get(key);
 		} else {
-			return new EntityLayout(entity);
+			return new SchemaLayout(schema);
 		}
 	}
 	

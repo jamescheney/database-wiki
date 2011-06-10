@@ -62,7 +62,7 @@ public class DatabaseWikiFormPrinter implements HtmlContentPrinter {
 	private String _action;
 	private String _authentication;
 	private String _autoSchemaChanges;
-	private String _entityPath;
+	private String _schemaPath;
 	private int _message;
 	private String _name;
 	private String _resource;
@@ -74,11 +74,11 @@ public class DatabaseWikiFormPrinter implements HtmlContentPrinter {
 	 * Constructors
 	 */
 	
-	public DatabaseWikiFormPrinter(String action, String name, String title, String authentication, String autoSchemaChanges, String schema, String resource, String entityPath, int message) {
+	public DatabaseWikiFormPrinter(String action, String name, String title, String authentication, String autoSchemaChanges, String schema, String resource, String schemaPath, int message) {
 		_action = action;
 		_authentication = authentication;
 		_autoSchemaChanges = autoSchemaChanges;
-		_entityPath = entityPath;
+		_schemaPath = schemaPath;
 				_message = message;
 		_name = name;
 		_resource = resource;
@@ -284,14 +284,14 @@ public class DatabaseWikiFormPrinter implements HtmlContentPrinter {
 			printer.closeTR();
 			printer.openTR();
 			printer.openTD(CSS.CSSFormLabel);
-			printer.text("Entity path");
+			printer.text("Schema path");
 			printer.closeTD();
 			printer.openTD(CSS.CSSFormControl);
 			if (_message == MessageNone) {
-				printer.addTEXTAREA(WikiServer.ParameterEntityPath, "90", _entityPath);
+				printer.addTEXTAREA(WikiServer.ParameterSchemaPath, "90", _schemaPath);
 			} else {
-				printer.addHIDDEN(WikiServer.ParameterEntityPath, _entityPath);
-				printer.text(_entityPath);
+				printer.addHIDDEN(WikiServer.ParameterSchemaPath, _schemaPath);
+				printer.text(_schemaPath);
 			}
 			printer.closeTD();
 			printer.closeTR();

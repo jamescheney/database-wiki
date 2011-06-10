@@ -23,21 +23,21 @@ package org.dbwiki.web.ui.layout;
 
 import org.dbwiki.data.database.DatabaseElementNode;
 
-import org.dbwiki.data.schema.Entity;
+import org.dbwiki.data.schema.SchemaNode;
 
 import org.dbwiki.web.request.parameter.RequestParameterVersion;
 
-/** Collects the information used to lay out each entity
- * EditWithParent - if the entity is edited, also include its parent
+/** Collects the information used to lay out each schema node
+ * EditWithParent - if the schema node is edited, also include its parent
  * LabelAlign - left, top or none
- * ShowContent - if the entity is shown, show its content also (for groups)
- * TextHeight - font size of the entity
+ * ShowContent - if the schema node is shown, show its content also (for groups)
+ * TextHeight - font size of the schema node
  * DisplayStyle - group, list or table
  * @author jcheney
  *
  */
 
-public class EntityLayout {
+public class SchemaLayout {
 	/*
 	 * Public Constants
 	 */
@@ -69,12 +69,12 @@ public class EntityLayout {
 	 * Constructors
 	 */
 	
-	public EntityLayout(Entity entity) {
-		_name = entity.label();
+	public SchemaLayout(SchemaNode schema) {
+		_name = schema.label();
 		_labelPrinter = new StringLabelPrinter(_name);
 		_labelShortPrinter = new StringLabelPrinter(_name);
-		_alignment = new LabelAlignment(entity);
-		_displayOrder = entity.id();
+		_alignment = new LabelAlignment(schema);
+		_displayOrder = schema.id();
 		_displayStyle = new DisplayStyle();
 		_editWithParent = DefaultEditWithParent;
 		_showContent = DefaultShowContent;
@@ -82,7 +82,7 @@ public class EntityLayout {
 		_textHeight = DefaultTextHeight;
 	}
 	
-	public EntityLayout(String name, String label, String labelAlign, String labelShort, int displayOrder, String displayStyle, boolean editWithParent, boolean showContent, String styleSheetPrefix, int textHeight) {
+	public SchemaLayout(String name, String label, String labelAlign, String labelShort, int displayOrder, String displayStyle, boolean editWithParent, boolean showContent, String styleSheetPrefix, int textHeight) {
 		_name = name;
 		_labelPrinter = new SubtreeLabelPrinter(label);
 		_labelShortPrinter = new SubtreeLabelPrinter(labelShort);

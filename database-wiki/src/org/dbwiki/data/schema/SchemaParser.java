@@ -129,7 +129,7 @@ public class SchemaParser {
 		return -1;
 	}
 	
-	private GroupEntity parseElement(String text, GroupEntity parent, DatabaseSchema schema) throws org.dbwiki.exception.WikiException {
+	private GroupSchemaNode parseElement(String text, GroupSchemaNode parent, DatabaseSchema schema) throws org.dbwiki.exception.WikiException {
 		// $name {
 		if (!((text.startsWith(elementIndicator)) && (text.endsWith(closeElement)))) {
 			throw new WikiSchemaException(WikiSchemaException.SyntaxError, "Element expected in " + text);
@@ -145,18 +145,18 @@ public class SchemaParser {
 		String elementName = elementDefinition.substring(0, pos).trim();
 		String elementBody = elementDefinition.substring(pos + openElement.length()).trim();
 		
-		GroupEntity entity = new GroupEntity(schema.size(), elementName, parent);
-		if (!DatabaseSchema.isValidName(entity.label())) {
+		GroupSchemaNode schemaNode = new GroupSchemaNode(schema.size(), elementName, parent);
+		if (!DatabaseSchema.isValidName(schemaNode.label())) {
 			throw new WikiSchemaException(WikiSchemaException.SyntaxError, "Invalid element name " + elementName);
 		}
-		schema.add(entity);
+		schema.add(schemaNode);
 
-		this.parseElementBody(elementBody, entity, schema);
+		this.parseElementBody(elementBody, schemaNode, schema);
 
-		return entity;
+		return schemaNode;
 	}
 	
-	private void parseElementBody(String text, GroupEntity parent, DatabaseSchema schema) throws org.dbwiki.exception.WikiException {
+	private void parseElementBody(String text, GroupSchemaNode parent, DatabaseSchema schema) throws org.dbwiki.exception.WikiException {
 		String elementBody = text;
 		
 		if (elementBody.length() == 0) {
@@ -176,7 +176,7 @@ public class SchemaParser {
 					attributeName = elementBody.substring(attributeIndicator.length()).trim();
 					elementBody = "";
 				}
-				AttributeEntity attribute = new AttributeEntity(schema.size(), attributeName, parent);
+				AttributeSchemaNode attribute = new AttributeSchemaNode(schema.size(), attributeName, parent);
 				if (!DatabaseSchema.isValidName(attribute.label())) {
 					throw new WikiSchemaException(WikiSchemaException.SyntaxError, "Invalid attribute name " + attributeName + " in " + text);
 				}
@@ -198,7 +198,6 @@ public class SchemaParser {
 	/** Parse something of the form $name {...}
 	 * @param text - The text being parsed
 	 * @param schema - Schema to add entry and its recursive contents to
-	 * @return GroupEntity - never used
 	 * @throws org.dbwiki.exception.WikiException
 	 */
 	private void parseEntry(String text, DatabaseSchema schema) throws org.dbwiki.exception.WikiException {
@@ -218,13 +217,13 @@ public class SchemaParser {
 		String entryName = entryDefinition.substring(0, pos).trim();
 		String entryBody = entryDefinition.substring(pos + openElement.length()).trim();
 		
-		GroupEntity entity = new GroupEntity(schema.size(), entryName, null);
-		if (!DatabaseSchema.isValidName(DatabaseSchema.getEntityName(entity.label()))) {
+		GroupSchemaNode schemaNode = new GroupSchemaNode(schema.size(), entryName, null);
+		if (!DatabaseSchema.isValidName(DatabaseSchema.getSchemaNodeName(schemaNode.label()))) {
 			throw new WikiSchemaException(WikiSchemaException.SyntaxError, "Invalid entry name " + entryName);
 		}
-		schema.add(entity);
+		schema.add(schemaNode);
 		
-		this.parseElementBody(entryBody, entity, schema);
+		this.parseElementBody(entryBody, schemaNode, schema);
 
 	}
 }

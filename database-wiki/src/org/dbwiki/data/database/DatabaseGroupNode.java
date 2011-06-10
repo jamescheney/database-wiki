@@ -27,8 +27,8 @@ import java.util.Vector;
 import org.dbwiki.data.annotation.AnnotationList;
 
 import org.dbwiki.data.resource.ResourceIdentifier;
-import org.dbwiki.data.schema.Entity;
-import org.dbwiki.data.schema.GroupEntity;
+import org.dbwiki.data.schema.SchemaNode;
+import org.dbwiki.data.schema.GroupSchemaNode;
 
 import org.dbwiki.data.time.TimeSequence;
 
@@ -49,8 +49,8 @@ public abstract class DatabaseGroupNode extends DatabaseElementNode {
 	 * Constructors
 	 */
 	
-	public DatabaseGroupNode(GroupEntity entity, DatabaseGroupNode parent, TimeSequence timestamp, AnnotationList annotation) {
-		super(entity, parent, timestamp, annotation);
+	public DatabaseGroupNode(GroupSchemaNode schema, DatabaseGroupNode parent, TimeSequence timestamp, AnnotationList annotation) {
+		super(schema, parent, timestamp, annotation);
 		
 		_children = new DatabaseElementList();
 	}
@@ -64,12 +64,12 @@ public abstract class DatabaseGroupNode extends DatabaseElementNode {
 		return _children;
 	}
 	
-	public DatabaseElementList find(Entity entity) {
-		Stack<Entity> entities = new Stack<Entity>();
+	public DatabaseElementList find(SchemaNode schema) {
+		Stack<SchemaNode> entities = new Stack<SchemaNode>();
 		
-		Entity parent = entity.parent();
+		SchemaNode parent = schema.parent();
 		while (parent != null) {
-			if (parent.equals(this.entity())) {
+			if (parent.equals(this.schema())) {
 				break;
 			}
 			entities.push(parent);
@@ -84,12 +84,12 @@ public abstract class DatabaseGroupNode extends DatabaseElementNode {
 		elements.add(this);
 		
 		while (!entities.isEmpty()) {
-			Entity pathEntity = entities.pop();
+			SchemaNode pathSchema = entities.pop();
 			Vector<DatabaseGroupNode> candidates = new Vector<DatabaseGroupNode>();
 			for (int iElement = 0; iElement < elements.size(); iElement++) {
 				DatabaseGroupNode node = elements.get(iElement);
 				for (int iChild = 0; iChild < node.children().size(); iChild++) {
-					if (node.children().get(iChild).entity().equals(pathEntity)) {
+					if (node.children().get(iChild).schema().equals(pathSchema)) {
 						candidates.add((DatabaseGroupNode)node.children().get(iChild));
 					}
 				}
@@ -101,7 +101,7 @@ public abstract class DatabaseGroupNode extends DatabaseElementNode {
 		for (int iElement = 0; iElement < elements.size(); iElement++) {
 			DatabaseGroupNode node = elements.get(iElement);
 			for (int iChild = 0; iChild < node.children().size(); iChild++) {
-				if (node.children().get(iChild).entity().equals(entity)) {
+				if (node.children().get(iChild).schema().equals(schema)) {
 					matches.add(node.children().get(iChild));
 				}
 			}

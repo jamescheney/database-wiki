@@ -26,39 +26,39 @@ import java.util.Vector;
 import org.dbwiki.data.database.DatabaseElementNode;
 
 import org.dbwiki.data.query.QueryResultSet;
-import org.dbwiki.data.schema.Entity;
+import org.dbwiki.data.schema.SchemaNode;
 import org.dbwiki.exception.WikiFatalException;
 
-/** A struct containing a list of entity nodes.
+/** A struct containing a list of schema nodes.
  * Used in printing data nodes and query results.
  * @author jcheney
  *
  */
-public class EntityNodeList {
+public class SchemaNodeList {
 	/*
 	 * Private Variables
 	 */
 	
 	private Vector<DatabaseElementNode> _elements;
-	private Entity _entity;
+	private SchemaNode _schemaNode;
 	
 	
 	/*
 	 * Constructors
 	 */
 	
-	public EntityNodeList(DatabaseElementNode node) {
+	public SchemaNodeList(DatabaseElementNode node) {
 		_elements = new Vector<DatabaseElementNode>();
 		_elements.add(node);
 		
-		_entity = node.entity();
+		_schemaNode = node.schema();
 	}
 	
-	public EntityNodeList(QueryResultSet rs) throws org.dbwiki.exception.WikiException {
+	public SchemaNodeList(QueryResultSet rs) throws org.dbwiki.exception.WikiException {
 		_elements = new Vector<DatabaseElementNode>();
 		_elements.add((DatabaseElementNode)rs.get(0));
 		
-		_entity = _elements.lastElement().entity();
+		_schemaNode = _elements.lastElement().schema();
 		
 		for (int iNode = 1; iNode < rs.size(); iNode++) {
 			this.add((DatabaseElementNode)rs.get(iNode));
@@ -71,14 +71,14 @@ public class EntityNodeList {
 	 */
 	
 	public void add(DatabaseElementNode node) throws org.dbwiki.exception.WikiException {
-		if (!node.entity().equals(_entity)) {
-			throw new WikiFatalException("Incomparable entities in EntityNodeList");
+		if (!node.schema().equals(_schemaNode)) {
+			throw new WikiFatalException("Incomparable entities in SchemaNodeList");
 		}
 		_elements.add(node);
 	}
 	
-	public Entity entity() {
-		return _entity;
+	public SchemaNode schema() {
+		return _schemaNode;
 	}
 	
 	public DatabaseElementNode get(int index) {

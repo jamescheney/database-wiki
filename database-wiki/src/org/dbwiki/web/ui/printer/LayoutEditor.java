@@ -23,9 +23,9 @@ package org.dbwiki.web.ui.printer;
 
 import java.util.Vector;
 
-import org.dbwiki.data.schema.AttributeEntity;
-import org.dbwiki.data.schema.Entity;
-import org.dbwiki.data.schema.GroupEntity;
+import org.dbwiki.data.schema.AttributeSchemaNode;
+import org.dbwiki.data.schema.SchemaNode;
+import org.dbwiki.data.schema.GroupSchemaNode;
 
 import org.dbwiki.exception.WikiException;
 
@@ -42,7 +42,7 @@ import org.dbwiki.web.server.WikiServerConstants;
 import org.dbwiki.web.ui.CSS;
 
 import org.dbwiki.web.ui.layout.DatabaseLayouter;
-import org.dbwiki.web.ui.layout.EntityLayout;
+import org.dbwiki.web.ui.layout.SchemaLayout;
 
 /** Prints a form that generates layout requests
  * 
@@ -71,15 +71,15 @@ public class LayoutEditor implements HtmlContentPrinter {
 	 */
 
 	public void print(HtmlLinePrinter printer) throws WikiException {
-		Vector<Entity> entities = new Vector<Entity>();
-		GroupEntity root = _request.wiki().database().schema().root();
+		Vector<SchemaNode> entities = new Vector<SchemaNode>();
+		GroupSchemaNode root = _request.wiki().database().schema().root();
 		entities.add(root);
-		this.listEntities(root, entities);
+		this.listSchemaNodes(root, entities);
 		
 		printer.paragraph("Database Layout", CSS.CSSHeadline);
 
 		printer.openFORM("frmEditor", "POST", _request.parameters().get(RequestParameter.ParameterResource).value());
-		printer.addHIDDEN(DatabaseWiki.ParameterWikiID, Integer.toString(_request.wiki().id()));
+		printer.addHIDDEN(DatabaseWiki.ParameterDatabaseID, Integer.toString(_request.wiki().id()));
 		printer.addHIDDEN(DatabaseWiki.ParameterFileType, Integer.toString(WikiServerConstants.RelConfigFileColFileTypeValLayout));
 
 		printer.paragraph("Index Layout", CSS.CSSHeadlineSmall);
@@ -118,8 +118,8 @@ public class LayoutEditor implements HtmlContentPrinter {
 		printer.closeTR();
 		printer.closeTABLE();
 
-		for (int iEntity = 0; iEntity < entities.size(); iEntity++) {
-			this.printEntityLayout(entities.get(iEntity), printer);
+		for (int i = 0; i < entities.size(); i++) {
+			this.printSchemaLayout(entities.get(i), printer);
 		}
 		
 		printer.openPARAGRAPH(CSS.CSSButtonLine);
@@ -140,40 +140,40 @@ public class LayoutEditor implements HtmlContentPrinter {
 	 * Private Methods
 	 */
 	
-	private void listEntities(GroupEntity entity, Vector<Entity> entities) {
-		for (int iChild = 0; iChild < entity.children().size(); iChild++) {
-			Entity child = entity.children().get(iChild);
+	private void listSchemaNodes(GroupSchemaNode schema, Vector<SchemaNode> entities) {
+		for (int iChild = 0; iChild < schema.children().size(); iChild++) {
+			SchemaNode child = schema.children().get(iChild);
 			// skip deleted entities
 			if (child.getTimestamp().isCurrent()) {
 				entities.add(child);
 				if (child.isGroup()) {
-					this.listEntities((GroupEntity)child, entities);
+					this.listSchemaNodes((GroupSchemaNode)child, entities);
 				}
 			}
 		}
 	}
 	
-	private void printDisplayLabelSelectBox(Vector<Entity> entities, HtmlLinePrinter printer) {
-		int currentDisplayEntityID = -1;
+	private void printDisplayLabelSelectBox(Vector<SchemaNode> entities, HtmlLinePrinter printer) {
+		int currentDisplaySchemaNodeID = -1;
 		
-		AttributeEntity current = _request.wiki().layouter().displayEntity(_request.wiki().database().schema());
+		AttributeSchemaNode current = _request.wiki().layouter().displaySchemaNode(_request.wiki().database().schema());
 		if (current != null) {
-			currentDisplayEntityID = current.id();
+			currentDisplaySchemaNodeID = current.id();
 		}
 		
 		int count = 0;
 		
 		if (entities.size() > 0) {
-			for (int iEntity = 0; iEntity < entities.size(); iEntity++) {
-				Entity entity = entities.get(iEntity);
-				if (entity.isAttribute()) {
+			for (int i = 0; i < entities.size(); i++) {
+				SchemaNode schemaNode = entities.get(i);
+				if (schemaNode.isAttribute()) {
 					if (count > 0) {
 						printer.addBR();
 					}
-					if (entity.id() == currentDisplayEntityID) {
-						printer.addRADIOBUTTON(entity.path(), DatabaseLayouter.PropertyDisplayEntity, Integer.toString(entity.id()), true);
+					if (schemaNode.id() == currentDisplaySchemaNodeID) {
+						printer.addRADIOBUTTON(schemaNode.path(), DatabaseLayouter.PropertyDisplaySchema, Integer.toString(schemaNode.id()), true);
 					} else {
-						printer.addRADIOBUTTON(entity.path(), DatabaseLayouter.PropertyDisplayEntity, Integer.toString(entity.id()), false);
+						printer.addRADIOBUTTON(schemaNode.path(), DatabaseLayouter.PropertyDisplaySchema, Integer.toString(schemaNode.id()), false);
 					}
 					count++;
 				}
@@ -181,14 +181,14 @@ public class LayoutEditor implements HtmlContentPrinter {
 		}
 	}
 	
-	private void printDisplayOrderSelectBox(Entity entity, int size, int displayOrder, HtmlLinePrinter printer) {
+	private void printDisplayOrderSelectBox(SchemaNode schema, int size, int displayOrder, HtmlLinePrinter printer) {
 		printer.openTR();
 		printer.openTD(CSS.CSSFormLabel);
 		printer.text("Display order");
 		printer.closeTD();
 		printer.openTD(CSS.CSSFormControl);
 
-		printer.openSELECT(DatabaseLayouter.PropertyEntityDisplayOrder + "_" + entity.id());
+		printer.openSELECT(DatabaseLayouter.PropertySchemaDisplayOrder + "_" + schema.id());
 		for (int iOrder = 1; iOrder <=size; iOrder++) {
 			printer.addOPTION(String.valueOf(iOrder), String.valueOf(iOrder), (iOrder == displayOrder));
 		}
@@ -198,10 +198,10 @@ public class LayoutEditor implements HtmlContentPrinter {
 		printer.closeTR();
 	}
 
-	private void printEntityLayout(Entity entity, HtmlLinePrinter printer) {
-		EntityLayout layout = _request.wiki().layouter().get(entity);
+	private void printSchemaLayout(SchemaNode schema, HtmlLinePrinter printer) {
+		SchemaLayout layout = _request.wiki().layouter().get(schema);
 	
-		printer.paragraph("Entity " + entity.path(), CSS.CSSHeadlineSmall);
+		printer.paragraph("Schema node " + schema.path(), CSS.CSSHeadlineSmall);
 
 		printer.openTABLE(CSS.CSSFormContainer);
 		printer.openTR();
@@ -214,7 +214,7 @@ public class LayoutEditor implements HtmlContentPrinter {
 		printer.text("Display name");
 		printer.closeTD();
 		printer.openTD(CSS.CSSFormControl);
-		printer.addTEXTAREA(DatabaseLayouter.PropertyEntityName + "_" + entity.id(), "90", layout.getName());
+		printer.addTEXTAREA(DatabaseLayouter.PropertySchemaName + "_" + schema.id(), "90", layout.getName());
 		printer.closeTD();
 		printer.closeTR();
 		
@@ -223,7 +223,7 @@ public class LayoutEditor implements HtmlContentPrinter {
 		printer.text("Display label");
 		printer.closeTD();
 		printer.openTD(CSS.CSSFormControl);
-		printer.addTEXTAREA(DatabaseLayouter.PropertyEntityLabel + "_" + entity.id(), "90", layout.getLabelDefinition());
+		printer.addTEXTAREA(DatabaseLayouter.PropertySchemaLabel + "_" + schema.id(), "90", layout.getLabelDefinition());
 		printer.closeTD();
 		printer.closeTR();
 
@@ -232,37 +232,37 @@ public class LayoutEditor implements HtmlContentPrinter {
 		printer.text("Display label (short form)");
 		printer.closeTD();
 		printer.openTD(CSS.CSSFormControl);
-		printer.addTEXTAREA(DatabaseLayouter.PropertyEntityLabelShort + "_" + entity.id(), "90", layout.getLabelShortDefinition());
+		printer.addTEXTAREA(DatabaseLayouter.PropertySchemaLabelShort + "_" + schema.id(), "90", layout.getLabelShortDefinition());
 		printer.closeTD();
 		printer.closeTR();
 
-		if (entity.id() != 0) {
+		if (schema.id() != 0) {
 			printer.openTR();
 			printer.openTD(CSS.CSSFormLabel);
 			printer.text("Label alignment");
 			printer.closeTD();
 			printer.openTD(CSS.CSSFormControl);
 			if (layout.getLabelAlignment().isLeftAlign()) {
-				printer.addRADIOBUTTON("Left", DatabaseLayouter.PropertyEntityLabelAlign + "_" + entity.id(), "left", true);
+				printer.addRADIOBUTTON("Left", DatabaseLayouter.PropertySchemaLabelAlign + "_" + schema.id(), "left", true);
 			} else {
-				printer.addRADIOBUTTON("Left", DatabaseLayouter.PropertyEntityLabelAlign + "_" + entity.id(), "left", false);
+				printer.addRADIOBUTTON("Left", DatabaseLayouter.PropertySchemaLabelAlign + "_" + schema.id(), "left", false);
 			}
 			printer.addBR();
 			if (layout.getLabelAlignment().isTopAlign()) {
-				printer.addRADIOBUTTON("Top", DatabaseLayouter.PropertyEntityLabelAlign + "_" + entity.id(), "top", true);
+				printer.addRADIOBUTTON("Top", DatabaseLayouter.PropertySchemaLabelAlign + "_" + schema.id(), "top", true);
 			} else {
-				printer.addRADIOBUTTON("Top", DatabaseLayouter.PropertyEntityLabelAlign + "_" + entity.id(), "top", false);
+				printer.addRADIOBUTTON("Top", DatabaseLayouter.PropertySchemaLabelAlign + "_" + schema.id(), "top", false);
 			}
 			printer.addBR();
 			if (layout.getLabelAlignment().isNoneAlign()) {
-				printer.addRADIOBUTTON("None", DatabaseLayouter.PropertyEntityLabelAlign + "_" + entity.id(), "none", true);
+				printer.addRADIOBUTTON("None", DatabaseLayouter.PropertySchemaLabelAlign + "_" + schema.id(), "none", true);
 			} else {
-				printer.addRADIOBUTTON("None", DatabaseLayouter.PropertyEntityLabelAlign + "_" + entity.id(), "none", false);
+				printer.addRADIOBUTTON("None", DatabaseLayouter.PropertySchemaLabelAlign + "_" + schema.id(), "none", false);
 			}
 			printer.closeTD();
 			printer.closeTR();
 	
-			this.printDisplayOrderSelectBox(entity, _request.wiki().database().schema().size(), layout.getDisplayOrder(), printer);
+			this.printDisplayOrderSelectBox(schema, _request.wiki().database().schema().size(), layout.getDisplayOrder(), printer);
 			
 			printer.openTR();
 			printer.openTD(CSS.CSSFormLabel);
@@ -270,44 +270,44 @@ public class LayoutEditor implements HtmlContentPrinter {
 			printer.closeTD();
 			printer.openTD(CSS.CSSFormControl);
 			if (layout.getDisplayStyle().isGroupStyle()) {
-				printer.addRADIOBUTTON("Group", DatabaseLayouter.PropertyEntityDisplayStyle + "_" + entity.id(), "group", true);
+				printer.addRADIOBUTTON("Group", DatabaseLayouter.PropertySchemaDisplayStyle + "_" + schema.id(), "group", true);
 			} else {
-				printer.addRADIOBUTTON("Group", DatabaseLayouter.PropertyEntityDisplayStyle + "_" + entity.id(), "group", false);
+				printer.addRADIOBUTTON("Group", DatabaseLayouter.PropertySchemaDisplayStyle + "_" + schema.id(), "group", false);
 			}
 			printer.addBR();
 			if (layout.getDisplayStyle().isListStyle()) {
-				printer.addRADIOBUTTON("List", DatabaseLayouter.PropertyEntityDisplayStyle + "_" + entity.id(), "list", true);
+				printer.addRADIOBUTTON("List", DatabaseLayouter.PropertySchemaDisplayStyle + "_" + schema.id(), "list", true);
 			} else {
-				printer.addRADIOBUTTON("List", DatabaseLayouter.PropertyEntityDisplayStyle + "_" + entity.id(), "list", false);
+				printer.addRADIOBUTTON("List", DatabaseLayouter.PropertySchemaDisplayStyle + "_" + schema.id(), "list", false);
 			}
 			printer.addBR();
 			if (layout.getDisplayStyle().isTableStyle()) {
-				printer.addRADIOBUTTON("Table", DatabaseLayouter.PropertyEntityDisplayStyle + "_" + entity.id(), "table", true);
+				printer.addRADIOBUTTON("Table", DatabaseLayouter.PropertySchemaDisplayStyle + "_" + schema.id(), "table", true);
 			} else {
-				printer.addRADIOBUTTON("Table", DatabaseLayouter.PropertyEntityDisplayStyle + "_" + entity.id(), "table", false);
+				printer.addRADIOBUTTON("Table", DatabaseLayouter.PropertySchemaDisplayStyle + "_" + schema.id(), "table", false);
 			}
 			printer.closeTD();
 			printer.closeTR();
 	
-			if (entity.isGroup()) {
+			if (schema.isGroup()) {
 				printer.openTR();
 				printer.openTD(CSS.CSSFormLabel);
 				printer.text("Show content");
 				printer.closeTD();
 				printer.openTD(CSS.CSSFormControl);
 				if (layout.getShowContent()) {
-					printer.addRADIOBUTTON("Yes", DatabaseLayouter.PropertyEntityShowContent + "_" + entity.id(), "true", true);
+					printer.addRADIOBUTTON("Yes", DatabaseLayouter.PropertySchemaShowContent + "_" + schema.id(), "true", true);
 					printer.addBR();
-					printer.addRADIOBUTTON("No", DatabaseLayouter.PropertyEntityShowContent + "_" + entity.id(), "false", false);
+					printer.addRADIOBUTTON("No", DatabaseLayouter.PropertySchemaShowContent + "_" + schema.id(), "false", false);
 				} else {
-					printer.addRADIOBUTTON("Yes", DatabaseLayouter.PropertyEntityShowContent + "_" + entity.id(), "true", false);
+					printer.addRADIOBUTTON("Yes", DatabaseLayouter.PropertySchemaShowContent + "_" + schema.id(), "true", false);
 					printer.addBR();
-					printer.addRADIOBUTTON("No", DatabaseLayouter.PropertyEntityShowContent + "_" + entity.id(), "false", true);
+					printer.addRADIOBUTTON("No", DatabaseLayouter.PropertySchemaShowContent + "_" + schema.id(), "false", true);
 				}
 				printer.closeTD();
 				printer.closeTR();
 			} else {
-				printer.addHIDDEN(DatabaseLayouter.PropertyEntityShowContent + "_" + entity.id(), "false");
+				printer.addHIDDEN(DatabaseLayouter.PropertySchemaShowContent + "_" + schema.id(), "false");
 			}
 			
 			printer.openTR();
@@ -316,13 +316,13 @@ public class LayoutEditor implements HtmlContentPrinter {
 			printer.closeTD();
 			printer.openTD(CSS.CSSFormControl);
 			if (layout.getEditWithParent()) {
-				printer.addRADIOBUTTON("Yes", DatabaseLayouter.PropertyEntityEditWithParent + "_" + entity.id(), "true", true);
+				printer.addRADIOBUTTON("Yes", DatabaseLayouter.PropertySchemaEditWithParent + "_" + schema.id(), "true", true);
 				printer.addBR();
-				printer.addRADIOBUTTON("No", DatabaseLayouter.PropertyEntityEditWithParent + "_" + entity.id(), "false", false);
+				printer.addRADIOBUTTON("No", DatabaseLayouter.PropertySchemaEditWithParent + "_" + schema.id(), "false", false);
 			} else {
-				printer.addRADIOBUTTON("Yes", DatabaseLayouter.PropertyEntityEditWithParent + "_" + entity.id(), "true", false);
+				printer.addRADIOBUTTON("Yes", DatabaseLayouter.PropertySchemaEditWithParent + "_" + schema.id(), "true", false);
 				printer.addBR();
-				printer.addRADIOBUTTON("No", DatabaseLayouter.PropertyEntityEditWithParent + "_" + entity.id(), "false", true);
+				printer.addRADIOBUTTON("No", DatabaseLayouter.PropertySchemaEditWithParent + "_" + schema.id(), "false", true);
 			}
 			printer.closeTD();
 			printer.closeTR();
@@ -332,28 +332,28 @@ public class LayoutEditor implements HtmlContentPrinter {
 			printer.text("Style sheet prefix");
 			printer.closeTD();
 			printer.openTD(CSS.CSSFormControl);
-			printer.addTEXTAREA(DatabaseLayouter.PropertyEntityStyleSheetPrefix + "_" + entity.id(), "90", layout.getStyleSheetPrefix());
+			printer.addTEXTAREA(DatabaseLayouter.PropertySchemaStyleSheetPrefix + "_" + schema.id(), "90", layout.getStyleSheetPrefix());
 			printer.closeTD();
 			printer.closeTR();
 
-			if (entity.isAttribute()) {
+			if (schema.isAttribute()) {
 				printer.openTR();
 				printer.openTD(CSS.CSSFormLabel);
 				printer.text("Text height");
 				printer.closeTD();
 				printer.openTD(CSS.CSSFormControl);
-				printer.addTEXTAREA(DatabaseLayouter.PropertyEntityTextHeight + "_" + entity.id(), "90", Integer.toString(layout.getTextHeight()));
+				printer.addTEXTAREA(DatabaseLayouter.PropertySchemaTextHeight + "_" + schema.id(), "90", Integer.toString(layout.getTextHeight()));
 				printer.closeTD();
 				printer.closeTR();
 			} else {
-				printer.addHIDDEN(DatabaseLayouter.PropertyEntityTextHeight + "_" + entity.id(), "0");
+				printer.addHIDDEN(DatabaseLayouter.PropertySchemaTextHeight + "_" + schema.id(), "0");
 			}
 		} else {
-			printer.addHIDDEN(DatabaseLayouter.PropertyEntityLabelAlign + "_" + entity.id(), "left");
-			printer.addHIDDEN(DatabaseLayouter.PropertyEntityDisplayStyle + "_" + entity.id(), "group");
-			printer.addHIDDEN(DatabaseLayouter.PropertyEntityShowContent + "_" + entity.id(), "false");
-			printer.addHIDDEN(DatabaseLayouter.PropertyEntityEditWithParent + "_" + entity.id(), "false");
-			printer.addHIDDEN(DatabaseLayouter.PropertyEntityTextHeight + "_" + entity.id(), "0");
+			printer.addHIDDEN(DatabaseLayouter.PropertySchemaLabelAlign + "_" + schema.id(), "left");
+			printer.addHIDDEN(DatabaseLayouter.PropertySchemaDisplayStyle + "_" + schema.id(), "group");
+			printer.addHIDDEN(DatabaseLayouter.PropertySchemaShowContent + "_" + schema.id(), "false");
+			printer.addHIDDEN(DatabaseLayouter.PropertySchemaEditWithParent + "_" + schema.id(), "false");
+			printer.addHIDDEN(DatabaseLayouter.PropertySchemaTextHeight + "_" + schema.id(), "0");
 		}
 		
 		printer.closeTABLE();

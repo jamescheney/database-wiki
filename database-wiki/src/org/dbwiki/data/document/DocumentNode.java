@@ -21,11 +21,11 @@
 */
 package org.dbwiki.data.document;
 
-import org.dbwiki.data.schema.Entity;
+import org.dbwiki.data.schema.SchemaNode;
 
 /** Document nodes represent data that's being inserted??
- * Document nodes can be compared, and contain an entity reference.
- * FIXME #node: Use generic Node<Entity>
+ * Document nodes can be compared, and contain a schema node reference.
+ * FIXME #node: Use generic Node<SchemaNode>
  * @author jcheney
  *
  */
@@ -34,15 +34,15 @@ public abstract class DocumentNode implements Comparable<DocumentNode> {
 	 * Private Variables
 	 */
 	
-	private Entity _entity;
+	private SchemaNode _schema;
 	
 	
 	/*
 	 * Constructors
 	 */
 	
-	public DocumentNode(Entity entity) {
-		_entity = entity;
+	public DocumentNode(SchemaNode schema) {
+		_schema = schema;
 	}
 	
 	
@@ -58,17 +58,17 @@ public abstract class DocumentNode implements Comparable<DocumentNode> {
 	 */
 	
 	public int compareTo(DocumentNode element) {
-		if (this.entity().id() < element.entity().id()) {
+		if (this.schema().id() < element.schema().id()) {
 			return -1;
-		} else if (this.entity().id() > element.entity().id()) {
+		} else if (this.schema().id() > element.schema().id()) {
 			return 1;
 		} else {
 			return 0;
 		}
 	}
 
-	public Entity entity() {
-		return _entity;
+	public SchemaNode schema() {
+		return _schema;
 	}
 	
 	public boolean isGroup() {
@@ -76,6 +76,6 @@ public abstract class DocumentNode implements Comparable<DocumentNode> {
 	}
 	
 	public String label() {
-		return _entity.label();
+		return _schema.label();
 	}
 }

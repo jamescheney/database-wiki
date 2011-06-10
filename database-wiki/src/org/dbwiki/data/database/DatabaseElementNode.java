@@ -23,7 +23,7 @@ package org.dbwiki.data.database;
 
 import org.dbwiki.data.annotation.AnnotationList;
 
-import org.dbwiki.data.schema.Entity;
+import org.dbwiki.data.schema.SchemaNode;
 
 import org.dbwiki.data.time.TimeSequence;
 
@@ -37,7 +37,7 @@ public abstract class DatabaseElementNode extends DatabaseNode {
 	 * Private Variables
 	 */
 	
-	private Entity _entity;
+	private SchemaNode _schema;
 	private String _label;
 	
 	
@@ -45,12 +45,12 @@ public abstract class DatabaseElementNode extends DatabaseNode {
 	 * Constructors
 	 */
 	
-	public DatabaseElementNode(Entity entity, DatabaseGroupNode parent, TimeSequence timestamp, AnnotationList annotation) {
+	public DatabaseElementNode(SchemaNode schema, DatabaseGroupNode parent, TimeSequence timestamp, AnnotationList annotation) {
 		super(parent, timestamp, annotation);
 		
-		_entity = entity;
+		_schema = schema;
 		
-		_label = entity.label();
+		_label = schema.label();
 	}
 	
 	
@@ -58,12 +58,12 @@ public abstract class DatabaseElementNode extends DatabaseNode {
 	 * Public Methods
 	 */
 	
-	public Entity entity() {
-		return _entity;
+	public SchemaNode schema() {
+		return _schema;
 	}
 	
 	public boolean isAttribute() {
-		return _entity.isAttribute();
+		return _schema.isAttribute();
 	}
 
 	public boolean isElement() {
@@ -71,7 +71,7 @@ public abstract class DatabaseElementNode extends DatabaseNode {
 	}
 
 	public boolean isGroup() {
-		return _entity.isGroup();
+		return _schema.isGroup();
 	}
 
 	public String label() {

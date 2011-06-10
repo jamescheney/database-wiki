@@ -34,8 +34,8 @@ import java.util.StringTokenizer;
 
 import org.dbwiki.data.provenance.ProvenanceUnknown;
 import org.dbwiki.data.schema.DatabaseSchema;
-import org.dbwiki.data.schema.Entity;
-import org.dbwiki.data.schema.GroupEntity;
+import org.dbwiki.data.schema.SchemaNode;
+import org.dbwiki.data.schema.GroupSchemaNode;
 import org.dbwiki.data.time.Version;
 
 import org.dbwiki.exception.WikiException;
@@ -73,7 +73,7 @@ public abstract class DatabaseConnector implements DatabaseConstants, WikiServer
 	 */
 	
 	protected abstract String autoIncrementColumn(String dbName);
-	protected abstract void createEntityIndexView(Connection con, String dbName) throws java.sql.SQLException;
+	protected abstract void createSchemaIndexView(Connection con, String dbName) throws java.sql.SQLException;
 	
 	
 	
@@ -100,7 +100,7 @@ public abstract class DatabaseConnector implements DatabaseConstants, WikiServer
 			createTimestampTable(con, dbName);
 			createPagesTable(con, dbName);
 			createDataView(con, dbName);
-			createEntityIndexView(con, dbName);
+			createSchemaIndexView(con, dbName);
 			
 			// store the schema, generating a version number and timestamp for the root
 			storeSchema(con, dbName, schema, user, versionIndex);
@@ -159,14 +159,14 @@ public abstract class DatabaseConnector implements DatabaseConstants, WikiServer
 					RelDatabaseColIsActive + " int NOT NULL DEFAULT " + RelDatabaseColIsActiveValTrue + ", " +
 					"PRIMARY KEY (" + RelDatabaseColID + "))");
 	
-			stmt.execute("CREATE TABLE " + RelationConfigFile + " (" +
-					RelConfigFileColWikiID + " int NOT NULL, " +
-					RelConfigFileColFileType + " int NOT NULL, " +
-					RelConfigFileColFileVersion + " int NOT NULL, " +
-					RelConfigFileColTime + " bigint NOT NULL," +
-					RelConfigFileColUser + " int NOT NULL, " +
-					RelConfigFileColValue + " text NOT NULL, " +
-					"PRIMARY KEY (" + RelConfigFileColWikiID + ", " + RelConfigFileColFileType + "," + RelConfigFileColFileVersion + "))");
+			stmt.execute("CREATE TABLE " + RelationPresentation + " (" +
+					RelPresentationColDatabase + " int NOT NULL, " +
+					RelPresentationColType + " int NOT NULL, " +
+					RelPresentationColVersion + " int NOT NULL, " +
+					RelPresentationColTime + " bigint NOT NULL," +
+					RelPresentationColUser + " int NOT NULL, " +
+					RelPresentationColValue + " text NOT NULL, " +
+					"PRIMARY KEY (" + RelPresentationColDatabase + ", " + RelPresentationColType + "," + RelPresentationColVersion + "))");
 
 			stmt.execute("CREATE TABLE " + RelationUser + " (" +
 					autoIncrementColumn(RelUserColID) + ", " +
@@ -210,14 +210,14 @@ public abstract class DatabaseConnector implements DatabaseConstants, WikiServer
 			Statement stmt = con.createStatement();
 			
 			dropView(stmt, dbName + ViewData);
-			dropView(stmt, dbName + ViewEntityIndex);
+			dropView(stmt, dbName + ViewSchemaIndex);
 			
 			dropTable(stmt, dbName + RelationAnnotation);
 			dropTable(stmt, dbName + RelationAnnotation);
 			dropTable(stmt, dbName + RelationData);
 			dropTable(stmt, dbName + RelationPages);
 			dropTable(stmt, dbName + RelationSchema);
-			dropTable(stmt, dbName + RelationTimestamp);
+			dropTable(stmt, dbName + RelationTimesequence);
 			dropTable(stmt, dbName + RelationVersion);
 			
 			stmt.close();
@@ -239,7 +239,7 @@ public abstract class DatabaseConnector implements DatabaseConstants, WikiServer
 			rs.close();
 		}
 		dropTable(stmt, RelationDatabase);
-		dropTable(stmt, RelationConfigFile);
+		dropTable(stmt, RelationPresentation);
 		dropTable(stmt, RelationUser);
 		stmt.close();
 		con.close();
@@ -279,14 +279,14 @@ public abstract class DatabaseConnector implements DatabaseConstants, WikiServer
 		
 		stmt.execute("CREATE TABLE " + relName + " (" +	
 				autoIncrementColumn(RelDataColID) + ", " +
-				RelDataColEntity + " int NOT NULL, " +
+				RelDataColSchema + " int NOT NULL, " +
 				RelDataColParent + " int NOT NULL, " +
 				RelDataColEntry + " int NOT NULL, " +
 				RelDataColValue + " text, " +
-				RelDataColTimestamp + " int NOT NULL DEFAULT (-1), " +				
+				RelDataColTimesequence + " int NOT NULL DEFAULT (-1), " +				
 				"PRIMARY KEY (" + RelDataColID + "))");
 		
-		stmt.execute("CREATE INDEX idx_" + relName + "_" + RelDataColEntity + " ON " + relName + " (" + RelDataColEntity + ")");
+		stmt.execute("CREATE INDEX idx_" + relName + "_" + RelDataColSchema + " ON " + relName + " (" + RelDataColSchema + ")");
 
 		stmt.close();
 	}
@@ -298,47 +298,22 @@ public abstract class DatabaseConnector implements DatabaseConstants, WikiServer
 				"SELECT " + 
 					"d." + RelDataColID + " " + ViewDataColNodeID + ", " +
 					"d." + RelDataColParent + " " + ViewDataColNodeParent + ", " +
-					"d." + RelDataColEntity + " " + ViewDataColNodeEntity + ", " +
+					"d." + RelDataColSchema + " " + ViewDataColNodeSchema + ", " +
 					"d." + RelDataColEntry + " " + ViewDataColNodeEntry + ", " +
 					"d." + RelDataColValue + " " + ViewDataColNodeValue + ", " +
-					"t." + RelTimestampColStart + " " + ViewDataColTimestampStart + ", " +
-					"t." + RelTimestampColEnd + " " + ViewDataColTimestampEnd + ", " +
+					"t." + RelTimesequenceColStart + " " + ViewDataColTimestampStart + ", " +
+					"t." + RelTimesequenceColStop + " " + ViewDataColTimestampEnd + ", " +
 					"a." + RelAnnotationColID + " " + ViewDataColAnnotationID + ", " +
 					"a." + RelAnnotationColDate + " " + ViewDataColAnnotationDate + ", " +
 					"a." + RelAnnotationColUser + " " + ViewDataColAnnotationUser + ", " +
 					"a." + RelAnnotationColText + " " + ViewDataColAnnotationText + " " +
 				"FROM " + dbName + RelationData + " d " +
-				"LEFT OUTER JOIN " + dbName + RelationTimestamp + " t ON (d." + RelDataColTimestamp + " = " + "t." + RelTimestampColID + ") " +
+				"LEFT OUTER JOIN " + dbName + RelationTimesequence + " t ON (d." + RelDataColTimesequence + " = " + "t." + RelTimesequenceColID + ") " +
 				"LEFT OUTER JOIN " + dbName + RelationAnnotation + " a ON (d." + RelDataColID + " = " + "a." + RelAnnotationColNode + ")");
 		
 		stmt.close();
 	}
 
-// don't actually need this!
-	
-//	protected void createSchemaView(Connection con, String name) throws java.sql.SQLException {
-//		Statement stmt = con.createStatement();
-//		
-//		stmt.execute("CREATE VIEW " + name + ViewData + " AS " +
-//				"SELECT " + 
-//					"d." + RelDataColID + " " + ViewDataColNodeID + ", " +
-//					"d." + RelDataColParent + " " + ViewDataColNodeParent + ", " +
-//					"d." + RelDataColEntity + " " + ViewDataColNodeEntity + ", " +
-//					"d." + RelDataColEntry + " " + ViewDataColNodeEntry + ", " +
-//					"d." + RelDataColValue + " " + ViewDataColNodeValue + ", " +
-//					"t." + RelTimestampColStart + " " + ViewDataColTimestampStart + ", " +
-//					"t." + RelTimestampColEnd + " " + ViewDataColTimestampEnd + ", " +
-//					"a." + RelAnnotationColID + " " + ViewDataColAnnotationID + ", " +
-//					"a." + RelAnnotationColDate + " " + ViewDataColAnnotationDate + ", " +
-//					"a." + RelAnnotationColUser + " " + ViewDataColAnnotationUser + ", " +
-//					"a." + RelAnnotationColText + " " + ViewDataColAnnotationText + " " +
-//				"FROM " + name + RelationData + " d " +
-//				"LEFT OUTER JOIN " + name + RelationTimestamp + " t ON (d." + RelDataColTimestamp + " = " + "t." + RelTimestampColID + ") " +
-//				"LEFT OUTER JOIN " + name + RelationAnnotation + " a ON (d." + RelDataColTimestamp + " = " + "a." + RelAnnotationColNode + ")");
-//		
-//		stmt.close();
-//	}
-	
 	protected void createPagesTable(Connection con, String dbName) throws java.sql.SQLException {	
 		Statement stmt = con.createStatement();
 		
@@ -383,7 +358,7 @@ public abstract class DatabaseConnector implements DatabaseConstants, WikiServer
 				RelSchemaColLabel + " varchar(255) NOT NULL, " +
 				RelSchemaColParent + " int NOT NULL, " +
 				RelSchemaColUser + " int NOT NULL, " +
-				RelSchemaColTimestamp + " int NOT NULL default(-1), " +
+				RelSchemaColTimesequence + " int NOT NULL default(-1), " +
 				"PRIMARY KEY (" + RelSchemaColID + "), " +
 				"UNIQUE(" + RelSchemaColLabel + ", " + RelSchemaColParent + "))");
 
@@ -395,32 +370,32 @@ public abstract class DatabaseConnector implements DatabaseConstants, WikiServer
 		String schemaTable = dbName + RelationSchema;
 		
 		if (schema != null) {
-			for (int iEntity = 0; iEntity < schema.size(); iEntity++) {
-				Entity entity = schema.get(iEntity);
-				String newEntity = "INSERT INTO " + schemaTable + "(" +
+			for (int i = 0; i < schema.size(); i++) {
+				SchemaNode node = schema.get(i);
+				String newNode = "INSERT INTO " + schemaTable + "(" +
 					RelSchemaColID +", " +
 					RelSchemaColType + ", " +
 					RelSchemaColLabel + ", " +
 					RelSchemaColParent + ", " +
 					RelSchemaColUser + ") VALUES(";
-				newEntity = newEntity + entity.id() + ", ";
-				if (entity.isAttribute()) {
-					newEntity = newEntity + RelSchemaColTypeValAttribute + ", ";
+				newNode = newNode + node.id() + ", ";
+				if (node.isAttribute()) {
+					newNode = newNode + RelSchemaColTypeValAttribute + ", ";
 				} else {
-					newEntity = newEntity + RelSchemaColTypeValGroup + ", ";				
+					newNode = newNode + RelSchemaColTypeValGroup + ", ";				
 				}
-				newEntity = newEntity + "'" + entity.label() + "', ";
-				if (entity.parent() != null) {
-					newEntity = newEntity + entity.parent().id() + ", ";
+				newNode = newNode + "'" + node.label() + "', ";
+				if (node.parent() != null) {
+					newNode = newNode + node.parent().id() + ", ";
 				} else {
-					newEntity = newEntity + "-1, ";
+					newNode = newNode + "-1, ";
 				}
 				if (user != null) {
-					newEntity = newEntity + user.id() + ")";
+					newNode = newNode + user.id() + ")";
 				} else {
-					newEntity = newEntity + User.UnknownUserID + ")";
+					newNode = newNode + User.UnknownUserID + ")";
 				}
-				statement.execute(newEntity);
+				statement.execute(newNode);
 			}
 			
 			// generate a version number for the schema root
@@ -431,9 +406,9 @@ public abstract class DatabaseConnector implements DatabaseConstants, WikiServer
 			// generate a timestamp for the schema root
 			int timestamp = -1;
 			String makeTimestamp =
-					"INSERT INTO " + dbName + RelationTimestamp + "(" +
-							RelTimestampColStart + ", " +
-							RelTimestampColEnd + ") VALUES(" + version.number() + " , -1)";
+					"INSERT INTO " + dbName + RelationTimesequence + "(" +
+							RelTimesequenceColStart + ", " +
+							RelTimesequenceColStop + ") VALUES(" + version.number() + " , -1)";
 			statement.execute(makeTimestamp, Statement.RETURN_GENERATED_KEYS);
 			ResultSet rs = statement.getGeneratedKeys();
 			if (rs.next()) {
@@ -444,10 +419,10 @@ public abstract class DatabaseConnector implements DatabaseConstants, WikiServer
 		    }	
 			
 			// update the schema root with the generated timestamp
-			GroupEntity root = schema.root();
+			GroupSchemaNode root = schema.root();
 			String updateTimestamp =
 					"UPDATE " + schemaTable + " " +
-						"SET " + RelSchemaColTimestamp + " = " + timestamp +
+						"SET " + RelSchemaColTimesequence + " = " + timestamp +
 						" WHERE " + RelSchemaColID + " = " + root.id();
 			statement.execute(updateTimestamp);
 		}
@@ -459,13 +434,13 @@ public abstract class DatabaseConnector implements DatabaseConstants, WikiServer
 	protected void createTimestampTable(Connection con, String dbName) throws java.sql.SQLException {
 		Statement stmt = con.createStatement();
 		
-		String relName = dbName + RelationTimestamp;
+		String relName = dbName + RelationTimesequence;
 
 		stmt.execute("CREATE TABLE " + relName + "(" +
-				autoIncrementColumn(RelTimestampColID) + ", " +
-				RelTimestampColStart + " int NOT NULL, " +
-				RelTimestampColEnd + " int NOT NULL, " +
-				"PRIMARY KEY (" + RelTimestampColID + ", " + RelTimestampColStart + "))");
+				autoIncrementColumn(RelTimesequenceColID) + ", " +
+				RelTimesequenceColStart + " int NOT NULL, " +
+				RelTimesequenceColStop + " int NOT NULL, " +
+				"PRIMARY KEY (" + RelTimesequenceColID + ", " + RelTimesequenceColStart + "))");
 		
 		stmt.close();
 	}
@@ -478,9 +453,9 @@ public abstract class DatabaseConnector implements DatabaseConstants, WikiServer
 				RelVersionColNumber + " int NOT NULL, " +
 				RelVersionColName + " varchar(80) NOT NULL, " +
 				RelVersionColProvenance + " smallint NOT NULL, " +
-				RelVersionColTimeMilliSec + " bigint NOT NULL, " +
+				RelVersionColTime + " bigint NOT NULL, " +
 				RelVersionColUser + " int NOT NULL, " +
-				RelVersionColSourceURL + " text, " +
+				RelVersionColSource + " text, " +
 				RelVersionColNode + " int NOT NULL, " +
 				"PRIMARY KEY (" + RelVersionColNumber + "))");
 		

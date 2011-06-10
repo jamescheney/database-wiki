@@ -35,18 +35,19 @@ import org.dbwiki.data.database.DatabaseElementNode;
 import org.dbwiki.data.database.DatabaseNode;
 import org.dbwiki.data.database.DatabaseTextNode;
 
-import org.dbwiki.data.resource.EntityIdentifier;
+import org.dbwiki.data.resource.SchemaNodeIdentifier;
 import org.dbwiki.data.resource.NodeIdentifier;
 
-import org.dbwiki.data.schema.AttributeEntity;
-import org.dbwiki.data.schema.Entity;
-import org.dbwiki.data.schema.GroupEntity;
+import org.dbwiki.data.schema.AttributeSchemaNode;
+import org.dbwiki.data.schema.SchemaNode;
+import org.dbwiki.data.schema.GroupSchemaNode;
 
 import org.dbwiki.data.time.TimeSequence;
 
 import org.dbwiki.exception.WikiFatalException;
 
-/** Provides static methods to get the nodes associated with an entity or all of the descendants of a given node.
+/** Provides static methods to get the nodes associated with a schema node or all
+ *  of the descendants of a given data node.
  * FIXME #static Fold into RDBMSDatabase?
  * @author jcheney
  *
@@ -58,9 +59,9 @@ public class DatabaseReader implements DatabaseConstants {
 	 */
 	
 	/**
-	 * Load in the list of IDs of a given entity.
+	 * Load in the list of IDs of a given schema node.
 	 */
-	public static ArrayList<NodeIdentifier> getNodesOfEntity(Connection con, RDBMSDatabase database, EntityIdentifier identifier)
+	public static ArrayList<NodeIdentifier> getNodesOfSchemaNode(Connection con, RDBMSDatabase database, SchemaNodeIdentifier identifier)
 		throws SQLException {
 		
 		ArrayList<NodeIdentifier> nodes = new ArrayList<NodeIdentifier>();
@@ -68,7 +69,7 @@ public class DatabaseReader implements DatabaseConstants {
 		Statement statement = con.createStatement();
 		ResultSet rs = statement.executeQuery(
 				"SELECT " + RelDataColID +  " FROM " + database.name() + RelationData + " " +
-				"WHERE " + RelDataColEntity + " = " + identifier.nodeID());
+				"WHERE " + RelDataColSchema + " = " + identifier.nodeID());
 		
 		while (rs.next()) {
 			int id = rs.getInt(RelDataColID);
@@ -119,9 +120,9 @@ public class DatabaseReader implements DatabaseConstants {
 				// node has existed in multiple time intervals, or if it has
 				// multiple annotations.
 				if (node == null || ((NodeIdentifier)node.identifier()).nodeID() != id)  {
-					int entity = rs.getInt(ViewDataColNodeEntity);
+					int schema = rs.getInt(ViewDataColNodeSchema);
 					int parent = rs.getInt(ViewDataColNodeParent);
-					if (entity != RelDataColEntityValUnknown) {
+					if (schema != RelDataColSchemaValUnknown) {
 						// FIXME #database: This seems to assume that the nodes are in parent-child order.
 						// The following logic seems rather fragile.
 						// It isn't at all clear that things will
@@ -145,11 +146,11 @@ public class DatabaseReader implements DatabaseConstants {
 						if (parent != RelDataColParentValUnknown) {
 							parentNode = (RDBMSDatabaseGroupNode)nodeIndex.get(new Integer(parent));
 						}
-						Entity schemaEntity = database.schema().get(entity);
-						if (schemaEntity.isAttribute()) {
-							node = new RDBMSDatabaseAttributeNode(id, (AttributeEntity)schemaEntity, parentNode);
+						SchemaNode schemaNode = database.schema().get(schema);
+						if (schemaNode.isAttribute()) {
+							node = new RDBMSDatabaseAttributeNode(id, (AttributeSchemaNode)schemaNode, parentNode);
 						} else {
-							node = new RDBMSDatabaseGroupNode(id, (GroupEntity)schemaEntity, parentNode);
+							node = new RDBMSDatabaseGroupNode(id, (GroupSchemaNode)schemaNode, parentNode);
 						}
 						if (parentNode != null) {
 							parentNode.children().add((DatabaseElementNode)node);

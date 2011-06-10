@@ -35,7 +35,7 @@ public class RequestParameterActionCancel extends RequestParameterAction {
 		return true;
 	}
 
-	public boolean actionEntity() {
+	public boolean actionSchemaNode() {
 		return false;
 	}
 	

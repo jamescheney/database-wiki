@@ -22,7 +22,7 @@
 package org.dbwiki.web.request.parameter;
 
 import org.dbwiki.data.database.DatabaseNode;
-import org.dbwiki.data.schema.Entity;
+import org.dbwiki.data.schema.SchemaNode;
 
 public class RequestParameterVersionSingle extends RequestParameterVersionNumber {
 	/*
@@ -42,8 +42,8 @@ public class RequestParameterVersionSingle extends RequestParameterVersionNumber
 		return node.getTimestamp().contains(versionNumber());
 	}
 
-	public boolean matches(Entity entity) {
-		return entity.getTimestamp().contains(versionNumber());
+	public boolean matches(SchemaNode schema) {
+		return schema.getTimestamp().contains(versionNumber());
 	}
 
 	

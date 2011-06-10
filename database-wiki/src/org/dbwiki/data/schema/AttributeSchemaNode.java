@@ -23,23 +23,23 @@ package org.dbwiki.data.schema;
 
 import org.dbwiki.data.time.TimeSequence;
 
-/** An attribute entity is a type describing a key-value pair.
+/** An attribute schema node is a type describing a key-value pair.
  * 
  * 
  * @author jcheney
  *
  */
-public class AttributeEntity extends Entity {
+public class AttributeSchemaNode extends SchemaNode {
 	/*
 	 * Constructors
 	 */
 	
-	public AttributeEntity(int id, String label, GroupEntity parent, TimeSequence timestamp)
+	public AttributeSchemaNode(int id, String label, GroupSchemaNode parent, TimeSequence timestamp)
 		throws org.dbwiki.exception.WikiException {
 		super(id, label, parent, timestamp);
 	}
 	
-	public AttributeEntity(int id, String label, GroupEntity parent)
+	public AttributeSchemaNode(int id, String label, GroupSchemaNode parent)
 	throws org.dbwiki.exception.WikiException {
 		this(id, label, parent, null);
 	}	

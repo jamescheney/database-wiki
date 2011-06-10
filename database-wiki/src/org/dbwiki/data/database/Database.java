@@ -31,8 +31,8 @@ import org.dbwiki.data.index.DatabaseContent;
 import org.dbwiki.data.io.NodeWriter;
 
 import org.dbwiki.data.schema.DatabaseSchema;
-import org.dbwiki.data.schema.Entity;
-import org.dbwiki.data.schema.GroupEntity;
+import org.dbwiki.data.schema.SchemaNode;
+import org.dbwiki.data.schema.GroupSchemaNode;
 
 import org.dbwiki.data.time.VersionIndex;
 
@@ -56,9 +56,9 @@ public interface Database {
 	 * Public Constants
 	 */
 	
-	// Entity types
-	public static final byte EntityTypeAttribute = 0;
-	public static final byte EntityTypeGroup     = 1;
+	// SchemaNode types
+	public static final byte SchemaNodeTypeAttribute = 0;
+	public static final byte SchemaNodeTypeGroup     = 1;
 	
 	
 	/*
@@ -69,16 +69,16 @@ public interface Database {
 	public void annotate(ResourceIdentifier identifier, Annotation annotation) throws org.dbwiki.exception.WikiException;
 	public DatabaseContent content() throws org.dbwiki.exception.WikiException;
 	public void delete(ResourceIdentifier identifier, User user) throws org.dbwiki.exception.WikiException;
-	public void deleteEntity(ResourceIdentifier identifier, User user) throws org.dbwiki.exception.WikiException;
+	public void deleteSchemaNode(ResourceIdentifier identifier, User user) throws org.dbwiki.exception.WikiException;
 	public void export(ResourceIdentifier identifier, int version, NodeWriter out) throws org.dbwiki.exception.WikiException;
 	public DatabaseNode get(ResourceIdentifier identifier) throws org.dbwiki.exception.WikiException;
-	public Entity getEntity(ResourceIdentifier identifier) throws org.dbwiki.exception.WikiException;
+	public SchemaNode getSchemaNode(ResourceIdentifier identifier) throws org.dbwiki.exception.WikiException;
 	public ResourceIdentifier getIdentifierForParameterString(String urlString) throws org.dbwiki.exception.WikiException;
 	public ResourceIdentifier getNodeIdentifierForURL(RequestURL url) throws org.dbwiki.exception.WikiException;
-	public ResourceIdentifier getEntityIdentifierForURL(RequestURL url) throws org.dbwiki.exception.WikiException;
+	public ResourceIdentifier getSchemaNodeIdentifierForURL(RequestURL url) throws org.dbwiki.exception.WikiException;
 	public DatabaseIdentifier identifier();
 	public ResourceIdentifier insertNode(ResourceIdentifier identifier, DocumentNode node, User user) throws org.dbwiki.exception.WikiException;
-	public void insertEntity(GroupEntity parent, String name, byte type, User user) throws org.dbwiki.exception.WikiException;
+	public void insertSchemaNode(GroupSchemaNode parent, String name, byte type, User user) throws org.dbwiki.exception.WikiException;
 	public String name();
 	public void paste(ResourceIdentifier target, PasteNode pasteNode, String sourceURL, User user) throws org.dbwiki.exception.WikiException;
 	public QueryResultSet query(String query) throws org.dbwiki.exception.WikiException;

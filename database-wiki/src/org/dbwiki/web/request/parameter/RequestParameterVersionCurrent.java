@@ -22,7 +22,7 @@
 package org.dbwiki.web.request.parameter;
 
 import org.dbwiki.data.database.DatabaseNode;
-import org.dbwiki.data.schema.Entity;
+import org.dbwiki.data.schema.SchemaNode;
 
 public class RequestParameterVersionCurrent extends RequestParameterVersion {
 	/*
@@ -33,8 +33,8 @@ public class RequestParameterVersionCurrent extends RequestParameterVersion {
 		return node.getTimestamp().isCurrent();
 	}
 	
-	public boolean matches(Entity entity) {
-		return entity.getTimestamp().isCurrent();
+	public boolean matches(SchemaNode schema) {
+		return schema.getTimestamp().isCurrent();
 	}
 		
 	public String value() {

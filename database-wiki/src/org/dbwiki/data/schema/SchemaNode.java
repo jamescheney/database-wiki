@@ -24,32 +24,32 @@ package org.dbwiki.data.schema;
 import java.util.Hashtable;
 
 import org.dbwiki.data.document.DocumentGroupNode;
-import org.dbwiki.data.resource.EntityIdentifier;
+import org.dbwiki.data.resource.SchemaNodeIdentifier;
 import org.dbwiki.data.time.TimeSequence;
 import org.dbwiki.data.time.TimestampedObject;
 
-/** A timestamped schema entity.  Entity is synonymous with "type" or "node of the schema".
- * An entity has an id, label, optional parent group entity, and timestamp.
+/** A timestamped schema node. 
+ * A schema node has an id, label, optional parent, and timestamp.
  * 
  * @author jcheney
  *
  */
 
-public abstract class Entity extends TimestampedObject {
+public abstract class SchemaNode extends TimestampedObject {
 	/*
 	 * Public Constants
 	 */
 	
-	public static final String EntityPathSeparator = "/";
+	public static final String SchemaPathSeparator = "/";
 
-	public static final int RootEntityID = -1;
+	public static final int RootID = -1;
 	/*
 	 * Private Variables
 	 */
 	
 	private int _id;
 	private String _label;
-	private GroupEntity _parent;
+	private GroupSchemaNode _parent;
 	// FIXME #schemaversioning: Delete this?  This is never read locally - and it shadows
 	// the parent class's _timestamp field too!
 	// But maybe this is intended.
@@ -60,7 +60,7 @@ public abstract class Entity extends TimestampedObject {
 	 * Constructors
 	 */
 	
-	public Entity(int id, String label, GroupEntity parent, TimeSequence timestamp) throws org.dbwiki.exception.WikiException {
+	public SchemaNode(int id, String label, GroupSchemaNode parent, TimeSequence timestamp) throws org.dbwiki.exception.WikiException {
 		super(parent, timestamp);
 		_id = id;
 		_label = label;
@@ -83,12 +83,12 @@ public abstract class Entity extends TimestampedObject {
 	/*
 	 * Public Methods
 	 */
-	public EntityIdentifier identifier() {
-		return new EntityIdentifier(_id);
+	public SchemaNodeIdentifier identifier() {
+		return new SchemaNodeIdentifier(_id);
 	}
 	
-	public boolean equals(Entity entity) {
-		return this.id() == entity.id();
+	public boolean equals(SchemaNode schema) {
+		return this.id() == schema.id();
 	}
 	
 	public int id() {
@@ -104,15 +104,15 @@ public abstract class Entity extends TimestampedObject {
 		return _label;
 	}
 	
-	public GroupEntity parent() {
+	public GroupSchemaNode parent() {
 		return _parent;
 	}
 	
 	public String path() {
 		if (_parent != null) {
-			return _parent.path() + EntityPathSeparator + _label;
+			return _parent.path() + SchemaPathSeparator + _label;
 		} else {
-			return EntityPathSeparator + _label;
+			return SchemaPathSeparator + _label;
 		}
 	}
 	
@@ -124,22 +124,22 @@ public abstract class Entity extends TimestampedObject {
 	
 	/** 
 	 * 
-	 * @param entity
+	 * @param schema
 	 * @param groupIndex
 	 * @return
 	 * @throws org.dbwiki.exception.WikiException
 	 */
-	public static DocumentGroupNode createGroupNode(GroupEntity entity, Hashtable<Integer, DocumentGroupNode> groupIndex) throws org.dbwiki.exception.WikiException {
-		DocumentGroupNode root = new DocumentGroupNode(entity);
+	public static DocumentGroupNode createGroupNode(GroupSchemaNode schema, Hashtable<Integer, DocumentGroupNode> groupIndex) throws org.dbwiki.exception.WikiException {
+		DocumentGroupNode root = new DocumentGroupNode(schema);
 		
-		groupIndex.put(new Integer(entity.id()), root);
+		groupIndex.put(new Integer(schema.id()), root);
 		
-		for (int iChild = 0; iChild < entity.children().size(); iChild++) {
+		for (int iChild = 0; iChild < schema.children().size(); iChild++) {
 			// TODO: we probably need to be careful about which bits of the
 			// schema are current
-			Entity child = entity.children().get(iChild);
+			SchemaNode child = schema.children().get(iChild);
 			if (child.isGroup()) {
-				root.children().add(createGroupNode((GroupEntity)child, groupIndex));
+				root.children().add(createGroupNode((GroupSchemaNode)child, groupIndex));
 			}
 		}
 		return root;

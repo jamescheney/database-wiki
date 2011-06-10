@@ -31,33 +31,33 @@ public class RequestParameter {
 	 * Public Constants
 	 */
 	
-	public static final String ParameterAction          = "action";
-	public static final String ParameterActivate        = "activate";
-	public static final String ParameterChangesSince    = "changes";
-	public static final String ParameterCopy            = "copy";
-	public static final String ParameterCopyPasteExport = "cpxml";
-	public static final String ParameterCreate          = "new";
-	public static final String ParameterCreateEntity    = "new_entity";
-	public static final String ParameterDelete          = "delete";
-	public static final String ParameterEdit            = "edit";
-	public static final String ParameterExport          = "xml";
-	public static final String ParameterHistory         = "history";
-	public static final String ParameterIndexPosition   = "idxpos";
-	public static final String ParameterLayout          = "layout";
-	public static final String ParameterPaste           = "paste";
-	public static final String ParameterPasteForm       = "paste_form";
-	public static final String ParameterPreviousVersion = "previous";
-	public static final String ParameterSearch          = "search";
-	public static final String ParameterReset           = "reset";
-	public static final String ParameterResource        = "resource";
-	public static final String ParameterSettings        = "settings";
-	public static final String ParameterStyleSheet      = "style_sheet";
-	public static final String ParameterTemplate        = "html_template";
-	public static final String ParameterURL             = "url";
-	public static final String ParameterVersion         = "version";
+	public static final String ParameterAction           = "action";
+	public static final String ParameterActivate         = "activate";
+	public static final String ParameterChangesSince     = "changes";
+	public static final String ParameterCopy             = "copy";
+	public static final String ParameterCopyPasteExport  = "cpxml";
+	public static final String ParameterCreate           = "new";
+	public static final String ParameterCreateSchemaNode = "new_schema_node";
+	public static final String ParameterDelete           = "delete";
+	public static final String ParameterEdit             = "edit";
+	public static final String ParameterExport           = "xml";
+	public static final String ParameterHistory          = "history";
+	public static final String ParameterIndexPosition    = "idxpos";
+	public static final String ParameterLayout           = "layout";
+	public static final String ParameterPaste            = "paste";
+	public static final String ParameterPasteForm        = "paste_form";
+	public static final String ParameterPreviousVersion  = "previous";
+	public static final String ParameterSearch           = "search";
+	public static final String ParameterReset            = "reset";
+	public static final String ParameterResource         = "resource";
+	public static final String ParameterSettings         = "settings";
+	public static final String ParameterStyleSheet       = "style_sheet";
+	public static final String ParameterTemplate         = "html_template";
+	public static final String ParameterURL              = "url";
+	public static final String ParameterVersion          = "version";
 	
 	public static final String ActionValueAnnotation      = "annotation";
-	public static final String ActionValueEntity          = "entity";
+	public static final String ActionValueSchemaNode      = "schema_node";
 	public static final String ActionValuePageID          = "page_id";
 	public static final String ActionValuePageTitle       = "page_title";
 	public static final String ActionValuePageValue       = "page_value";
@@ -76,8 +76,8 @@ public class RequestParameter {
 				return new RequestParameterActionAnnotate();
 			} else if (value.equals(RequestParameterAction.ActionCancel)) {
 				return new RequestParameterActionCancel();
-			} else if (value.equals(RequestParameterAction.ActionEntity)) {
-				return new RequestParameterActionEntity();
+			} else if (value.equals(RequestParameterAction.ActionSchemaNode)) {
+				return new RequestParameterActionSchemaNode();
 			} else if (value.equals(RequestParameterAction.ActionInsert)) {
 				return new RequestParameterActionInsert();
 			} else if (value.equals(RequestParameterAction.ActionUpdate)) {

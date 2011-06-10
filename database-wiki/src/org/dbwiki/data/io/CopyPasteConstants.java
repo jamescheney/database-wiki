@@ -32,7 +32,7 @@ public interface CopyPasteConstants {
 	 */
 
 	public static final String AttributeLabelDatabaseName = "name";
-	public static final String AttributeLabelEntityName   = "label";
+	public static final String AttributeLabelSchemaNodeName   = "label";
 	public static final String AttributeLabelID           = "id";
 	public static final String AttributeLabelType         = "type";
 	public static final String AttributeLabelVersion      = "version";

@@ -33,12 +33,12 @@ import org.dbwiki.web.ui.CSS;
 
 import org.dbwiki.web.ui.printer.HtmlContentPrinter;
 
-/** Prints a form for creating new entity/schema type.
+/** Prints a form for creating new schema nodes.
  * 
  * @author jcheney
  *
  */
-public class CreateEntityFormPrinter implements HtmlContentPrinter {
+public class CreateSchemaNodeFormPrinter implements HtmlContentPrinter {
 	/*
 	 * Private Variables
 	 */
@@ -50,7 +50,7 @@ public class CreateEntityFormPrinter implements HtmlContentPrinter {
 	 * Constructors
 	 */
 	
-	public CreateEntityFormPrinter(WikiRequest request) {
+	public CreateSchemaNodeFormPrinter(WikiRequest request) {
 		_request = request;
 	}
 	
@@ -62,7 +62,7 @@ public class CreateEntityFormPrinter implements HtmlContentPrinter {
 	public void print(HtmlLinePrinter printer) throws org.dbwiki.exception.WikiException {
 		printer.paragraph("Create new schema element", CSS.CSSHeadline);
 
-		printer.openFORM("frmEntity", "POST", _request.wri().getURL());
+		printer.openFORM("frmSchema", "POST", _request.wri().getURL());
 
 		printer.openTABLE(CSS.CSSFormContainer);
 
@@ -76,7 +76,7 @@ public class CreateEntityFormPrinter implements HtmlContentPrinter {
 		printer.text("NAME");
 		printer.closeTD();
 		printer.openTD(CSS.CSSObjectValueActive);
-		printer.addTEXTAREA(DatabaseWiki.ParameterEntityName, "95", "");
+		printer.addTEXTAREA(DatabaseWiki.ParameterSchemaNodeName, "95", "");
 		printer.closeTD();
 		printer.closeTR();
 		
@@ -95,9 +95,9 @@ public class CreateEntityFormPrinter implements HtmlContentPrinter {
 		printer.text("TYPE");
 		printer.closeTD();
 		printer.openTD(CSS.CSSObjectValueActive);
-		printer.addRADIOBUTTON("Attribute", DatabaseWiki.ParameterEntityType, String.valueOf(Database.EntityTypeAttribute), true);
+		printer.addRADIOBUTTON("Attribute", DatabaseWiki.ParameterSchemaNodeType, String.valueOf(Database.SchemaNodeTypeAttribute), true);
 		printer.addBR();
-		printer.addRADIOBUTTON("Group", DatabaseWiki.ParameterEntityType, String.valueOf(Database.EntityTypeGroup), false);
+		printer.addRADIOBUTTON("Group", DatabaseWiki.ParameterSchemaNodeType, String.valueOf(Database.SchemaNodeTypeGroup), false);
 		printer.closeTD();
 		printer.closeTR();
 
@@ -110,9 +110,9 @@ public class CreateEntityFormPrinter implements HtmlContentPrinter {
 		printer.openPARAGRAPH(CSS.CSSButtonLine);
 		printer.openCENTER();
 				
-//		printer.addBUTTON("image", "action", RequestParameterAction.ActionEntity, "/pictures/button_save.gif");
+//		printer.addBUTTON("image", "action", RequestParameterAction.ActionSchemaNode, "/pictures/button_save.gif");
 		printer.addREALBUTTON("submit",
-				"action", RequestParameterAction.ActionEntity, "<img src=\"/pictures/button_save.gif\">");
+				"action", RequestParameterAction.ActionSchemaNode, "<img src=\"/pictures/button_save.gif\">");
 		printer.text("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
 		printer.addREALBUTTON("submit",
 				"action", RequestParameterAction.ActionCancel, "<img src=\"/pictures/button_cancel.gif\">");

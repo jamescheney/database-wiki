@@ -127,7 +127,7 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 	
 	public static final String ParameterAuthenticationMode = "PASSWORD";
 	public static final String ParameterAutoSchemaChanges = "SCHEMA_CHANGES";
-	public static final String ParameterEntityPath = "ENTITY_PATH";
+	public static final String ParameterSchemaPath = "SCHEMA_PATH";
 	public static final String ParameterInputFile = "INPUT_FILE";
 	public static final String ParameterName = "NAME";
 	public static final String ParameterPath = "PATH";
@@ -423,20 +423,20 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 			Connection con = _connector.getConnection();
 			Statement stmt = con.createStatement();
 			ResultSet rs = stmt.executeQuery(
-				"SELECT * FROM " + RelationConfigFile + " " +
-				"WHERE " + RelConfigFileColWikiID + " = " + wiki.id() + " " +
-				"ORDER BY " + RelConfigFileColTime);
+				"SELECT * FROM " + RelationPresentation + " " +
+				"WHERE " + RelPresentationColDatabase + " = " + wiki.id() + " " +
+				"ORDER BY " + RelPresentationColTime);
 			while (rs.next()) {
-				ConfigSetting setting = new ConfigSetting(new SimpleDateFormat("d MMM yyyy HH:mm:ss").format(new java.util.Date(rs.getLong(RelConfigFileColTime))), currentSetting);
-				switch (rs.getInt(RelConfigFileColFileType)) {
+				ConfigSetting setting = new ConfigSetting(new SimpleDateFormat("d MMM yyyy HH:mm:ss").format(new java.util.Date(rs.getLong(RelPresentationColTime))), currentSetting);
+				switch (rs.getInt(RelPresentationColType)) {
 				case RelConfigFileColFileTypeValLayout:
-					setting.setLayoutVersion(rs.getInt(RelConfigFileColFileVersion));
+					setting.setLayoutVersion(rs.getInt(RelPresentationColVersion));
 					break;
 				case RelConfigFileColFileTypeValTemplate:
-					setting.setTemplateVersion(rs.getInt(RelConfigFileColFileVersion));
+					setting.setTemplateVersion(rs.getInt(RelPresentationColVersion));
 					break;
 				case RelConfigFileColFileTypeValCSS:
-					setting.setStyleSheetVersion(rs.getInt(RelConfigFileColFileVersion));
+					setting.setStyleSheetVersion(rs.getInt(RelPresentationColVersion));
 					break;
 				default:
 					throw new WikiFatalException("Unknown config file type");
@@ -560,23 +560,23 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 			// The setAutoCommit(false), however, should prevent any major damage
 			// in case the assumption does not hold.
 			ResultSet rs = stmt.executeQuery(
-				"SELECT MAX(" + RelConfigFileColFileVersion + ") " + 
-				"FROM " + RelationConfigFile + " " +
-				"WHERE " + RelConfigFileColWikiID + " = " + wikiID + " " +
-				"AND " + RelConfigFileColFileType + " = " + fileType);
+				"SELECT MAX(" + RelPresentationColVersion + ") " + 
+				"FROM " + RelationPresentation + " " +
+				"WHERE " + RelPresentationColDatabase + " = " + wikiID + " " +
+				"AND " + RelPresentationColType + " = " + fileType);
 			rs.next();
 			// User generated config file versions start from 1
 			int version = Math.max(rs.getInt(1) + 1, 1);
 			rs.close();
 			try {
 				PreparedStatement pStmtInsertConfig = con.prepareStatement(
-					"INSERT INTO " + RelationConfigFile + " (" +
-						RelConfigFileColFileType + ", " +
-						RelConfigFileColFileVersion + ", " +
-						RelConfigFileColTime + ", " +
-						RelConfigFileColUser + ", " +
-						RelConfigFileColValue + ", " +
-						RelConfigFileColWikiID + ") VALUES(?, ?, ?, ?, ?, ?)");
+					"INSERT INTO " + RelationPresentation + " (" +
+						RelPresentationColType + ", " +
+						RelPresentationColVersion + ", " +
+						RelPresentationColTime + ", " +
+						RelPresentationColUser + ", " +
+						RelPresentationColValue + ", " +
+						RelPresentationColDatabase + ") VALUES(?, ?, ?, ?, ?, ?)");
 				pStmtInsertConfig.setInt(1, fileType);
 				pStmtInsertConfig.setInt(2, version);
 				pStmtInsertConfig.setLong(3, new java.util.Date().getTime());
@@ -654,7 +654,7 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 		String autoSchemaChanges = request.parameters().get(ParameterAutoSchemaChanges).value();
 		String schema = request.parameters().get(ParameterSchema).value();
 		String resource = request.parameters().get(ParameterInputFile).value();
-		String entityPath = request.parameters().get(ParameterEntityPath).value();
+		String schemaPath = request.parameters().get(ParameterSchemaPath).value();
 		DatabaseSchema databaseSchema = null;
 		
 		//
@@ -742,7 +742,7 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 			// form is re-displayed showing the error message.
 			//
 			ServerResponseHandler responseHandler = new ServerResponseHandler(request, _wikiTitle + " - Create Database Wiki");
-			responseHandler.put(HtmlContentGenerator.ContentContent, new DatabaseWikiFormPrinter(RequestParameterAction.ActionInsert, name, title, authenticationMode, autoSchemaChanges, schema, resource, entityPath, message));
+			responseHandler.put(HtmlContentGenerator.ContentContent, new DatabaseWikiFormPrinter(RequestParameterAction.ActionInsert, name, title, authenticationMode, autoSchemaChanges, schema, resource, schemaPath, message));
 			return responseHandler;
 		} else {
 			//
@@ -754,11 +754,11 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 			
 			
 			if (databaseSchema != null) {
-				// Path is either the value of the form parameter ENTITY_PATH or
+				// Path is either the value of the form parameter SCHEMA_PATH or
 				// the path of the schema root node;
 				String path = null;
-				if (!entityPath.equals("")) {
-					path = entityPath;
+				if (!schemaPath.equals("")) {
+					path = schemaPath;
 				} else {
 					path = databaseSchema.root().path();
 				}
@@ -1016,11 +1016,11 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 		try {
 			Connection con = _connector.getConnection();
 			Statement stmt = con.createStatement();
-			ResultSet rs = stmt.executeQuery("SELECT " + RelConfigFileColValue + " " +
-				"FROM " + RelationConfigFile + " " +
-				"WHERE " + RelConfigFileColWikiID + " = " + wikiID + " " +
-				" AND " + RelConfigFileColFileType + " = " + fileType + " " +
-				"AND " + RelConfigFileColFileVersion + " = " + fileVersion);
+			ResultSet rs = stmt.executeQuery("SELECT " + RelPresentationColValue + " " +
+				"FROM " + RelationPresentation + " " +
+				"WHERE " + RelPresentationColDatabase + " = " + wikiID + " " +
+				" AND " + RelPresentationColType + " = " + fileType + " " +
+				"AND " + RelPresentationColVersion + " = " + fileVersion);
 			if (rs.next()) {
 				value = rs.getString(1);
 			}

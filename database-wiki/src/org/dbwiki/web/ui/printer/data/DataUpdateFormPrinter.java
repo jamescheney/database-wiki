@@ -26,8 +26,8 @@ import org.dbwiki.data.database.DatabaseElementNode;
 import org.dbwiki.data.database.DatabaseGroupNode;
 import org.dbwiki.data.database.DatabaseNode;
 import org.dbwiki.data.database.DatabaseTextNode;
-import org.dbwiki.data.schema.Entity;
-import org.dbwiki.data.schema.GroupEntity;
+import org.dbwiki.data.schema.SchemaNode;
+import org.dbwiki.data.schema.GroupSchemaNode;
 
 import org.dbwiki.exception.web.WikiRequestException;
 
@@ -40,7 +40,7 @@ import org.dbwiki.web.request.parameter.RequestParameterAction;
 import org.dbwiki.web.ui.CSS;
 
 import org.dbwiki.web.ui.layout.DatabaseLayouter;
-import org.dbwiki.web.ui.layout.EntityLayout;
+import org.dbwiki.web.ui.layout.SchemaLayout;
 
 import org.dbwiki.web.ui.printer.HtmlContentPrinter;
 
@@ -75,18 +75,18 @@ public class DataUpdateFormPrinter implements HtmlContentPrinter {
 	public void print(HtmlLinePrinter body) throws org.dbwiki.exception.WikiException {
 		if (_request.parameters().hasParameter(RequestParameter.ParameterCreate)) {
 			RequestParameter parameter = _request.parameters().get(RequestParameter.ParameterCreate);
-			Entity entity = null;
+			SchemaNode schema = null;
 			if (parameter.hasValue()) {
 				try {
-					entity = _request.wiki().database().schema().get(Integer.parseInt(parameter.value()));
+					schema = _request.wiki().database().schema().get(Integer.parseInt(parameter.value()));
 				} catch (NumberFormatException excpt) {
 					throw new WikiRequestException(WikiRequestException.InvalidParameterValue, parameter.toString());
 				}
 			} else {
-				entity = _request.wiki().database().schema().root();
+				schema = _request.wiki().database().schema().root();
 			}
-			body.paragraph(_layouter.get(entity).getName(), CSS.CSSHeadline);
-			this.printInsertForm(_request, entity, body);
+			body.paragraph(_layouter.get(schema).getName(), CSS.CSSHeadline);
+			this.printInsertForm(_request, schema, body);
 		} else if (_request.parameters().hasParameter(RequestParameter.ParameterEdit)) {
 			body.paragraph("Edit", CSS.CSSHeadline);
 			DatabaseNode node = _request.node();
@@ -109,15 +109,15 @@ public class DataUpdateFormPrinter implements HtmlContentPrinter {
 		return "<textarea name=\"" + RequestParameter.TextFieldIndicator + name + "\" style=\"width: 99%; height: " + height + "px\">" + value + "</textarea>";		
 	}
 
-	public String getTextareaLine(Entity entity, int height) {
-		return this.getTextareaLine(Integer.toString(entity.id()), "", height);
+	public String getTextareaLine(SchemaNode schema, int height) {
+		return this.getTextareaLine(Integer.toString(schema.id()), "", height);
 	}
 
-	private void printInsertForm(WikiDataRequest request, Entity entity, HtmlLinePrinter body) {
+	private void printInsertForm(WikiDataRequest request, SchemaNode schema, HtmlLinePrinter body) {
 		body.openFORM("frmInsert", "POST", request.wri().getURL());
-		body.addHIDDEN(RequestParameter.ActionValueEntity, Integer.toString(entity.id()));
+		body.addHIDDEN(RequestParameter.ActionValueSchemaNode, Integer.toString(schema.id()));
 
-		this.printInsertLines(entity, body);
+		this.printInsertLines(schema, body);
 
 		body.openPARAGRAPH(CSS.CSSButtonLine);
 		body.openCENTER();
@@ -132,31 +132,31 @@ public class DataUpdateFormPrinter implements HtmlContentPrinter {
 		body.closeFORM();
 	}
 	
-	public void printInsertLines(Entity entity, HtmlLinePrinter body) {
-		EntityLayout layout = _layouter.get(entity);
+	public void printInsertLines(SchemaNode schema, HtmlLinePrinter body) {
+		SchemaLayout layout = _layouter.get(schema);
 
-		if (entity.isAttribute()) {
+		if (schema.isAttribute()) {
 			body.openTABLE(layout.getCSS(CSS.CSSObjectFrameActive));
-			this.printInsertLine(entity, body);
+			this.printInsertLine(schema, body);
 			body.closeTABLE();
 		} else {
 			body.openTABLE(layout.getCSS(CSS.CSSObjectFrame));
-			GroupEntity groupEntity = (GroupEntity)entity;
-			for (int iChild = 0; iChild < groupEntity.children().size(); iChild++) {
-				Entity childEntity = groupEntity.children().get(iChild);
+			GroupSchemaNode groupSchemaNode = (GroupSchemaNode)schema;
+			for (int iChild = 0; iChild < groupSchemaNode.children().size(); iChild++) {
+				SchemaNode child = groupSchemaNode.children().get(iChild);
 				// skip deleted entities
-				if (!childEntity.getTimestamp().isCurrent())
+				if (!child.getTimestamp().isCurrent())
 					continue;
-				if (childEntity.isAttribute()) {
+				if (child.isAttribute()) {
 					body.openTR();
 					body.openTD(layout.getCSS(CSS.CSSObjectListing));
 					body.openTABLE(layout.getCSS(CSS.CSSObjectFrameActive));
-					this.printInsertLine(childEntity, body);
+					this.printInsertLine(child, body);
 					body.closeTABLE();
 					body.closeTD();
 					body.closeTR();
-				} else if (_layouter.get(childEntity).getEditWithParent()) {
-					GroupEntity groupChild = (GroupEntity)childEntity;
+				} else if (_layouter.get(child).getEditWithParent()) {
+					GroupSchemaNode groupChild = (GroupSchemaNode)child;
 					body.openTR();
 					body.openTD(layout.getCSS(CSS.CSSObjectListing));
 					body.openTABLE(layout.getCSS(CSS.CSSContentFrameActive));
@@ -177,15 +177,15 @@ public class DataUpdateFormPrinter implements HtmlContentPrinter {
 		}
 	}
 
-	public void printInsertLine(Entity entity, HtmlLinePrinter body) {
-		EntityLayout layout = _layouter.get(entity);
+	public void printInsertLine(SchemaNode schema, HtmlLinePrinter body) {
+		SchemaLayout layout = _layouter.get(schema);
 		
 		body.openTR();
 		body.openTD(layout.getCSS(CSS.CSSObjectLabelActive));
 		body.text(layout.getName());
 		body.closeTD();
 		body.openTD(layout.getCSS(CSS.CSSObjectValueActive));
-		body.text(this.getTextareaLine(entity, layout.getTextHeight()));		
+		body.text(this.getTextareaLine(schema, layout.getTextHeight()));		
 		body.closeTD();
 		body.closeTR();
 	}
@@ -194,15 +194,15 @@ public class DataUpdateFormPrinter implements HtmlContentPrinter {
 		body.openFORM("frmInsert", "POST", request.wri().getURL());
 		
 		if (node.isElement()) {
-			body.addHIDDEN(RequestParameter.ActionValueEntity, Integer.toString(((DatabaseElementNode)node).entity().id()));
+			body.addHIDDEN(RequestParameter.ActionValueSchemaNode, Integer.toString(((DatabaseElementNode)node).schema().id()));
 		} else {
-			body.addHIDDEN(RequestParameter.ActionValueEntity, Integer.toString(((DatabaseTextNode)node).parent().entity().id()));
+			body.addHIDDEN(RequestParameter.ActionValueSchemaNode, Integer.toString(((DatabaseTextNode)node).parent().schema().id()));
 		}
 
 		if (node.isElement()) {
 			this.printUpdateLines((DatabaseElementNode)node, body);
 		} else {
-			EntityLayout layout = _layouter.get(node.parent().entity());
+			SchemaLayout layout = _layouter.get(node.parent().schema());
 			body.openTABLE(layout.getCSS(CSS.CSSObjectFrameActive));
 			body.openTR();
 			body.openTD(layout.getCSS(CSS.CSSObjectValueActive));
@@ -225,7 +225,7 @@ public class DataUpdateFormPrinter implements HtmlContentPrinter {
 	}
 
 	public void printUpdateLines(DatabaseElementNode element, HtmlLinePrinter body) throws org.dbwiki.exception.WikiException {
-		EntityLayout layout = _layouter.get(element.entity());
+		SchemaLayout layout = _layouter.get(element.schema());
 		if (element.isAttribute()) {
 			body.openTABLE(layout.getCSS(CSS.CSSObjectFrameActive));
 			this.printUpdateLine((DatabaseAttributeNode)element, body);
@@ -244,14 +244,14 @@ public class DataUpdateFormPrinter implements HtmlContentPrinter {
 						body.closeTABLE();
 						body.closeTD();
 						body.closeTR();
-					} else if (_layouter.get(child.entity()).getEditWithParent()) {
+					} else if (_layouter.get(child.schema()).getEditWithParent()) {
 						DatabaseGroupNode groupChild = (DatabaseGroupNode)child;
 						body.openTR();
 						body.openTD(layout.getCSS(CSS.CSSObjectListing));
 						body.openTABLE(layout.getCSS(CSS.CSSContentFrameActive));
 						body.openTR();
 						body.openTD(layout.getCSS(CSS.CSSContentTopLabelActive));
-						body.text(_layouter.get(groupChild.entity()).getName());
+						body.text(_layouter.get(groupChild.schema()).getName());
 						body.closeTD();
 						body.closeTR();
 						body.openTR();
@@ -268,7 +268,7 @@ public class DataUpdateFormPrinter implements HtmlContentPrinter {
 
 	}
 	public void printUpdateLine(DatabaseAttributeNode attribute, HtmlLinePrinter body) {
-		EntityLayout layout = _layouter.get(attribute.entity());
+		SchemaLayout layout = _layouter.get(attribute.schema());
 		
 		DatabaseTextNode value = attribute.value().getCurrent();
 		if (value != null) {
@@ -284,7 +284,7 @@ public class DataUpdateFormPrinter implements HtmlContentPrinter {
 	}
 
 	private void printUpdateTextArea(DatabaseTextNode value, HtmlLinePrinter body) {
-		EntityLayout layout = _layouter.get(value.parent().entity());
+		SchemaLayout layout = _layouter.get(value.parent().schema());
 
 		String text = value.text();
 		if (text == null) {

@@ -27,10 +27,10 @@ import org.dbwiki.data.document.DocumentAttributeNode;
 import org.dbwiki.data.document.DocumentGroupNode;
 import org.dbwiki.data.document.DocumentNode;
 
-import org.dbwiki.data.schema.AttributeEntity;
+import org.dbwiki.data.schema.AttributeSchemaNode;
 import org.dbwiki.data.schema.DatabaseSchema;
-import org.dbwiki.data.schema.Entity;
-import org.dbwiki.data.schema.GroupEntity;
+import org.dbwiki.data.schema.SchemaNode;
+import org.dbwiki.data.schema.GroupSchemaNode;
 
 import org.dbwiki.exception.WikiFatalException;
 import org.dbwiki.exception.data.WikiDataException;
@@ -50,7 +50,7 @@ public class InputCallbackHandler {
 	private Stack<DocumentNode> _elementStack;
 	private int _ignoreSubtreeDepth = -1;
 	private DocumentNode _root;
-	private Entity _rootEntity;
+	private SchemaNode _rootSchemaNode;
 	private NodeValueReader _valueReader;
 	
 	
@@ -58,13 +58,13 @@ public class InputCallbackHandler {
 	 * Constructors
 	 */
 	
-	public InputCallbackHandler(Entity rootEntity) {
-		_rootEntity = rootEntity;
+	public InputCallbackHandler(SchemaNode rootSchemaNode) {
+		_rootSchemaNode = rootSchemaNode;
 		_valueReader = null;
 	}
 	
 	public InputCallbackHandler(DatabaseSchema schema) {
-		_rootEntity = schema.root();
+		_rootSchemaNode = schema.root();
 		_valueReader = null;
 	}
 	/*
@@ -126,29 +126,29 @@ public class InputCallbackHandler {
 		} else if (_valueReader != null) {
 			_valueReader.startElement(label);
 		} else if (_root == null) {
-			if (_rootEntity.label().equals(label)) {
-				if (_rootEntity.isAttribute()) {
-					_root = new DocumentAttributeNode((AttributeEntity)_rootEntity);
+			if (_rootSchemaNode.label().equals(label)) {
+				if (_rootSchemaNode.isAttribute()) {
+					_root = new DocumentAttributeNode((AttributeSchemaNode)_rootSchemaNode);
 					_valueReader = new NodeValueReader();
 				} else {
-					_root = new DocumentGroupNode((GroupEntity)_rootEntity);
+					_root = new DocumentGroupNode((GroupSchemaNode)_rootSchemaNode);
 				}
 				_elementStack.push(_root);
 			} else {
-				throw new WikiDataException(WikiDataException.InvaldInputData, "Expected root label " + _rootEntity.label() + " instead of " + label);
+				throw new WikiDataException(WikiDataException.InvaldInputData, "Expected root label " + _rootSchemaNode.label() + " instead of " + label);
 			}
 		} else if (!_elementStack.isEmpty()) {
 			DocumentNode element = _elementStack.peek();
 			if (element.isGroup()) {
 				DocumentGroupNode group = (DocumentGroupNode)element;
-				Entity childEntity = ((GroupEntity)group.entity()).children().get(label);
-				if (childEntity != null && childEntity.getTimestamp().isCurrent()) {
+				SchemaNode childSchemaNode = ((GroupSchemaNode)group.schema()).children().get(label);
+				if (childSchemaNode != null && childSchemaNode.getTimestamp().isCurrent()) {
 					DocumentNode child = null;
-					if (childEntity.isAttribute()) {
-						child = new DocumentAttributeNode((AttributeEntity)childEntity);
+					if (childSchemaNode.isAttribute()) {
+						child = new DocumentAttributeNode((AttributeSchemaNode)childSchemaNode);
 						_valueReader = new NodeValueReader();
 					} else {
-						child = new DocumentGroupNode((GroupEntity)childEntity);
+						child = new DocumentGroupNode((GroupSchemaNode)childSchemaNode);
 					}
 					group.children().add(child);
 					_elementStack.push(child);

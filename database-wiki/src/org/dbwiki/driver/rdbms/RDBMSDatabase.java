@@ -68,14 +68,14 @@ import org.dbwiki.data.query.VectorQueryResultSet;
 import org.dbwiki.data.query.WikiPathQueryStatement;
 
 import org.dbwiki.data.resource.DatabaseIdentifier;
-import org.dbwiki.data.resource.EntityIdentifier;
+import org.dbwiki.data.resource.SchemaNodeIdentifier;
 import org.dbwiki.data.resource.NodeIdentifier;
 import org.dbwiki.data.resource.ResourceIdentifier;
 
-import org.dbwiki.data.schema.AttributeEntity;
+import org.dbwiki.data.schema.AttributeSchemaNode;
 import org.dbwiki.data.schema.DatabaseSchema;
-import org.dbwiki.data.schema.Entity;
-import org.dbwiki.data.schema.GroupEntity;
+import org.dbwiki.data.schema.SchemaNode;
+import org.dbwiki.data.schema.GroupSchemaNode;
 
 import org.dbwiki.data.time.TimeInterval;
 import org.dbwiki.data.time.TimeSequence;
@@ -223,26 +223,26 @@ public class RDBMSDatabase implements Database, DatabaseConstants {
 		}
 	}
 	
-	public synchronized void deleteEntity(ResourceIdentifier identifier, User user) throws org.dbwiki.exception.WikiException {
+	public synchronized void deleteSchemaNode(ResourceIdentifier identifier, User user) throws org.dbwiki.exception.WikiException {
 		Connection con = _connector.getConnection();
 
-		Entity entity = _schema.get(((EntityIdentifier)identifier).nodeID());
+		SchemaNode schemaNode = _schema.get(((SchemaNodeIdentifier)identifier).nodeID());
 		Version version = _versionIndex.getNextVersion(new ProvenanceUnknown(user));
 		
 		try {
 			con.setAutoCommit(false);
 			try {
-				// delete all nodes whose types are entity
+				// delete all nodes whose types are schemaNode
 				
 				ArrayList<NodeIdentifier> deletedNodes =
-					DatabaseReader.getNodesOfEntity(con, this, ((EntityIdentifier)identifier));
+					DatabaseReader.getNodesOfSchemaNode(con, this, ((SchemaNodeIdentifier)identifier));
 				
 				for(NodeIdentifier nid : deletedNodes) {
 					deleteNode(con, DatabaseReader.get(con, this, nid), version);
 				}
 				
-				// delete the entity from the schema
-				deleteEntity(con, entity, version);
+				// delete the schema node from the schema
+				deletetSchemaNode(con, schemaNode, version);
 				_versionIndex.add(version);
 				_versionIndex.store(con);
 			} catch (org.dbwiki.exception.WikiException wikiException) {
@@ -282,13 +282,13 @@ public class RDBMSDatabase implements Database, DatabaseConstants {
 		return node;
 	}
 	
-	public Entity getEntity(ResourceIdentifier identifier) throws org.dbwiki.exception.WikiException {
+	public SchemaNode getSchemaNode(ResourceIdentifier identifier) throws org.dbwiki.exception.WikiException {
 		// the entire schema history is kept in memory
-		return _schema.get(((EntityIdentifier)identifier).nodeID());
+		return _schema.get(((SchemaNodeIdentifier)identifier).nodeID());
 	}
 
-	public AttributeEntity getDisplayEntity() {
-		return _wiki.layouter().displayEntity(schema());
+	public AttributeSchemaNode getDisplaySchemaNode() {
+		return _wiki.layouter().displaySchemaNode(schema());
 	}
 	
 	public ResourceIdentifier getIdentifierForParameterString(String parameterValue) throws org.dbwiki.exception.WikiException {
@@ -303,8 +303,8 @@ public class RDBMSDatabase implements Database, DatabaseConstants {
 		return new NodeIdentifier(url);
 	}
 
-	public ResourceIdentifier getEntityIdentifierForURL(RequestURL url) throws org.dbwiki.exception.WikiException {
-		return new EntityIdentifier(url);
+	public ResourceIdentifier getSchemaNodeIdentifierForURL(RequestURL url) throws org.dbwiki.exception.WikiException {
+		return new SchemaNodeIdentifier(url);
 	}
 	
 	public DatabaseIdentifier identifier() {
@@ -340,29 +340,29 @@ public class RDBMSDatabase implements Database, DatabaseConstants {
 		return nodeIdentifier;
 	}
 	
-	public synchronized void insertEntity(GroupEntity parent, String name, byte type, User user) throws org.dbwiki.exception.WikiException {
+	public synchronized void insertSchemaNode(GroupSchemaNode parent, String name, byte type, User user) throws org.dbwiki.exception.WikiException {
 		if (!DatabaseSchema.isValidName(name)) {
 			throw new WikiSchemaException(WikiSchemaException.SyntaxError, "Invalid element name " + name);
 		}
 		
 		Version version = _versionIndex.getNextVersion(new ProvenanceUnknown(user));
 		
-		Entity entity = null;
-		if (type == EntityTypeAttribute) {
+		SchemaNode schema = null;
+		if (type == SchemaNodeTypeAttribute) {
 			if (_schema.size() == 0) {
-				throw new WikiSchemaException(WikiSchemaException.InvalidEntityType, "Root entity cannot be an attribute");
+				throw new WikiSchemaException(WikiSchemaException.InvalidSchemaType, "Schema root cannot be an attribute");
 			}
-			entity = new AttributeEntity(_schema.size(), name, parent, new TimeSequence(version));
-		} else if (type == EntityTypeGroup) {
-			entity = new GroupEntity(_schema.size(), name, parent, new TimeSequence(version));
+			schema = new AttributeSchemaNode(_schema.size(), name, parent, new TimeSequence(version));
+		} else if (type == SchemaNodeTypeGroup) {
+			schema = new GroupSchemaNode(_schema.size(), name, parent, new TimeSequence(version));
 		} else {
-			throw new WikiSchemaException(WikiSchemaException.InvalidEntityType, String.valueOf(type));
+			throw new WikiSchemaException(WikiSchemaException.InvalidSchemaType, String.valueOf(type));
 		}
 		
 		try {
 			Connection con = _connector.getConnection();
 			con.setAutoCommit(false);
-			new DatabaseWriter(con, this).insertEntity(entity, version);
+			new DatabaseWriter(con, this).insertSchemaNode(schema, version);
 			_versionIndex.add(version);
 			_versionIndex.store(con);
 			con.commit();
@@ -370,7 +370,7 @@ public class RDBMSDatabase implements Database, DatabaseConstants {
 		} catch (java.sql.SQLException sqlException) {
 			throw new WikiFatalException(sqlException);
 		}
-		_schema.add(entity);
+		_schema.add(schema);
 	}
 
 	public String name() {
@@ -405,14 +405,14 @@ public class RDBMSDatabase implements Database, DatabaseConstants {
 					// FIXME #copypaste: This code looks unnecessarily complicated
 					// Isn't:
 					//
-					//   (GroupEntity)schema.get(targetElement.entity().id())
+					//   (GroupSchemaNode)schema.get(targetElement.schema().id())
 					//
 					// entirely equivalent to:
 					//
-					//   (GroupEntity)targetElement.entity()
+					//   (GroupSchemaNode)targetElement.schema()
 					//
 					// ?
-					insertNode = getPasteInsertNode((GroupEntity)schema.get(targetElement.entity().id()), (PasteElementNode)pasteNode, schema);
+					insertNode = getPasteInsertNode((GroupSchemaNode)schema.get(targetElement.schema().id()), (PasteElementNode)pasteNode, schema);
 				} else {
 					insertNode = getPasteInsertNode(null, (PasteElementNode)pasteNode, schema);
 				}
@@ -426,8 +426,8 @@ public class RDBMSDatabase implements Database, DatabaseConstants {
 							} else {
 								new DatabaseWriter(con, this).insertNode((NodeIdentifier)target, insertNode, version);
 							}
-							for (int iEntity = schema().size(); iEntity < schema.size(); iEntity++) {
-								new DatabaseWriter(con, this).insertEntity(schema.get(iEntity), version);
+							for (int i = schema().size(); i < schema.size(); i++) {
+								new DatabaseWriter(con, this).insertSchemaNode(schema.get(i), version);
 							}
 							_versionIndex.add(version);
 							_versionIndex.store(con);
@@ -579,12 +579,12 @@ public class RDBMSDatabase implements Database, DatabaseConstants {
 		}
 	}
 
-	private void deleteEntity(Connection con, Entity entity, Version version) throws org.dbwiki.exception.WikiException {
-		if (entity.getTimestamp().isCurrent()) {
-			// mark the entity itself as deleted
-			updateTimestamp(con, entity, entity.getTimestamp().finishAt(version.number() - 1));
-			if (entity instanceof GroupEntity) {
-				deleteGroupEntity(con, (GroupEntity)entity, version);
+	private void deletetSchemaNode(Connection con, SchemaNode schema, Version version) throws org.dbwiki.exception.WikiException {
+		if (schema.getTimestamp().isCurrent()) {
+			// mark the schema node itself as deleted
+			updateTimestamp(con, schema, schema.getTimestamp().finishAt(version.number() - 1));
+			if (schema instanceof GroupSchemaNode) {
+				deleteGroupSchemaNode(con, (GroupSchemaNode)schema, version);
 			}
 		}
 	}
@@ -598,13 +598,13 @@ public class RDBMSDatabase implements Database, DatabaseConstants {
 		}
 	}
 
-	private void deleteGroupEntity(Connection con, GroupEntity entity, Version version) throws org.dbwiki.exception.WikiException {
-		for (int i = 0; i < entity.children().size(); i++) {
-			Entity child = entity.children().get(i);
+	private void deleteGroupSchemaNode(Connection con, GroupSchemaNode schema, Version version) throws org.dbwiki.exception.WikiException {
+		for (int i = 0; i < schema.children().size(); i++) {
+			SchemaNode child = schema.children().get(i);
 			if ((child.hasTimestamp()) && child.getTimestamp().isCurrent()) {
 				updateTimestamp(con, child, child.getTimestamp().finishAt(version.number() - 1));
 			}
-			deleteEntity(con, child, version);
+			deletetSchemaNode(con, child, version);
 		}
 	}
 	
@@ -657,51 +657,51 @@ public class RDBMSDatabase implements Database, DatabaseConstants {
 		}
 	}
 	
-	private DocumentNode getPasteInsertNode(GroupEntity parentEntity, PasteElementNode sourceNode, DatabaseSchema schema) throws org.dbwiki.exception.WikiException {
-		Entity documentEntity = null;
+	private DocumentNode getPasteInsertNode(GroupSchemaNode parentSchemaNode, PasteElementNode sourceNode, DatabaseSchema schema) throws org.dbwiki.exception.WikiException {
+		SchemaNode schemaNode = null;
 		
-		if (parentEntity != null) {
-			for (int iEntity = 0; iEntity < parentEntity.children().size(); iEntity++) {
+		if (parentSchemaNode != null) {
+			for (int i = 0; i < parentSchemaNode.children().size(); i++) {
 				// TODO: we probably need to be careful about which bits of the
 				// schema are current
-				if (parentEntity.children().get(iEntity).label().equals(sourceNode.label())) {
-					documentEntity = parentEntity.children().get(iEntity);
+				if (parentSchemaNode.children().get(i).label().equals(sourceNode.label())) {
+					schemaNode = parentSchemaNode.children().get(i);
 					break;
 				}
 			}
-			if (documentEntity == null) {
+			if (schemaNode == null) {
 				if (_wiki.getAutoSchemaChanges() == DatabaseWiki.AutoSchemaChangesAllow) {
 					if (sourceNode.isAttribute()) {
-						documentEntity = new AttributeEntity(schema.size(), sourceNode.label(), parentEntity, null);
+						schemaNode = new AttributeSchemaNode(schema.size(), sourceNode.label(), parentSchemaNode, null);
 					} else {
-						documentEntity = new GroupEntity(schema.size(), sourceNode.label(), parentEntity, null);
+						schemaNode = new GroupSchemaNode(schema.size(), sourceNode.label(), parentSchemaNode, null);
 					}
-					schema.add(documentEntity);
+					schema.add(schemaNode);
 				} else if (_wiki.getAutoSchemaChanges() == DatabaseWiki.AutoSchemaChangesNever) {
-					throw new WikiDataException(WikiDataException.UnknownEntity, sourceNode.label() + " not allowed under " + parentEntity.label());
+					throw new WikiDataException(WikiDataException.UnknownSchemaNode, sourceNode.label() + " not allowed under " + parentSchemaNode.label());
 				}
 			}
 		} else if (schema.root() != null) {
-			documentEntity = schema.root();
-			if (!documentEntity.label().equals(sourceNode.label())) {
+			schemaNode = schema.root();
+			if (!schemaNode.label().equals(sourceNode.label())) {
 				throw new WikiDataException(WikiDataException.InvalidPasteTarget, "Node label does not match root label");
 			}
 		} else {
 			if (_wiki.getAutoSchemaChanges() == DatabaseWiki.AutoSchemaChangesAllow) {
-				documentEntity = new GroupEntity(schema.size(), sourceNode.label(), null, null);
-				schema.add(documentEntity);
+				schemaNode = new GroupSchemaNode(schema.size(), sourceNode.label(), null, null);
+				schema.add(schemaNode);
 			} else if (_wiki.getAutoSchemaChanges() == DatabaseWiki.AutoSchemaChangesNever) {
-				throw new WikiDataException(WikiDataException.UnknownEntity, sourceNode.label() + " not allowed as root entity");
+				throw new WikiDataException(WikiDataException.UnknownSchemaNode, sourceNode.label() + " not allowed as schema root");
 			}
 		}
 		
-		if (documentEntity != null) {
-			if (documentEntity.isAttribute()) {
-				return new DocumentAttributeNode((AttributeEntity)documentEntity, ((PasteAttributeNode)sourceNode).getValue().getValue());
+		if (schemaNode != null) {
+			if (schemaNode.isAttribute()) {
+				return new DocumentAttributeNode((AttributeSchemaNode)schemaNode, ((PasteAttributeNode)sourceNode).getValue().getValue());
 			} else {
-				DocumentGroupNode group = new DocumentGroupNode((GroupEntity)documentEntity);
+				DocumentGroupNode group = new DocumentGroupNode((GroupSchemaNode)schemaNode);
 				for (int iChild = 0; iChild < ((PasteGroupNode)sourceNode).children().size(); iChild++) {
-					DocumentNode insertChild = getPasteInsertNode((GroupEntity)documentEntity, (PasteElementNode)((PasteGroupNode)sourceNode).children().get(iChild), schema);
+					DocumentNode insertChild = getPasteInsertNode((GroupSchemaNode)schemaNode, (PasteElementNode)((PasteGroupNode)sourceNode).children().get(iChild), schema);
 					if (insertChild != null) {
 						group.children().add(insertChild);
 					}

@@ -23,9 +23,9 @@ package org.dbwiki.data.query;
 
 import java.util.Vector;
 
-import org.dbwiki.data.schema.AttributeEntity;
-import org.dbwiki.data.schema.Entity;
-import org.dbwiki.data.schema.GroupEntity;
+import org.dbwiki.data.schema.AttributeSchemaNode;
+import org.dbwiki.data.schema.SchemaNode;
+import org.dbwiki.data.schema.GroupSchemaNode;
 
 import org.dbwiki.exception.data.WikiQueryException;
 
@@ -47,9 +47,9 @@ public class WikiPathQueryStatement extends QueryStatement {
 	 */
 	/** Creates a wiki path query statement for a given database from a path expression
 	 */
-	public WikiPathQueryStatement(GroupEntity entity, String pathExpression) throws org.dbwiki.exception.WikiException {
+	public WikiPathQueryStatement(GroupSchemaNode schema, String pathExpression) throws org.dbwiki.exception.WikiException {
 		//
-		// Expects a XPath-like expression, i.e., /entity{[child='...'] | :<<node-index>>}/entity{[child='...'] | :<<node-index>>}/...
+		// Expects a XPath-like expression, i.e., /schema-node{[child='...'] | :<<node-index>>}/schema-node{[child='...'] | :<<node-index>>}/...
 		// The [child='...'] | :<<node-index>>-part is optional.
 		// Only one of the options [child='...'] OR :<<node-index>> are allowed.
 		//
@@ -58,7 +58,7 @@ public class WikiPathQueryStatement extends QueryStatement {
 		if (tokens.size() > 0) {
 			_elements = new Vector<WikiPathComponent>();
 			for (int iToken = 0; iToken < tokens.size(); iToken++) {
-				this.add(entity, tokens.get(iToken));
+				this.add(schema, tokens.get(iToken));
 			}
 		} else {
 			throw new WikiQueryException(WikiQueryException.InvalidWikiQuery, pathExpression);
@@ -97,7 +97,7 @@ public class WikiPathQueryStatement extends QueryStatement {
 	/** Adds a token to the path.  Basically is doing parsing.
 	 * FIXME #query: Move parsing into parboiled parser.
 	 */
-	private void add(GroupEntity rootEntity, String token) throws org.dbwiki.exception.WikiException {
+	private void add(GroupSchemaNode rootSchema, String token) throws org.dbwiki.exception.WikiException {
 		String label = null;
 		String condition = null;
 		
@@ -120,34 +120,34 @@ public class WikiPathQueryStatement extends QueryStatement {
 			label = token;
 		}
 		
-		Entity entity = null;
+		SchemaNode schema = null;
 		
 		if (_elements.size() > 0) {
-			Entity parent = _elements.lastElement().entity();
+			SchemaNode parent = _elements.lastElement().schema();
 			if (parent.isGroup()) {
-				entity = ((GroupEntity)parent).find(label);
+				schema = ((GroupSchemaNode)parent).find(label);
 			} else {
 				throw new WikiQueryException(WikiQueryException.InvalidWikiPathComponent, token);
 			}
 		} else {
-			entity = rootEntity;
-			if (!entity.label().equals(label)) {
+			schema = rootSchema;
+			if (!schema.label().equals(label)) {
 				throw new WikiQueryException(WikiQueryException.InvalidWikiPathComponent, token);
 			}
 		}
 		
 		if (condition != null) {
 			if (isIndexCondition) {
-				_elements.add(new WikiPathComponent(entity, new WikiPathIndexCondition(condition)));
+				_elements.add(new WikiPathComponent(schema, new WikiPathIndexCondition(condition)));
 			} else {
-				if (entity.isGroup()) {
+				if (schema.isGroup()) {
 					pos = condition.indexOf('=');
 					if (pos != -1) {
-						Entity child = ((GroupEntity)entity).find(condition.substring(0, pos));
+						SchemaNode child = ((GroupSchemaNode)schema).find(condition.substring(0, pos));
 						if (child.isAttribute()) {
 							String value = condition.substring(pos + 1);
 							if ((value.startsWith("'")) && (value.endsWith("'"))) {
-								_elements.add(new WikiPathComponent(entity, new WikiPathValueCondition((AttributeEntity)child, value)));
+								_elements.add(new WikiPathComponent(schema, new WikiPathValueCondition((AttributeSchemaNode)child, value)));
 							} else {
 								throw new WikiQueryException(WikiQueryException.InvalidWikiPathComponent, token);							
 							}
@@ -162,7 +162,7 @@ public class WikiPathQueryStatement extends QueryStatement {
 				}
 			}
 		} else {
-			_elements.add(new WikiPathComponent(entity));
+			_elements.add(new WikiPathComponent(schema));
 		}
 	}
 	

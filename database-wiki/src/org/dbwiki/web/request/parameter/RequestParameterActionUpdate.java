@@ -35,7 +35,7 @@ public class RequestParameterActionUpdate extends RequestParameterAction {
 		return false;
 	}
 	
-	public boolean actionEntity() {
+	public boolean actionSchemaNode() {
 		return false;
 	}
 	

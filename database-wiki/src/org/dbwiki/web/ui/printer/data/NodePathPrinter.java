@@ -78,7 +78,7 @@ public class NodePathPrinter implements HtmlContentPrinter {
 				if (!versionParameter.versionCurrent()) {
 					target = target + "?" + versionParameter.toURLString();
 				}
-				String link = _layouter.get(element.entity()).getShortLabel(element, versionParameter);
+				String link = _layouter.get(element.schema()).getShortLabel(element, versionParameter);
 				link = "<a CLASS=\"" + CSS.CSSObjectPath + "\" HREF=\"" + target + "\">" + link + "</a>";
 				if (line != null) {
 					line = link + " &gt; " + line;

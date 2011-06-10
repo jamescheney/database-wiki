@@ -31,7 +31,7 @@ import org.dbwiki.web.html.HtmlLinePrinter;
 import org.dbwiki.web.html.HtmlPage;
 import org.dbwiki.web.request.parameter.RequestParameterVersionCurrent;
 import org.dbwiki.web.ui.CSS;
-import org.dbwiki.web.ui.printer.EntityNodeList;
+import org.dbwiki.web.ui.printer.SchemaNodeList;
 import org.dbwiki.web.ui.printer.page.PageContentPrinter;
 
 import org.pegdown.ExtendedPrinter;
@@ -66,7 +66,7 @@ public class QueryNode extends Node {
 			if (!rs.isEmpty()) {
 				body.openPARAGRAPH(CSS.CSSPageText);
 				if (rs.isElement()) {
-					body.add(contentPrinter.getLinesForNodeList(new EntityNodeList(rs), new RequestParameterVersionCurrent()));
+					body.add(contentPrinter.getLinesForNodeList(new SchemaNodeList(rs), new RequestParameterVersionCurrent()));
 				} else {
 					for (int iNode = 0; iNode < rs.size(); iNode++) {
 						contentPrinter.printTextNode((DatabaseTextNode)rs.get(iNode), body);

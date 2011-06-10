@@ -22,7 +22,7 @@
 package org.dbwiki.web.request.parameter;
 
 import org.dbwiki.data.database.DatabaseNode;
-import org.dbwiki.data.schema.Entity;
+import org.dbwiki.data.schema.SchemaNode;
 
 public class RequestParameterVersionAll extends RequestParameterVersion {
 	/*
@@ -33,7 +33,7 @@ public class RequestParameterVersionAll extends RequestParameterVersion {
 		return true;
 	}
 	
-	public boolean matches(Entity node) {
+	public boolean matches(SchemaNode node) {
 		return true;
 	}
 

@@ -117,7 +117,7 @@ public class CopyPasteNodeWriter extends NodeWriter {
 		return "<" + CopyPasteConstants.ElementLabelNode 
 			+ " " + CopyPasteConstants.AttributeLabelType 
 			+ "=\"" + Integer.toString(type) 
-			+ "\" " + CopyPasteConstants.AttributeLabelEntityName 
+			+ "\" " + CopyPasteConstants.AttributeLabelSchemaNodeName 
 			+ "=\"" + node.label() 
 			+ "\" " + CopyPasteConstants.AttributeLabelID 
 			+ "=\"" + node.identifier().toURLString() + "\">"; 

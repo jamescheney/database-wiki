@@ -24,8 +24,8 @@ package org.dbwiki.data.document;
 import java.util.Collections;
 import java.util.Vector;
 
-import org.dbwiki.data.schema.Entity;
-import org.dbwiki.data.schema.GroupEntity;
+import org.dbwiki.data.schema.SchemaNode;
+import org.dbwiki.data.schema.GroupSchemaNode;
 
 public class DocumentGroupNode extends DocumentNode {
 	/*
@@ -39,8 +39,8 @@ public class DocumentGroupNode extends DocumentNode {
 	 * Constructors
 	 */
 	
-	public DocumentGroupNode(GroupEntity entity) {
-		super(entity);
+	public DocumentGroupNode(GroupSchemaNode schema) {
+		super(schema);
 		
 		_children = new DocumentNodeList();
 	}
@@ -54,13 +54,13 @@ public class DocumentGroupNode extends DocumentNode {
 		return _children;
 	}
 	
-	public Vector<DocumentNode> find(Entity entity) throws org.dbwiki.exception.WikiException {
+	public Vector<DocumentNode> find(SchemaNode schema) throws org.dbwiki.exception.WikiException {
 		Vector<DocumentNode> elementList = new Vector<DocumentNode>();
 		
-		if (this.entity().equals(entity)) {
+		if (this.schema().equals(schema)) {
 			elementList.add(this);
 		} else {
-			this.find(this, entity, elementList);
+			this.find(this, schema, elementList);
 		}
 		
 		return elementList;
@@ -104,13 +104,13 @@ public class DocumentGroupNode extends DocumentNode {
 	 * Private Variables
 	 */
 	
-	private void find(DocumentGroupNode group, Entity entity, Vector<DocumentNode> elementList) throws org.dbwiki.exception.WikiException {
+	private void find(DocumentGroupNode group, SchemaNode schema, Vector<DocumentNode> elementList) throws org.dbwiki.exception.WikiException {
 		for (int iChild = 0; iChild < group.children().size(); iChild++) {
 			DocumentNode element = group.children().get(iChild);
-			if (element.entity().equals(entity)) {
+			if (element.schema().equals(schema)) {
 				elementList.add(element);
 			} else if (element.isGroup()) {
-				this.find((DocumentGroupNode)element, entity, elementList);
+				this.find((DocumentGroupNode)element, schema, elementList);
 			}
 		}
 	}

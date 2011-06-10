@@ -26,9 +26,9 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 
 import org.dbwiki.data.schema.DatabaseSchema;
-import org.dbwiki.data.schema.Entity;
-import org.dbwiki.data.schema.GroupEntity;
-import org.dbwiki.data.schema.AttributeEntity;
+import org.dbwiki.data.schema.SchemaNode;
+import org.dbwiki.data.schema.GroupSchemaNode;
+import org.dbwiki.data.schema.AttributeSchemaNode;
 import org.dbwiki.data.time.TimeSequence;
 
 
@@ -49,9 +49,9 @@ public class SQLDatabaseSchema extends DatabaseSchema implements DatabaseConstan
 		Statement statement = con.createStatement();
 		
 		// The following query returns one row for each
-		// version of each schema 'entity' along with the
+		// version of each schema node along with the
 		// start and end points of the associated time interval.
-		// The left join ensures that every entity will be returned
+		// The left join ensures that every schema node will be returned
 		// even if its time interval is derived from its parent.
 		// (In the latter case, the start and end points will be null.)
 		ResultSet results =
@@ -62,12 +62,12 @@ public class SQLDatabaseSchema extends DatabaseSchema implements DatabaseConstan
 				"s." + RelSchemaColLabel + " as " + RelSchemaColLabel + ", " +
 				"s." + RelSchemaColParent + " as " + RelSchemaColParent + ", " +
 				"s." + RelSchemaColUser + " as " + RelSchemaColUser + ", " +
-				"s." + RelSchemaColTimestamp + " as " + RelSchemaColTimestamp + ", " +
-				"t." + RelTimestampColStart + " as " + RelTimestampColStart + ", " +
-				"t." + RelTimestampColEnd + " as " + RelTimestampColEnd + " " +
+				"s." + RelSchemaColTimesequence + " as " + RelSchemaColTimesequence + ", " +
+				"t." + RelTimesequenceColStart + " as " + RelTimesequenceColStart + ", " +
+				"t." + RelTimesequenceColStop + " as " + RelTimesequenceColStop + " " +
 				"FROM " + dbName + RelationSchema + " AS s LEFT JOIN " +
-				          dbName + RelationTimestamp + " AS t " +
-				"ON s." + RelSchemaColTimestamp + " = t." + RelTimestampColID + " " +
+				          dbName + RelationTimesequence + " AS t " +
+				"ON s." + RelSchemaColTimesequence + " = t." + RelTimesequenceColID + " " +
 				"ORDER BY s." + RelSchemaColID);
 
 		// As in DatabaseReader.get() we assume that parents
@@ -78,60 +78,41 @@ public class SQLDatabaseSchema extends DatabaseSchema implements DatabaseConstan
 		while (results.next()) {
 			int id = results.getInt(RelSchemaColID);
 			
-			// if the entity isn't already loaded, then load it
-			Entity entity;
-			entity = get(id); 		
-			if(entity == null) {
+			// if the schema node isn't already loaded, then load it
+			SchemaNode schema;
+			schema = get(id); 		
+			if(schema == null) {
 				String label = results.getString(RelSchemaColLabel);
-				GroupEntity parent = null;
+				GroupSchemaNode parent = null;
 				if (results.getInt(RelSchemaColParent) != -1) {
-					parent = (GroupEntity)get(results.getInt(RelSchemaColParent));
+					parent = (GroupSchemaNode)get(results.getInt(RelSchemaColParent));
 				}
 
 				if ((results.getInt(RelSchemaColType) == RelSchemaColTypeValAttribute) && (parent != null)) {
-					entity = new AttributeEntity(id, label, parent);
+					schema = new AttributeSchemaNode(id, label, parent);
 				} else if (results.getInt(RelSchemaColType) == RelSchemaColTypeValGroup) {
-					entity = new GroupEntity(id, label, parent);
+					schema = new GroupSchemaNode(id, label, parent);
 				} else {
-					throw new WikiSchemaException(WikiSchemaException.InvalidEntityType, "Database value " + results.getInt(RelSchemaColType));
+					throw new WikiSchemaException(WikiSchemaException.InvalidSchemaType, "Database value " + results.getInt(RelSchemaColType));
 				}
 			}
 
 			// load the time interval - if any
 			int end = RelTimestampColEndValOpen;
-			int start = results.getInt(RelTimestampColStart);
+			int start = results.getInt(RelTimesequenceColStart);
 			if(!results.wasNull()) {
 				// a time interval for this node
-				end = results.getInt(RelTimestampColEnd);
-				if(entity.hasTimestamp()) {
-					entity.getTimestamp().elongate(start, end);
+				end = results.getInt(RelTimesequenceColStop);
+				if(schema.hasTimestamp()) {
+					schema.getTimestamp().elongate(start, end);
 				} else {
-					entity.setTimestamp(new TimeSequence(start, end, versionIndex));
+					schema.setTimestamp(new TimeSequence(start, end, versionIndex));
 				}
 			}
 			
-			add(entity);
+			add(schema);
 		}
 		
-		
-//		ResultSet results = statement.executeQuery("SELECT * FROM " + dbName + RelationSchema + " ORDER BY " + RelSchemaColID);
-//		while (results.next()) {
-//			int id = results.getInt(RelSchemaColID);
-//			String label = results.getString(RelSchemaColLabel);
-//			GroupEntity parent = null;
-//			if (results.getInt(RelSchemaColParent) != -1) {
-//				parent = (GroupEntity)get(results.getInt(RelSchemaColParent));
-//			}
-//			Entity entity = null;
-//			if ((results.getInt(RelSchemaColType) == RelSchemaColTypeValAttribute) && (parent != null)) {
-//				entity = new AttributeEntityImpl(id, label, parent);
-//			} else if (results.getInt(RelSchemaColType) == RelSchemaColTypeValGroup) {
-//				entity = new GroupEntityImpl(id, label, parent);
-//			} else {
-//				throw new WikiSchemaException(WikiSchemaException.InvalidEntityType, "Database value " + results.getInt(RelSchemaColType));
-//			}
-//			add(entity);
-//		}
 		results.close();
 		statement.close();
 	}

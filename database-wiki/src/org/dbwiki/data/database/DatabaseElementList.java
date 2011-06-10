@@ -23,7 +23,7 @@ package org.dbwiki.data.database;
 
 import java.util.Vector;
 
-import org.dbwiki.data.schema.Entity;
+import org.dbwiki.data.schema.SchemaNode;
 
 /** A vector of database element nodes used for the list of children of a group node.
  * 
@@ -54,7 +54,7 @@ public class DatabaseElementList {
 	public void add(DatabaseElementNode node) {
 		boolean added = false;
 		for (int iElement = 0; iElement < _elements.size(); iElement++) {
-			if (_elements.get(iElement).entity().id() > node.entity().id()) {
+			if (_elements.get(iElement).schema().id() > node.schema().id()) {
 				_elements.add(iElement, node);
 				added = true;
 				break;
@@ -69,11 +69,11 @@ public class DatabaseElementList {
 		return _elements.get(index);
 	}
 	
-	public DatabaseElementList get(Entity entity) {
+	public DatabaseElementList get(SchemaNode schema) {
 		DatabaseElementList matches = new DatabaseElementList();
 		for (int iElement = 0; iElement < this.size(); iElement++) {
 			DatabaseElementNode element = this.get(iElement);
-			if (element.entity().equals(entity)) {
+			if (element.schema().equals(schema)) {
 				matches.add(element);
 			}
 		}
@@ -84,7 +84,7 @@ public class DatabaseElementList {
 		DatabaseElementList matches = new DatabaseElementList();
 		for (int iElement = 0; iElement < this.size(); iElement++) {
 			DatabaseElementNode element = this.get(iElement);
-			if (element.entity().label().equals(label)) {
+			if (element.schema().label().equals(label)) {
 				matches.add(element);
 			}
 		}

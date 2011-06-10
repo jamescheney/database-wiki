@@ -25,33 +25,33 @@ import java.util.Vector;
 
 import org.dbwiki.data.database.DatabaseElementNode;
 import org.dbwiki.data.database.DatabaseGroupNode;
-import org.dbwiki.data.schema.Entity;
+import org.dbwiki.data.schema.SchemaNode;
 
 import org.dbwiki.web.ui.layout.DatabaseLayouter;
-import org.dbwiki.web.ui.layout.EntityLayout;
+import org.dbwiki.web.ui.layout.SchemaLayout;
 /**
- * A struct containing a layouter and a vector of entity node lists.
+ * A struct containing a layouter and a vector of schema node lists.
  * Used in printing out data nodes.
  * @author jcheney
  *
  */
-public class EntityNodeListIndex {
+public class SchemaNodeListIndex {
 	/*
 	 * Private Variables
 	 */
 	
 	private DatabaseLayouter _layout;
-	private Vector<EntityNodeList> _lists;
+	private Vector<SchemaNodeList> _lists;
 	
 	
 	/*
 	 * Constructors
 	 */
 	
-	public EntityNodeListIndex(DatabaseGroupNode node, DatabaseLayouter layout) throws org.dbwiki.exception.WikiException {
+	public SchemaNodeListIndex(DatabaseGroupNode node, DatabaseLayouter layout) throws org.dbwiki.exception.WikiException {
 		_layout = layout;
 		
-		_lists = new Vector<EntityNodeList>();
+		_lists = new Vector<SchemaNodeList>();
 		for (int iChild = 0; iChild < node.children().size(); iChild++) {
 			this.add(node.children().get(iChild));
 		}
@@ -63,25 +63,25 @@ public class EntityNodeListIndex {
 	 */
 	
 	public void add(DatabaseElementNode node) throws org.dbwiki.exception.WikiException {
-		EntityNodeList container = null;
+		SchemaNodeList container = null;
 		for (int iElement = 0; iElement < _lists.size(); iElement++) {
-			if (_lists.get(iElement).entity().equals(node.entity())) {
+			if (_lists.get(iElement).schema().equals(node.schema())) {
 				container = _lists.get(iElement);
 				break;
 			}
 		}
 		if (container == null) {
-			container = new EntityNodeList(node);
+			container = new SchemaNodeList(node);
 			boolean added = false;
-			EntityLayout nodeLayout = _layout.get(node.entity());
+			SchemaLayout nodeLayout = _layout.get(node.schema());
 			for (int iElement = 0; iElement < _lists.size(); iElement++) {
-				Entity entity = _lists.get(iElement).entity();
-				EntityLayout entityLayout = _layout.get(entity);
-				if (entityLayout.getDisplayOrder() > nodeLayout.getDisplayOrder()) {
+				SchemaNode schema = _lists.get(iElement).schema();
+				SchemaLayout schemaLayout = _layout.get(schema);
+				if (schemaLayout.getDisplayOrder() > nodeLayout.getDisplayOrder()) {
 					_lists.add(iElement, container);
 					added = true;
 					break;
-				} else if ((entityLayout.getDisplayOrder() == nodeLayout.getDisplayOrder()) && (entity.id() > node.entity().id())) {
+				} else if ((schemaLayout.getDisplayOrder() == nodeLayout.getDisplayOrder()) && (schema.id() > node.schema().id())) {
 					_lists.add(iElement, container);
 					added = true;
 					break;
@@ -95,7 +95,7 @@ public class EntityNodeListIndex {
 		}
 	}
 	
-	public EntityNodeList get(int index) {
+	public SchemaNodeList get(int index) {
 		return _lists.get(index);
 	}
 	

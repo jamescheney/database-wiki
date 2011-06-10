@@ -21,7 +21,7 @@
 */
 package org.dbwiki.web.ui.layout;
 
-import org.dbwiki.data.schema.Entity;
+import org.dbwiki.data.schema.SchemaNode;
 
 /** Alignment of labels in data rendering.  Left, none or top.
  * 
@@ -64,8 +64,8 @@ public class LabelAlignment {
 		}
 	}
 	
-	public LabelAlignment(Entity entity) {
-		if (entity.isAttribute()) {
+	public LabelAlignment(SchemaNode schema) {
+		if (schema.isAttribute()) {
 			_alignment = alignLeft;
 		} else {
 			_alignment = alignNone;

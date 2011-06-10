@@ -105,12 +105,12 @@ public class CopyPasteInputHandler implements InputHandler {
 			}
 		} else if ((label.equals(CopyPasteConstants.ElementLabelNode)) && (attrs.length == 3) && (_databaseInfo != null)) {
 			int type = Integer.parseInt(this.getAttribute(attrs, CopyPasteConstants.AttributeLabelType).value());
-			String entityName = this.getAttribute(attrs, CopyPasteConstants.AttributeLabelEntityName).value();
+			String schemaName = this.getAttribute(attrs, CopyPasteConstants.AttributeLabelSchemaNodeName).value();
 			PasteNode node = null;
 			if (type == CopyPasteConstants.NodeTypeAttribute) {
-				node = new PasteAttributeNode(_databaseInfo, entityName);
+				node = new PasteAttributeNode(_databaseInfo, schemaName);
 			} else if (type == CopyPasteConstants.NodeTypeGroup) {
-				node = new PasteGroupNode(_databaseInfo, entityName);
+				node = new PasteGroupNode(_databaseInfo, schemaName);
 			} else {
 				throw new WikiFatalException("Invalid node type in copy & paste data stream");
 			}

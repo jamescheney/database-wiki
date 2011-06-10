@@ -24,12 +24,12 @@ package org.dbwiki.web.ui.printer.schema;
 
 
 import org.dbwiki.data.resource.DatabaseIdentifier;
-import org.dbwiki.data.resource.EntityIdentifier;
+import org.dbwiki.data.resource.SchemaNodeIdentifier;
 
-import org.dbwiki.data.schema.AttributeEntity;
-import org.dbwiki.data.schema.Entity;
-import org.dbwiki.data.schema.EntityList;
-import org.dbwiki.data.schema.GroupEntity;
+import org.dbwiki.data.schema.AttributeSchemaNode;
+import org.dbwiki.data.schema.SchemaNode;
+import org.dbwiki.data.schema.SchemaNodeList;
+import org.dbwiki.data.schema.GroupSchemaNode;
 
 import org.dbwiki.web.html.HtmlLinePrinter;
 
@@ -40,7 +40,7 @@ import org.dbwiki.web.request.parameter.RequestParameterVersion;
 import org.dbwiki.web.ui.CSS;
 
 import org.dbwiki.web.ui.layout.DatabaseLayouter;
-import org.dbwiki.web.ui.layout.EntityLayout;
+import org.dbwiki.web.ui.layout.SchemaLayout;
 import org.dbwiki.web.ui.printer.HtmlContentPrinter;
 
 /** Prints schema types as HTML 
@@ -48,7 +48,7 @@ import org.dbwiki.web.ui.printer.HtmlContentPrinter;
  * @author jcheney
  *
  */
-public class EntityPrinter implements HtmlContentPrinter {
+public class SchemaNodePrinter implements HtmlContentPrinter {
 	/*
 	 * Private Variables
 	 */
@@ -58,18 +58,18 @@ public class EntityPrinter implements HtmlContentPrinter {
 	
 	private RequestParameterVersion _versionParameter;
 	
-	private Entity _entity;
+	private SchemaNode _schemaNode;
 	
 	/*
 	 * Constructors
 	 */
 		
-	public EntityPrinter(WikiSchemaRequest request, DatabaseLayouter layouter) throws org.dbwiki.exception.WikiException {
+	public SchemaNodePrinter(WikiSchemaRequest request, DatabaseLayouter layouter) throws org.dbwiki.exception.WikiException {
 		_databaseIdentifier = request.wri().databaseIdentifier();
 		_layouter = layouter;
-		_entity = request.entity();
-		if(_entity == null) {
-			_entity = request.wiki().database().getEntity(new EntityIdentifier(0));
+		_schemaNode = request.schema();
+		if(_schemaNode == null) {
+			_schemaNode = request.wiki().database().getSchemaNode(new SchemaNodeIdentifier(0));
 		}
 		_versionParameter = RequestParameter.versionParameter(request.parameters().get(RequestParameter.ParameterVersion));
 	}
@@ -78,22 +78,22 @@ public class EntityPrinter implements HtmlContentPrinter {
 	/*
 	 * Public Methods
 	 */
-	public void printGroupEntity(GroupEntity entity, String target, RequestParameterVersion versionParameter, EntityLayout layout, HtmlLinePrinter body)
+	public void printGroupSchemaNode(GroupSchemaNode schema, String target, RequestParameterVersion versionParameter, SchemaLayout layout, HtmlLinePrinter body)
 	    throws org.dbwiki.exception.WikiException {
 		
 		body.openTABLE(layout.getCSS(CSS.CSSObjectFrame));
 		
 		body.openTR();
 		body.openTD(layout.getCSS(CSS.CSSObjectListing));
-		if (entity.getTimestamp().isCurrent()) {
-			body.linkWithTitle(target, entity.getTimestamp().toPrintString(), entity.label(), layout.getCSS(CSS.CSSContentValueActive));
+		if (schema.getTimestamp().isCurrent()) {
+			body.linkWithTitle(target, schema.getTimestamp().toPrintString(), schema.label(), layout.getCSS(CSS.CSSContentValueActive));
 		} else {
-			body.linkWithTitle(target, entity.getTimestamp().toPrintString(), entity.label(), layout.getCSS(CSS.CSSContentValueInactive));
+			body.linkWithTitle(target, schema.getTimestamp().toPrintString(), schema.label(), layout.getCSS(CSS.CSSContentValueInactive));
 		}
 		body.closeTD();
 		body.closeTR();
 
-		EntityList children = entity.children();
+		SchemaNodeList children = schema.children();
 		body.openTR();
 		body.openTD(layout.getCSS(CSS.CSSObjectListing));
 		printEntitiesInGroupStyle(children, target, versionParameter, layout, body);
@@ -107,16 +107,16 @@ public class EntityPrinter implements HtmlContentPrinter {
 	 * Private Methods
 	 */
 	
-	private String getEntityLink(Entity entity, RequestParameterVersion versionParameter) {
-		String target = _databaseIdentifier.linkPrefix() + entity.identifier().toURLString();
+	private String getSchemaNodeLink(SchemaNode schema, RequestParameterVersion versionParameter) {
+		String target = _databaseIdentifier.linkPrefix() + schema.identifier().toURLString();
 		if (!versionParameter.versionCurrent()) {
 			target = target + "?" + versionParameter.toURLString();
 		}
 		return target;
 	}
 	
-	private boolean printAttributeEntity(AttributeEntity attribute, String linkTarget, RequestParameterVersion versionParameter,
-					EntityLayout layout, HtmlLinePrinter content) throws org.dbwiki.exception.WikiException {
+	private boolean printAttributeSchemaNode(AttributeSchemaNode attribute, String linkTarget, RequestParameterVersion versionParameter,
+					SchemaLayout layout, HtmlLinePrinter content) throws org.dbwiki.exception.WikiException {
 		int lineCount = 0;
 		String label = attribute.label();
 
@@ -124,7 +124,7 @@ public class EntityPrinter implements HtmlContentPrinter {
 			lineCount = 1;
 			String target = linkTarget;
 			//if (target == null)  {
-				target = getEntityLink(attribute, versionParameter);
+				target = getSchemaNodeLink(attribute, versionParameter);
 			//}
 			if (attribute.getTimestamp().isCurrent()) {
 				content.linkWithTitle(target, attribute.getTimestamp().toPrintString(), label, layout.getCSS(CSS.CSSContentValueActive));
@@ -136,7 +136,7 @@ public class EntityPrinter implements HtmlContentPrinter {
 		return (lineCount > 0);
 	}
 	
-	private void printEntitiesInGroupStyle(EntityList list, String linkTarget, RequestParameterVersion versionParameter, EntityLayout layout, HtmlLinePrinter content)
+	private void printEntitiesInGroupStyle(SchemaNodeList list, String linkTarget, RequestParameterVersion versionParameter, SchemaLayout layout, HtmlLinePrinter content)
 		throws org.dbwiki.exception.WikiException {
 			
 		content.openTABLE(layout.getCSS(CSS.CSSContentFrameActive));
@@ -146,23 +146,23 @@ public class EntityPrinter implements HtmlContentPrinter {
 		content.openTABLE(layout.getCSS(CSS.CSSContentValueListing));
 		
 		for (int i = 0; i < list.size(); i++) {
-			Entity entity = list.get(i);
-			if (versionParameter.matches(entity)) {
+			SchemaNode schema = list.get(i);
+			if (versionParameter.matches(schema)) {
 				content.openTR();
 				String target = linkTarget;
-				target = getEntityLink(entity, versionParameter);
-				if (entity.isAttribute()) {
-					AttributeEntity attribute = (AttributeEntity)entity;
+				target = getSchemaNodeLink(schema, versionParameter);
+				if (schema.isAttribute()) {
+					AttributeSchemaNode attribute = (AttributeSchemaNode)schema;
 					if (attribute.getTimestamp().isCurrent()) {
 						content.openTD(layout.getCSS(CSS.CSSContentValueActive));
 					} else {
 						content.openTD(layout.getCSS(CSS.CSSContentValueInactive));
 					}
-					printAttributeEntity(attribute, target, versionParameter, layout, content);
+					printAttributeSchemaNode(attribute, target, versionParameter, layout, content);
 
 					content.closeTD();
 				} else {
-					printGroupEntity((GroupEntity)entity, target, versionParameter, layout, content);
+					printGroupSchemaNode((GroupSchemaNode)schema, target, versionParameter, layout, content);
 				}
 				content.closeTR();
 			}
@@ -176,13 +176,13 @@ public class EntityPrinter implements HtmlContentPrinter {
 	}
 	
 	public void print(HtmlLinePrinter body) throws org.dbwiki.exception.WikiException {
-		String target = getEntityLink(_entity, _versionParameter);
+		String target = getSchemaNodeLink(_schemaNode, _versionParameter);
 		
-		if (_versionParameter.matches(_entity)) {
-			if (_entity.isAttribute()) {
-				printAttributeEntity((AttributeEntity)_entity, target, _versionParameter, _layouter.get(_entity), body);
+		if (_versionParameter.matches(_schemaNode)) {
+			if (_schemaNode.isAttribute()) {
+				printAttributeSchemaNode((AttributeSchemaNode)_schemaNode, target, _versionParameter, _layouter.get(_schemaNode), body);
 			} else {
-				printGroupEntity((GroupEntity)_entity, target, _versionParameter, _layouter.get(_entity), body);
+				printGroupSchemaNode((GroupSchemaNode)_schemaNode, target, _versionParameter, _layouter.get(_schemaNode), body);
 			}
 		}
 	}

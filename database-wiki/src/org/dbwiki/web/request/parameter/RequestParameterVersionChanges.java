@@ -25,8 +25,8 @@ import org.dbwiki.data.database.DatabaseAttributeNode;
 import org.dbwiki.data.database.DatabaseElementNode;
 import org.dbwiki.data.database.DatabaseGroupNode;
 import org.dbwiki.data.database.DatabaseNode;
-import org.dbwiki.data.schema.Entity;
-import org.dbwiki.data.schema.GroupEntity;
+import org.dbwiki.data.schema.SchemaNode;
+import org.dbwiki.data.schema.GroupSchemaNode;
 
 public class RequestParameterVersionChanges extends RequestParameterVersionNumber {
 	/*
@@ -74,17 +74,17 @@ public class RequestParameterVersionChanges extends RequestParameterVersionNumbe
 	}
 	
 	/**
-	 * Return true if any descendant of entity has changed.
+	 * Return true if any descendant of schema has changed.
 	 */
-	public boolean matches(Entity entity) throws org.dbwiki.exception.WikiException {
-		if (entity.getTimestamp().changedSince(versionNumber())) {
+	public boolean matches(SchemaNode schema) throws org.dbwiki.exception.WikiException {
+		if (schema.getTimestamp().changedSince(versionNumber())) {
 			return true;
 		} else {
 			boolean matches = false;
-			if (entity.isAttribute()) {
+			if (schema.isAttribute()) {
 				return false;
 			} else {
-				GroupEntity group = (GroupEntity)entity;
+				GroupSchemaNode group = (GroupSchemaNode)schema;
 				for (int iElement = 0; iElement < group.children().size(); iElement++) {
 					if (matches(group.children().get(iElement))) {
 						matches = true;

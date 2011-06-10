@@ -21,9 +21,9 @@
 */
 package org.dbwiki.data.query;
 
-import org.dbwiki.data.schema.Entity;
+import org.dbwiki.data.schema.SchemaNode;
 
-/** Struct holding components of a wiki path, including an entity and optional condition
+/** Struct holding components of a wiki path, including a schema and optional condition
  * 
  * 
  * @author jcheney
@@ -35,20 +35,20 @@ public class WikiPathComponent {
 	 */
 	
 	private WikiPathCondition _condition;
-	private Entity _entity;
+	private SchemaNode _schema;
 	
 	
 	/*
 	 * Constructors 
 	 */
 	
-	public WikiPathComponent(Entity entity, WikiPathCondition condition) {
-		_entity = entity;
+	public WikiPathComponent(SchemaNode schema, WikiPathCondition condition) {
+		_schema = schema;
 		_condition = condition;
 	}
 	
-	public WikiPathComponent(Entity entity) {
-		this(entity, null);
+	public WikiPathComponent(SchemaNode schema) {
+		this(schema, null);
 	}
 	
 	
@@ -60,8 +60,8 @@ public class WikiPathComponent {
 		return _condition;
 	}
 	
-	public Entity entity() {
-		return _entity;
+	public SchemaNode schema() {
+		return _schema;
 	}
 	
 	public boolean hasCondition() {

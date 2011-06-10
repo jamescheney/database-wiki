@@ -23,8 +23,8 @@ package org.dbwiki.web.ui.printer.data;
 
 import org.dbwiki.data.database.DatabaseElementNode;
 
-import org.dbwiki.data.schema.Entity;
-import org.dbwiki.data.schema.GroupEntity;
+import org.dbwiki.data.schema.SchemaNode;
+import org.dbwiki.data.schema.GroupSchemaNode;
 
 import org.dbwiki.web.html.HtmlLinePrinter;
 
@@ -86,14 +86,14 @@ public class DataMenuPrinter extends MenuPrinter {
 
 		if (_request.node() != null) {
 			if (_request.node().getTimestamp().isCurrent()) {
-				Entity entity = null;
+				SchemaNode schema = null;
 				if (_request.node().isElement()) {
-					entity = ((DatabaseElementNode)_request.node()).entity();
-					if (!entity.isGroup()) {
-						entity = null;
+					schema = ((DatabaseElementNode)_request.node()).schema();
+					if (!schema.isGroup()) {
+						schema = null;
 					}
 				}
-				this.printObjectMenu((GroupEntity)entity, printer);
+				this.printObjectMenu((GroupSchemaNode)schema, printer);
 			} else {
 				DatabaseElementNode parent = _request.node().parent();
 				if (parent != null) {
@@ -157,12 +157,12 @@ public class DataMenuPrinter extends MenuPrinter {
 		printer.add("\t\t\t<div class=\"" + CSS.CSSMenuSubBox + "\">");
 		printer.add("\t\t\t\t<ul>");
 		
-		Entity root = _request.wiki().database().schema().root();
+		SchemaNode root = _request.wiki().database().schema().root();
 		printer.add("\t\t\t\t\t<li><span class=\"" + CSS.CSSMenuSubBox + "\">" + menuLabelInsert + "</span></li>");
 		if (root != null) {
 			printer.add("\t\t\t\t\t<li><a href=\"" + _request.wri().getURL() + "?" + RequestParameter.ParameterCreate + "=" + root.id() + "\" class=\"" + CSS.CSSMenuSubSub + "\">" + _layouter.get(root).getName() + "</a></li>");
 		} else {
-			printer.add("\t\t\t\t\t<li><a href=\"" + _request.wri().getURL() + "?" + RequestParameter.ParameterCreateEntity + "\" class=\"" + CSS.CSSMenuSubSub + "\">" + menuLabelNew + "</a></li>");
+			printer.add("\t\t\t\t\t<li><a href=\"" + _request.wri().getURL() + "?" + RequestParameter.ParameterCreateSchemaNode + "\" class=\"" + CSS.CSSMenuSubSub + "\">" + menuLabelNew + "</a></li>");
 		}
 		
 		this.printPasteSubMenu(printer);
@@ -172,15 +172,15 @@ public class DataMenuPrinter extends MenuPrinter {
 		printer.add("\t\t</div>");
 	}
 	
-	private void printObjectMenu(GroupEntity entity, HtmlLinePrinter printer) throws org.dbwiki.exception.WikiException {
+	private void printObjectMenu(GroupSchemaNode schema, HtmlLinePrinter printer) throws org.dbwiki.exception.WikiException {
 		printer.add("\t\t<div class=\"" + CSS.CSSMenuSub + "\" id=\"" + MenuEdit + "\" onMouseOver=\"ShowItem('" + MenuEdit + "');\" onMouseOut=\"HideItem('" + MenuEdit + "');\">");
 		printer.add("\t\t\t<div class=\"" + CSS.CSSMenuSubBox + "\">");
 		printer.add("\t\t\t\t<ul>");
 		
-		if (entity != null) {
+		if (schema != null) {
 			printer.add("\t\t\t\t\t<li><span class=\"" + CSS.CSSMenuSubBox + "\">" + menuLabelInsert + "</span></li>");
-			for (int iChild = 0; iChild < entity.children().size(); iChild++) {
-				Entity child = entity.children().get(iChild);
+			for (int i = 0; i < schema.children().size(); i++) {
+				SchemaNode child = schema.children().get(i);
 				// skip deleted entities
 				if(child.getTimestamp().isCurrent()) {
 					printer.add("\t\t\t\t\t<li><a href=\"" + _request.wri().getURL() +
@@ -189,7 +189,7 @@ public class DataMenuPrinter extends MenuPrinter {
 							"</a></li>");
 				}
 			}
-			printer.add("\t\t\t\t\t<li><a href=\"" + _request.wri().getURL() + "?" + RequestParameter.ParameterCreateEntity + "\" class=\"" + CSS.CSSMenuSubSub + "\">" + menuLabelNew + "</a></li>");
+			printer.add("\t\t\t\t\t<li><a href=\"" + _request.wri().getURL() + "?" + RequestParameter.ParameterCreateSchemaNode + "\" class=\"" + CSS.CSSMenuSubSub + "\">" + menuLabelNew + "</a></li>");
 		}
 
 		printer.add("\t\t\t\t\t<li><a href=\"" + _request.wri().getURL() + "?" + RequestParameter.ParameterEdit + "\">" + menuLabelEdit + "</a></li>");

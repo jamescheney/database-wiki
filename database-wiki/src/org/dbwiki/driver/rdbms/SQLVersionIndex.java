@@ -93,8 +93,8 @@ public class SQLVersionIndex extends VersionIndex implements DatabaseConstants {
 				nid = new NodeIdentifier(nodeId);
 			Provenance provenance =
 				ProvenanceFactory.getProvenance((byte)rs.getInt(RelVersionColProvenance),
-						user, nid, rs.getString(RelVersionColSourceURL));
-			long createTime = rs.getLong(RelVersionColTimeMilliSec);
+						user, nid, rs.getString(RelVersionColSource));
+			long createTime = rs.getLong(RelVersionColTime);
 			this.add(new Version(versionNumber, versionName, createTime, provenance, this));
 		}	
 		rs.close();
@@ -147,8 +147,8 @@ public class SQLVersionIndex extends VersionIndex implements DatabaseConstants {
 			RelVersionColProvenance + ", " + 
 			RelVersionColUser + ", " + 
 			RelVersionColNode + ", " + 
-			RelVersionColSourceURL + ", " +
-			RelVersionColTimeMilliSec + ") VALUES(?, ?, ?, ?, ?, ?, ?)";
+			RelVersionColSource + ", " +
+			RelVersionColTime + ") VALUES(?, ?, ?, ?, ?, ?, ?)";
 		
 		PreparedStatement statement = con.prepareStatement(_insertSQL);
 		statement.setInt(1, version.number());

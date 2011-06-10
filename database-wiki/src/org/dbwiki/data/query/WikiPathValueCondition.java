@@ -21,10 +21,10 @@
 */
 package org.dbwiki.data.query;
 
-import org.dbwiki.data.schema.AttributeEntity;
+import org.dbwiki.data.schema.AttributeSchemaNode;
 
 /** A wiki path value condition
- * Contains an attribute entity reference and a string value.
+ * Contains an attribute schema node reference and a string value.
  * @author jcheney
  *
  */
@@ -33,7 +33,7 @@ public class WikiPathValueCondition extends WikiPathCondition {
 	 * Private Variables
 	 */
 	
-	private AttributeEntity _entity;
+	private AttributeSchemaNode _schema;
 	private String _value;
 	
 	
@@ -41,8 +41,8 @@ public class WikiPathValueCondition extends WikiPathCondition {
 	 * Constructors
 	 */
 	
-	public WikiPathValueCondition(AttributeEntity entity, String value) {
-		_entity = entity;
+	public WikiPathValueCondition(AttributeSchemaNode schema, String value) {
+		_schema = schema;
 		_value = this.unmask(value.substring(1, value.length() - 1));
 	}
 	
@@ -51,8 +51,8 @@ public class WikiPathValueCondition extends WikiPathCondition {
 	 * Public Methods
 	 */
 	
-	public AttributeEntity entity() {
-		return _entity;
+	public AttributeSchemaNode schema() {
+		return _schema;
 	}
 	
 	public boolean isIndexCondition() {

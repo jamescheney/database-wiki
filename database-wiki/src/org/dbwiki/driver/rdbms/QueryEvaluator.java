@@ -43,7 +43,7 @@ import org.dbwiki.data.query.WikiPathValueCondition;
 
 import org.dbwiki.data.resource.NodeIdentifier;
 
-import org.dbwiki.data.schema.Entity;
+import org.dbwiki.data.schema.SchemaNode;
 
 /** Provides static methods to evaluate wiki path queries 
  * FIXME #static Find a better place for this code; reorganize with DatabaseReader
@@ -93,7 +93,7 @@ public class QueryEvaluator extends DatabaseReader {
 			if (component.condition().isValueCondition()) {
 				isValid = false;
 				WikiPathValueCondition valueCond = (WikiPathValueCondition)component.condition();
-				DatabaseElementList nodes = ((DatabaseGroupNode)node).find(valueCond.entity());
+				DatabaseElementList nodes = ((DatabaseGroupNode)node).find(valueCond.schema());
 				for (int iNode = 0; iNode < nodes.size(); iNode++) {
 					DatabaseTextNode text = (((DatabaseAttributeNode)nodes.get(iNode))).value().getCurrent();
 					if (text != null) {
@@ -112,13 +112,13 @@ public class QueryEvaluator extends DatabaseReader {
 			} else {
 				WikiPathComponent nextComp = query.get(pos + 1);
 				DatabaseGroupNode group = (DatabaseGroupNode)node;
-				int entityIndex = 0;
+				int schemaIndex = 0;
 				for (int iChild = 0; iChild < group.children().size(); iChild++) {
-					if (group.children().get(iChild).entity().equals(nextComp.entity())) {
-						entityIndex++;
+					if (group.children().get(iChild).schema().equals(nextComp.schema())) {
+						schemaIndex++;
 						if (nextComp.hasCondition()) {
 							if (nextComp.condition().isIndexCondition()) {
-								if (((WikiPathIndexCondition)nextComp.condition()).index() == entityIndex) {
+								if (((WikiPathIndexCondition)nextComp.condition()).index() == schemaIndex) {
 									eval(group.children().get(iChild), query, pos + 1, rs);
 									break;
 								}
@@ -169,7 +169,7 @@ public class QueryEvaluator extends DatabaseReader {
 		if (query.firstElement().hasCondition()) {
 			if (query.firstElement().condition().isValueCondition()) {
 				WikiPathValueCondition valueCond = (WikiPathValueCondition)query.firstElement().condition();
-				sqlStatements.add(getEntityValueStatement(database, valueCond));
+				sqlStatements.add(getSchemaValueStatement(database, valueCond));
 				parameters.add(valueCond.value());
 			}
 		}
@@ -177,14 +177,14 @@ public class QueryEvaluator extends DatabaseReader {
 			WikiPathComponent component = query.get(iComponent);
 			if (component.hasCondition()) {
 				if (component.condition().isIndexCondition()) {
-					sqlStatements.add(getEntityIndexStatement(database, component.entity(), ((WikiPathIndexCondition)component.condition()).index()));
+					sqlStatements.add(getSchemaIndexStatement(database, component.schema(), ((WikiPathIndexCondition)component.condition()).index()));
 				} else {
 					WikiPathValueCondition valueCond = (WikiPathValueCondition)component.condition();
-					sqlStatements.add(getEntityValueStatement(database, valueCond));
+					sqlStatements.add(getSchemaValueStatement(database, valueCond));
 					parameters.add(valueCond.value());
 				}
 			} else {
-				sqlStatements.add(getEntityIndexStatement(database, component.entity(), 1));
+				sqlStatements.add(getSchemaIndexStatement(database, component.schema(), 1));
 			}
 		}
 		
@@ -218,19 +218,19 @@ public class QueryEvaluator extends DatabaseReader {
 		return result;
 	}
 	
-	private static String getEntityIndexStatement(RDBMSDatabase database, Entity entity, int index) {
+	private static String getSchemaIndexStatement(RDBMSDatabase database, SchemaNode schema, int index) {
 		return "SELECT DISTINCT " + RelDataColEntry + " " +
-			"FROM " + database.name() + ViewEntityIndex + " " +
-			"WHERE " + ViewEntityIndexColMaxCount + " >= " + index + " " +
-			"AND " + RelDataColEntity + " = " + entity.id();
+			"FROM " + database.name() + ViewSchemaIndex + " " +
+			"WHERE " + ViewSchemaIndexColMaxCount + " >= " + index + " " +
+			"AND " + RelDataColSchema + " = " + schema.id();
 	}
 	
-	private static String getEntityValueStatement(RDBMSDatabase database, WikiPathValueCondition condition) {
+	private static String getSchemaValueStatement(RDBMSDatabase database, WikiPathValueCondition condition) {
 		return "SELECT DISTINCT d1." + RelDataColEntry + " " +
 			"FROM " + database.name() + RelationData + " d1, " + database.name() + RelationData + " d2 " +
-			"WHERE d1." + RelDataColEntity + " = " + RelDataColEntityValUnknown + " " +
+			"WHERE d1." + RelDataColSchema + " = " + RelDataColSchemaValUnknown + " " +
 			"AND d1." + RelDataColValue + " = ? " +
 			"AND d1." + RelDataColParent + " = d2." + RelDataColID + " " +
-			"AND d2." + RelDataColEntity + " = " + condition.entity().id();
+			"AND d2." + RelDataColSchema + " = " + condition.schema().id();
 	}
 }

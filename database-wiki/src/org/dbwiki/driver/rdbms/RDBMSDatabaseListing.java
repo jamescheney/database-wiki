@@ -69,32 +69,32 @@ public class RDBMSDatabaseListing implements DatabaseContent {
 	public  RDBMSDatabaseListing(Connection con, RDBMSDatabase database) throws org.dbwiki.exception.WikiException {
 		this();
 		
-		if (database.getDisplayEntity() != null) {
+		if (database.getDisplaySchemaNode() != null) {
 			try {
 				String relData = database.name() + DatabaseConstants.RelationData;
-				String relTimestamp = database.name() + DatabaseConstants.RelationTimestamp;
+				String relTimestamp = database.name() + DatabaseConstants.RelationTimesequence;
 				String relVersion = database.name() + DatabaseConstants.RelationVersion;
 				
 				PreparedStatement pStmtSelectContent = con.prepareStatement("SELECT " +
 					relData + "." + DatabaseConstants.RelDataColID + ", " +
-					relTimestamp + "." + DatabaseConstants.RelTimestampColStart + ", " +
-					relTimestamp + "." + DatabaseConstants.RelTimestampColEnd + " " +
+					relTimestamp + "." + DatabaseConstants.RelTimesequenceColStart + ", " +
+					relTimestamp + "." + DatabaseConstants.RelTimesequenceColStop + " " +
 					"FROM " + relData + ", " + relTimestamp + " " +
 					"WHERE " + relData + "." + DatabaseConstants.RelDataColID + " = " + relData + "." + DatabaseConstants.RelDataColEntry + " AND " + 
-					relData + "." + DatabaseConstants.RelDataColTimestamp + " = " + relTimestamp + "." + DatabaseConstants.RelTimestampColID + " " +
-					"ORDER BY " +relData + "." + DatabaseConstants.RelDataColID + ", " + relTimestamp + "." + DatabaseConstants.RelTimestampColStart);
+					relData + "." + DatabaseConstants.RelDataColTimesequence + " = " + relTimestamp + "." + DatabaseConstants.RelTimesequenceColID + " " +
+					"ORDER BY " +relData + "." + DatabaseConstants.RelDataColID + ", " + relTimestamp + "." + DatabaseConstants.RelTimesequenceColStart);
 					
 				PreparedStatement pStmtSelectLabel = con.prepareStatement("SELECT d." +
 						DatabaseConstants.RelDataColEntry + ", d." + DatabaseConstants.RelDataColValue + ", " + 
-						relTimestamp + "." + DatabaseConstants.RelTimestampColStart + ", " + relTimestamp + "." + DatabaseConstants.RelTimestampColEnd + " FROM (" +
+						relTimestamp + "." + DatabaseConstants.RelTimesequenceColStart + ", " + relTimestamp + "." + DatabaseConstants.RelTimesequenceColStop + " FROM (" +
 						"SELECT d1." + DatabaseConstants.RelDataColID + ", d1." + DatabaseConstants.RelDataColEntry + ", d1." + DatabaseConstants.RelDataColValue + ", " +
-						"d1." + DatabaseConstants.RelDataColTimestamp + " " +
+						"d1." + DatabaseConstants.RelDataColTimesequence + " " +
 						"FROM " + relData + " d1, " + relData + " d2 " +
-						"WHERE d1." + DatabaseConstants.RelDataColEntity + " = " + DatabaseConstants.RelDataColEntityValUnknown + " AND " +
+						"WHERE d1." + DatabaseConstants.RelDataColSchema + " = " + DatabaseConstants.RelDataColSchemaValUnknown + " AND " +
 						"d1." + DatabaseConstants.RelDataColParent + " = d2." + DatabaseConstants.RelDataColID + " AND " +
-						"d2." + DatabaseConstants.RelDataColEntity + " = ?) d " +
-						"LEFT OUTER JOIN " + relTimestamp + " ON d." + DatabaseConstants.RelDataColTimestamp + " = " + relTimestamp + "." + DatabaseConstants.RelTimestampColID + " " +
-						"ORDER BY d." + DatabaseConstants.RelDataColEntry + ", d." + DatabaseConstants.RelDataColID + " DESC, " + relTimestamp + "." + DatabaseConstants.RelTimestampColEnd);
+						"d2." + DatabaseConstants.RelDataColSchema + " = ?) d " +
+						"LEFT OUTER JOIN " + relTimestamp + " ON d." + DatabaseConstants.RelDataColTimesequence + " = " + relTimestamp + "." + DatabaseConstants.RelTimesequenceColID + " " +
+						"ORDER BY d." + DatabaseConstants.RelDataColEntry + ", d." + DatabaseConstants.RelDataColID + " DESC, " + relTimestamp + "." + DatabaseConstants.RelTimesequenceColStop);
 					
 				PreparedStatement pStmtSelectLastChange = con.prepareStatement("SELECT " +
 						relData + "." + DatabaseConstants.RelDataColEntry + ", MAX(" + relVersion + "." + DatabaseConstants.RelVersionColNumber + ") " +
@@ -121,7 +121,7 @@ public class RDBMSDatabaseListing implements DatabaseContent {
 					}
 				}
 				rs.close();
-				pStmtSelectLabel.setInt(1, database.getDisplayEntity().id());
+				pStmtSelectLabel.setInt(1, database.getDisplaySchemaNode().id());
 				rs = pStmtSelectLabel.executeQuery();
 				entry = null;
 				int maxTime = Integer.MIN_VALUE;

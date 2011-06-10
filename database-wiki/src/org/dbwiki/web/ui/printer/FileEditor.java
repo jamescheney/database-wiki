@@ -74,7 +74,7 @@ public class FileEditor implements HtmlContentPrinter {
 		printer.paragraph(_title, CSS.CSSHeadline);
 
 		printer.openFORM("frmEditor", "POST", _request.parameters().get(RequestParameter.ParameterResource).value());
-		printer.addHIDDEN(DatabaseWiki.ParameterWikiID, Integer.toString(_request.wiki().id()));
+		printer.addHIDDEN(DatabaseWiki.ParameterDatabaseID, Integer.toString(_request.wiki().id()));
 		printer.addHIDDEN(DatabaseWiki.ParameterFileType, Integer.toString(fileType));
 
 		printer.openTABLE(CSS.CSSFormContainer);

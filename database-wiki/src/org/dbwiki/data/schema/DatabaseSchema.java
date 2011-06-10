@@ -38,16 +38,16 @@ public class DatabaseSchema {
 	 * Private Variables
 	 */
 	
-	private Hashtable<String, Entity> _pathMap;
-	private Hashtable<Integer, Entity> _idMap;
-	private GroupEntity _root;
+	private Hashtable<String, SchemaNode> _pathMap;
+	private Hashtable<Integer, SchemaNode> _idMap;
+	private GroupSchemaNode _root;
 	
 	/*
 	 * Constructors
 	 */
 	public DatabaseSchema() {
-		_pathMap = new Hashtable<String, Entity>();
-		_idMap = new Hashtable<Integer, Entity>();
+		_pathMap = new Hashtable<String, SchemaNode>();
+		_idMap = new Hashtable<Integer, SchemaNode>();
 		_root = null;
 	}
 	
@@ -57,58 +57,58 @@ public class DatabaseSchema {
 	
 	
 	
-	/** Adds an entity.  First entity to be added is expected to be root.
+	/** Adds a schema node.  First schema node to be added is expected to be root.
 	 * 
-	 * @param entity
+	 * @param schema
 	 * @throws org.dbwiki.exception.WikiException
 	 */
-	public void add(Entity entity) throws org.dbwiki.exception.WikiException {
+	public void add(SchemaNode schema) throws org.dbwiki.exception.WikiException {
 // The constraint that consecutive entities must
 // have consecutive ids seems overly restrictive.
 //
 // We now use a hash table for the id map rather than
 // a list, which should give us more flexibility.
 //
-//		if (entity.id() != this.size()) {
-//			throw new WikiFatalException("Entity with invalid id(" + entity.id() + ") added to database schema. Expected id is " + this.size());
+//		if (schema.id() != this.size()) {
+//			throw new WikiFatalException("Schema node with invalid id(" + schema.id() + ") added to database schema. Expected id is " + this.size());
 //		}
 
 		if(_idMap.size() == 0) {
-			_root = (GroupEntity)entity;
+			_root = (GroupSchemaNode)schema;
 		}
 		
 		assert(_idMap.size() > 0);
-		if (!isValidName(entity.label())) {
+		if (!isValidName(schema.label())) {
 			throw new WikiSchemaException(WikiSchemaException.SyntaxError, "Invalid entry name " + _root.label());
 		}
-		String key = entity.path();
+		String key = schema.path();
 		if (_pathMap.containsKey(key)) {
-			throw new WikiFatalException("Entity with duplicate path(" + key + ") added to database schema.");
+			throw new WikiFatalException("Schema node with duplicate path(" + key + ") added to database schema.");
 		}
 		
-		_pathMap.put(key, entity);		
-		_idMap.put(entity.id(), entity);
+		_pathMap.put(key, schema);		
+		_idMap.put(schema.id(), schema);
 	}
 	
 
-	public Entity get(int index) {
+	public SchemaNode get(int index) {
 		return _idMap.get(index);
 	}
 	
-	public Entity get(String path) throws org.dbwiki.exception.WikiException {
+	public SchemaNode get(String path) throws org.dbwiki.exception.WikiException {
 		String key = path;
-		if ((path.length() > 1) && (path.endsWith(Entity.EntityPathSeparator))) {
-			key = key.substring(0, key.length() - Entity.EntityPathSeparator.length());
+		if ((path.length() > 1) && (path.endsWith(SchemaNode.SchemaPathSeparator))) {
+			key = key.substring(0, key.length() - SchemaNode.SchemaPathSeparator.length());
 		}
-		Entity entity = _pathMap.get(key);
-		if (entity == null) {
-			throw new WikiSchemaException(WikiSchemaException.UnknownEntity, path);
+		SchemaNode schema = _pathMap.get(key);
+		if (schema == null) {
+			throw new WikiSchemaException(WikiSchemaException.UnknownSchemaNode, path);
 		} else {
-			return entity;
+			return schema;
 		}
 	}
 	
-	public GroupEntity root() {
+	public GroupSchemaNode root() {
 		return _root;
 	}
 	
@@ -121,7 +121,7 @@ public class DatabaseSchema {
 	 * Static methods for names
 	 * 
 	 */
-	public static String getEntityName(String text) {
+	public static String getSchemaNodeName(String text) {
 		int pos = text.lastIndexOf('/');
 		if (pos == -1) {
 			return text;

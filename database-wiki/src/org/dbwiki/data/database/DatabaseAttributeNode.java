@@ -24,7 +24,7 @@ package org.dbwiki.data.database;
 import org.dbwiki.data.annotation.AnnotationList;
 
 import org.dbwiki.data.resource.ResourceIdentifier;
-import org.dbwiki.data.schema.AttributeEntity;
+import org.dbwiki.data.schema.AttributeSchemaNode;
 
 import org.dbwiki.data.time.TimeSequence;
 
@@ -45,8 +45,8 @@ public abstract class DatabaseAttributeNode extends DatabaseElementNode {
 	 * Constructors
 	 */
 	
-	public DatabaseAttributeNode(AttributeEntity entity, DatabaseGroupNode parent, TimeSequence timestamp, AnnotationList annotation) {
-		super(entity, parent, timestamp, annotation);
+	public DatabaseAttributeNode(AttributeSchemaNode schema, DatabaseGroupNode parent, TimeSequence timestamp, AnnotationList annotation) {
+		super(schema, parent, timestamp, annotation);
 		
 		_value = new DatabaseNodeValue();
 	}

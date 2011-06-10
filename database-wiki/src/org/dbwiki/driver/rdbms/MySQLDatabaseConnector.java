@@ -31,7 +31,7 @@ public class MySQLDatabaseConnector extends DatabaseConnector {
 	 * Private Constants
 	 */
 	
-	private static final String viewEntityIndexBase = "_veindex_base";
+	private static final String viewSchemaIndexBase = "_veindex_base";
 	
 	
 	/*
@@ -51,17 +51,17 @@ public class MySQLDatabaseConnector extends DatabaseConnector {
 		return name + " int NOT NULL AUTO_INCREMENT";
 	}
 	
-	protected void createEntityIndexView(Connection con, String name) throws java.sql.SQLException {
+	protected void createSchemaIndexView(Connection con, String name) throws java.sql.SQLException {
 		Statement stmt = con.createStatement();
 		
-		stmt.execute("CREATE VIEW " + name + viewEntityIndexBase + " AS " +
-				"SELECT " + RelDataColEntry + ", " + RelDataColParent + ", " + RelDataColEntity + ", COUNT(*) cnt " +
+		stmt.execute("CREATE VIEW " + name + viewSchemaIndexBase + " AS " +
+				"SELECT " + RelDataColEntry + ", " + RelDataColParent + ", " + RelDataColSchema + ", COUNT(*) cnt " +
 				"FROM " + name + RelationData + " " +
-				"WHERE " + RelDataColEntity + " >= 0 GROUP BY " + RelDataColEntry + ", " + RelDataColParent + ", " + RelDataColEntity);
-		stmt.execute("CREATE VIEW " + name + ViewEntityIndex + " AS " +
-				"SELECT " + RelDataColEntry + ", " + RelDataColEntity + ", MAX(cnt) " + ViewEntityIndexColMaxCount + " " + 
-				"FROM " + name + viewEntityIndexBase + " " +
-				"GROUP BY " + RelDataColEntry + ", " + RelDataColEntity);
+				"WHERE " + RelDataColSchema + " >= 0 GROUP BY " + RelDataColEntry + ", " + RelDataColParent + ", " + RelDataColSchema);
+		stmt.execute("CREATE VIEW " + name + ViewSchemaIndex + " AS " +
+				"SELECT " + RelDataColEntry + ", " + RelDataColSchema + ", MAX(cnt) " + ViewSchemaIndexColMaxCount + " " + 
+				"FROM " + name + viewSchemaIndexBase + " " +
+				"GROUP BY " + RelDataColEntry + ", " + RelDataColSchema);
 		
 		stmt.close();
 	}

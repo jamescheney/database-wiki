@@ -27,30 +27,30 @@ import org.dbwiki.data.time.TimeSequence;
 import org.dbwiki.exception.data.WikiSchemaException;
 
 
-/** A GroupEntity is a schema type that has a name and a list of 
+/** A SchemaNode is a schema type that has a name and a list of 
  * children forming the content of the group.
  *
  * @author jcheney
  *
  */
-public class GroupEntity extends Entity {
+public class GroupSchemaNode extends SchemaNode {
 	/*
 	 * Private Variables
 	 */
 	
-	private EntityList _children;
+	private SchemaNodeList _children;
 	
 	
 	/*
 	 * Constructors
 	 */
-	public GroupEntity(int id, String label, GroupEntity parent, TimeSequence timestamp)
+	public GroupSchemaNode(int id, String label, GroupSchemaNode parent, TimeSequence timestamp)
 	throws org.dbwiki.exception.WikiException {
 		super(id, label, parent, timestamp);
-		_children = new EntityList();
+		_children = new SchemaNodeList();
 	}
 	
-	public GroupEntity(int id, String label, GroupEntity parent)
+	public GroupSchemaNode(int id, String label, GroupSchemaNode parent)
 	throws org.dbwiki.exception.WikiException {
 		this(id, label, parent, null);
 	}
@@ -60,30 +60,30 @@ public class GroupEntity extends Entity {
 	 * Public Methods
 	 */
 
-	public EntityList children() {
+	public SchemaNodeList children() {
 		return _children;
 	}
 	
-	public Entity find(String path) throws org.dbwiki.exception.WikiException {
+	public SchemaNode find(String path) throws org.dbwiki.exception.WikiException {
 		StringTokenizer tokens = new StringTokenizer(path, "/");
 		
-		EntityList children = this.children();
+		SchemaNodeList children = this.children();
 		while (tokens.hasMoreTokens()) {
-			Entity entity = children.get(tokens.nextToken());
-			if (entity == null) {
-				throw new WikiSchemaException(WikiSchemaException.UnknownEntity, this.path() + "/" + path);
+			SchemaNode schema = children.get(tokens.nextToken());
+			if (schema == null) {
+				throw new WikiSchemaException(WikiSchemaException.UnknownSchemaNode, this.path() + "/" + path);
 			}
 			if (tokens.hasMoreTokens()) {
-				if (entity.isGroup()) {
-					children = ((GroupEntity)entity).children();
+				if (schema.isGroup()) {
+					children = ((GroupSchemaNode)schema).children();
 				} else {
-					throw new WikiSchemaException(WikiSchemaException.UnknownEntity, this.path() + "/" + path);
+					throw new WikiSchemaException(WikiSchemaException.UnknownSchemaNode, this.path() + "/" + path);
 				}
 			} else {
-				return entity;
+				return schema;
 			}
 		}
-		throw new WikiSchemaException(WikiSchemaException.UnknownEntity, this.path() + "/" + path);
+		throw new WikiSchemaException(WikiSchemaException.UnknownSchemaNode, this.path() + "/" + path);
 	}
 	
 	public boolean isAttribute() {
@@ -121,9 +121,9 @@ public class GroupEntity extends Entity {
 			buf.append("$" + label() + " {\n");
 			
 			for (int iChild = 0; iChild < children().size(); iChild++) {
-				Entity node = children().get(iChild);
+				SchemaNode node = children().get(iChild);
 				node.printToBuf(buf,indentation + "\t");
-				if(iChild < children().size()-1 && node instanceof AttributeEntity) {
+				if(iChild < children().size()-1 && node instanceof AttributeSchemaNode) {
 					buf.append(",");
 				
 				}

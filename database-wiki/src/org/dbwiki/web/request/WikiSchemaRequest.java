@@ -22,7 +22,7 @@
 package org.dbwiki.web.request;
 
 import org.dbwiki.data.resource.WRI;
-import org.dbwiki.data.schema.Entity;
+import org.dbwiki.data.schema.SchemaNode;
 import org.dbwiki.data.time.VersionIndex;
 import org.dbwiki.web.server.DatabaseWiki;
 
@@ -37,7 +37,7 @@ public class WikiSchemaRequest extends WikiRequest {
 	private WRI _wri;
 	
 	private boolean _isRootRequest;
-	private Entity _entity;
+	private SchemaNode _schemaNode;
 	private byte _requestType = requestTypeUNKNOWN;
 
 	/**
@@ -47,8 +47,8 @@ public class WikiSchemaRequest extends WikiRequest {
 		super(wiki, url);
 		
 		_isRootRequest = url.isRoot();
-    	_wri = new WRI(wiki.database().identifier(), wiki.database().getEntityIdentifierForURL(url));
-    	_entity = this.wiki().database().getEntity(_wri.resourceIdentifier());
+    	_wri = new WRI(wiki.database().identifier(), wiki.database().getSchemaNodeIdentifierForURL(url));
+    	_schemaNode = this.wiki().database().getSchemaNode(_wri.resourceIdentifier());
     	
 	    if (url.exchange().getRequestMethod().equalsIgnoreCase("GET")) {
 	    	_requestType = requestTypeGET;
@@ -69,8 +69,8 @@ public class WikiSchemaRequest extends WikiRequest {
 		return _isRootRequest;
 	}
 
-	public Entity entity() {
-    	return _entity;
+	public SchemaNode schema() {
+    	return _schemaNode;
 	}
 	
 	@Override

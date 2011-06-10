@@ -30,10 +30,10 @@ public class WikiSchemaException extends WikiException {
 	
 	public static final long serialVersionUID = 8816L;
 
-	public static final int DuplicateEntity   = 1000;
-	public static final int InvalidEntityType = 2000;
+	public static final int DuplicateSchemaNode   = 1000;
+	public static final int InvalidSchemaType = 2000;
 	public static final int SyntaxError       = 3000;
-	public static final int UnknownEntity     = 4000;
+	public static final int UnknownSchemaNode     = 4000;
 	
 	
 	/*
@@ -66,14 +66,14 @@ public class WikiSchemaException extends WikiException {
 	
 	public String errorCodeMessage() {
 		switch(_errorCode) {
-		case DuplicateEntity:
-			return "[Duplicate entity in list]";
-		case InvalidEntityType:
-			return "[Invalid entity type]";
+		case DuplicateSchemaNode:
+			return "[Duplicate schema node in list]";
+		case InvalidSchemaType:
+			return "[Invalid schema node type]";
 		case SyntaxError:
 			return "[Syntax error]";
-		case UnknownEntity:
-			return "[Unknown entity]";
+		case UnknownSchemaNode:
+			return "[Unknown schema node]";
 		default:
 			return "";
 		}

@@ -22,7 +22,7 @@
 package org.dbwiki.web.request.parameter;
 
 import org.dbwiki.data.database.DatabaseNode;
-import org.dbwiki.data.schema.Entity;
+import org.dbwiki.data.schema.SchemaNode;
 
 public abstract class RequestParameterVersion {
 	/*
@@ -43,10 +43,10 @@ public abstract class RequestParameterVersion {
 	public abstract boolean matches(DatabaseNode node) throws org.dbwiki.exception.WikiException;
 	
 	/**
-	 * Returns true if the entity matches the filter associated with this
+	 * Returns true if the schema node matches the filter associated with this
 	 * 'RequestParameterVersion'.
 	 */
-	public abstract boolean matches(Entity entity) throws org.dbwiki.exception.WikiException;
+	public abstract boolean matches(SchemaNode schemaNode) throws org.dbwiki.exception.WikiException;
 	public abstract String value();
 	public abstract boolean versionAll();
 	public abstract boolean versionChangesSince();

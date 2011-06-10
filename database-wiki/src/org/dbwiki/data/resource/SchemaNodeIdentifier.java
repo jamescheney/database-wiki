@@ -25,12 +25,12 @@ import org.dbwiki.exception.web.WikiRequestException;
 import org.dbwiki.web.request.RequestURL;
 import org.dbwiki.web.server.DatabaseWiki;
 
-/** An EntityIdentifier - id of a schema type / entity
+/** An SchemaNodeIdentifier - id of a schema node
  * 
  * @author jcheney
  *
  */
-public class EntityIdentifier implements ResourceIdentifier {
+public class SchemaNodeIdentifier implements ResourceIdentifier {
 	/*
 	 * Private Variables
 	 */
@@ -42,15 +42,15 @@ public class EntityIdentifier implements ResourceIdentifier {
 	 * Constructors
 	 */
 	
-	public EntityIdentifier() {
+	public SchemaNodeIdentifier() {
 		_nodeID = -1;
 	}
 	
-	public EntityIdentifier(int nodeID) {
+	public SchemaNodeIdentifier(int nodeID) {
 		_nodeID = nodeID;
 	}
 	
-	public EntityIdentifier(RequestURL url) throws org.dbwiki.exception.WikiException {
+	public SchemaNodeIdentifier(RequestURL url) throws org.dbwiki.exception.WikiException {
 		if (url.size() == 0) {
 			_nodeID = -1;
 		} else if (url.size() == 1) {
@@ -69,7 +69,7 @@ public class EntityIdentifier implements ResourceIdentifier {
 	 */
 	
 	public boolean equals(ResourceIdentifier identifier) {
-		return (nodeID() == ((EntityIdentifier)identifier).nodeID());
+		return (nodeID() == ((SchemaNodeIdentifier)identifier).nodeID());
 	}
 
 	public boolean isRootIdentifier() {

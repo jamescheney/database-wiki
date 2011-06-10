@@ -55,9 +55,9 @@ package org.dbwiki.data.io;
 import java.util.Stack;
 import java.util.Vector;
 
-import org.dbwiki.data.schema.AttributeEntity;
+import org.dbwiki.data.schema.AttributeSchemaNode;
 import org.dbwiki.data.schema.DatabaseSchema;
-import org.dbwiki.data.schema.GroupEntity;
+import org.dbwiki.data.schema.GroupSchemaNode;
 import org.dbwiki.exception.WikiException;
 
 /** An XML parser that scans the document and generates a schema
@@ -205,7 +205,7 @@ public class StructureParser implements InputHandler {
 	
 	
 	public DatabaseSchema getDatabaseSchema(String path) throws WikiException {
-		ElementNode node = _root.get( path);
+		ElementNode node = _root.get(path);
 		
 		return buildRoot(node);
 	}
@@ -219,29 +219,29 @@ public class StructureParser implements InputHandler {
 	/*
 	 * Private Methods
 	 */
-	private void buildSchema(DatabaseSchema schema, ElementNode node, GroupEntity parent) throws WikiException {
+	private void buildSchema(DatabaseSchema schema, ElementNode node, GroupSchemaNode parent) throws WikiException {
 		if (node.children().size() > 0) {
-			// has children, so must be an element ('GroupEntity')
-			GroupEntity entity = new GroupEntity(schema.size(), node.label(), parent);
-			schema.add(entity);
+			// has children, so must be an element ('GroupSchemaNode')
+			GroupSchemaNode schemaNode = new GroupSchemaNode(schema.size(), node.label(), parent);
+			schema.add(schemaNode);
 			for (int i = 0; i < node.children().size(); i++) {
-				this.buildSchema(schema, node.children().get(i), entity);
+				this.buildSchema(schema, node.children().get(i), schemaNode);
 			}
 		} else {
 			// if we've seen no element children here, then assume
 			// this is an attribute
-			AttributeEntity entity = new AttributeEntity(schema.size(), node.label(), parent);
-			schema.add(entity);
+			AttributeSchemaNode schemaNode = new AttributeSchemaNode(schema.size(), node.label(), parent);
+			schema.add(schemaNode);
 		}
 	}
 	
 	private DatabaseSchema buildRoot(ElementNode node) throws WikiException {
 		DatabaseSchema schema = new DatabaseSchema();
-		GroupEntity rootEntity = new GroupEntity(schema.size(), node.label(), null);
-		schema.add(rootEntity);
+		GroupSchemaNode rootSchemaNode = new GroupSchemaNode(schema.size(), node.label(), null);
+		schema.add(rootSchemaNode);
 		
 		for (int i = 0; i < node.children().size(); i++) {
-			buildSchema(schema, node.children().get(i), rootEntity);
+			buildSchema(schema, node.children().get(i), rootSchemaNode);
 		}
 		
 		return schema;

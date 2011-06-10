@@ -28,7 +28,7 @@ import org.dbwiki.data.database.DatabaseGroupNode;
 
 import org.dbwiki.data.resource.NodeIdentifier;
 
-import org.dbwiki.data.schema.AttributeEntity;
+import org.dbwiki.data.schema.AttributeSchemaNode;
 
 import org.dbwiki.data.time.TimeSequence;
 
@@ -50,24 +50,24 @@ public class RDBMSDatabaseAttributeNode extends DatabaseAttributeNode {
 	 * Constructors
 	 */
 	
-	public RDBMSDatabaseAttributeNode(int id, AttributeEntity entity, DatabaseGroupNode parent, TimeSequence timestamp, AnnotationList annotation) {
-		super(entity, parent, timestamp, annotation);
+	public RDBMSDatabaseAttributeNode(int id, AttributeSchemaNode schema, DatabaseGroupNode parent, TimeSequence timestamp, AnnotationList annotation) {
+		super(schema, parent, timestamp, annotation);
 		
 		_identifier = new NodeIdentifier(id);
 	}
 
-	public RDBMSDatabaseAttributeNode(int id, AttributeEntity entity, DatabaseGroupNode parent, TimeSequence timestamp) {
-		this(id, entity, parent, timestamp, new AnnotationList());
+	public RDBMSDatabaseAttributeNode(int id, AttributeSchemaNode schema, DatabaseGroupNode parent, TimeSequence timestamp) {
+		this(id, schema, parent, timestamp, new AnnotationList());
 	}
 	
-	public RDBMSDatabaseAttributeNode(int id, AttributeEntity entity, DatabaseGroupNode parent, TimeSequence timestamp, String value, AnnotationList annotation) {
-		this(id, entity, parent, timestamp, annotation);
+	public RDBMSDatabaseAttributeNode(int id, AttributeSchemaNode schema, DatabaseGroupNode parent, TimeSequence timestamp, String value, AnnotationList annotation) {
+		this(id, schema, parent, timestamp, annotation);
 		
 		this.value().add(new RDBMSDatabaseTextNode(DatabaseConstants.RelDataColIDValUnknown, this, null, value));
 	}
 
-	public RDBMSDatabaseAttributeNode(int id, AttributeEntity entity, DatabaseGroupNode parent) {
-		this(id, entity, parent, null, new AnnotationList());
+	public RDBMSDatabaseAttributeNode(int id, AttributeSchemaNode schema, DatabaseGroupNode parent) {
+		this(id, schema, parent, null, new AnnotationList());
 	}
 	
 		

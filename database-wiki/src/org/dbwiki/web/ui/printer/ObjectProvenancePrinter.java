@@ -123,7 +123,7 @@ public class ObjectProvenancePrinter implements HtmlContentPrinter {
 					while (!node.identifier().equals(_request.node().identifier())) {
 						if (node.isElement()) {
 							DatabaseElementNode element = (DatabaseElementNode)node;
-							String elementName = _layouter.get(element.entity()).getShortLabel(element, versionParameter);
+							String elementName = _layouter.get(element.schema()).getShortLabel(element, versionParameter);
 							if (targetName != null) {
 								targetName = elementName + "/" + targetName;
 							} else {

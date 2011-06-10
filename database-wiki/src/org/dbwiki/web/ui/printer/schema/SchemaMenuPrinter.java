@@ -74,7 +74,7 @@ public class SchemaMenuPrinter extends MenuPrinter {
 //		}
 		
 		printer.add("\t\t\t\t\t<li><a href=\"" + _request.wri().getURL() + "?" +
-					RequestParameter.ParameterCreateEntity + "\" class=\"" +
+					RequestParameter.ParameterCreateSchemaNode + "\" class=\"" +
 						CSS.CSSMenuSubSub + "\">" + menuLabelNew + "</a></li>");
 		printer.add("\t\t\t\t\t<li><a href=\"#\" onclick=\"loadPopup();return false\">" + menuLabelDelete + "</a></li>");
 

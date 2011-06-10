@@ -37,14 +37,14 @@ import org.dbwiki.data.document.DocumentAttributeNode;
 import org.dbwiki.data.document.DocumentGroupNode;
 import org.dbwiki.data.document.DocumentNode;
 
-import org.dbwiki.data.resource.EntityIdentifier;
+import org.dbwiki.data.resource.SchemaNodeIdentifier;
 import org.dbwiki.data.resource.NodeIdentifier;
 import org.dbwiki.data.resource.ResourceIdentifier;
 
 
-import org.dbwiki.data.schema.AttributeEntity;
-import org.dbwiki.data.schema.Entity;
-import org.dbwiki.data.schema.GroupEntity;
+import org.dbwiki.data.schema.AttributeSchemaNode;
+import org.dbwiki.data.schema.SchemaNode;
+import org.dbwiki.data.schema.GroupSchemaNode;
 
 import org.dbwiki.data.time.TimeInterval;
 import org.dbwiki.data.time.TimeSequence;
@@ -104,13 +104,13 @@ public class DatabaseWriter implements DatabaseConstants {
 		}
 	}
 
-	/** Via query, insert a new entity with a given version.
+	/** Via query, insert a new schema node with a given version.
 	 * 
-	 * @param entity
+	 * @param schemaNode
 	 * @param version
 	 * @throws org.dbwiki.exception.WikiException
 	 */
-	public void insertEntity(Entity entity, Version version) throws org.dbwiki.exception.WikiException {
+	public void insertSchemaNode(SchemaNode schemaNode, Version version) throws org.dbwiki.exception.WikiException {
 		User user = version.provenance().user();
 		TimeSequence timestamp = new TimeSequence(version);
 		try {
@@ -122,15 +122,15 @@ public class DatabaseWriter implements DatabaseConstants {
 					RelSchemaColParent + ", " +
 					RelSchemaColUser + ")" +
 					" VALUES(?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
-			insert.setInt(1, entity.id());
-			if (entity.isAttribute()) {
+			insert.setInt(1, schemaNode.id());
+			if (schemaNode.isAttribute()) {
 				insert.setInt(2, RelSchemaColTypeValAttribute);
 			} else {
 				insert.setInt(2, RelSchemaColTypeValGroup);
 			}
-			insert.setString(3, entity.label());
-			if (entity.parent() != null) {
-				insert.setInt(4, entity.parent().id());
+			insert.setString(3, schemaNode.label());
+			if (schemaNode.parent() != null) {
+				insert.setInt(4, schemaNode.parent().id());
 			} else {
 				insert.setInt(4, RelSchemaColParentValUnknown);
 			}
@@ -189,8 +189,8 @@ public class DatabaseWriter implements DatabaseConstants {
 				if (identifier instanceof NodeIdentifier)
 					recordNewNodeTimestamp(((NodeIdentifier)identifier).nodeID(),
 															getGeneratedKey(insert));
-				else if (identifier instanceof EntityIdentifier)
-					recordNewSchemaTimestamp(((EntityIdentifier)identifier).nodeID(),
+				else if (identifier instanceof SchemaNodeIdentifier)
+					recordNewSchemaTimestamp(((SchemaNodeIdentifier)identifier).nodeID(),
 															getGeneratedKey(insert));
 			}
 			insert.close();
@@ -246,7 +246,7 @@ public class DatabaseWriter implements DatabaseConstants {
 	 */
 	public ResourceIdentifier insertRootNode(DocumentGroupNode node, Version version) throws org.dbwiki.exception.WikiException {
 		try {
-			RDBMSDatabaseGroupNode root = this.insertGroupNode((GroupEntity)node.entity(), null, -1, new TimeSequence(version.number(), _database.versionIndex()));
+			RDBMSDatabaseGroupNode root = this.insertGroupNode((GroupSchemaNode)node.schema(), null, -1, new TimeSequence(version.number(), _database.versionIndex()));
 			this.insertGroupChildren(node, root, root.identifier().nodeID());
 			PreparedStatement pStmtUpdateNode = _con.prepareStatement(
 				"UPDATE " + _database.name() + RelationData + " " +
@@ -281,9 +281,9 @@ public class DatabaseWriter implements DatabaseConstants {
 		
 		try {
 			if (node.isAttribute()) {
-				nodeIdentifier = insertAttributeNode((AttributeEntity)node.entity(), parent, ((NodeIdentifier)entry.identifier()).nodeID(), new TimeSequence(version), ((DocumentAttributeNode)node).value()).identifier();
+				nodeIdentifier = insertAttributeNode((AttributeSchemaNode)node.schema(), parent, ((NodeIdentifier)entry.identifier()).nodeID(), new TimeSequence(version), ((DocumentAttributeNode)node).value()).identifier();
 			} else {
-				RDBMSDatabaseGroupNode group = insertGroupNode((GroupEntity)node.entity(), parent, ((NodeIdentifier)entry.identifier()).nodeID(), new TimeSequence(version));
+				RDBMSDatabaseGroupNode group = insertGroupNode((GroupSchemaNode)node.schema(), parent, ((NodeIdentifier)entry.identifier()).nodeID(), new TimeSequence(version));
 				insertGroupChildren((DocumentGroupNode)node, group, ((NodeIdentifier)entry.identifier()).nodeID());
 				nodeIdentifier = group.identifier();
 			}
@@ -304,9 +304,9 @@ public class DatabaseWriter implements DatabaseConstants {
 		try {
 			int timestamp = getTimestamp(identifier);
 			PreparedStatement pStmtUpdateTimestamp = _con.prepareStatement(
-				"UPDATE " + _database.name() + RelationTimestamp + " " +
-					"SET " + RelTimestampColEnd + " = ? " +
-					"WHERE " + RelTimestampColID + " = ? AND " + RelTimestampColStart + " = ?");
+				"UPDATE " + _database.name() + RelationTimesequence + " " +
+					"SET " + RelTimesequenceColStop + " = ? " +
+					"WHERE " + RelTimesequenceColID + " = ? AND " + RelTimesequenceColStart + " = ?");
 			pStmtUpdateTimestamp.setInt(1, interval.end());
 			pStmtUpdateTimestamp.setInt(2, timestamp);
 			pStmtUpdateTimestamp.setInt(3, interval.start());
@@ -342,31 +342,10 @@ public class DatabaseWriter implements DatabaseConstants {
 			throw new WikiFatalException(sqlException);
 		}
 	}
-		
-// APPEARS TO BE DEAD CODE
-//	public void updatePage(int id, String content, long timestamp) throws WikiFatalException {
-//		
-//		try {
-//			PreparedStatement pStmtUpdatePage = con.prepareStatement(
-//				"UPDATE " + database.name() + RelationPages + " " +
-//				    "SET " +
-//				    RelPagesColContent + " = ?, " +
-//				    RelPagesColTimestamp + " = ? " +
-//				    "WHERE " + RelPagesColID + " = ?");
-//			pStmtUpdatePage.setString(1, content);
-//			pStmtUpdatePage.setLong(2, timestamp);
-//			pStmtUpdatePage.setInt(3, id);
-//			pStmtUpdatePage.execute();
-//		} catch (java.sql.SQLException sqlException) {
-//			throw new WikiFatalException(sqlException);
-//		}
-//	}
-
 	
 	/*
 	 * Private Methods
 	 */
-	
 	private int getTimestamp(String relation, String idColumn, String timestampColumn, int id) throws SQLException, WikiFatalException {
 		PreparedStatement q = _con.prepareStatement("" +
 				"SELECT " + timestampColumn +
@@ -385,11 +364,11 @@ public class DatabaseWriter implements DatabaseConstants {
 	}
 	
 	private int getSchemaTimestamp(int id) throws SQLException, WikiFatalException {
-		return getTimestamp(RelationSchema, RelSchemaColID, RelSchemaColTimestamp, id);
+		return getTimestamp(RelationSchema, RelSchemaColID, RelSchemaColTimesequence, id);
 	}
 	
 	private int getNodeTimestamp(int id) throws SQLException, WikiFatalException {
-		return getTimestamp(RelationData, RelDataColID, RelDataColTimestamp, id);		
+		return getTimestamp(RelationData, RelDataColID, RelDataColTimesequence, id);		
 	}
 	
 	private int getTimestamp(ResourceIdentifier identifier) throws SQLException, WikiFatalException {
@@ -397,8 +376,8 @@ public class DatabaseWriter implements DatabaseConstants {
 		
 		if (identifier instanceof NodeIdentifier)
 			timestamp = getNodeTimestamp(((NodeIdentifier)identifier).nodeID());
-		else if (identifier instanceof EntityIdentifier)
-			timestamp = getSchemaTimestamp(((EntityIdentifier)identifier).nodeID());
+		else if (identifier instanceof SchemaNodeIdentifier)
+			timestamp = getSchemaTimestamp(((SchemaNodeIdentifier)identifier).nodeID());
 		
 		return timestamp;
 	}
@@ -429,21 +408,21 @@ public class DatabaseWriter implements DatabaseConstants {
 	}
 	
 	private void recordNewSchemaTimestamp(int id, int timestamp) throws SQLException {
-		recordNewTimestamp(RelationSchema, RelSchemaColID, RelSchemaColTimestamp, id, timestamp);
+		recordNewTimestamp(RelationSchema, RelSchemaColID, RelSchemaColTimesequence, id, timestamp);
 	}
 	
 	private void recordNewNodeTimestamp(int id, int timestamp) throws SQLException {
-		recordNewTimestamp(RelationData, RelDataColID, RelDataColTimestamp, id, timestamp);
+		recordNewTimestamp(RelationData, RelDataColID, RelDataColTimesequence, id, timestamp);
 	}
 		
 	private RDBMSDatabaseAttributeNode 
 			insertAttributeNode(
-				AttributeEntity entity, 
+				AttributeSchemaNode schema, 
 				RDBMSDatabaseGroupNode parent, 
 				int entry, TimeSequence timestamp, 
 				String value)
 			throws java.sql.SQLException, org.dbwiki.exception.WikiException {
-		RDBMSDatabaseAttributeNode attribute = new RDBMSDatabaseAttributeNode(this.insertNode(entity, parent, entry, timestamp, null), entity, parent, timestamp);
+		RDBMSDatabaseAttributeNode attribute = new RDBMSDatabaseAttributeNode(this.insertNode(schema, parent, entry, timestamp, null), schema, parent, timestamp);
 		this.insertNode(null, attribute, entry, null, value);
 		return attribute;
 	}
@@ -458,10 +437,10 @@ public class DatabaseWriter implements DatabaseConstants {
 			DocumentNode element = group.children().get(iChild);
 			if (element.isAttribute()) {
 				DocumentAttributeNode attributeChild = (DocumentAttributeNode)element;
-				insertAttributeNode((AttributeEntity)attributeChild.entity(), parent, entry, null, attributeChild.value());
+				insertAttributeNode((AttributeSchemaNode)attributeChild.schema(), parent, entry, null, attributeChild.value());
 			} else {
 				DocumentGroupNode groupChild = (DocumentGroupNode)element;
-				RDBMSDatabaseGroupNode node = insertGroupNode((GroupEntity)groupChild.entity(), parent, entry, null);
+				RDBMSDatabaseGroupNode node = insertGroupNode((GroupSchemaNode)groupChild.schema(), parent, entry, null);
 				insertGroupChildren(groupChild, node, entry);
 			}
 		}
@@ -469,20 +448,20 @@ public class DatabaseWriter implements DatabaseConstants {
 
 	private RDBMSDatabaseGroupNode 
 			insertGroupNode(
-				GroupEntity entity, 
+				GroupSchemaNode schema, 
 				RDBMSDatabaseGroupNode parent, 
 				int entry, 
 				TimeSequence timestamp)
 	 		throws java.sql.SQLException, org.dbwiki.exception.WikiException {
-		return new RDBMSDatabaseGroupNode(insertNode(entity, parent, entry, timestamp, null), entity, parent, timestamp);
+		return new RDBMSDatabaseGroupNode(insertNode(schema, parent, entry, timestamp, null), schema, parent, timestamp);
 	}
 	
-	private int insertNode(Entity entity, DatabaseNode parent, int entry, TimeSequence timestamp, String value) throws java.sql.SQLException, org.dbwiki.exception.WikiException {
+	private int insertNode(SchemaNode schema, DatabaseNode parent, int entry, TimeSequence timestamp, String value) throws java.sql.SQLException, org.dbwiki.exception.WikiException {
 		PreparedStatement insert = prepareInsertNode();
-		if (entity != null) {
-			insert.setInt(1, entity.id());
+		if (schema != null) {
+			insert.setInt(1, schema.id());
 		} else {
-			insert.setInt(1, RelDataColEntityValUnknown);
+			insert.setInt(1, RelDataColSchemaValUnknown);
 		}
 		if (parent != null) {
 			insert.setInt(2, ((NodeIdentifier)parent.identifier()).nodeID());
@@ -519,7 +498,7 @@ public class DatabaseWriter implements DatabaseConstants {
 	private PreparedStatement prepareInsertNode() throws java.sql.SQLException {		
 		return _con.prepareStatement(
 			"INSERT INTO " + _database.name() + RelationData + "(" +
-				RelDataColEntity + ", " +
+				RelDataColSchema + ", " +
 				RelDataColParent + ", " +
 				RelDataColEntry + ", " +
 				RelDataColValue + ") VALUES(? ,? , ?, ?)", Statement.RETURN_GENERATED_KEYS);
@@ -528,15 +507,15 @@ public class DatabaseWriter implements DatabaseConstants {
 	private PreparedStatement prepareInsertTimestamp(boolean fresh) throws java.sql.SQLException {		
 		if(fresh) {
 			return _con.prepareStatement(
-			"INSERT INTO " + _database.name() + RelationTimestamp + "(" +
-			RelTimestampColStart + ", " +
-			RelTimestampColEnd + ") VALUES(?, ?)", Statement.RETURN_GENERATED_KEYS);
+			"INSERT INTO " + _database.name() + RelationTimesequence + "(" +
+			RelTimesequenceColStart + ", " +
+			RelTimesequenceColStop + ") VALUES(?, ?)", Statement.RETURN_GENERATED_KEYS);
 		} else {
 			return _con.prepareStatement(
-					"INSERT INTO " + _database.name() + RelationTimestamp + "(" +
-					RelTimestampColID + ", " +
-					RelTimestampColStart + ", " +
-					RelTimestampColEnd + ") VALUES(?, ?, ?)");
+					"INSERT INTO " + _database.name() + RelationTimesequence + "(" +
+					RelTimesequenceColID + ", " +
+					RelTimesequenceColStart + ", " +
+					RelTimesequenceColStop + ") VALUES(?, ?, ?)");
 		}
 	}
 

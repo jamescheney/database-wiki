@@ -21,7 +21,7 @@
 */
 package org.dbwiki.web.request.parameter;
 
-public class RequestParameterActionEntity extends RequestParameterAction {
+public class RequestParameterActionSchemaNode extends RequestParameterAction {
 	/*
 	 * Public Methods
 	 */
@@ -34,7 +34,7 @@ public class RequestParameterActionEntity extends RequestParameterAction {
 		return false;
 	}
 	
-	public boolean actionEntity() {
+	public boolean actionSchemaNode() {
 		return true;
 	}
 	
@@ -47,6 +47,6 @@ public class RequestParameterActionEntity extends RequestParameterAction {
 	}
 
 	public String toURLString() {
-		return RequestParameter.ParameterAction + "=" + RequestParameterAction.ActionEntity;
+		return RequestParameter.ParameterAction + "=" + RequestParameterAction.ActionSchemaNode;
 	}
 }

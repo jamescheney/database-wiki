@@ -26,19 +26,19 @@ import java.util.Vector;
 
 import org.dbwiki.exception.data.WikiSchemaException;
 
-/** A list of entities, with a map from entity names to their values.
- * Used in GroupEntity for children.
+/** A list of entities, with a map from schema node names to their values.
+ * Used in GroupSchemaNode for children.
  * @author jcheney
  *
  */
 
-public class EntityList {
+public class SchemaNodeList {
 	/*
 	 * Private Variables
 	 */
 	
-	private Vector<Entity> _entityList;
-	private Hashtable<String, Entity> _entityIndex;
+	private Vector<SchemaNode> _schemaNodeList;
+	private Hashtable<String, SchemaNode> _schemaNodeIndex;
 	private boolean _hasAttributes;
 	private boolean _hasElements;
 	
@@ -47,9 +47,9 @@ public class EntityList {
 	 * Constructors
 	 */
 	
-	public EntityList() {
-		_entityList = new Vector<Entity>();
-		_entityIndex = new Hashtable<String, Entity>();
+	public SchemaNodeList() {
+		_schemaNodeList = new Vector<SchemaNode>();
+		_schemaNodeIndex = new Hashtable<String, SchemaNode>();
 		_hasAttributes = false;
 		_hasElements = false;
 	}
@@ -59,28 +59,28 @@ public class EntityList {
 	 * Public Methods
 	 */
 	
-	public void add(Entity entity) throws org.dbwiki.exception.WikiException {
-		String key = entity.label();
-		if (!_entityIndex.containsKey(key)) {
-			_entityList.add(entity);
-			_entityIndex.put(key, entity);
-			if (entity.isAttribute()) {
+	public void add(SchemaNode schema) throws org.dbwiki.exception.WikiException {
+		String key = schema.label();
+		if (!_schemaNodeIndex.containsKey(key)) {
+			_schemaNodeList.add(schema);
+			_schemaNodeIndex.put(key, schema);
+			if (schema.isAttribute()) {
 				_hasAttributes = true;
 			} else {
 				_hasElements = true;
 			}
 		} else {
-			throw new WikiSchemaException(WikiSchemaException.DuplicateEntity, key);
+			throw new WikiSchemaException(WikiSchemaException.DuplicateSchemaNode, key);
 		}
 	}
 	
-	public Entity get(int index) {
-		return _entityList.get(index);
+	public SchemaNode get(int index) {
+		return _schemaNodeList.get(index);
 	}
 	
-	public Entity get(String name) {
-		if (_entityIndex.containsKey(name)) {
-			return _entityIndex.get(name);
+	public SchemaNode get(String name) {
+		if (_schemaNodeIndex.containsKey(name)) {
+			return _schemaNodeIndex.get(name);
 		} else {
 			return null;
 		}
@@ -95,6 +95,6 @@ public class EntityList {
 	}
 	
 	public int size() {
-		return _entityList.size();
+		return _schemaNodeList.size();
 	}
 }

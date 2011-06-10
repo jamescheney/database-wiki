@@ -179,7 +179,7 @@ public class WikiAuthenticator extends Authenticator {
 					return true;
 				} else if (parameters.hasParameter(RequestParameter.ParameterCreate)) {
 					return true;
-				} else if (parameters.hasParameter(RequestParameter.ParameterCreateEntity)) {
+				} else if (parameters.hasParameter(RequestParameter.ParameterCreateSchemaNode)) {
 					return true;
 				} else if (parameters.hasParameter(RequestParameter.ParameterDelete)) {
 					return true;

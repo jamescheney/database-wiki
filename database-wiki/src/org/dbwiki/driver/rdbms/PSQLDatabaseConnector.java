@@ -45,15 +45,15 @@ public class PSQLDatabaseConnector extends DatabaseConnector {
 		return name + " SERIAL";
 	}
 
-	protected void createEntityIndexView(Connection con, String name) throws java.sql.SQLException {
+	protected void createSchemaIndexView(Connection con, String name) throws java.sql.SQLException {
 		Statement stmt = con.createStatement();
 		
-		stmt.execute("CREATE VIEW " + name + ViewEntityIndex + " AS " +
-				"SELECT " + RelDataColEntry + ", " + RelDataColEntity + ", MAX(cnt) " + ViewEntityIndexColMaxCount + " " + 
-				"FROM (SELECT " + RelDataColEntry + ", " + RelDataColParent + ", " + RelDataColEntity + ", COUNT(*) cnt " +
+		stmt.execute("CREATE VIEW " + name + ViewSchemaIndex + " AS " +
+				"SELECT " + RelDataColEntry + ", " + RelDataColSchema + ", MAX(cnt) " + ViewSchemaIndexColMaxCount + " " + 
+				"FROM (SELECT " + RelDataColEntry + ", " + RelDataColParent + ", " + RelDataColSchema + ", COUNT(*) cnt " +
 				"FROM " + name + RelationData + " " +
-				"WHERE " + RelDataColEntity + " >= 0 GROUP BY " + RelDataColEntry + ", " + RelDataColParent + ", " + RelDataColEntity + ") q " +
-				"GROUP BY " + RelDataColEntry + ", " + RelDataColEntity);
+				"WHERE " + RelDataColSchema + " >= 0 GROUP BY " + RelDataColEntry + ", " + RelDataColParent + ", " + RelDataColSchema + ") q " +
+				"GROUP BY " + RelDataColEntry + ", " + RelDataColSchema);
 		
 		stmt.close();
 	}

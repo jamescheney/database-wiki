@@ -21,7 +21,7 @@
 */
 package org.dbwiki.data.document;
 
-import org.dbwiki.data.schema.AttributeEntity;
+import org.dbwiki.data.schema.AttributeSchemaNode;
 
 public class DocumentAttributeNode extends DocumentNode {
 	/*
@@ -35,14 +35,14 @@ public class DocumentAttributeNode extends DocumentNode {
 	 * Constructors
 	 */
 	
-	public DocumentAttributeNode(AttributeEntity entity, String value) {
-		super(entity);
+	public DocumentAttributeNode(AttributeSchemaNode schema, String value) {
+		super(schema);
 		
 		_value = value;
 	}
 
-	public DocumentAttributeNode(AttributeEntity entity) {
-		this(entity, null);
+	public DocumentAttributeNode(AttributeSchemaNode schema) {
+		this(schema, null);
 		
 		_value = null;
 	}

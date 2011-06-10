@@ -30,8 +30,8 @@ import org.dbwiki.data.database.DatabaseTextNode;
 
 import org.dbwiki.data.resource.DatabaseIdentifier;
 
-import org.dbwiki.data.schema.Entity;
-import org.dbwiki.data.schema.GroupEntity;
+import org.dbwiki.data.schema.SchemaNode;
+import org.dbwiki.data.schema.GroupSchemaNode;
 
 import org.dbwiki.web.html.HtmlLinePrinter;
 import org.dbwiki.web.html.HtmlPage;
@@ -43,10 +43,10 @@ import org.dbwiki.web.request.parameter.RequestParameterVersion;
 import org.dbwiki.web.ui.CSS;
 
 import org.dbwiki.web.ui.layout.DatabaseLayouter;
-import org.dbwiki.web.ui.layout.EntityLayout;
+import org.dbwiki.web.ui.layout.SchemaLayout;
 
-import org.dbwiki.web.ui.printer.EntityNodeList;
-import org.dbwiki.web.ui.printer.EntityNodeListIndex;
+import org.dbwiki.web.ui.printer.SchemaNodeList;
+import org.dbwiki.web.ui.printer.SchemaNodeListIndex;
 import org.dbwiki.web.ui.printer.HtmlContentPrinter;
 
 /** Abstract class to print data nodes using layout
@@ -108,14 +108,14 @@ public class DataNodePrinter implements HtmlContentPrinter {
 	/** Generates HTML lines corresponding to the nodes in list.
 	 * versionParameter says which version(s) to use.
 	 */
-	public HtmlPage getLinesForNodeList(EntityNodeList list, RequestParameterVersion versionParameter) throws org.dbwiki.exception.WikiException {
+	public HtmlPage getLinesForNodeList(SchemaNodeList list, RequestParameterVersion versionParameter) throws org.dbwiki.exception.WikiException {
 		HtmlLinePrinter content = new HtmlLinePrinter();
 		boolean hasContent = false;
 		
-		EntityLayout layout = _layouter.get(list.entity());
+		SchemaLayout layout = _layouter.get(list.schema());
 
 		// Dispatching based on layout style for this node's type
-		if ((layout.getDisplayStyle().isGroupStyle()) || ((layout.getDisplayStyle().isTableStyle()) && (list.entity().isAttribute()))) {
+		if ((layout.getDisplayStyle().isGroupStyle()) || ((layout.getDisplayStyle().isTableStyle()) && (list.schema().isAttribute()))) {
 			hasContent = printNodesInGroupStyle(list, versionParameter, layout, content);
 		} else if (layout.getDisplayStyle().isListStyle()) {
 			hasContent = printNodesInListStyle(list, versionParameter, layout, content);
@@ -131,7 +131,7 @@ public class DataNodePrinter implements HtmlContentPrinter {
 	}
 
 	public void printAttributeNode(DatabaseAttributeNode node, RequestParameterVersion versionParameter, HtmlLinePrinter body) throws org.dbwiki.exception.WikiException {
-		EntityLayout layout = _layouter.get(node.entity());
+		SchemaLayout layout = _layouter.get(node.schema());
 		
 		boolean active = node.getTimestamp().isCurrent();
 
@@ -167,13 +167,13 @@ public class DataNodePrinter implements HtmlContentPrinter {
 	}
 
 	public void printGroupNode(DatabaseGroupNode node, RequestParameterVersion versionParameter, HtmlLinePrinter body) throws org.dbwiki.exception.WikiException {
-		EntityLayout layout = _layouter.get(node.entity());
+		SchemaLayout layout = _layouter.get(node.schema());
 		
 		body.openTABLE(layout.getCSS(CSS.CSSObjectFrame));
-		EntityNodeListIndex children = new EntityNodeListIndex(node, _layouter);
-		for (int iEntity = 0; iEntity < children.size(); iEntity++) {
+		SchemaNodeListIndex children = new SchemaNodeListIndex(node, _layouter);
+		for (int i = 0; i < children.size(); i++) {
 			// filtering of versions handled in getLinesForNodeList
-			HtmlPage lines = getLinesForNodeList(children.get(iEntity), versionParameter);
+			HtmlPage lines = getLinesForNodeList(children.get(i), versionParameter);
 			if (lines.size() > 0) {
 				body.openTR();
 				body.openTD(layout.getCSS(CSS.CSSObjectListing));
@@ -187,7 +187,7 @@ public class DataNodePrinter implements HtmlContentPrinter {
 	}
 
 	public void printTextNode(DatabaseTextNode node, HtmlLinePrinter body) {
-		EntityLayout layout = _layouter.get(node.parent().entity());
+		SchemaLayout layout = _layouter.get(node.parent().schema());
 		
 		boolean active = node.getTimestamp().isCurrent();
 		if (active) {
@@ -226,7 +226,7 @@ public class DataNodePrinter implements HtmlContentPrinter {
 		return target;
 	}
 	
-	private boolean printAttributeValue(DatabaseAttributeNode attribute, RequestParameterVersion versionParameter, EntityLayout layout, HtmlLinePrinter content) throws org.dbwiki.exception.WikiException {
+	private boolean printAttributeValue(DatabaseAttributeNode attribute, RequestParameterVersion versionParameter, SchemaLayout layout, HtmlLinePrinter content) throws org.dbwiki.exception.WikiException {
 		int lineCount = 0;
 		for (int iValue = 0; iValue < attribute.value().size(); iValue++) {
 			DatabaseTextNode value = attribute.value().get(iValue);
@@ -249,7 +249,7 @@ public class DataNodePrinter implements HtmlContentPrinter {
 		return (lineCount > 0);
 	}
 
-	private boolean printGroupValue(DatabaseGroupNode group, String linkTarget, RequestParameterVersion versionParameter, EntityLayout layout, HtmlLinePrinter content) throws org.dbwiki.exception.WikiException {
+	private boolean printGroupValue(DatabaseGroupNode group, String linkTarget, RequestParameterVersion versionParameter, SchemaLayout layout, HtmlLinePrinter content) throws org.dbwiki.exception.WikiException {
 		boolean hasContent = false;
 		
 		if (versionParameter.matches(group)) {
@@ -268,9 +268,9 @@ public class DataNodePrinter implements HtmlContentPrinter {
 				content.openTABLE(layout.getCSS(CSS.CSSContentFrame));
 								
 				// Display the children
-				EntityNodeListIndex children = new EntityNodeListIndex(group, _layouter);
-				for (int iEntity = 0; iEntity < children.size(); iEntity++) {
-					HtmlPage lines = getLinesForNodeList(children.get(iEntity), versionParameter);
+				SchemaNodeListIndex children = new SchemaNodeListIndex(group, _layouter);
+				for (int i = 0; i < children.size(); i++) {
+					HtmlPage lines = getLinesForNodeList(children.get(i), versionParameter);
 					if (lines.size() > 0) {
 						content.openTR();
 						content.openTD(layout.getCSS(CSS.CSSContentListing));
@@ -288,7 +288,7 @@ public class DataNodePrinter implements HtmlContentPrinter {
 		return hasContent;
 	}
 	
-	private boolean printNodesInGroupStyle(EntityNodeList list, RequestParameterVersion versionParameter, EntityLayout layout, HtmlLinePrinter content) throws org.dbwiki.exception.WikiException {
+	private boolean printNodesInGroupStyle(SchemaNodeList list, RequestParameterVersion versionParameter, SchemaLayout layout, HtmlLinePrinter content) throws org.dbwiki.exception.WikiException {
 		boolean hasContent = false;
 		
 		boolean active = list.isActive();
@@ -329,7 +329,7 @@ public class DataNodePrinter implements HtmlContentPrinter {
 			if (versionParameter.matches(element)) {
 				content.openTR();
 				String target = getNodeLink(element, versionParameter);
-				if (list.entity().isAttribute()) {
+				if (list.schema().isAttribute()) {
 					DatabaseAttributeNode attribute = (DatabaseAttributeNode)element;
 					if (attribute.getTimestamp().isCurrent()) {
 						content.openTD(layout.getCSS(CSS.CSSContentValueActive));
@@ -358,7 +358,7 @@ public class DataNodePrinter implements HtmlContentPrinter {
 		return hasContent;
 	}
 	
-	private boolean printNodesInListStyle(EntityNodeList list, RequestParameterVersion versionParameter, EntityLayout layout, HtmlLinePrinter content) throws org.dbwiki.exception.WikiException {
+	private boolean printNodesInListStyle(SchemaNodeList list, RequestParameterVersion versionParameter, SchemaLayout layout, HtmlLinePrinter content) throws org.dbwiki.exception.WikiException {
 		boolean hasContent = false;
 		
 		content.openTABLE(layout.getCSS(CSS.CSSContentFrameListing));
@@ -407,7 +407,7 @@ public class DataNodePrinter implements HtmlContentPrinter {
 				content.openTD(layout.getCSS(CSS.CSSContentValue));
 				content.openTABLE(layout.getCSS(CSS.CSSContentValueListing));
 				content.openTR();
-				if (list.entity().isAttribute()) {
+				if (list.schema().isAttribute()) {
 					DatabaseAttributeNode attribute = (DatabaseAttributeNode)element;
 					if (attribute.getTimestamp().isCurrent()) {
 						content.openTD(layout.getCSS(CSS.CSSContentValueActive));
@@ -438,7 +438,7 @@ public class DataNodePrinter implements HtmlContentPrinter {
 		return hasContent;
 	}
 
-	private boolean printNodesInTableStyle(EntityNodeList list, RequestParameterVersion versionParameter, EntityLayout layout, HtmlLinePrinter content) throws org.dbwiki.exception.WikiException {
+	private boolean printNodesInTableStyle(SchemaNodeList list, RequestParameterVersion versionParameter, SchemaLayout layout, HtmlLinePrinter content) throws org.dbwiki.exception.WikiException {
 		boolean hasContent = false;
 		
 		boolean active = list.isActive();
@@ -472,22 +472,22 @@ public class DataNodePrinter implements HtmlContentPrinter {
 
 		content.openTD(layout.getCSS(CSS.CSSContentValue));
 		
-		GroupEntity entity = (GroupEntity)list.entity();
+		GroupSchemaNode schemaNode = (GroupSchemaNode)list.schema();
 		
 		content.openTABLE(layout.getCSS(CSS.CSSContentTable));
 			
 		content.openTR();
-		for (int iColumn = 0; iColumn < entity.children().size(); iColumn++) {
-			Entity columnEntity = entity.children().get(iColumn);
+		for (int iColumn = 0; iColumn < schemaNode.children().size(); iColumn++) {
+			SchemaNode columnSchemaNode = schemaNode.children().get(iColumn);
 			// only display columns for entities that have not been deleted
-			if (versionParameter.matches(columnEntity)) {
-				EntityLayout entityLayout = _layouter.get(columnEntity);
+			if (versionParameter.matches(columnSchemaNode)) {
+				SchemaLayout schemaLayout = _layouter.get(columnSchemaNode);
 				if (active) {
 					content.openTH(layout.getCSS(CSS.CSSContentCellActive));
 				} else {
 					content.openTH(layout.getCSS(CSS.CSSContentCellInactive));
 				}
-				content.text(entityLayout.getName());
+				content.text(schemaLayout.getName());
 				content.closeTH();
 			}
 		}
@@ -498,8 +498,8 @@ public class DataNodePrinter implements HtmlContentPrinter {
 			// only display nodes that have not been deleted
 			if (versionParameter.matches(groupNode)) {
 				content.openTR();
-				for (int iColumn = 0; iColumn < entity.children().size(); iColumn++) {
-					DatabaseElementList nodes = groupNode.children().get(entity.children().get(iColumn));
+				for (int iColumn = 0; iColumn < schemaNode.children().size(); iColumn++) {
+					DatabaseElementList nodes = groupNode.children().get(schemaNode.children().get(iColumn));
 					if (groupNode.getTimestamp().isCurrent()) {
 						content.openTD(layout.getCSS(CSS.CSSContentCellActive));
 					} else {
@@ -513,7 +513,7 @@ public class DataNodePrinter implements HtmlContentPrinter {
 						if (element.isAttribute()) {
 							printAttributeValue((DatabaseAttributeNode)element, versionParameter, layout, content);
 						} else {
-							String label = _layouter.get(element.entity()).getLabel(element, versionParameter);
+							String label = _layouter.get(element.schema()).getLabel(element, versionParameter);
 							
 							if (element.getTimestamp().isCurrent()) {
 								content.linkWithTitle(target, element.getTimestamp().toPrintString(), label, layout.getCSS(CSS.CSSContentValueActive));

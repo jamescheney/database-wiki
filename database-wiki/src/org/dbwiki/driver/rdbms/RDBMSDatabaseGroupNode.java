@@ -27,7 +27,7 @@ import org.dbwiki.data.database.DatabaseGroupNode;
 
 import org.dbwiki.data.resource.NodeIdentifier;
 
-import org.dbwiki.data.schema.GroupEntity;
+import org.dbwiki.data.schema.GroupSchemaNode;
 
 import org.dbwiki.data.time.TimeSequence;
 
@@ -50,18 +50,18 @@ public class RDBMSDatabaseGroupNode extends DatabaseGroupNode {
 	 * Constructors
 	 */
 	
-	public RDBMSDatabaseGroupNode(int id, GroupEntity entity, DatabaseGroupNode parent, TimeSequence timestamp, AnnotationList annotation) {
-		super(entity, parent, timestamp, annotation);
+	public RDBMSDatabaseGroupNode(int id, GroupSchemaNode schema, DatabaseGroupNode parent, TimeSequence timestamp, AnnotationList annotation) {
+		super(schema, parent, timestamp, annotation);
 		
 		_identifier = new NodeIdentifier(id);
 	}
 
-	public RDBMSDatabaseGroupNode(int id, GroupEntity entity, DatabaseGroupNode parent, TimeSequence timestamp) {
-		this(id, entity, parent, timestamp, new AnnotationList());
+	public RDBMSDatabaseGroupNode(int id, GroupSchemaNode schema, DatabaseGroupNode parent, TimeSequence timestamp) {
+		this(id, schema, parent, timestamp, new AnnotationList());
 	}
 
-	public RDBMSDatabaseGroupNode(int id, GroupEntity entity, DatabaseGroupNode parent) {
-		this(id, entity, parent, null);
+	public RDBMSDatabaseGroupNode(int id, GroupSchemaNode schema, DatabaseGroupNode parent) {
+		this(id, schema, parent, null);
 	}
 	
 	

@@ -37,9 +37,9 @@ public class SubtreeLabelPrinter implements ElementLabelPrinter {
 	 * Private Constants
 	 */
 	
-	private static final String tokenCloseEntityLabel = "]]";
+	private static final String tokenCloseSchemaNodeLabel = "]]";
 	private static final String tokenCloseOptionGroup = "}}";
-	private static final String tokenOpenEntityLabel  = "[[";
+	private static final String tokenOpenSchemaNodeLabel  = "[[";
 	private static final String tokenOpenOptionGroup  = "{{";
 	
 	
@@ -60,7 +60,7 @@ public class SubtreeLabelPrinter implements ElementLabelPrinter {
 	 * Private Classes
 	 */
 	
-	private class EntityLabelElement implements LabelDefinitionElement {
+	private class SchemaLabelElement implements LabelDefinitionElement {
 		/*
 		 * Private Variables
 		 */
@@ -72,7 +72,7 @@ public class SubtreeLabelPrinter implements ElementLabelPrinter {
 		 * Constructors
 		 */
 		
-		public EntityLabelElement(String path) {
+		public SchemaLabelElement(String path) {
 			_path = path;
 		}
 		
@@ -170,9 +170,9 @@ public class SubtreeLabelPrinter implements ElementLabelPrinter {
 		 * Public Constants
 		 */
 		
-		public static final byte TokenTypeCloseEntityLabel = 0;
+		public static final byte TokenTypeCloseSchemaLabel = 0;
 		public static final byte TokenTypeCloseOptionGroup = 1;
-		public static final byte TokenTypeOpenEntityLabel  = 2;
+		public static final byte TokenTypeOpenSchemaLabel  = 2;
 		public static final byte TokenTypeOpenOptionGroup  = 3;
 		public static final byte TokenTypeStringValue      = 4;
 		
@@ -203,16 +203,16 @@ public class SubtreeLabelPrinter implements ElementLabelPrinter {
 		 * Public Methods
 		 */
 		
-		public boolean isCloseEntityLabel() {
-			return (_type == TokenTypeCloseEntityLabel);
+		public boolean isCloseSchemaLabel() {
+			return (_type == TokenTypeCloseSchemaLabel);
 		}
 
 		public boolean isCloseOptionGroup() {
 			return (_type == TokenTypeCloseOptionGroup);
 		}
 
-		public boolean isOpenEntityLabel() {
-			return (_type == TokenTypeOpenEntityLabel);
+		public boolean isOpenSchemaLabel() {
+			return (_type == TokenTypeOpenSchemaLabel);
 		}
 
 		public boolean isOpenOptionGroup() {
@@ -252,17 +252,17 @@ public class SubtreeLabelPrinter implements ElementLabelPrinter {
 		try {
 			Vector<Token> tokens = new Vector<Token>();
 			while (!def.equals("")) {
-				int posCloseEntity = def.indexOf(tokenCloseEntityLabel);
+				int posCloseSchema = def.indexOf(tokenCloseSchemaNodeLabel);
 				int posCloseGroup = def.indexOf(tokenCloseOptionGroup);
-				int posOpenEntity = def.indexOf(tokenOpenEntityLabel);
+				int posOpenSchema = def.indexOf(tokenOpenSchemaNodeLabel);
 				int posOpenGroup = def.indexOf(tokenOpenOptionGroup);
-				switch (this.getMinPositive(posCloseEntity, posCloseGroup, posOpenEntity, posOpenGroup)) {
+				switch (this.getMinPositive(posCloseSchema, posCloseGroup, posOpenSchema, posOpenGroup)) {
 				case 1:
-					if (posCloseEntity > 0) {
-						tokens.add(new Token(Token.TokenTypeStringValue, def.substring(0, posCloseEntity)));
+					if (posCloseSchema > 0) {
+						tokens.add(new Token(Token.TokenTypeStringValue, def.substring(0, posCloseSchema)));
 					}
-					tokens.add(new Token(Token.TokenTypeCloseEntityLabel));
-					def = def.substring(posCloseEntity + tokenCloseEntityLabel.length());
+					tokens.add(new Token(Token.TokenTypeCloseSchemaLabel));
+					def = def.substring(posCloseSchema + tokenCloseSchemaNodeLabel.length());
 					break;
 				case 2:
 					if (posCloseGroup > 0) {
@@ -272,11 +272,11 @@ public class SubtreeLabelPrinter implements ElementLabelPrinter {
 					def = def.substring(posCloseGroup + tokenCloseOptionGroup.length());
 					break;
 				case 3:
-					if (posOpenEntity > 0) {
-						tokens.add(new Token(Token.TokenTypeStringValue, def.substring(0, posOpenEntity)));
+					if (posOpenSchema > 0) {
+						tokens.add(new Token(Token.TokenTypeStringValue, def.substring(0, posOpenSchema)));
 					}
-					tokens.add(new Token(Token.TokenTypeOpenEntityLabel));
-					def = def.substring(posOpenEntity + tokenOpenEntityLabel.length());
+					tokens.add(new Token(Token.TokenTypeOpenSchemaLabel));
+					def = def.substring(posOpenSchema + tokenOpenSchemaNodeLabel.length());
 					break;
 				case 4:
 					if (posOpenGroup > 0) {
@@ -399,9 +399,9 @@ public class SubtreeLabelPrinter implements ElementLabelPrinter {
 		int index = 0;
 		while (index < tokens.size()) {
 			Token token = tokens.get(index);
-			if (token.isOpenEntityLabel()) {
-				if (tokens.get(index + 2).isCloseEntityLabel()) {
-					_elements.add(new EntityLabelElement(tokens.get(index + 1).value()));
+			if (token.isOpenSchemaLabel()) {
+				if (tokens.get(index + 2).isCloseSchemaLabel()) {
+					_elements.add(new SchemaLabelElement(tokens.get(index + 1).value()));
 					index += 3;
 				} else {
 					throw new WikiFatalException("Invalid subtree label definition");

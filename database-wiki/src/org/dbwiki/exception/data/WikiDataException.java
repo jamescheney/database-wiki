@@ -39,7 +39,7 @@ public class WikiDataException extends WikiException {
 	public static final int UnknownDriverName  = 3750;
 	public static final int UnknownNodeID      = 4000;
 	public static final int InvalidPasteTarget = 4500;
-	public static final int UnknownEntity      = 4750;
+	public static final int UnknownSchemaNode      = 4750;
 	public static final int UnknownResource    = 5000;
 
 	
@@ -85,8 +85,8 @@ public class WikiDataException extends WikiException {
 			return "[Unknown driver name]";
 		case UnknownNodeID:
 			return "[Unknown node identifier]";
-		case UnknownEntity:
-			return "[Unknown entity]";
+		case UnknownSchemaNode:
+			return "[Unknown schema node]";
 		case UnknownResource:
 			return "[Unknown resource]";
 		default:

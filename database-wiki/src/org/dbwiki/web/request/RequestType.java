@@ -43,8 +43,8 @@ public class RequestType {
 	private static final byte requestTypeCopyPasteExport = 3;
 	//?new[=...]
 	private static final byte requestTypeCreate = 4;
-	//?new_entity
-	private static final byte requestTypeCreateEntity = 5;
+	//?new_schema_node
+	private static final byte requestTypeCreateSchemaNode = 5;
 	//?delete
 	private static final byte requestTypeDelete = 6;
 	//?edit[=...]
@@ -130,9 +130,9 @@ public class RequestType {
 			} else if (parameters.hasParameter(RequestParameter.ParameterCreate)) {
 				//?new[=...]
 				_type = requestTypeCreate;
-			} else if (parameters.hasParameter(RequestParameter.ParameterCreateEntity)) {
-				//?new_entity
-				_type = requestTypeCreateEntity;
+			} else if (parameters.hasParameter(RequestParameter.ParameterCreateSchemaNode)) {
+				//?new_schema_node
+				_type = requestTypeCreateSchemaNode;
 			} else if (parameters.hasParameter(RequestParameter.ParameterDelete)) {
 				//?delete
 				_type = requestTypeDelete;
@@ -242,8 +242,8 @@ public class RequestType {
 		return (_type == requestTypeCreate);
 	}
 	
-	public boolean isCreateEntity() {
-		return (_type == requestTypeCreateEntity);
+	public boolean isCreateSchemaNode() {
+		return (_type == requestTypeCreateSchemaNode);
 	}
 	
 	public boolean isDelete() {
