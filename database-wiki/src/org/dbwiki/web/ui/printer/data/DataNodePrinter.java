@@ -251,20 +251,17 @@ public class DataNodePrinter implements HtmlContentPrinter {
 
 	private boolean printGroupValue(DatabaseGroupNode group, String linkTarget, RequestParameterVersion versionParameter, SchemaLayout layout, HtmlLinePrinter content) throws org.dbwiki.exception.WikiException {
 		boolean hasContent = false;
-		
 		if (versionParameter.matches(group)) {
 			if (group.getTimestamp().isCurrent()) {
 				content.openTD(layout.getCSS(CSS.CSSContentValueActive));
-				//content.linkWithTitle(linkTarget, group.getTimestamp().toPrintString(), "foo1"+layout.getLabel(group, versionParameter), layout.getCSS(CSS.CSSContentValueActive));
+				//content.linkWithTitle(linkTarget, group.getTimestamp().toPrintString(), layout.getLabel(group, versionParameter), layout.getCSS(CSS.CSSContentValueActive));
 			} else {
 				content.openTD(layout.getCSS(CSS.CSSContentValueInactive));
-				//content.linkWithTitle(linkTarget, group.getTimestamp().toPrintString(), "foo1"+layout.getLabel(group, versionParameter), layout.getCSS(CSS.CSSContentValueInactive));
-			}
-			if (group.hasAnnotation()) {
-				addAnnotationIndicator(content);
+				//content.linkWithTitle(linkTarget, group.getTimestamp().toPrintString(), layout.getLabel(group, versionParameter), layout.getCSS(CSS.CSSContentValueInactive));
 			}
 
 			if (layout.getShowContent() == true) {
+				
 				content.openTABLE(layout.getCSS(CSS.CSSContentFrame));
 								
 				// Display the children
@@ -278,8 +275,18 @@ public class DataNodePrinter implements HtmlContentPrinter {
 						content.closeTD();
 						content.closeTR();
 					}
-				}
+				} 
 				content.closeTABLE();
+			} else {
+				if (group.getTimestamp().isCurrent()) {
+					content.linkWithTitle(linkTarget, group.getTimestamp().toPrintString(), layout.getLabel(group, versionParameter), layout.getCSS(CSS.CSSContentValueActive));
+				} else {
+					content.linkWithTitle(linkTarget, group.getTimestamp().toPrintString(), layout.getLabel(group, versionParameter), layout.getCSS(CSS.CSSContentValueInactive));
+				}
+				if (group.hasAnnotation()) {
+					addAnnotationIndicator(content);
+				}
+			
 			}
 			hasContent = true;
 			content.closeTD();
