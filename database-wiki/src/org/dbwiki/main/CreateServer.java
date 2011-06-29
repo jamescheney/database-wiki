@@ -25,7 +25,7 @@ import java.io.File;
 
 import org.dbwiki.driver.rdbms.DatabaseConnectorFactory;
 
-/** Creates the top-level wiki_server tables.  Needs to be run before starting the wiki.
+/** Creates the top-level tables.  Needs to be run before starting the wiki.
  * 
  * @author jcheney
  *
@@ -48,28 +48,7 @@ public class CreateServer {
 			System.exit(0);
 		}
 		
-		// Creates the following tables in the database that is specified
-		// by the parameters in the config-files:
-		//
-		// The listing of database wikis
-		//
-		// CREATE TABLE wiki_server_database (
-		//   id SERIAL / AUTOINCREMENT,
-		//   name varchar(16) NOT NULL,
-		//   title varchar(80) NOT NULL,
-		//   is_active int NOT NULL
-		// )
-		//
-		//
-		// The listing of users:
-		//
-		// CREATE TABLE wiki_server_user (
-		//   id SERIAL / AUTO INCREMENT,
-		//   login varchar(80) NOT NULL,
-		//   full_name varchar(160) NOT NULL,
-		//   password varchar(80) NOT NULL
-		// )
-		
+		// Creates the following tables: _database, _presentation, _user
 		try {
 			new DatabaseConnectorFactory().getConnector(org.dbwiki.lib.IO.loadProperties(new File(args[0]))).createServer(new File(args[1]));
 		} catch (Exception exception) {
