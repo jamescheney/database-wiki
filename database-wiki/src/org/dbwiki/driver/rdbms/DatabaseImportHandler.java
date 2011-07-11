@@ -82,6 +82,7 @@ public class DatabaseImportHandler implements ImportHandler {
 			} catch (Exception exception) {
 				_con.rollback();
 				success = false;
+				throw new WikiFatalException(exception);
 			}
 			if (success) {
 				_con.commit();
