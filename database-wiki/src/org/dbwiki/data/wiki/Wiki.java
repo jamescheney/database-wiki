@@ -51,6 +51,7 @@ public interface Wiki {
 	public void delete(PageIdentifier identifier) throws org.dbwiki.exception.WikiException;
 	/** 
 	 * Get wiki page associated with a given identifier
+	 * If the identifier is the wiki root, then return null.
 	 * @param identifier
 	 * @return
 	 * @throws org.dbwiki.exception.WikiException

@@ -121,7 +121,7 @@ public class SimpleWiki implements Wiki {
 	}
 
 	/** 
-	 * Get wiki page associated with a given identifier
+	 * Get wiki page associated with a given identifier.  Returns null if request points to root of wiki
 	 * @param identifier
 	 * @return
 	 * @throws org.dbwiki.exception.WikiException
@@ -130,13 +130,11 @@ public class SimpleWiki implements Wiki {
 		DatabaseWikiPage page = null;
 		
 		PageIdentifier p = (PageIdentifier)identifier;
-		
-		// FIXME #wikipages: do something sensible for the case where
-		// identifier represents the root of the wiki pages
-		//
-		// Perhaps we should simply return null if the page
-		// isn't present?
 				
+		if (p.isRootIdentifier()) {
+			return null;
+		}
+		
 		String name = p.toQueryString();
 		long timestamp = p.getTimestamp();
 		

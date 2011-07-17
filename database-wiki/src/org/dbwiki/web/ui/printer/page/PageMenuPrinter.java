@@ -24,6 +24,7 @@ package org.dbwiki.web.ui.printer.page;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
+import org.dbwiki.data.wiki.DatabaseWikiPage;
 import org.dbwiki.exception.WikiException;
 import org.dbwiki.web.html.HtmlLinePrinter;
 
@@ -62,7 +63,11 @@ public class PageMenuPrinter extends MenuPrinter {
 	protected void printViewMenu(HtmlLinePrinter printer) {
 		String name = null;
 		try {
-			name = URLEncoder.encode(_request.page().getName(), "UTF-8");
+			// #wikipages: This throws an exception when we are dealing with the root page request.
+			DatabaseWikiPage page = _request.page();
+			if (page != null) {
+				name = URLEncoder.encode(page.getName(), "UTF-8");
+			}
 		} catch (WikiException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -79,8 +84,10 @@ public class PageMenuPrinter extends MenuPrinter {
 		printer.add("\t\t\t\t\t<li><a href=\"/\">Server Home</a></li>");
 		printer.add("\t\t\t\t\t<li><a href=\"" + _request.wiki().database().identifier().databaseHomepage() + "\">Database</a></li>");
 		printer.add("\t\t\t\t\t<li><a href=\"" + _request.wiki().database().identifier().databaseHomepage() + "/" + DatabaseWiki.WikiPageRequestPrefix + "\">Wiki</a></li>");
-		printer.add("\t\t\t\t\t<li><a href=\"" + _request.wiki().database().identifier().databaseHomepage() + "/" + DatabaseWiki.WikiPageRequestPrefix +
+		if(name != null) { // only add if this is a specific page request
+			printer.add("\t\t\t\t\t<li><a href=\"" + _request.wiki().database().identifier().databaseHomepage() + "/" + DatabaseWiki.WikiPageRequestPrefix +
 										"/" + name + "?history" + "\">History</a></li>");
+		}
 		
 		printer.add("\t\t\t\t</ul>");
 		printer.add("\t\t\t</div>");
