@@ -202,9 +202,9 @@ public class DataNodePrinter implements HtmlContentPrinter {
 			body.openTD(layout.getCSS(CSS.CSSObjectValueInactive));
 		}
 		body.text(node.value());
-	//	if (node.hasAnnotation()) {
-			addAnnotationIndicator(body, node.identifier().toURLString());
-		//}
+		if (node.hasAnnotation()) {
+			addAnnotationIndicator(body);
+		}
 		body.closeTD();
 		body.closeTR();
 		body.closeTABLE();
@@ -241,9 +241,9 @@ public class DataNodePrinter implements HtmlContentPrinter {
 				} else {
 					content.linkWithTitle(target, value.getTimestamp().toPrintString(), value.text(), layout.getCSS(CSS.CSSContentValueInactive));
 				}
-				//if ((attribute.hasAnnotation()) || (value.hasAnnotation())) {
-					addAnnotationIndicator(content, value.identifier().toURLString());
-				//}
+				if ((attribute.hasAnnotation()) || (value.hasAnnotation())) {
+					addAnnotationIndicator(content);
+				}
 			}
 		}
 		return (lineCount > 0);
@@ -283,9 +283,9 @@ public class DataNodePrinter implements HtmlContentPrinter {
 				} else {
 					content.linkWithTitle(linkTarget, group.getTimestamp().toPrintString(), layout.getLabel(group, versionParameter), layout.getCSS(CSS.CSSContentValueInactive));
 				}
-				//if (group.hasAnnotation()) {
-					addAnnotationIndicator(content, group.identifier().toURLString());
-				//}
+				if (group.hasAnnotation()) {
+					addAnnotationIndicator(content);
+				}
 			
 			}
 			hasContent = true;
@@ -392,9 +392,9 @@ public class DataNodePrinter implements HtmlContentPrinter {
 						content.openTD(layout.getCSS(CSS.CSSContentTopLabelInactive));
 						content.link(target, layout.getLabel(element, versionParameter), layout.getCSS(CSS.CSSContentLabelInactive));
 					}
-				//	if (element.hasAnnotation()) {
-						addAnnotationIndicator(content, element.identifier().toURLString());
-					//}
+					if (element.hasAnnotation()) {
+						addAnnotationIndicator(content);
+					}
 					content.closeTD();
 					content.closeTR();
 					content.openTR();
@@ -406,9 +406,9 @@ public class DataNodePrinter implements HtmlContentPrinter {
 						content.openTD(layout.getCSS(CSS.CSSContentLeftLabelInactive));
 						content.link(target, layout.getLabel(element, versionParameter), layout.getCSS(CSS.CSSContentLabelInactive));
 					}
-				//	if (element.hasAnnotation()) {
-						addAnnotationIndicator(content,element.identifier().toURLString());
-				//	}
+					if (element.hasAnnotation()) {
+						addAnnotationIndicator(content);
+					}
 					content.closeTD();
 				}
 				content.openTD(layout.getCSS(CSS.CSSContentValue));
@@ -529,9 +529,9 @@ public class DataNodePrinter implements HtmlContentPrinter {
 							}
 						}
 					}
-				//	if (hasAnnotation) {
-						addAnnotationIndicator(content,groupNode.identifier().toURLString());
-					//}
+					if (hasAnnotation) {
+						addAnnotationIndicator(content);
+					}
 					content.closeTD();
 				}
 				content.closeTR();
@@ -548,13 +548,8 @@ public class DataNodePrinter implements HtmlContentPrinter {
 		return hasContent;
 	}
 	
-	private void addAnnotationIndicator(HtmlLinePrinter content, String iNode) {
-		//content.addIMG("/pictures/annotation.gif");
-		String temp = iNode.substring(1);
-		//content.add("<div id=\"" + temp + "\">");
-		content.add("<div id=\"" + temp + "\">"+"<a class=\"Annotation_class\" href=\"#\" onclick=\"PopupAnnotation(\'"+temp +"\')\"><img border=0 src=\"/pictures/annotation_small.gif\"></a>");
-		//content.add("&nbsp;&nbsp;&nbsp;&nbsp;");
-		content.add("</div>");
+	private void addAnnotationIndicator(HtmlLinePrinter content) {
+		content.addIMG("/pictures/annotation.gif");
 	}
 	
 }
