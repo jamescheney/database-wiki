@@ -57,6 +57,7 @@ public class QueryEvaluator extends DatabaseReader {
 	
 	public static QueryResultSet evaluate(Connection con, RDBMSDatabase database, WikiPathQueryStatement query) throws java.sql.SQLException, org.dbwiki.exception.WikiException {
 		Vector<NodeIdentifier> entries = null;
+
 		if (query.firstElement().hasCondition()) {
 			if (query.firstElement().condition().isIndexCondition()) {
 				entries = new Vector<NodeIdentifier>();
@@ -66,6 +67,7 @@ public class QueryEvaluator extends DatabaseReader {
 				}
 			}
 		}
+
 		if (entries == null) {
 			entries = findEntryCandidates(con, database, query);
 		}
@@ -76,6 +78,7 @@ public class QueryEvaluator extends DatabaseReader {
 			RDBMSDatabaseGroupNode entry = (RDBMSDatabaseGroupNode)get(con, database, entries.get(iEntry));
 			eval(entry, query, 0, rs);
 		}
+		
 		return rs;
 	}
 	
