@@ -19,42 +19,26 @@
     along with Database Wiki.  If not, see <http://www.gnu.org/licenses/>.
     END LICENSE BLOCK
 */
-package org.dbwiki.main;
+package org.dbwiki.data.provenance;
 
-import java.io.File;
 
-import org.dbwiki.driver.rdbms.DatabaseConnectorFactory;
+import org.dbwiki.user.User;
 
-/** Creates the top-level tables.  Needs to be run before starting the wiki.
- * 
- * @author jcheney
- *
- */
-public class CreateServer {
+public class ProvenanceCreate extends Provenance {
 	/*
-	 * Private Constants
+	 * Constructors
 	 */
 	
-	private static final String commandLine = "CreateServer <config-file> <user-listing>";
+	public ProvenanceCreate(User user) {
+		super(ProvenanceTypeCreate, user, null);
+	}
 	
 	
 	/*
 	 * Public Methods
 	 */
-	
-	public static void main(String[] args) {
-		if (args.length != 2) {
-			System.out.println("Usage: " + commandLine);
-			System.exit(0);
-		}
-		
-		// Creates the following tables: _database, _presentation, _user
-		try {
-			new DatabaseConnectorFactory().getConnector(org.dbwiki.lib.IO.loadProperties(new File(args[0]))).createServer(new File(args[1]));
-		} catch (Exception exception) {
-			exception.printStackTrace();
-			System.exit(0);
-		}
-	}
 
+	public String name() {
+		return "CREATE";
+	}
 }

@@ -28,7 +28,6 @@ import org.dbwiki.data.resource.SchemaNodeIdentifier;
 
 import org.dbwiki.data.schema.AttributeSchemaNode;
 import org.dbwiki.data.schema.SchemaNode;
-import org.dbwiki.data.schema.SchemaNodeList;
 import org.dbwiki.data.schema.GroupSchemaNode;
 
 import org.dbwiki.web.html.HtmlLinePrinter;
@@ -78,29 +77,16 @@ public class SchemaNodePrinter implements HtmlContentPrinter {
 	/*
 	 * Public Methods
 	 */
-	public void printGroupSchemaNode(GroupSchemaNode schema, String target, RequestParameterVersion versionParameter, SchemaLayout layout, HtmlLinePrinter body)
-	    throws org.dbwiki.exception.WikiException {
+	
+	public void print(HtmlLinePrinter body) throws org.dbwiki.exception.WikiException {
 		
-		body.openTABLE(layout.getCSS(CSS.CSSObjectFrame));
-		
-		body.openTR();
-		body.openTD(layout.getCSS(CSS.CSSObjectListing));
-		if (schema.getTimestamp().isCurrent()) {
-			body.linkWithTitle(target, schema.getTimestamp().toPrintString(), schema.label(), layout.getCSS(CSS.CSSContentValueActive));
-		} else {
-			body.linkWithTitle(target, schema.getTimestamp().toPrintString(), schema.label(), layout.getCSS(CSS.CSSContentValueInactive));
+		if (_versionParameter.matches(_schemaNode)) {
+			if (_schemaNode.isAttribute()) {
+				printAttributeSchemaNode((AttributeSchemaNode)_schemaNode, _versionParameter, _layouter.get(_schemaNode), body);
+			} else {
+				printGroupSchemaNode((GroupSchemaNode)_schemaNode, _versionParameter, _layouter.get(_schemaNode), body);
+			}
 		}
-		body.closeTD();
-		body.closeTR();
-
-		SchemaNodeList children = schema.children();
-		body.openTR();
-		body.openTD(layout.getCSS(CSS.CSSObjectListing));
-		printEntitiesInGroupStyle(children, target, versionParameter, layout, body);
-		body.closeTD();
-		body.closeTR();
-
-		body.closeTABLE();
 	}
 	
 	/*
@@ -115,75 +101,91 @@ public class SchemaNodePrinter implements HtmlContentPrinter {
 		return target;
 	}
 	
-	private boolean printAttributeSchemaNode(AttributeSchemaNode attribute, String linkTarget, RequestParameterVersion versionParameter,
+	private void printAttributeSchemaNode(AttributeSchemaNode attribute, RequestParameterVersion versionParameter,
 					SchemaLayout layout, HtmlLinePrinter content) throws org.dbwiki.exception.WikiException {
-		int lineCount = 0;
-		String label = attribute.label();
 
-		if (versionParameter.matches(attribute)) {
-			lineCount = 1;
-			String target = linkTarget;
-			//if (target == null)  {
-				target = getSchemaNodeLink(attribute, versionParameter);
-			//}
-			if (attribute.getTimestamp().isCurrent()) {
-				content.linkWithTitle(target, attribute.getTimestamp().toPrintString(), label, layout.getCSS(CSS.CSSContentValueActive));
-			} else {
-				content.linkWithTitle(target, attribute.getTimestamp().toPrintString(), label, layout.getCSS(CSS.CSSContentValueInactive));
-			}
+		boolean active = attribute.getTimestamp().isCurrent();
+
+		if (active) {
+			content.openTABLE(layout.getCSS(CSS.CSSObjectFrameActive));
+		} else {
+			content.openTABLE(layout.getCSS(CSS.CSSObjectFrameInactive));
 		}
+		
+		String target = getSchemaNodeLink(attribute, versionParameter);
 
-		return (lineCount > 0);
-	}
-	
-	private void printEntitiesInGroupStyle(SchemaNodeList list, String linkTarget, RequestParameterVersion versionParameter, SchemaLayout layout, HtmlLinePrinter content)
-		throws org.dbwiki.exception.WikiException {
-			
-		content.openTABLE(layout.getCSS(CSS.CSSContentFrameActive));
-	
 		content.openTR();
-		content.openTD(layout.getCSS(CSS.CSSContentValue));
-		content.openTABLE(layout.getCSS(CSS.CSSContentValueListing));
 		
-		for (int i = 0; i < list.size(); i++) {
-			SchemaNode schema = list.get(i);
-			if (versionParameter.matches(schema)) {
-				content.openTR();
-				String target = linkTarget;
-				target = getSchemaNodeLink(schema, versionParameter);
-				if (schema.isAttribute()) {
-					AttributeSchemaNode attribute = (AttributeSchemaNode)schema;
-					if (attribute.getTimestamp().isCurrent()) {
-						content.openTD(layout.getCSS(CSS.CSSContentValueActive));
-					} else {
-						content.openTD(layout.getCSS(CSS.CSSContentValueInactive));
-					}
-					printAttributeSchemaNode(attribute, target, versionParameter, layout, content);
-
-					content.closeTD();
-				} else {
-					printGroupSchemaNode((GroupSchemaNode)schema, target, versionParameter, layout, content);
-				}
-				content.closeTR();
-			}
+		//if (active) {
+		//	content.openTD(layout.getCSS(CSS.CSSContentLeftLabelActive));
+		//	content.link(target, "ATTRIBUTE", layout.getCSS(CSS.CSSContentLabelActive));
+		//} else {
+		//	content.openTD(layout.getCSS(CSS.CSSContentLeftLabelInactive));
+		//	content.link(target, "ATTRIBUTE", layout.getCSS(CSS.CSSContentLabelInactive));
+		//}
+		//content.closeTD();
+		
+		if (active) {
+			content.openTD(layout.getCSS(CSS.CSSObjectValueActive));
+			content.linkWithTitle(target, attribute.getTimestamp().toPrintString(), attribute.label(), layout.getCSS(CSS.CSSContentValueActive));
+		} else {
+			content.openTD(layout.getCSS(CSS.CSSObjectValueInactive));
+			content.linkWithTitle(target, attribute.getTimestamp().toPrintString(), attribute.label(), layout.getCSS(CSS.CSSContentValueInactive));
 		}
-
-		content.closeTABLE();
+		
 		content.closeTD();
-			
+		
 		content.closeTR();
+		
 		content.closeTABLE();
 	}
 	
-	public void print(HtmlLinePrinter body) throws org.dbwiki.exception.WikiException {
-		String target = getSchemaNodeLink(_schemaNode, _versionParameter);
-		
-		if (_versionParameter.matches(_schemaNode)) {
-			if (_schemaNode.isAttribute()) {
-				printAttributeSchemaNode((AttributeSchemaNode)_schemaNode, target, _versionParameter, _layouter.get(_schemaNode), body);
-			} else {
-				printGroupSchemaNode((GroupSchemaNode)_schemaNode, target, _versionParameter, _layouter.get(_schemaNode), body);
-			}
+	public void printGroupSchemaNode(GroupSchemaNode group, RequestParameterVersion versionParameter, SchemaLayout layout, HtmlLinePrinter content)
+		    throws org.dbwiki.exception.WikiException {
+
+		boolean active = group.getTimestamp().isCurrent();
+
+		if (active) {
+			content.openTABLE(layout.getCSS(CSS.CSSObjectFrameActive));
+		} else {
+			content.openTABLE(layout.getCSS(CSS.CSSObjectFrameInactive));
 		}
-	}
+		
+		String target = getSchemaNodeLink(group, versionParameter);
+
+		content.openTR();
+		
+		if (active) {
+			content.openTD(layout.getCSS(CSS.CSSContentLeftLabelActive));
+			content.link(target, group.label(), layout.getCSS(CSS.CSSContentLabelActive));
+		} else {
+			content.openTD(layout.getCSS(CSS.CSSContentLeftLabelInactive));
+			content.link(target, group.label(), layout.getCSS(CSS.CSSContentLabelInactive));
+		}
+		content.closeTD();
+		
+		content.openTD(layout.getCSS(CSS.CSSObjectValueActive));
+		
+		for (int iChild = 0; iChild < group.children().size(); iChild++) {
+			content.openTABLE(CSS.CSSContentFrameListing);
+			content.openTR();
+			content.openTD(CSS.CSSContentFrameListing);
+			SchemaNode child = group.children().get(iChild);
+			if (child.isAttribute()) {
+				printAttributeSchemaNode((AttributeSchemaNode)child, _versionParameter, _layouter.get(child), content);
+			} else {
+				printGroupSchemaNode((GroupSchemaNode)child, _versionParameter, _layouter.get(child), content);
+			}
+			content.closeTD();
+			content.closeTR();
+			content.closeTABLE();
+		}
+		
+		content.closeTD();
+		
+		content.closeTR();
+		
+		content.closeTABLE();
+		
+		}
 }

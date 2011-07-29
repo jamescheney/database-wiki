@@ -762,9 +762,14 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 				} else {
 					path = databaseSchema.root().path();
 				}
-					
+				
+				URL resourceURL = null;
+				if (!resource.equals("")) {
+					resourceURL = new URL(resource);
+				}
+				
 				try {
-					registerDatabase(name, title, path, new URL(resource), databaseSchema, request.user(),
+					registerDatabase(name, title, path, resourceURL, databaseSchema, request.user(),
 							Integer.parseInt(authenticationMode), Integer.parseInt(autoSchemaChanges));
 				} catch (java.sql.SQLException sqlException) {
 					throw new WikiFatalException(sqlException);

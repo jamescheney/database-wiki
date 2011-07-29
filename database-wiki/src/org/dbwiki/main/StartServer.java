@@ -35,7 +35,7 @@ public class StartServer {
 	 * Private Constants
 	 */
 	
-	private static final String commandLine = "DatabaseServerStartup <config-file>";
+	private static final String commandLine = "StartServer <config-file>";
 	
 	
 	/*

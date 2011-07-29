@@ -21,18 +21,14 @@
 */
 package org.dbwiki.web.ui.printer.schema;
 
-import org.dbwiki.data.database.DatabaseElementNode;
-import org.dbwiki.data.database.DatabaseNode;
 import org.dbwiki.data.schema.SchemaNode;
 import org.dbwiki.data.schema.GroupSchemaNode;
 
 import org.dbwiki.web.html.HtmlLinePrinter;
 
-import org.dbwiki.web.request.WikiDataRequest;
 import org.dbwiki.web.request.WikiSchemaRequest;
 import org.dbwiki.web.request.parameter.RequestParameter;
 import org.dbwiki.web.request.parameter.RequestParameterVersion;
-
 
 import org.dbwiki.web.ui.CSS;
 
@@ -73,26 +69,23 @@ public class SchemaPathPrinter implements HtmlContentPrinter {
 		
 		SchemaNode schema = _request.schema();
 		while (schema != null) {
-			if (schema.isGroup()) {
-				GroupSchemaNode group = (GroupSchemaNode)schema;
-				String target = _request.wri().databaseIdentifier().linkPrefix() + schema.identifier().toURLString();
-				if (!versionParameter.versionCurrent()) {
-					target = target + "?" + versionParameter.toURLString();
-				}
-				String link = schema.label();
-				// FIXME #schema
-				// perhaps this should use the layouter, but currently
-				// the treatment of data nodes is hard-coded.
-				// It isn't obvious what the code does or how to adapt it
-				// to entities.
-				//
-				//_layouter.get(schema).getShortLabel(schema, versionParameter);
-				link = "<a CLASS=\"" + CSS.CSSObjectPath + "\" HREF=\"" + target + "\">" + link + "</a>";
-				if (line != null) {
-					line = link + " &gt; " + line;
-				} else {
-					line = link;
-				}
+			String target = _request.wri().databaseIdentifier().linkPrefix() + schema.identifier().toURLString();
+			if (!versionParameter.versionCurrent()) {
+				target = target + "?" + versionParameter.toURLString();
+			}
+			String link = schema.label();
+			// FIXME #schema
+			// perhaps this should use the layouter, but currently
+			// the treatment of data nodes is hard-coded.
+			// It isn't obvious what the code does or how to adapt it
+			// to entities.
+			//
+			//_layouter.get(schema).getShortLabel(schema, versionParameter);
+			link = "<a CLASS=\"" + CSS.CSSObjectPath + "\" HREF=\"" + target + "\">" + link + "</a>";
+			if (line != null) {
+				line = link + " &gt; " + line;
+			} else {
+				line = link;
 			}
 			schema = schema.parent();
 		}

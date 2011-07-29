@@ -38,6 +38,8 @@ public class ProvenanceFactory {
 			return new ProvenanceActivate(user, identifier);
 		case Provenance.ProvenanceTypeCopy:
 			return new ProvenanceCopy(user, identifier, sourceURL);
+		case Provenance.ProvenanceTypeCreate:
+			return new ProvenanceCreate(user);
 		case Provenance.ProvenanceTypeDelete:
 			return new ProvenanceDelete(user, identifier);
 		case Provenance.ProvenanceTypeImport:

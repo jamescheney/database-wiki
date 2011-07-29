@@ -117,7 +117,9 @@ public class ObjectAnnotationPrinter implements HtmlContentPrinter {
 		body.add("		<table width=\"100%\"><tr><td>");
 		body.add("		<textarea name=\"" + RequestParameter.ActionValueAnnotation +"\" cols=\"100\" rows=\"5\"></textarea>");
 		body.add("		</td><td align=\"left\">");
-		body.add("		<input type=\"image\" name=\"" + RequestParameter.ParameterAction + "\" value=\"" + RequestParameterAction.ActionAnnotate + "\" src=\"/pictures/button_save.gif\"/>");
+		body.add("		<button style=\"background:none; border:none\"type=\"submit\" + name=\"action\" value=\"" + RequestParameterAction.ActionAnnotate + "\">");
+		body.add("      	<img src=\"/pictures/button_save.gif\">");
+		body.add("		</button>");		
 		body.add("		</td></tr></table>");
 		body.add("	</form>");
 		body.add("</div>");

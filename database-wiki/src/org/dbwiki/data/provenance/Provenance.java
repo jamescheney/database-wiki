@@ -40,6 +40,7 @@ public abstract class Provenance {
 	
 	public static final byte ProvenanceTypeActivate = 0;
 	public static final byte ProvenanceTypeCopy     = 1;
+	public static final byte ProvenanceTypeCreate   = 6;
 	public static final byte ProvenanceTypeDelete   = 2;
 	public static final byte ProvenanceTypeImport   = 3;
 	public static final byte ProvenanceTypeInsert   = 4;

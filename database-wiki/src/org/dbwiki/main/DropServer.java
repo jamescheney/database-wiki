@@ -41,7 +41,7 @@ public class DropServer implements DatabaseConstants, WikiServerConstants {
 	 * Private Constants
 	 */
 	
-	private static final String commandLine = "DropWikiServer <config-file>";
+	private static final String commandLine = "DropServer <config-file>";
 	
 	
 	/*

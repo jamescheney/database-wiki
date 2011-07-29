@@ -34,16 +34,15 @@ public class PasteDatabaseInfo {
 	
 	private String _name;
 	private int _version;
-	private String _key;
+
 	
 	/*
 	 * Constructors
 	 */
 	
-	public PasteDatabaseInfo(String name, int version,String key) {
+	public PasteDatabaseInfo(String name, int version) {
 		_name = name;
 		_version = version;
-		_key = key;
 	}
 	
 	
@@ -57,9 +56,5 @@ public class PasteDatabaseInfo {
 	
 	public int version() {
 		return _version;
-	}
-	
-	public String key() {
-		return _key;
 	}
 }

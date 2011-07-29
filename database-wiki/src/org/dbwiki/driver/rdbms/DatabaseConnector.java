@@ -32,7 +32,7 @@ import java.sql.Statement;
 import java.util.Date;
 import java.util.StringTokenizer;
 
-import org.dbwiki.data.provenance.ProvenanceUnknown;
+import org.dbwiki.data.provenance.ProvenanceCreate;
 import org.dbwiki.data.schema.DatabaseSchema;
 import org.dbwiki.data.schema.SchemaNode;
 import org.dbwiki.data.schema.GroupSchemaNode;
@@ -399,7 +399,7 @@ public abstract class DatabaseConnector implements DatabaseConstants, WikiServer
 			}
 			
 			// generate a version number for the schema root
-			Version version = versionIndex.getNextVersion(new ProvenanceUnknown(user));
+			Version version = versionIndex.getNextVersion(new ProvenanceCreate(user));
 			versionIndex.add(version);
 			versionIndex.store(con);
 			
