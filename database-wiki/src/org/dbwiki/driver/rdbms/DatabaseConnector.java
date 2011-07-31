@@ -155,6 +155,7 @@ public abstract class DatabaseConnector implements DatabaseConstants, WikiServer
 					RelDatabaseColCSS + " int NOT NULL DEFAULT " + RelConfigFileColFileVersionValUnknown + ", " +
 					RelDatabaseColLayout + " int NOT NULL DEFAULT " + RelConfigFileColFileVersionValUnknown + ", " +
 					RelDatabaseColTemplate + " int NOT NULL DEFAULT " + RelConfigFileColFileVersionValUnknown + ", " +
+					RelDatabaseColURLDecoding + " int NOT NULL DEFAULT " + RelConfigFileColFileVersionValUnknown + ", " +
 					RelDatabaseColUser + " int NOT NULL, " +
 					RelDatabaseColIsActive + " int NOT NULL DEFAULT " + RelDatabaseColIsActiveValTrue + ", " +
 					"PRIMARY KEY (" + RelDatabaseColID + "))");

@@ -23,10 +23,14 @@ package org.dbwiki.web.request;
 
 import org.dbwiki.data.database.DatabaseNode;
 
+import org.dbwiki.data.resource.ResourceIdentifier;
 import org.dbwiki.data.resource.WRI;
 
 import org.dbwiki.data.time.VersionIndex;
+import org.dbwiki.exception.web.WikiRequestException;
 
+import org.dbwiki.web.request.parameter.RequestParameter;
+import org.dbwiki.web.request.parameter.RequestParameterVersion;
 import org.dbwiki.web.server.DatabaseWiki;
 
 public class WikiDataRequest extends WikiRequest {
@@ -57,7 +61,19 @@ public class WikiDataRequest extends WikiRequest {
 		super(wiki, url);
 		
 		_isRootRequest = url.isRoot();
-    	_wri = new WRI(wiki.database().identifier(), wiki.database().getNodeIdentifierForURL(url));
+		
+		ResourceIdentifier nodeIdentifier = null;
+		if (url.size() <= 1) {
+			try {
+				nodeIdentifier = wiki.database().getNodeIdentifierForURL(url);
+			} catch (org.dbwiki.exception.WikiException wikiException) {
+			}
+		}
+		if ((nodeIdentifier == null) && (wiki.urlDecoder().size() > 0)) {
+			nodeIdentifier = wiki.urlDecoder().decode(wiki.database(), url, RequestParameter.versionParameter(this.parameters().get(RequestParameter.ParameterVersion)));
+		}
+		
+    	_wri = new WRI(wiki.database().identifier(), nodeIdentifier);
     	_node = null;
     	
 	    if (url.exchange().getRequestMethod().equalsIgnoreCase("GET")) {

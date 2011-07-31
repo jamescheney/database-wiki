@@ -88,6 +88,7 @@ import org.dbwiki.web.ui.ServerResponseHandler;
 
 import org.dbwiki.web.ui.printer.server.DatabaseWikiFormPrinter;
 import org.dbwiki.web.ui.printer.server.DatabaseWikiListingPrinter;
+import org.dbwiki.web.ui.printer.server.DatabaseWikiProperties;
 import org.dbwiki.web.ui.printer.server.ServerMenuPrinter;
 
 //import org.pegdown.ExtendedPegDownProcessor;
@@ -300,9 +301,13 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 			int layoutVersion = rs.getInt(RelDatabaseColLayout);
 			int templateVersion = rs.getInt(RelDatabaseColTemplate);
 			int styleSheetVersion = rs.getInt(RelDatabaseColCSS);
+			int urlDecodingVersion = RelConfigFileColFileVersionValUnknown;
+			if (org.dbwiki.lib.JDBC.hasColumn(rs, RelDatabaseColURLDecoding)) {
+				urlDecodingVersion = rs.getInt(RelDatabaseColURLDecoding);
+			}
 			WikiAuthenticator authenticator = new WikiAuthenticator("/" + name, rs.getInt(RelDatabaseColAuthentication), _users);
 			int autoSchemaChanges = rs.getInt(RelDatabaseColAutoSchemaChanges);
-			ConfigSetting setting = new ConfigSetting(layoutVersion, templateVersion, styleSheetVersion);
+			ConfigSetting setting = new ConfigSetting(layoutVersion, templateVersion, styleSheetVersion, urlDecodingVersion);
 			_wikiListing.add(new DatabaseWiki(id, name, title, authenticator, autoSchemaChanges, setting, _connector, this));
 		}
 		rs.close();
@@ -364,6 +369,18 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 			return this.readDefaultConfigFile("/html/style/wiki_template.css");
 		} else {
 			return this.readConfigFile(wiki.id(), RelConfigFileColFileTypeValCSS, fileVersion);
+		}
+	}
+	
+	/** Depending on the file version of the requested URL-decoding-rules-definition-file
+	 * this method either returns an empty string (for ValUnknown) or it
+	 * reads the information from the database (-> readConfigFile()).
+	 */
+	public String getURLDecoding(DatabaseWiki wiki, int fileVersion) throws org.dbwiki.exception.WikiException {
+		if (fileVersion == RelConfigFileColFileVersionValUnknown) {
+			return "";
+		} else {
+			return this.readConfigFile(wiki.id(), RelConfigFileColFileTypeValURLDecoding, fileVersion);
 		}
 	}
 	
@@ -438,6 +455,9 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 				case RelConfigFileColFileTypeValCSS:
 					setting.setStyleSheetVersion(rs.getInt(RelPresentationColVersion));
 					break;
+				case RelConfigFileColFileTypeValURLDecoding:
+					setting.setURLDecodingRulesVersion(rs.getInt(RelPresentationColVersion));
+					break;
 				default:
 					throw new WikiFatalException("Unknown config file type");
 				}
@@ -458,7 +478,7 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 	 * @param wiki - the wiki to be reset
 	 */
 	public synchronized void resetWikiConfiguration(DatabaseWiki wiki) throws org.dbwiki.exception.WikiException {
-		this.resetWikiConfiguration(wiki, RelConfigFileColFileVersionValUnknown, RelConfigFileColFileVersionValUnknown, RelConfigFileColFileVersionValUnknown);
+		this.resetWikiConfiguration(wiki, RelConfigFileColFileVersionValUnknown, RelConfigFileColFileVersionValUnknown, RelConfigFileColFileVersionValUnknown, RelConfigFileColFileVersionValUnknown);
 	}
 	
 	/** 
@@ -470,7 +490,7 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 	 * @param styleSheetVersion
 	 * @throws org.dbwiki.exception.WikiException
 	 */
-	public synchronized void resetWikiConfiguration(DatabaseWiki wiki, int layoutVersion, int templateVersion, int styleSheetVersion) throws org.dbwiki.exception.WikiException {
+	public synchronized void resetWikiConfiguration(DatabaseWiki wiki, int layoutVersion, int templateVersion, int styleSheetVersion, int urlDecodingVersion) throws org.dbwiki.exception.WikiException {
 		try {
 			Connection con = _connector.getConnection();
 			Statement stmt = con.createStatement();
@@ -481,7 +501,7 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 				"WHERE " + RelDatabaseColID + " = " + wiki.id());
 			stmt.close();
 			con.close();
-			wiki.reset(layoutVersion, templateVersion, styleSheetVersion);
+			wiki.reset(layoutVersion, templateVersion, styleSheetVersion, urlDecodingVersion);
 		} catch (java.sql.SQLException sqlException) {
 			throw new WikiFatalException(sqlException);
 		}
@@ -514,14 +534,7 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 
 		HttpContext context = _webServer.createContext("/", this);
 		context.setAuthenticator(new WikiAuthenticator("/", _authenticationMode, _users));
-		//context.setAuthenticator(new WikiServerAuthenticator("/", _authenticationMode, this, _users));
 
-		/* The old code for having a single HttpContext per Database Wiki.
-		 * Such a scenario, however, does not allow copy/paste between
-		 * Wikis (as it is currently implemented). Therefore the switch
-		 * to the single HttpContext.
-		 * FIXME #server: The comments seem out of sync with the code.
-		 */
 		for (int iWiki = 0; iWiki < _wikiListing.size(); iWiki++) {
 			DatabaseWiki wiki = _wikiListing.get(iWiki);
 			context = _webServer.createContext("/" + wiki.name(), wiki);
@@ -596,6 +609,8 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 					sql = sql + RelDatabaseColLayout;
 				} else if (fileType == RelConfigFileColFileTypeValTemplate) {
 					sql = sql + RelDatabaseColTemplate;
+				} else if (fileType == RelConfigFileColFileTypeValURLDecoding) {
+					sql = sql + RelDatabaseColURLDecoding;
 				}
 				sql = sql +	" = " + version + " WHERE " + RelDatabaseColID + " = " + wikiID;
 				stmt.execute(sql);
@@ -648,13 +663,8 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 	 */
 	private ServerResponseHandler getInsertWikiResponseHandler(ServerRequest request) throws org.dbwiki.exception.WikiException, MalformedURLException, IOException {
 		
-		String name = request.parameters().get(ParameterName).value().toUpperCase();
-		String title = request.parameters().get(ParameterTitle).value();
-		String authenticationMode = request.parameters().get(ParameterAuthenticationMode).value();
-		String autoSchemaChanges = request.parameters().get(ParameterAutoSchemaChanges).value();
-		String schema = request.parameters().get(ParameterSchema).value();
-		String resource = request.parameters().get(ParameterInputFile).value();
-		String schemaPath = request.parameters().get(ParameterSchemaPath).value();
+		DatabaseWikiProperties properties = new DatabaseWikiProperties(request.parameters());
+		
 		DatabaseSchema databaseSchema = null;
 		
 		//
@@ -665,13 +675,13 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 		//
 		// Validate name
 		//
-		if (name.equals("")) {
+		if (properties.getName().equals("")) {
 			message = DatabaseWikiFormPrinter.MessageNoName;
-		} else if (!this.isValidWikiName(name)) {
+		} else if (!this.isValidWikiName(properties.getName())) {
 			message = DatabaseWikiFormPrinter.MessageInvalidName;
 		} else {
 			for (int iWiki = 0; iWiki < this.size(); iWiki++) {
-				if (this.get(iWiki).name().equalsIgnoreCase(name)) {
+				if (this.get(iWiki).name().equalsIgnoreCase(properties.getName())) {
 					message = DatabaseWikiFormPrinter.MessageDuplicateName;
 				}
 			}
@@ -680,16 +690,16 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 		//
 		// Validate title
 		//
-		if ((message == DatabaseWikiFormPrinter.MessageNone) && (title.equals(""))) {
+		if ((message == DatabaseWikiFormPrinter.MessageNone) && (properties.getTitle().equals(""))) {
 			message = DatabaseWikiFormPrinter.MessageNoTitle;
 		}
 		
 		//
 		// Validate schema
 		//
-		if ((message == DatabaseWikiFormPrinter.MessageNone) && (!schema.equals(""))) {
+		if ((message == DatabaseWikiFormPrinter.MessageNone) && (!properties.getSchema().equals(""))) {
 			try {
-				databaseSchema = new SchemaParser().parse(schema);
+				databaseSchema = new SchemaParser().parse(properties.getSchema());
 			} catch (org.dbwiki.exception.WikiException wikiException) {
 				wikiException.printStackTrace();
 				message = DatabaseWikiFormPrinter.MessageErroneousSchema;
@@ -700,20 +710,20 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 		// Validate resource. If no schema is specified then generate schema from
 		// given resource and let the user edit/verify the schema.
 		//
-		if ((message == DatabaseWikiFormPrinter.MessageNone) && (!resource.equals(""))) {
+		if ((message == DatabaseWikiFormPrinter.MessageNone) && (!properties.getResource().equals(""))) {
 			InputStream in = null;
 			try {
-				if (resource.endsWith(".gz")) {
-					in = new GZIPInputStream(new URL(resource).openStream());
+				if (properties.getResource().endsWith(".gz")) {
+					in = new GZIPInputStream(new URL(properties.getResource()).openStream());
 				} else {
-					in = new URL(resource).openStream();
+					in = new URL(properties.getResource()).openStream();
 				}
 			} catch (java.net.MalformedURLException mue) {
 				message = DatabaseWikiFormPrinter.MessageFileNotFound;
 			} catch (java.io.IOException ioe) {
 				message = DatabaseWikiFormPrinter.MessageFileNotFound;
 			}
-			if ((message == DatabaseWikiFormPrinter.MessageNone) && (schema.equals(""))) {
+			if ((message == DatabaseWikiFormPrinter.MessageNone) && (properties.getSchema().equals(""))) {
 				try {
 					// FIXME #schemaparsing: Make this a method somewhere...
 					StructureParser structureParser = new StructureParser();
@@ -722,7 +732,7 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 						throw structureParser.getException();
 					}
 					databaseSchema = structureParser.getDatabaseSchema();
-					schema = databaseSchema.printSchema();
+					properties.setSchema(databaseSchema.printSchema());
 				} catch (Exception excpt) {
 					throw new WikiFatalException(excpt);
 				}
@@ -742,7 +752,7 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 			// form is re-displayed showing the error message.
 			//
 			ServerResponseHandler responseHandler = new ServerResponseHandler(request, _wikiTitle + " - Create Database Wiki");
-			responseHandler.put(HtmlContentGenerator.ContentContent, new DatabaseWikiFormPrinter(RequestParameterAction.ActionInsert, name, title, authenticationMode, autoSchemaChanges, schema, resource, schemaPath, message));
+			responseHandler.put(HtmlContentGenerator.ContentContent, new DatabaseWikiFormPrinter(properties, RequestParameterAction.ActionInsert, "Create Database Wiki", message));
 			return responseHandler;
 		} else {
 			//
@@ -757,20 +767,20 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 				// Path is either the value of the form parameter SCHEMA_PATH or
 				// the path of the schema root node;
 				String path = null;
-				if (!schemaPath.equals("")) {
-					path = schemaPath;
+				if (!properties.getSchemaPath().equals("")) {
+					path = properties.getSchemaPath();
 				} else {
 					path = databaseSchema.root().path();
 				}
 				
 				URL resourceURL = null;
-				if (!resource.equals("")) {
-					resourceURL = new URL(resource);
+				if (!properties.getResource().equals("")) {
+					resourceURL = new URL(properties.getResource());
 				}
 				
 				try {
-					registerDatabase(name, title, path, resourceURL, databaseSchema, request.user(),
-							Integer.parseInt(authenticationMode), Integer.parseInt(autoSchemaChanges));
+					registerDatabase(properties.getName(), properties.getTitle(), path, resourceURL, databaseSchema, request.user(),
+							properties.getAuthentication(), properties.getAutoSchemaChanges());
 				} catch (java.sql.SQLException sqlException) {
 					throw new WikiFatalException(sqlException);
 				}
@@ -814,7 +824,8 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 			PreparedStatement pStmt = con.prepareStatement(
 					"INSERT INTO " + RelationDatabase + "(" +
 					RelDatabaseColName + ", " + RelDatabaseColTitle + ", " + 
-					RelDatabaseColAuthentication + ", " + RelDatabaseColAutoSchemaChanges + ", " + RelDatabaseColUser + ") VALUES(? , ? , ?, ? , ?)", Statement.RETURN_GENERATED_KEYS);
+					RelDatabaseColAuthentication + ", " + RelDatabaseColAutoSchemaChanges + ", " +
+					RelDatabaseColUser + ") VALUES(? , ?, ?, ? , ?)", Statement.RETURN_GENERATED_KEYS);
 			pStmt.setString(1, name);
 			pStmt.setString(2, title);
 			pStmt.setInt(3, authenticationMode);
@@ -913,19 +924,17 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 		// FIXME #security: Check that the other fields have reasonable values!
 		DatabaseWiki wiki = this.getRequestWiki(request, ParameterName);
 		
-		String title = request.parameters().get(ParameterTitle).value();
-		String authenticationMode = request.parameters().get(ParameterAuthenticationMode).value();
-		String autoSchemaChanges = request.parameters().get(ParameterAutoSchemaChanges).value();
+		DatabaseWikiProperties properties = new DatabaseWikiProperties(request.parameters());
 		
 		int message = DatabaseWikiFormPrinter.MessageNone;
-		if (title.equals("")) {
+		if (properties.getTitle().equals("")) {
 			message = DatabaseWikiFormPrinter.MessageNoTitle;
 		}
 		
 		// If invalid, pass back appropriate message.
 		if (message != DatabaseWikiFormPrinter.MessageNone) {
 			ServerResponseHandler responseHandler = new ServerResponseHandler(request, _wikiTitle + " - Edit Database Wiki");
-			responseHandler.put(HtmlContentGenerator.ContentContent, new DatabaseWikiFormPrinter(RequestParameterAction.ActionUpdate, wiki.name(), title, authenticationMode, autoSchemaChanges, message));
+			responseHandler.put(HtmlContentGenerator.ContentContent, new DatabaseWikiFormPrinter(properties, RequestParameterAction.ActionUpdate, "Edit Database Wiki", message));
 			return responseHandler;
 		} else {
 			// Otherwise, apply the changes.
@@ -934,23 +943,25 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 			}
 			try {
 				Connection con = _connector.getConnection();
+				con.setAutoCommit(false);
 				PreparedStatement pStmt = con.prepareStatement("UPDATE " + RelationDatabase + " " + 
 					"SET " + RelDatabaseColTitle + " = ?, " +
 					RelDatabaseColAuthentication + " = ?, " +
 					RelDatabaseColAutoSchemaChanges + " = ? " +
 					"WHERE " + RelDatabaseColID + " = " + wiki.id());
-				pStmt.setString(1, title);
-				pStmt.setInt(2, Integer.parseInt(authenticationMode));
-				pStmt.setInt(3, Integer.parseInt(autoSchemaChanges));
+				pStmt.setString(1, properties.getTitle());
+				pStmt.setInt(2, properties.getAuthentication());
+				pStmt.setInt(3, properties.getAutoSchemaChanges());
 				pStmt.execute();
 				pStmt.close();
+				con.commit();
 				con.close();
 			} catch (java.sql.SQLException sqlException) {
 				throw new WikiFatalException(sqlException);
 			}
-			wiki.authenticator().setAuthenticationMode(Integer.parseInt(authenticationMode));
-			wiki.setAutoSchemaChanges(Integer.parseInt(autoSchemaChanges));
-			wiki.setTitle(title);
+			wiki.authenticator().setAuthenticationMode(properties.getAuthentication());
+			wiki.setAutoSchemaChanges(properties.getAutoSchemaChanges());
+			wiki.setTitle(properties.getTitle());
 			Collections.sort(_wikiListing);
 			return this.getHomepageResponseHandler(request);
 		}
@@ -1058,11 +1069,11 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 			responseHandler = this.getHomepageResponseHandler(request);
 		} else if (request.type().isCreate()) {
 			responseHandler = new ServerResponseHandler(request, _wikiTitle + " - Create Database Wiki");
-			responseHandler.put(HtmlContentGenerator.ContentContent, new DatabaseWikiFormPrinter());
+			responseHandler.put(HtmlContentGenerator.ContentContent, new DatabaseWikiFormPrinter("Create Database Wiki"));
 		} else if (request.type().isEdit()) {
 			DatabaseWiki wiki = this.getRequestWiki(request, RequestParameter.ParameterEdit);
 			responseHandler = new ServerResponseHandler(request, _wikiTitle + " - Edit Database Wiki");
-			responseHandler.put(HtmlContentGenerator.ContentContent, new DatabaseWikiFormPrinter(RequestParameterAction.ActionUpdate, wiki.name(), wiki.getTitle(), wiki.authenticator().getAuthenticationMode(), wiki.getAutoSchemaChanges()));
+			responseHandler.put(HtmlContentGenerator.ContentContent, new DatabaseWikiFormPrinter(new DatabaseWikiProperties(wiki), RequestParameterAction.ActionUpdate, "Edit Database Wiki"));
 		} else if (request.type().isReset()) {
 			this.resetWikiConfiguration(this.getRequestWiki(request, RequestParameter.ParameterReset));
 			responseHandler = this.getHomepageResponseHandler(request);

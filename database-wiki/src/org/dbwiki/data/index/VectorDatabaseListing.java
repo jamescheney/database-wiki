@@ -52,6 +52,15 @@ public class VectorDatabaseListing implements DatabaseContent {
 		return _entries.get(index);
 	}
 
+	public DatabaseEntry get(String key) {
+		for (DatabaseEntry entry : _entries) {
+			if (entry.label().equals(key)) {
+				return entry;
+			}
+		}
+		return null;
+	}
+
 	public int size() {
 		return _entries.size();
 	}

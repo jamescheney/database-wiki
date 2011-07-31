@@ -83,6 +83,7 @@ import org.dbwiki.web.html.RedirectPage;
 
 import org.dbwiki.web.request.HttpRequest;
 import org.dbwiki.web.request.RequestURL;
+import org.dbwiki.web.request.URLDecodingRules;
 import org.dbwiki.web.request.WikiDataRequest;
 import org.dbwiki.web.request.WikiPageRequest;
 import org.dbwiki.web.request.WikiRequest;
@@ -190,6 +191,8 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 	private WikiServer _server;
 	private String _template = null;
 	private String _title;
+	private int _urlDecodingVersion;
+	private URLDecodingRules _urlDecoder;
 	private Wiki _wiki;
 	
 	/*
@@ -207,7 +210,7 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 		_name = name;
 		_title = title;
 		
-		reset(setting.getLayoutVersion(), setting.getTemplateVersion(), setting.getStyleSheetVersion());
+		reset(setting.getLayoutVersion(), setting.getTemplateVersion(), setting.getStyleSheetVersion(), setting.getURLDecodingRulesVersion());
 		
 		_database = new RDBMSDatabase(this, connector);
 		_wiki = new SimpleWiki(name, connector, server.users());
@@ -215,9 +218,8 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 	
 	// HACK: pass in and use an existing connection and version index.
 	// Used only in WikiServer.RegisterDatabase to create a new database.
-	public DatabaseWiki(int id, String name, String title, WikiAuthenticator authenticator,
-			 			int autoSchemaChanges, DatabaseConnector connector, WikiServer server,
-			 			Connection con, SQLVersionIndex versionIndex)
+	public DatabaseWiki(int id, String name, String title, WikiAuthenticator authenticator, int autoSchemaChanges, DatabaseConnector connector,
+						WikiServer server, Connection con, SQLVersionIndex versionIndex)
 	throws org.dbwiki.exception.WikiException {
 		_authenticator = authenticator;
 		_autoSchemaChanges = autoSchemaChanges;
@@ -228,7 +230,7 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 		
 		ConfigSetting setting = new ConfigSetting();
 		
-		reset(setting.getLayoutVersion(), setting.getTemplateVersion(), setting.getStyleSheetVersion());
+		reset(setting.getLayoutVersion(), setting.getTemplateVersion(), setting.getStyleSheetVersion(), setting.getURLDecodingRulesVersion());
 		
 		_database = new RDBMSDatabase(this, connector, con, versionIndex);
 		_wiki = new SimpleWiki(name, connector, server.users());
@@ -263,6 +265,14 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 		return _cssLinePrinter;
 	}
 	
+	public URLDecodingRules urlDecoder() throws org.dbwiki.exception.WikiException {
+		if (_urlDecoder == null) {
+			_urlDecoder = new URLDecodingRules(_database.schema(), _server.getURLDecoding(this, _urlDecodingVersion));
+		}
+		return _urlDecoder;
+	}
+	
+
 	public Database database() {
 		return _database;
 	}
@@ -284,6 +294,8 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 			return _template;
 		} else if (fileType == WikiServerConstants.RelConfigFileColFileTypeValCSS) {
 			return _server.getStyleSheet(this, _cssVersion);
+		} else if (fileType == WikiServerConstants.RelConfigFileColFileTypeValURLDecoding) {
+			return _server.getURLDecoding(this, _urlDecodingVersion);
 		} else {
 			throw new WikiFatalException("Unknown configuration file type");
 		}
@@ -355,12 +367,14 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 	 * Reset configuration to the specified file versions.
 	 */
 	
-	public void reset(int layoutVersion, int templateVersion, int styleSheetVersion) throws org.dbwiki.exception.WikiException {
+	public void reset(int layoutVersion, int templateVersion, int styleSheetVersion, int urlDecodingVersion) throws org.dbwiki.exception.WikiException {
 		_cssVersion = styleSheetVersion;
 		_layoutVersion = layoutVersion;
 		_templateVersion = templateVersion;
+		_urlDecodingVersion = urlDecodingVersion;
 		_template = _server.getTemplate(this, _templateVersion);
 		_cssLinePrinter = new CSSLinePrinter(this.id(), _cssVersion);
+		_urlDecoder = null;
 		_layouter = new DatabaseLayouter(_server.getLayout(this, _layoutVersion));
 	}
 	
@@ -375,6 +389,11 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 	public int getCSSVersion() {
 		return _cssVersion;
 	}
+	
+	public int getURLDecodingVersion() {
+		return _urlDecodingVersion;
+	}
+	
 	/** Dispatches HTTP interactions based on the type of the request.
 	 * Data requests are handled by respondToDataRequest
 	 * Wiki Page requests are handled by respondToPageRequest
@@ -531,7 +550,7 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 		} catch (Exception exception) {
 			throw new WikiFatalException(exception);
 		}
-		_server.resetWikiConfiguration(this, setting.getLayoutVersion(), setting.getTemplateVersion(), setting.getStyleSheetVersion());
+		_server.resetWikiConfiguration(this, setting.getLayoutVersion(), setting.getTemplateVersion(), setting.getStyleSheetVersion(), setting.getURLDecodingRulesVersion());
 	}
 	
 	/** Handles data export requests (generating XML)
@@ -745,6 +764,8 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 				contentGenerator.put(DatabaseWikiContentGenerator.ContentContent, new FileEditor(request, "Edit style sheet"));
 			} else if (request.type().isTemplate()) { // Editing the template
 				contentGenerator.put(DatabaseWikiContentGenerator.ContentContent, new FileEditor(request, "Edit template"));
+			} else if (request.type().isURLDecoding()) { // Editing the URL decoding rules
+				contentGenerator.put(DatabaseWikiContentGenerator.ContentContent, new FileEditor(request, "Edit URL decoding rules"));
 			} else if (request.type().isSettings()) { // The list of prior combinations of config files, can be used to revert.
 				contentGenerator.put(DatabaseWikiContentGenerator.ContentContent, new SettingsListingPrinter(request));
 			} else {
@@ -817,6 +838,8 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 			contentGenerator.put(DatabaseWikiContentGenerator.ContentContent, new FileEditor(request, "Edit style sheet"));
 		} else if (request.type().isTemplate()) {
 			contentGenerator.put(DatabaseWikiContentGenerator.ContentContent, new FileEditor(request, "Edit template"));
+		} else if (request.type().isURLDecoding()) {
+			contentGenerator.put(DatabaseWikiContentGenerator.ContentContent, new FileEditor(request, "Edit URL decoding rules"));
 		} else if (request.type().isSettings()) {
 			contentGenerator.put(DatabaseWikiContentGenerator.ContentContent, new SettingsListingPrinter(request));
 		} else if (request.type().isPageHistory()) {
@@ -987,6 +1010,9 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 		} else if (fileType == WikiServerConstants.RelConfigFileColFileTypeValCSS) {
 			_cssVersion = _server.updateConfigFile(wikiID, fileType, value, request.user());
 			_cssLinePrinter = new CSSLinePrinter(this.id(), _cssVersion);
+		} else if (fileType == WikiServerConstants.RelConfigFileColFileTypeValURLDecoding) {
+			_urlDecoder = new URLDecodingRules(_database.schema(), value);
+			_urlDecodingVersion = _server.updateConfigFile(wikiID, fileType, value, request.user());
 		}
 	}
 }

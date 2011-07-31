@@ -46,56 +46,43 @@ public class DatabaseWikiFormPrinter implements HtmlContentPrinter {
 	 * Public Constants
 	 */
 	
-	public static final int MessageNone            = -1;
-	public static final int MessageNoName          = 0;
-	public static final int MessageDuplicateName   = 1;
-	public static final int MessageFileNotFound    = 2;
-	public static final int MessageInvalidName     = 3;
-	public static final int MessageErroneousSchema = 4;
-	public static final int MessageNoTitle         = 5;
-	public static final int MessageEditSchema      = 6;
+	public static final int MessageNone                 = -1;
+	public static final int MessageNoName               = 0;
+	public static final int MessageDuplicateName        = 1;
+	public static final int MessageFileNotFound         = 2;
+	public static final int MessageInvalidName          = 3;
+	public static final int MessageErroneousConstraints = 4;
+	public static final int MessageErroneousSchema      = 5;
+	public static final int MessageNoTitle              = 6;
+	public static final int MessageEditSchema           = 7;
 	
 	/*
 	 * Private Variables
 	 */
 	
 	private String _action;
-	private String _authentication;
-	private String _autoSchemaChanges;
-	private String _schemaPath;
+	private String _headline;
+	private DatabaseWikiProperties _properties;
 	private int _message;
-	private String _name;
-	private String _resource;
-	private String _schema;
-	private String _title;
 	
 	
 	/*
 	 * Constructors
 	 */
 	
-	public DatabaseWikiFormPrinter(String action, String name, String title, String authentication, String autoSchemaChanges, String schema, String resource, String schemaPath, int message) {
+	public DatabaseWikiFormPrinter(DatabaseWikiProperties properties, String action, String headline, int message) {
 		_action = action;
-		_authentication = authentication;
-		_autoSchemaChanges = autoSchemaChanges;
-		_schemaPath = schemaPath;
-				_message = message;
-		_name = name;
-		_resource = resource;
-		_schema = schema;
-		_title = title;
+		_properties = properties;
+		_headline = headline;
+		_message = message;
 	}
 	
-	public DatabaseWikiFormPrinter(String action, String name, String title, int authenticationMode, int autoSchemaChanges) {
-		this(action, name, title, Integer.toString(authenticationMode), Integer.toString(autoSchemaChanges), "", "", "", MessageNone);
-	}
-	
-	public DatabaseWikiFormPrinter(String action, String name, String title, String authenticationMode, String autoSchemaChanges, int message) {
-		this(action, name, title, authenticationMode, autoSchemaChanges, "", "", "", message);
+	public DatabaseWikiFormPrinter(DatabaseWikiProperties properties, String action, String headline) {
+		this(properties, action, headline, MessageNone);
 	}
 
-	public DatabaseWikiFormPrinter() {
-		this(RequestParameterAction.ActionInsert, "", "", Integer.toString(WikiAuthenticator.AuthenticateWriteOnly), Integer.toString(DatabaseWiki.AutoSchemaChangesIgnore), "", "", "", MessageNone);
+	public DatabaseWikiFormPrinter(String headline) {
+		this(new DatabaseWikiProperties(), RequestParameterAction.ActionInsert, headline, MessageNone);
 	}
 	
 	
@@ -104,7 +91,7 @@ public class DatabaseWikiFormPrinter implements HtmlContentPrinter {
 	 */
 	
 	public void print(HtmlLinePrinter printer) throws WikiException {
-		printer.paragraph("Create Database Wiki", CSS.CSSHeadline);
+		printer.paragraph(_headline, CSS.CSSHeadline);
 
 		//printer.openUPLOADFORM("frmCreateWiki", "POST", "/");
 		printer.openFORM("frmCreateWiki", "POST", "/");
@@ -114,6 +101,10 @@ public class DatabaseWikiFormPrinter implements HtmlContentPrinter {
 		printer.openTD(CSS.CSSFormContainer);
 		
 		printer.openTABLE(CSS.CSSFormFrame);
+		
+		//
+		// Short Name
+		//
 		
 		printer.openTR();
 		printer.openTD(CSS.CSSFormLabel);
@@ -125,32 +116,36 @@ public class DatabaseWikiFormPrinter implements HtmlContentPrinter {
 				printer.text("Please enter a valid name.");
 				printer.addBR();
 				printer.addBR();
-				printer.addTEXTAREA(WikiServer.ParameterName, "90", _name);
+				printer.addTEXTAREA(WikiServer.ParameterName, "90", _properties.getName());
 				printer.closeTD();
 			} else if (_message == MessageDuplicateName) {
 				printer.openTD(CSS.CSSFormMessage);
-				printer.text("The name " + _name + " already exists.");
+				printer.text("The name " + _properties.getName() + " already exists.");
 				printer.addBR();
 				printer.addBR();
-				printer.addTEXTAREA(WikiServer.ParameterName, "90", _name);
+				printer.addTEXTAREA(WikiServer.ParameterName, "90", _properties.getName());
 				printer.closeTD();
 			} else if (_message != MessageNone) {
 				printer.openTD(CSS.CSSFormText);
-				printer.addHIDDEN(WikiServer.ParameterName, _name);
-				printer.text(_name);
+				printer.addHIDDEN(WikiServer.ParameterName, _properties.getName());
+				printer.text(_properties.getName());
 				printer.closeTD();
 			} else {
 				printer.openTD(CSS.CSSFormControl);
-				printer.addTEXTAREA(WikiServer.ParameterName, "90", _name);
+				printer.addTEXTAREA(WikiServer.ParameterName, "90", _properties.getName());
 				printer.closeTD();
 			}
 		} else {
 			printer.openTD(CSS.CSSFormText);
-			printer.addHIDDEN(WikiServer.ParameterName, _name);
-			printer.text(_name);
+			printer.addHIDDEN(WikiServer.ParameterName, _properties.getName());
+			printer.text(_properties.getName());
 			printer.closeTD();
 		}
 		printer.closeTR();
+		
+		//
+		// Title
+		//
 		
 		printer.openTR();
 		printer.openTD(CSS.CSSFormLabel);
@@ -161,19 +156,23 @@ public class DatabaseWikiFormPrinter implements HtmlContentPrinter {
 			printer.text("Please enter a valid title.");
 			printer.addBR();
 			printer.addBR();
-			printer.addTEXTAREA(WikiServer.ParameterTitle, "90", _title);
+			printer.addTEXTAREA(WikiServer.ParameterTitle, "90", _properties.getTitle());
 			printer.closeTD();
 		} else if (_message != MessageNone) {
 			printer.openTD(CSS.CSSFormText);
-			printer.addHIDDEN(WikiServer.ParameterTitle, _title);
-			printer.text(_title);
+			printer.addHIDDEN(WikiServer.ParameterTitle, _properties.getTitle());
+			printer.text(_properties.getTitle());
 			printer.closeTD();
 		} else {
 			printer.openTD(CSS.CSSFormControl);
-			printer.addTEXTAREA(WikiServer.ParameterTitle, "90", _title);
+			printer.addTEXTAREA(WikiServer.ParameterTitle, "90", _properties.getTitle());
 			printer.closeTD();
 		}
 		printer.closeTR();
+		
+		//
+		// Authentication Mode
+		//
 		
 		printer.openTR();
 		printer.openTD(CSS.CSSFormLabel);
@@ -182,27 +181,31 @@ public class DatabaseWikiFormPrinter implements HtmlContentPrinter {
 
 		if (_message != MessageNone) {
 			printer.openTD(CSS.CSSFormText);
-			printer.addHIDDEN(WikiServer.ParameterAuthenticationMode, _authentication);
-			if (_authentication.equals(Integer.toString(WikiAuthenticator.AuthenticateNever))) {
+			printer.addHIDDEN(WikiServer.ParameterAuthenticationMode, String.valueOf(_properties.getAuthentication()));
+			if (_properties.getAuthentication() == WikiAuthenticator.AuthenticateNever) {
 				printer.text("Never login (<i>NO AUTHENTICATION</i>)");
-			} else if (_authentication.equals(Integer.toString(WikiAuthenticator.AuthenticateWriteOnly))) {
+			} else if (_properties.getAuthentication() == WikiAuthenticator.AuthenticateWriteOnly) {
 				printer.text("Login for updates (<i>WRITE-ONLY AUTHENTICATION</i>)");
-			} else if (_authentication.equals(Integer.toString(WikiAuthenticator.AuthenticateAlways))) {
+			} else if (_properties.getAuthentication() == WikiAuthenticator.AuthenticateAlways) {
 				printer.text("Always login (<i>FULL AUTHENTICATION</i>)");
 			}
 			printer.closeTD();
 		} else {
 			printer.openTD(CSS.CSSFormControl);
-			printer.addRADIOBUTTON("Never login (<i>NO AUTHENTICATION</i>)", WikiServer.ParameterAuthenticationMode, Integer.toString(WikiAuthenticator.AuthenticateNever), _authentication.equals(Integer.toString(WikiAuthenticator.AuthenticateNever)));
+			printer.addRADIOBUTTON("Never login (<i>NO AUTHENTICATION</i>)", WikiServer.ParameterAuthenticationMode, Integer.toString(WikiAuthenticator.AuthenticateNever), (_properties.getAuthentication() == WikiAuthenticator.AuthenticateNever));
 			printer.addBR();
-			printer.addRADIOBUTTON("Login for updates (<i>WRITE-ONLY AUTHENTICATION</i>)", WikiServer.ParameterAuthenticationMode, Integer.toString(WikiAuthenticator.AuthenticateWriteOnly), _authentication.equals(Integer.toString(WikiAuthenticator.AuthenticateWriteOnly)));
+			printer.addRADIOBUTTON("Login for updates (<i>WRITE-ONLY AUTHENTICATION</i>)", WikiServer.ParameterAuthenticationMode, Integer.toString(WikiAuthenticator.AuthenticateWriteOnly), (_properties.getAuthentication() == WikiAuthenticator.AuthenticateWriteOnly));
 			printer.addBR();
-			printer.addRADIOBUTTON("Always login (<i>FULL AUTHENTICATION</i>)", WikiServer.ParameterAuthenticationMode, Integer.toString(WikiAuthenticator.AuthenticateAlways), _authentication.equals(Integer.toString(WikiAuthenticator.AuthenticateAlways)));
+			printer.addRADIOBUTTON("Always login (<i>FULL AUTHENTICATION</i>)", WikiServer.ParameterAuthenticationMode, Integer.toString(WikiAuthenticator.AuthenticateAlways), (_properties.getAuthentication() == WikiAuthenticator.AuthenticateAlways));
 			printer.closeTD();
 		}
 		
 		printer.closeTR();
 
+		//
+		// Schema 
+		//
+		
 		if (_action.equals(RequestParameterAction.ActionInsert)) {
 			printer.openTR();
 			printer.openTD(CSS.CSSFormLabel);
@@ -213,22 +216,35 @@ public class DatabaseWikiFormPrinter implements HtmlContentPrinter {
 				printer.text("The given schema is invalid.");
 				printer.addBR();
 				printer.addBR();
-				printer.addTEXTAREA(WikiServer.ParameterSchema, "90", "15", true, _schema);
+				printer.addTEXTAREA(WikiServer.ParameterSchema, "90", "15", true, _properties.getSchema());
 				printer.closeTD();
 			} else if (_message == MessageEditSchema) {
 				printer.openTD(CSS.CSSFormMessage);
 				printer.text("Please specify the target path and schema for the given XML resource, or modify the inferred one below.");
 				printer.addBR();
 				printer.addBR();
-				printer.addTEXTAREA(WikiServer.ParameterSchema, "90", "15", true, _schema);
+				printer.addTEXTAREA(WikiServer.ParameterSchema, "90", "15", true, _properties.getSchema());
 				printer.closeTD();
 			} else {
 				printer.openTD(CSS.CSSFormControl);
-				printer.addTEXTAREA(WikiServer.ParameterSchema, "90", "15", true, _schema);
+				printer.addTEXTAREA(WikiServer.ParameterSchema, "90", "15", true, _properties.getSchema());
 				printer.closeTD();
 			}
 			printer.closeTR();
+		} else {
+			printer.openTR();
+			printer.openTD(CSS.CSSFormLabel);
+			printer.text("Schema");
+			printer.closeTD();
+			printer.openTD(CSS.CSSFormControl);
+			printer.text(_properties.getSchema());
+			printer.closeTD();
+			printer.closeTR();
 		}
+		
+		//
+		// Automatic Schema Changes
+		//
 		
 		printer.openTR();
 		printer.openTD(CSS.CSSFormLabel);
@@ -237,25 +253,29 @@ public class DatabaseWikiFormPrinter implements HtmlContentPrinter {
 
 		if (_message != MessageNone) {
 			printer.openTD(CSS.CSSFormText);
-			printer.addHIDDEN(WikiServer.ParameterAutoSchemaChanges, _autoSchemaChanges);
-			if (_autoSchemaChanges.equals(Integer.toString(DatabaseWiki.AutoSchemaChangesNever))) {
+			printer.addHIDDEN(WikiServer.ParameterAutoSchemaChanges, String.valueOf(_properties.getAutoSchemaChanges()));
+			if (_properties.getAutoSchemaChanges() == DatabaseWiki.AutoSchemaChangesNever) {
 				printer.text("Never change schema automatically.");
-			} else if (_autoSchemaChanges.equals(Integer.toString(DatabaseWiki.AutoSchemaChangesIgnore))) {
+			} else if (_properties.getAutoSchemaChanges() == DatabaseWiki.AutoSchemaChangesIgnore) {
 				printer.text("Ignore unknown node types.");
-			} else if (_autoSchemaChanges.equals(Integer.toString(DatabaseWiki.AutoSchemaChangesAllow))) {
+			} else if (_properties.getAutoSchemaChanges() == DatabaseWiki.AutoSchemaChangesAllow) {
 				printer.text("Automatically add new node types if necessary.");
 			}
 			printer.closeTD();
 		} else {
 			printer.openTD(CSS.CSSFormControl);
-			printer.addRADIOBUTTON("Never change schema automatically.", WikiServer.ParameterAutoSchemaChanges, Integer.toString(DatabaseWiki.AutoSchemaChangesNever), _autoSchemaChanges.equals(Integer.toString(DatabaseWiki.AutoSchemaChangesNever)));
+			printer.addRADIOBUTTON("Never change schema automatically.", WikiServer.ParameterAutoSchemaChanges, Integer.toString(DatabaseWiki.AutoSchemaChangesNever), (_properties.getAutoSchemaChanges() == DatabaseWiki.AutoSchemaChangesNever));
 			printer.addBR();
-			printer.addRADIOBUTTON("Ignore unknown node types.", WikiServer.ParameterAutoSchemaChanges, Integer.toString(DatabaseWiki.AutoSchemaChangesIgnore), _autoSchemaChanges.equals(Integer.toString(DatabaseWiki.AutoSchemaChangesIgnore)));
+			printer.addRADIOBUTTON("Ignore unknown node types.", WikiServer.ParameterAutoSchemaChanges, Integer.toString(DatabaseWiki.AutoSchemaChangesIgnore), (_properties.getAutoSchemaChanges() == DatabaseWiki.AutoSchemaChangesIgnore));
 			printer.addBR();
-			printer.addRADIOBUTTON("Automatically add new node types if necessary.", WikiServer.ParameterAutoSchemaChanges, Integer.toString(DatabaseWiki.AutoSchemaChangesAllow), _autoSchemaChanges.equals(Integer.toString(DatabaseWiki.AutoSchemaChangesAllow)));
+			printer.addRADIOBUTTON("Automatically add new node types if necessary.", WikiServer.ParameterAutoSchemaChanges, Integer.toString(DatabaseWiki.AutoSchemaChangesAllow), (_properties.getAutoSchemaChanges() == DatabaseWiki.AutoSchemaChangesAllow));
 			printer.closeTD();
 		}
 		printer.closeTR();
+		
+		//
+		// Data file & Schema path
+		//
 		
 		if (_action.equals(RequestParameterAction.ActionInsert)) {
 			printer.openTR();
@@ -268,17 +288,17 @@ public class DatabaseWikiFormPrinter implements HtmlContentPrinter {
 				printer.addBR();
 				printer.addBR();
 				//printer.addFILE(WikiServer.ParameterInputFile);
-				printer.addTEXTAREA(WikiServer.ParameterInputFile, "90", _resource);
+				printer.addTEXTAREA(WikiServer.ParameterInputFile, "90", _properties.getResource());
 				printer.closeTD();
 			} else if (_message != MessageNone) {
 				printer.openTD(CSS.CSSFormText);
-				printer.addHIDDEN(WikiServer.ParameterInputFile, _resource);
-				printer.text(_resource);
+				printer.addHIDDEN(WikiServer.ParameterInputFile, _properties.getResource());
+				printer.text(_properties.getResource());
 				printer.closeTD();
 			} else {
 				printer.openTD(CSS.CSSFormControl);
 				//printer.addFILE(WikiServer.ParameterInputFile);
-				printer.addTEXTAREA(WikiServer.ParameterInputFile, "90", _resource);
+				printer.addTEXTAREA(WikiServer.ParameterInputFile, "90", _properties.getResource());
 				printer.closeTD();
 			}
 			printer.closeTR();
@@ -287,12 +307,12 @@ public class DatabaseWikiFormPrinter implements HtmlContentPrinter {
 			printer.text("Schema path");
 			printer.closeTD();
 			printer.openTD(CSS.CSSFormControl);
-			if (_message == MessageNone) {
-				printer.addTEXTAREA(WikiServer.ParameterSchemaPath, "90", _schemaPath);
-			} else {
-				printer.addHIDDEN(WikiServer.ParameterSchemaPath, _schemaPath);
-				printer.text(_schemaPath);
-			}
+			//if (_message == MessageNone) {
+				printer.addTEXTAREA(WikiServer.ParameterSchemaPath, "90", _properties.getSchemaPath());
+			//} else {
+			//	printer.addHIDDEN(WikiServer.ParameterSchemaPath, _properties.getSchemaPath());
+			//	printer.text(_properties.getSchemaPath());
+			//}
 			printer.closeTD();
 			printer.closeTR();
 		}

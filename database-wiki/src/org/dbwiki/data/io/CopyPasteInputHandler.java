@@ -86,11 +86,6 @@ public class CopyPasteInputHandler implements InputHandler {
 	}
 
 	public void startElement(String label, Attribute[] attrs) throws org.dbwiki.exception.WikiException {
-		System.out.print(label);
-		for (Attribute attr : attrs) {
-			System.out.print(" " + attr.name() + "=" + attr.value());
-		}
-		System.out.println();
 		if ((label.equals(CopyPasteConstants.ElementLabelDatabase)) && (attrs.length == 2) && (_databaseInfo == null)) {
 			String name = this.getAttribute(attrs, CopyPasteConstants.AttributeLabelDatabaseName).value();
 			int version = Integer.parseInt(this.getAttribute(attrs, CopyPasteConstants.AttributeLabelVersion).value());

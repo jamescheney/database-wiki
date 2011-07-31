@@ -32,5 +32,6 @@ public interface DatabaseContent {
 	 */
 	
 	public DatabaseEntry get(int index);
+	public DatabaseEntry get(String key);
 	public int size();
 }

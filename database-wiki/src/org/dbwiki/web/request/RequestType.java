@@ -77,6 +77,9 @@ public class RequestType {
 	private static final byte requestTypePageHistory = 20;
 	//?xml [?version]
 	private static final byte requestTypeExport = 21;
+	//?url_decoding resource=...
+	private static final byte requestTypeURLDecoding = 22;
+	
 	
 	
 	/*
@@ -197,6 +200,10 @@ public class RequestType {
 			} else if ((parameters.hasParameter(RequestParameter.ParameterStyleSheet)) && (parameters.hasParameter(RequestParameter.ParameterResource))) {
 				//?style_sheet resource=...
 				_type = requestTypeStyleSheet;
+			} else if ((parameters.hasParameter(RequestParameter.ParameterURLDecoding)) && (parameters.hasParameter(RequestParameter.ParameterResource))) {
+				//?url_decoding resource=...
+				_type = requestTypeURLDecoding;
+				
 			} else if ((parameters.hasParameter(RequestParameter.ParameterReset)) && (parameters.hasParameter(RequestParameter.ParameterResource))) {
 				// / [index_pos=...] [version=...]
 				if ((parameters.hasParameter(RequestParameter.ParameterVersion)) && (parameters.hasParameter(RequestParameter.ParameterIndexPosition))) {
@@ -312,6 +319,10 @@ public class RequestType {
 	
 	public boolean isUnknown() {
 		return (_type == requestTypeUnknown);
+	}
+	
+	public boolean isURLDecoding() {
+		return (_type == requestTypeURLDecoding);
 	}
 	
 	public String toString() {

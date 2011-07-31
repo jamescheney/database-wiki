@@ -90,7 +90,6 @@ public class DatabaseSchema {
 		_idMap.put(schema.id(), schema);
 	}
 	
-
 	public SchemaNode get(int index) {
 		return _idMap.get(index);
 	}
@@ -149,6 +148,14 @@ public class DatabaseSchema {
 		StringBuffer buf = new StringBuffer();
 
 		_root.printToBuf(buf,"");
+		
+		return buf.toString().trim();
+	}
+
+	public String printSchemaHTML() {
+		StringBuffer buf = new StringBuffer();
+
+		_root.printToBuf(buf, "", "&nbsp;&nbsp;&nbsp;&nbsp;", "<br>");
 		
 		return buf.toString().trim();
 	}

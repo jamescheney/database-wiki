@@ -76,6 +76,9 @@ public class SettingsListingPrinter implements HtmlContentPrinter {
 		body.openTH(CSS.CSSList);
 		body.text("Style Sheet");
 		body.closeTH();
+		body.openTH(CSS.CSSList);
+		body.text("URL Decoding Rules");
+		body.closeTH();
 		body.closeTR();
 		
 		Vector<ConfigSetting> settings = _request.wiki().listSettings();
@@ -87,15 +90,19 @@ public class SettingsListingPrinter implements HtmlContentPrinter {
 			body.link(baseURL + "?" + setting.toURLString(), setting.date(), CSS.CSSList);
 			body.closeTD();
 			body.openTD(CSS.CSSList);
-			ConfigSetting s = new ConfigSetting(setting.getLayoutVersion(), cSet.getTemplateVersion(), cSet.getStyleSheetVersion());
+			ConfigSetting s = new ConfigSetting(setting.getLayoutVersion(), cSet.getTemplateVersion(), cSet.getStyleSheetVersion(), cSet.getURLDecodingRulesVersion());
 			body.link(baseURL + "?" + s.toURLString(), this.valueOf(setting.getLayoutVersion()), CSS.CSSList);
 			body.closeTD();
 			body.openTD(CSS.CSSList);
-			s = new ConfigSetting(cSet.getLayoutVersion(), setting.getTemplateVersion(), cSet.getStyleSheetVersion());
+			s = new ConfigSetting(cSet.getLayoutVersion(), setting.getTemplateVersion(), cSet.getStyleSheetVersion(), cSet.getURLDecodingRulesVersion());
 			body.link(baseURL + "?" + s.toURLString(), this.valueOf(setting.getTemplateVersion()), CSS.CSSList);
 			body.closeTD();
 			body.openTD(CSS.CSSList);
-			s = new ConfigSetting(cSet.getLayoutVersion(), cSet.getTemplateVersion(), setting.getStyleSheetVersion());
+			s = new ConfigSetting(cSet.getLayoutVersion(), cSet.getTemplateVersion(), setting.getStyleSheetVersion(), cSet.getURLDecodingRulesVersion());
+			body.link(baseURL + "?" + s.toURLString(), this.valueOf(setting.getStyleSheetVersion()), CSS.CSSList);
+			body.closeTD();
+			body.openTD(CSS.CSSList);
+			s = new ConfigSetting(cSet.getLayoutVersion(), cSet.getTemplateVersion(), cSet.getStyleSheetVersion(), setting.getURLDecodingRulesVersion());
 			body.link(baseURL + "?" + s.toURLString(), this.valueOf(setting.getStyleSheetVersion()), CSS.CSSList);
 			body.closeTD();
 			body.closeTR();

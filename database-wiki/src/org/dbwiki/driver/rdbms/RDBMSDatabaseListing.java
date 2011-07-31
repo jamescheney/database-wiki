@@ -29,6 +29,7 @@ import java.util.Hashtable;
 import java.util.Vector;
 
 import org.dbwiki.data.index.DatabaseContent;
+import org.dbwiki.data.index.DatabaseEntry;
 
 import org.dbwiki.data.resource.NodeIdentifier;
 import org.dbwiki.data.time.TimeSequence;
@@ -48,6 +49,7 @@ public class RDBMSDatabaseListing implements DatabaseContent {
 	
 	private Hashtable<Integer, RDBMSDatabaseEntry> _entryIndex;
 	private Vector<RDBMSDatabaseEntry> _entryList;
+	private boolean _isSorted = false;
 	
 	
 	/*
@@ -164,8 +166,6 @@ public class RDBMSDatabaseListing implements DatabaseContent {
 		}
 		
 		sort();
-		
-
 	}
 	
 	/*
@@ -175,10 +175,39 @@ public class RDBMSDatabaseListing implements DatabaseContent {
 	public void add(RDBMSDatabaseEntry entry) {
 		_entryIndex.put(new Integer(entry.identifier().nodeID()), entry);
 		_entryList.add(entry);
+		_isSorted = false;
 	}
 	
 	public RDBMSDatabaseEntry get(int index) {
 		return _entryList.get(index);
+	}
+	
+	public RDBMSDatabaseEntry get(String key) {
+		if (_isSorted) {
+			int low = 0;
+			int high = _entryList.size() - 1;
+			while(high >= low) {
+				int middle = (low + high) / 2;
+				RDBMSDatabaseEntry entry = _entryList.get(middle);
+				int comp = entry.label().compareTo(key);
+				if(comp == 0) {
+					return entry;
+				}
+				if(comp < 0) {
+					low = middle + 1;
+				}
+				if(comp > 0) {
+					high = middle - 1;
+				}
+			}
+		} else {
+			for (RDBMSDatabaseEntry entry : _entryList) {
+				if (entry.label().equals(key)) {
+					return entry;
+				}
+			}
+		}
+		return null;
 	}
 
 	public RDBMSDatabaseEntry get(NodeIdentifier identifier) {
@@ -191,5 +220,6 @@ public class RDBMSDatabaseListing implements DatabaseContent {
 	
 	public void sort() {
 		Collections.sort(_entryList);
+		_isSorted = true;
 	}
 }

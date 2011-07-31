@@ -120,7 +120,7 @@ public abstract class SchemaNode extends TimestampedObject {
 		return label();
 	}
 	
-	public abstract void printToBuf(StringBuffer buf, String indentation);
+	public abstract void printToBuf(StringBuffer buf, String indentation, String extend, String cr);
 	
 	/** 
 	 * 

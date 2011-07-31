@@ -30,10 +30,11 @@ public class WikiSchemaException extends WikiException {
 	
 	public static final long serialVersionUID = 8816L;
 
-	public static final int DuplicateSchemaNode   = 1000;
-	public static final int InvalidSchemaType = 2000;
-	public static final int SyntaxError       = 3000;
-	public static final int UnknownSchemaNode     = 4000;
+	public static final int DuplicateSchemaNode         = 1000;
+	public static final int InvalidConstraintDefinition = 1500;
+	public static final int InvalidSchemaType           = 2000;
+	public static final int SyntaxError                 = 3000;
+	public static final int UnknownSchemaNode           = 4000;
 	
 	
 	/*
@@ -68,6 +69,8 @@ public class WikiSchemaException extends WikiException {
 		switch(_errorCode) {
 		case DuplicateSchemaNode:
 			return "[Duplicate schema node in list]";
+		case InvalidConstraintDefinition:
+			return "[Invalid constraint definition]";
 		case InvalidSchemaType:
 			return "[Invalid schema node type]";
 		case SyntaxError:

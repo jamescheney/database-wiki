@@ -120,6 +120,7 @@ public abstract class MenuPrinter implements HtmlContentPrinter {
 		printer.add("\t\t\t\t\t<li><a href=\"" + dbHomeLink + "?" + RequestParameter.ParameterLayout + resource + "\">Layout</a></li>");
 		printer.add("\t\t\t\t\t<li><a href=\"" + dbHomeLink + "?" + RequestParameter.ParameterTemplate + resource + "\">Template</a></li>");
 		printer.add("\t\t\t\t\t<li><a href=\"" + dbHomeLink + "?" + RequestParameter.ParameterStyleSheet + resource + "\">Style Sheet</a></li>");
+		printer.add("\t\t\t\t\t<li><a href=\"" + dbHomeLink + "?" + RequestParameter.ParameterURLDecoding + resource + "\">URL Decoding</a></li>");
 		printer.add("\t\t\t\t\t<li><a href=\"" + _request.wri().getURL() + "?" +  RequestParameter.ParameterSettings + "\">Previous ...</a></li>");
 		
 		printer.add("\t\t\t\t</ul>");

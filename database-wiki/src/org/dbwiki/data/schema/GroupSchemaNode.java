@@ -114,20 +114,20 @@ public class GroupSchemaNode extends SchemaNode {
 	}
 	
 	// FIXME #schemaparsing: Evil hack to deal with irregularity of schema parser
-	public void printToBuf(StringBuffer buf,String indentation) {
+	public void printToBuf(StringBuffer buf,String indentation, String extend, String cr) {
 
 		if (children().size() >= 1) {
 			buf.append(indentation);
-			buf.append("$" + label() + " {\n");
+			buf.append("$" + label() + " {" + cr);
 			
 			for (int iChild = 0; iChild < children().size(); iChild++) {
 				SchemaNode node = children().get(iChild);
-				node.printToBuf(buf,indentation + "\t");
+				node.printToBuf(buf, indentation + extend, extend, cr);
 				if(iChild < children().size()-1 && node instanceof AttributeSchemaNode) {
 					buf.append(",");
 				
 				}
-				buf.append("\n");
+				buf.append(cr);
 			}
 			buf.append(indentation);
 			buf.append("}");
@@ -138,6 +138,7 @@ public class GroupSchemaNode extends SchemaNode {
 		
 	}
 
-	
-	
+	public void printToBuf(StringBuffer buf,String indentation) {
+		this.printToBuf(buf, indentation, "\t", "\n");
+	}
 }

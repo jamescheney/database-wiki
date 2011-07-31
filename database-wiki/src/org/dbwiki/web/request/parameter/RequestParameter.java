@@ -54,6 +54,7 @@ public class RequestParameter {
 	public static final String ParameterStyleSheet       = "style_sheet";
 	public static final String ParameterTemplate         = "html_template";
 	public static final String ParameterURL              = "url";
+	public static final String ParameterURLDecoding      = "url_decoding";
 	public static final String ParameterVersion          = "version";
 	
 	public static final String ActionValueAnnotation      = "annotation";

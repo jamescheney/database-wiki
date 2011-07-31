@@ -82,7 +82,6 @@ public class PasteGroupNode extends PasteElementNode {
 				if ((_nodes.get(0).isElement()) && (node.isElement())) {
 					_nodes.add(node);
 				} else {
-					System.out.println(_nodes.get(0) + "\t" + node);
 					throw new WikiFatalException("Invalid node sequence in document. Trying to add text node to group node");
 				}
 			} else {

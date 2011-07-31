@@ -145,7 +145,6 @@ public class QueryEvaluator extends DatabaseReader {
 		String query = "SELECT DISTINCT " + RelDataColEntry + " " +
 						"FROM " + database.name() + RelationData + " " +
 						"ORDER BY " + RelDataColEntry;
-		System.out.println(query);
 		ResultSet rs = stmt.executeQuery(query);
 		
 		int count = 0;

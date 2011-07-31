@@ -69,6 +69,8 @@ public class FileEditor implements HtmlContentPrinter {
 			fileType = WikiServerConstants.RelConfigFileColFileTypeValTemplate;
 		} else if (_request.parameters().hasParameter(RequestParameter.ParameterStyleSheet)) {
 			fileType = WikiServerConstants.RelConfigFileColFileTypeValCSS;
+		} else if (_request.parameters().hasParameter(RequestParameter.ParameterURLDecoding)) {
+			fileType = WikiServerConstants.RelConfigFileColFileTypeValURLDecoding;
 		}
 		
 		printer.paragraph(_title, CSS.CSSHeadline);

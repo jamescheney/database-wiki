@@ -59,6 +59,7 @@ public interface WikiServerConstants {
 	public static final String RelDatabaseColName = "name";
 	public static final String RelDatabaseColTemplate = "template_version";
 	public static final String RelDatabaseColTitle = "title";
+	public static final String RelDatabaseColURLDecoding = "url_decoding_version";
 	public static final String RelDatabaseColUser = "uid";
 	
 	public static final int RelDatabaseColIsActiveValFalse = 0;
@@ -77,10 +78,11 @@ public interface WikiServerConstants {
 	public static final String RelPresentationColValue    = "value";
 	public static final String RelPresentationColDatabase = "database";
 
-	public static final int RelConfigFileColFileTypeValCSS = 1;
-	public static final int RelConfigFileColFileTypeValLayout = 2;
-	public static final int RelConfigFileColFileTypeValTemplate = 3;
-
+	public static final int RelConfigFileColFileTypeValCSS         = 1;
+	public static final int RelConfigFileColFileTypeValLayout      = 2;
+	public static final int RelConfigFileColFileTypeValTemplate    = 3;
+	public static final int RelConfigFileColFileTypeValURLDecoding =4;
+	
 	public static final int RelConfigFileColFileVersionValUnknown = -1;
 	
 	

@@ -52,7 +52,7 @@ public class AttributeSchemaNode extends SchemaNode {
 	}
 
 	@Override
-	public void printToBuf(StringBuffer buf, String indentation) {
+	public void printToBuf(StringBuffer buf, String indentation, String extend, String cr) {
 		buf.append(indentation + "@" + label());
 		
 	}

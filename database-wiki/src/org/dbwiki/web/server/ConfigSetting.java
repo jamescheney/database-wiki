@@ -40,25 +40,27 @@ public class ConfigSetting {
 	private int _layoutVersion;
 	private int _templateVersion;
 	private int _styleSheetVersion;
+	private int _urlDecodingRulesVersion;
 	
 	
 	/*
 	 * Constructors
 	 */
 	
-	public ConfigSetting(String date, int layoutVersion, int templateVersion, int styleSheetVersion) {
+	public ConfigSetting(String date, int layoutVersion, int templateVersion, int styleSheetVersion, int urlDecodingRulesVersion) {
 		_date = date;
 		_layoutVersion = layoutVersion;
 		_templateVersion = templateVersion;
 		_styleSheetVersion = styleSheetVersion;
+		_urlDecodingRulesVersion = urlDecodingRulesVersion;
 	}
 	
-	public ConfigSetting(int layoutVersion, int templateVersion, int styleSheetVersion) {
-		this("", layoutVersion, templateVersion, styleSheetVersion);
+	public ConfigSetting(int layoutVersion, int templateVersion, int styleSheetVersion, int urlDecodingRulesVersion) {
+		this("", layoutVersion, templateVersion, styleSheetVersion, urlDecodingRulesVersion);
 	}
 
 	public ConfigSetting(String date, ConfigSetting setting) {
-		this(date, setting.getLayoutVersion(), setting.getTemplateVersion(), setting.getStyleSheetVersion());
+		this(date, setting.getLayoutVersion(), setting.getTemplateVersion(), setting.getStyleSheetVersion(), setting.getURLDecodingRulesVersion());
 	}
 
 	public ConfigSetting(String parameterValue) {
@@ -71,7 +73,7 @@ public class ConfigSetting {
 	}
 
 	public ConfigSetting() {
-		this("DEFAULT", WikiServerConstants.RelConfigFileColFileVersionValUnknown, WikiServerConstants.RelConfigFileColFileVersionValUnknown, WikiServerConstants.RelConfigFileColFileVersionValUnknown);
+		this("DEFAULT", WikiServerConstants.RelConfigFileColFileVersionValUnknown, WikiServerConstants.RelConfigFileColFileVersionValUnknown, WikiServerConstants.RelConfigFileColFileVersionValUnknown, WikiServerConstants.RelConfigFileColFileVersionValUnknown);
 	}
 	
 	
@@ -95,6 +97,10 @@ public class ConfigSetting {
 		return _styleSheetVersion;
 	}
 	
+	public int getURLDecodingRulesVersion() {
+		return _urlDecodingRulesVersion;
+	}
+	
 	public void setLayoutVersion(int value) {
 		_layoutVersion = value;
 	}
@@ -107,6 +113,10 @@ public class ConfigSetting {
 		_styleSheetVersion = value;
 	}
 	
+	public void setURLDecodingRulesVersion(int value) {
+		_urlDecodingRulesVersion = value;
+	}
+
 	public String toURLString() {
 		return  RequestParameter.ParameterReset + "=" + _layoutVersion + "_" + _templateVersion + "_" + _styleSheetVersion;
 	}

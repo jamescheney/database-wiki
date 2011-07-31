@@ -50,6 +50,15 @@ public class ArrayDatabaseListing implements DatabaseContent {
 		return _entries[index];
 	}
 
+	public DatabaseEntry get(String key) {
+		for (DatabaseEntry entry : _entries) {
+			if (entry.label().equals(key)) {
+				return entry;
+			}
+		}
+		return null;
+	}
+	
 	public int size() {
 		return _entries.length;
 	}
