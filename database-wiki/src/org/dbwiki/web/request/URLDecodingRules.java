@@ -170,21 +170,25 @@ public class URLDecodingRules {
 			rule = this.get(schemaNode.children().get(nodeIdentifier.substring(0, pos)));
 			keyValue = nodeIdentifier.substring(pos + 1);
 		} else {
-			//If it's the last element of the URL path the nodeIdentifier could be the node label
+			// If it's the last element of the URL path the nodeIdentifier could be the node label
 			// of an attribute node or a key value for an internal node.
-			if (pathIndex == url.size() - 1) {
-				for (int iChild = 0; iChild < schemaNode.children().size(); iChild++) {
-					SchemaNode childSchema = schemaNode.children().get(iChild);
-					if ((childSchema.label().equals(nodeIdentifier)) && (childSchema.isAttribute())) {
-						// Make sure that there is only one child
-						DatabaseElementList nodes = node.find(childSchema.path().substring(node.schema().path().length() + 1));
-						if (nodes.size() > 1) {
-							throw new WikiDataException(WikiDataException.UnknownResource, url.toString());
-						} else if (nodes.size() == 1) {
+			// First check whether the nodeIdentifier is a valid node label for the current
+			// schema node.
+			for (int iChild = 0; iChild < schemaNode.children().size(); iChild++) {
+				SchemaNode childSchema = schemaNode.children().get(iChild);
+				if ((childSchema.label().equals(nodeIdentifier)) && (childSchema.isAttribute())) {
+					// Make sure that there is only one child
+					DatabaseElementList nodes = node.find(childSchema.path().substring(node.schema().path().length() + 1));
+					if (nodes.size() > 1) {
+						throw new WikiDataException(WikiDataException.UnknownResource, url.toString());
+					} else if (nodes.size() == 1) {
+						if (pathIndex == (url.size() - 1)) {
 							return nodes.get(0).identifier();
 						} else {
-							throw new WikiDataException(WikiDataException.UnknownResource, url.toString());
+							return this.decode(database, (DatabaseGroupNode)nodes.get(0), versionParameter, url, pathIndex + 1);
 						}
+					} else {
+						throw new WikiDataException(WikiDataException.UnknownResource, url.toString());
 					}
 				}
 			}
