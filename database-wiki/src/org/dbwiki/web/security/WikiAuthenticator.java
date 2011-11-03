@@ -23,6 +23,7 @@ package org.dbwiki.web.security;
 
 import java.net.URLDecoder;
 
+import org.dbwiki.exception.WikiFatalException;
 import org.dbwiki.user.User;
 import org.dbwiki.user.UserListing;
 
@@ -171,10 +172,13 @@ public class WikiAuthenticator extends Authenticator {
 			if (rawQuery != null) {
 				RequestParameterList parameters;
 				try {
-					parameters = new RequestParameterList(URLDecoder.decode(rawQuery, "UTF-8"));
-				} catch (java.io.UnsupportedEncodingException uee) {
+					parameters = new RequestParameterList(rawQuery);
+				} catch (WikiFatalException e) {
+					e.printStackTrace();
+					
+					// is this really what we want to do?
 					return true;
-				}
+				} 
 				if (parameters.hasParameter(RequestParameter.ParameterActivate)) {
 					return true;
 				} else if (parameters.hasParameter(RequestParameter.ParameterCreate)) {

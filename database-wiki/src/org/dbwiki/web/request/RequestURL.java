@@ -99,12 +99,6 @@ public class RequestURL {
 					}
 				}
 				in.close();
-
-				// There seems to be a problem when using UTF-8 here, especially for
-				// &nbsp; in the parameter value. But ISO-8859-1 does not seem to
-				// work all the time either???
-				//urlParameter = URLDecoder.decode(urlParameter, "ISO-8859-1");
-				urlParameter = URLDecoder.decode(urlParameter, "UTF-8");
 		    }
 		} catch (java.io.IOException ioException) {
 			throw new WikiFatalException(ioException);

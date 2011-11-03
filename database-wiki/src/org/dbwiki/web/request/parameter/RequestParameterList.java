@@ -21,9 +21,13 @@
 */
 package org.dbwiki.web.request.parameter;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
 import java.util.Vector;
+
+import org.dbwiki.exception.WikiFatalException;
 
 public class RequestParameterList {
 	/*
@@ -43,13 +47,19 @@ public class RequestParameterList {
 		_parameterList = new Vector<RequestParameter>();
 	}
 	
-	public RequestParameterList(String urlParameter) {
+	public RequestParameterList(String urlParameter) throws WikiFatalException {
 		this();
 		
 		if (urlParameter != null) {
 			StringTokenizer tokens = new StringTokenizer(urlParameter, "&");
 	    	while (tokens.hasMoreTokens()) {
-	    		this.add(new RequestParameter(tokens.nextToken()));
+	    		try {
+					this.add(new RequestParameter(URLDecoder.decode(tokens.nextToken(), "UTF-8")));
+				} catch (UnsupportedEncodingException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					throw new WikiFatalException(e);
+				}
 	    	}
 		}
 	}
