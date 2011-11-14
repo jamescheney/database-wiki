@@ -68,6 +68,10 @@ public class SchemaNodeIdentifier implements ResourceIdentifier {
 	 * Public Methods
 	 */
 	
+	public int compareTo(ResourceIdentifier identifier) {
+		return (nodeID() - ((SchemaNodeIdentifier)identifier).nodeID());
+	}
+
 	public boolean equals(ResourceIdentifier identifier) {
 		return (nodeID() == ((SchemaNodeIdentifier)identifier).nodeID());
 	}

@@ -23,17 +23,13 @@ package org.dbwiki.web.ui.layout;
 
 public class DisplayStyle {
 	/*
-	 * Private Constants
-	 */
-	
-	private static final String styleGroup = "group";
-	private static final String styleList  = "list";
-	private static final String styleTable = "table";
-	
-	/*
 	 * Public Constants
 	 */
 	
+	public static final String styleGroup = "group";
+	public static final String styleList  = "list";
+	public static final String styleTable = "table";
+
 	public static final String DefaultStyle = styleList;
 	
 	

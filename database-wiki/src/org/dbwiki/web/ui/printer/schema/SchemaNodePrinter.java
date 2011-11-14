@@ -29,6 +29,7 @@ import org.dbwiki.data.resource.SchemaNodeIdentifier;
 import org.dbwiki.data.schema.AttributeSchemaNode;
 import org.dbwiki.data.schema.SchemaNode;
 import org.dbwiki.data.schema.GroupSchemaNode;
+import org.dbwiki.data.time.TimestampPrinter;
 
 import org.dbwiki.web.html.HtmlLinePrinter;
 
@@ -54,7 +55,7 @@ public class SchemaNodePrinter implements HtmlContentPrinter {
 	
 	private DatabaseIdentifier _databaseIdentifier;
 	private DatabaseLayouter _layouter;
-	
+	private TimestampPrinter _timestampPrinter;
 	private RequestParameterVersion _versionParameter;
 	
 	private SchemaNode _schemaNode;
@@ -70,6 +71,7 @@ public class SchemaNodePrinter implements HtmlContentPrinter {
 		if(_schemaNode == null) {
 			_schemaNode = request.wiki().database().getSchemaNode(new SchemaNodeIdentifier(0));
 		}
+		_timestampPrinter = new TimestampPrinter(request.wiki().database().versionIndex());
 		_versionParameter = RequestParameter.versionParameter(request.parameters().get(RequestParameter.ParameterVersion));
 	}
 	
@@ -127,10 +129,10 @@ public class SchemaNodePrinter implements HtmlContentPrinter {
 		
 		if (active) {
 			content.openTD(layout.getCSS(CSS.CSSObjectValueActive));
-			content.linkWithTitle(target, attribute.getTimestamp().toPrintString(), attribute.label(), layout.getCSS(CSS.CSSContentValueActive));
+			content.linkWithTitle(target, _timestampPrinter.toPrintString(attribute.getTimestamp()), attribute.label(), layout.getCSS(CSS.CSSContentValueActive));
 		} else {
 			content.openTD(layout.getCSS(CSS.CSSObjectValueInactive));
-			content.linkWithTitle(target, attribute.getTimestamp().toPrintString(), attribute.label(), layout.getCSS(CSS.CSSContentValueInactive));
+			content.linkWithTitle(target, _timestampPrinter.toPrintString(attribute.getTimestamp()), attribute.label(), layout.getCSS(CSS.CSSContentValueInactive));
 		}
 		
 		content.closeTD();

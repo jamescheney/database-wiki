@@ -25,6 +25,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.dbwiki.data.database.Database;
+import org.dbwiki.data.time.TimestampPrinter;
 import org.dbwiki.data.wiki.DatabaseWikiPage;
 
 import org.dbwiki.user.User;
@@ -58,7 +59,7 @@ public class PageContentPrinter extends DataNodePrinter {
 	 */
 	
 	public PageContentPrinter(WikiPageRequest request, DatabaseLayouter layouter) {
-		super(request.wiki().database().identifier(), layouter);
+		super(request.wiki().database().identifier(), layouter, new TimestampPrinter(request.wiki().database().versionIndex()));
 		
 		_request = request;
 	}
@@ -101,9 +102,4 @@ public class PageContentPrinter extends DataNodePrinter {
 	public Database getDatabase() {
 		return _request.wiki().database();
 	}
-	
-	/*
-	 * Private Methods
-	 */
-
 }

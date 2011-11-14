@@ -21,6 +21,8 @@
 */
 package org.dbwiki.data.query;
 
+import org.dbwiki.data.database.Database;
+import org.dbwiki.data.resource.NodeIdentifier;
 import org.dbwiki.exception.data.WikiQueryException;
 
 /** A QueryStatement that fetches the data associated with a node id.
@@ -33,6 +35,7 @@ public class NIDQueryStatement extends QueryStatement {
 	 * Private Variables
 	 */
 	
+	private Database _database;
 	private int _nodeID;
 	
 	
@@ -40,10 +43,11 @@ public class NIDQueryStatement extends QueryStatement {
 	 * Constructors
 	 */
 	
-	public NIDQueryStatement(String nodeHexID) throws org.dbwiki.exception.WikiException {
+	public NIDQueryStatement(Database database, String nodeHexID) throws org.dbwiki.exception.WikiException {
 		//
 		// Expects a node identifier in hexadecimal integer format
 		//
+		_database = database;
 		try {
 			_nodeID = Integer.decode("0x" + nodeHexID);
 		} catch (java.lang.NumberFormatException exception) {
@@ -56,15 +60,7 @@ public class NIDQueryStatement extends QueryStatement {
 	 * Public Methods
 	 */
 	
-	public boolean isNIDStatement() {
-		return true;
-	}
-
-	public boolean isWikiPathStatement() {
-		return false;
-	}
-	
-	public int nodeID() {
-		return _nodeID;
+	public QueryResultSet execute() throws org.dbwiki.exception.WikiException {
+		return new QueryResultSet(_database.get(new NodeIdentifier(_nodeID)));
 	}
 }

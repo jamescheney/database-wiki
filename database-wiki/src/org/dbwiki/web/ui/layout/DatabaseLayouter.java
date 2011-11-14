@@ -222,6 +222,9 @@ public class DatabaseLayouter {
 		Integer key = new Integer(schema.id());
 		if (_layouter.containsKey(key)) {
 			return _layouter.get(key);
+		} else if (schema.id() == -1) {
+			return new SchemaLayout(schema.label(), schema.label(), LabelAlignment.alignNone, schema.label(), 0, DisplayStyle.styleTable, false, true, null, 0);
+
 		} else {
 			return new SchemaLayout(schema);
 		}

@@ -19,48 +19,32 @@
     along with Database Wiki.  If not, see <http://www.gnu.org/licenses/>.
     END LICENSE BLOCK
 */
-package org.dbwiki.data.query;
+package org.dbwiki.data.query.handler;
 
-import org.dbwiki.exception.data.WikiQueryException;
-
-/** A path index condition.
- * 
- * @author jcheney
+/** DatabaseGroupNode for the result returned by the SELECT clause of a query.
+ *
+ * @author hmueller
  *
  */
-public class WikiPathIndexCondition extends WikiPathCondition {
-	/*
-	 * Private Variables
-	 */
-	
-	private int _index;
-	
-	
-	/*
-	 * Constructors
-	 */
-	
-	public WikiPathIndexCondition(String index) throws org.dbwiki.exception.WikiException {
-		try {
-			_index = Integer.parseInt(index);
-		} catch (NumberFormatException exceptin) {
-			throw new WikiQueryException(WikiQueryException.InvalidIndexCondition, String.valueOf(index));
-		}
-		if (_index <= 0) {
-			throw new WikiQueryException(WikiQueryException.InvalidIndexCondition, String.valueOf(index));
-		}
+import org.dbwiki.data.annotation.AnnotationList;
+import org.dbwiki.data.database.DatabaseGroupNode;
+import org.dbwiki.data.resource.NodeIdentifier;
+import org.dbwiki.data.resource.ResourceIdentifier;
+import org.dbwiki.data.schema.GroupSchemaNode;
+import org.dbwiki.data.time.TimeSequence;
+
+public class ResultGroupNode extends DatabaseGroupNode {
+
+	public ResultGroupNode(GroupSchemaNode entity, TimeSequence timestamp) {
+		super(entity, null, timestamp, new AnnotationList());
 	}
-	
-	
+
 	/*
 	 * Public Methods
 	 */
 	
-	public int index() {
-		return _index;
-	}
-	
-	public boolean isIndexCondition() {
-		return true;
+	public ResourceIdentifier identifier() {
+
+		return new NodeIdentifier();
 	}
 }

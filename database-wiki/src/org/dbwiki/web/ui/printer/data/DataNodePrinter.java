@@ -32,6 +32,7 @@ import org.dbwiki.data.resource.DatabaseIdentifier;
 
 import org.dbwiki.data.schema.SchemaNode;
 import org.dbwiki.data.schema.GroupSchemaNode;
+import org.dbwiki.data.time.TimestampPrinter;
 
 import org.dbwiki.web.html.HtmlLinePrinter;
 import org.dbwiki.web.html.HtmlPage;
@@ -64,6 +65,7 @@ public class DataNodePrinter implements HtmlContentPrinter {
 	private DatabaseIdentifier _databaseIdentifier;
 	private DatabaseLayouter _layouter;
 	private DatabaseNode _node;
+	private TimestampPrinter _timestampPrinter;
 	private RequestParameterVersion _versionParameter;
 	
 	
@@ -71,15 +73,16 @@ public class DataNodePrinter implements HtmlContentPrinter {
 	 * Constructors
 	 */
 	
-	public DataNodePrinter(DatabaseIdentifier databaseIdentifier, DatabaseLayouter layouter) {
+	public DataNodePrinter(DatabaseIdentifier databaseIdentifier, DatabaseLayouter layouter, TimestampPrinter timestampPrinter) {
 		_databaseIdentifier = databaseIdentifier;
 		_layouter = layouter;
+		_timestampPrinter = timestampPrinter;
 	}
 	
 	public DataNodePrinter(WikiDataRequest request, DatabaseLayouter layouter) throws org.dbwiki.exception.WikiException {
 		_databaseIdentifier = request.wri().databaseIdentifier();
 		_layouter = layouter;
-		
+		_timestampPrinter = new TimestampPrinter(request.wiki().database().versionIndex());
 		_node = request.node();
 		_versionParameter = RequestParameter.versionParameter(request.parameters().get(RequestParameter.ParameterVersion));
 	}
@@ -237,9 +240,9 @@ public class DataNodePrinter implements HtmlContentPrinter {
 				}
 				String target = getNodeLink(value, versionParameter);
 				if (value.getTimestamp().isCurrent()) {
-					content.linkWithTitle(target, value.getTimestamp().toPrintString(), value.text(), layout.getCSS(CSS.CSSContentValueActive));
+					content.linkWithTitle(target, _timestampPrinter.toPrintString(value.getTimestamp()), value.text(), layout.getCSS(CSS.CSSContentValueActive));
 				} else {
-					content.linkWithTitle(target, value.getTimestamp().toPrintString(), value.text(), layout.getCSS(CSS.CSSContentValueInactive));
+					content.linkWithTitle(target, _timestampPrinter.toPrintString(value.getTimestamp()), value.text(), layout.getCSS(CSS.CSSContentValueInactive));
 				}
 				if ((attribute.hasAnnotation()) || (value.hasAnnotation())) {
 					addAnnotationIndicator(content);
@@ -279,9 +282,9 @@ public class DataNodePrinter implements HtmlContentPrinter {
 				content.closeTABLE();
 			} else {
 				if (group.getTimestamp().isCurrent()) {
-					content.linkWithTitle(linkTarget, group.getTimestamp().toPrintString(), layout.getLabel(group, versionParameter), layout.getCSS(CSS.CSSContentValueActive));
+					content.linkWithTitle(linkTarget, _timestampPrinter.toPrintString(group.getTimestamp()), layout.getLabel(group, versionParameter), layout.getCSS(CSS.CSSContentValueActive));
 				} else {
-					content.linkWithTitle(linkTarget, group.getTimestamp().toPrintString(), layout.getLabel(group, versionParameter), layout.getCSS(CSS.CSSContentValueInactive));
+					content.linkWithTitle(linkTarget, _timestampPrinter.toPrintString(group.getTimestamp()), layout.getLabel(group, versionParameter), layout.getCSS(CSS.CSSContentValueInactive));
 				}
 				if (group.hasAnnotation()) {
 					addAnnotationIndicator(content);
@@ -516,17 +519,20 @@ public class DataNodePrinter implements HtmlContentPrinter {
 					for (int iElement = 0; iElement < nodes.size(); iElement++) {
 						DatabaseElementNode element = nodes.get(iElement);
 						hasAnnotation = (hasAnnotation || element.hasAnnotation());
-						String target = getNodeLink(element, versionParameter);
 						if (element.isAttribute()) {
 							printAttributeValue((DatabaseAttributeNode)element, versionParameter, layout, content);
 						} else {
-							String label = _layouter.get(element.schema()).getLabel(element, versionParameter);
-							
-							if (element.getTimestamp().isCurrent()) {
-								content.linkWithTitle(target, element.getTimestamp().toPrintString(), label, layout.getCSS(CSS.CSSContentValueActive));
-							} else {
-								content.linkWithTitle(target, element.getTimestamp().toPrintString(), label, layout.getCSS(CSS.CSSContentValueInactive));
-							}
+							this.printGroupNode((DatabaseGroupNode)element, versionParameter, content);
+							// Printing the group node and all its children could get messy. Alternatively,
+							// we could just print a text line for each node using the code below (need to
+							// comment out the previous line).
+							//String label = _layouter.get(element.schema()).getLabel(element, versionParameter);
+							//String target = getNodeLink(element, versionParameter);
+							//if (element.getTimestamp().isCurrent()) {
+							//	content.linkWithTitle(target, _timestampPrinter.toPrintString(element.getTimestamp()), label, layout.getCSS(CSS.CSSContentValueActive));
+							//} else {
+							//	content.linkWithTitle(target, _timestampPrinter.toPrintString(element.getTimestamp()), label, layout.getCSS(CSS.CSSContentValueInactive));
+							//}
 						}
 					}
 					if (hasAnnotation) {

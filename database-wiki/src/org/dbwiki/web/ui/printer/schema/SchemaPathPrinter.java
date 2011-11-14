@@ -22,7 +22,6 @@
 package org.dbwiki.web.ui.printer.schema;
 
 import org.dbwiki.data.schema.SchemaNode;
-import org.dbwiki.data.schema.GroupSchemaNode;
 
 import org.dbwiki.web.html.HtmlLinePrinter;
 
@@ -31,8 +30,6 @@ import org.dbwiki.web.request.parameter.RequestParameter;
 import org.dbwiki.web.request.parameter.RequestParameterVersion;
 
 import org.dbwiki.web.ui.CSS;
-
-import org.dbwiki.web.ui.layout.DatabaseLayouter;
 
 import org.dbwiki.web.ui.printer.HtmlContentPrinter;
 
@@ -46,16 +43,14 @@ public class SchemaPathPrinter implements HtmlContentPrinter {
 	 * Private Variables
 	 */
 	
-	private DatabaseLayouter _layouter;
 	private WikiSchemaRequest _request;
 	
 	/*
 	 * Constructors
 	 */
 	
-	public SchemaPathPrinter(WikiSchemaRequest request, DatabaseLayouter layouter) {
+	public SchemaPathPrinter(WikiSchemaRequest request) {
 		_request = request;
-		_layouter = layouter;
 	}
 	
 	/*

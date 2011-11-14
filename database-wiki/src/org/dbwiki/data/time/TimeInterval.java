@@ -75,6 +75,37 @@ public class TimeInterval {
 		return ((_start <= time) && (((_end >= time) && (_end >= _start)) || (_end == -1)));
 	}
 
+	/** Returns true if the time interval contains (subsumes) the given time interval
+	 * 
+	 * @param interval
+	 * @return
+	 */
+	public boolean contains(TimeInterval interval) {
+		
+		if (this.start() <= interval.start()) {
+			if (this.isOpen()) {
+				return true;
+			} else if (interval.isOpen()) {
+				return false;
+			} else if (this.end() >= interval.end()) {
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			return false;
+		}
+	}
+	
+	/** Returns a copy of this time interval
+	 * 
+	 * @return
+	 */
+	public TimeInterval copy() {
+		
+		return new TimeInterval(_start, _end);
+	}
+
 	/** The end point of the interval
 	 * 
 	 */
@@ -82,6 +113,39 @@ public class TimeInterval {
 		return _end;
 	}
 	
+	/** Extends the time interval by setting it's end value to
+	 * the given time
+	 * 
+	 * @param time
+	 */
+	public void extend(int time) {
+		
+		_end = time;
+	}
+
+	/** Returns a new time interval that is the intersection of this time interval
+	 * and a given time interval
+	 * 
+	 * @param interval
+	 * @return
+	 * @throws au.csiro.svs.SVSException
+	 */
+	public TimeInterval intersect(TimeInterval interval) {
+		
+		int start = Math.max(this.start(), interval.start());
+		if ((this.isOpen()) && (interval.isOpen())) {
+			return new TimeInterval(start);
+		} else {
+			if (this.isOpen()) {
+				return new TimeInterval(start, interval.end());
+			} else if (interval.isOpen()) {
+				return new TimeInterval(start, this.end());
+			} else {
+				return new TimeInterval(start, Math.min(this.end(), interval.end()));
+			}
+		}
+	}
+
 	/** 
 	 * Boolean flag indicating whether the end of the interval is "now" 
 	 */
@@ -89,6 +153,38 @@ public class TimeInterval {
 		return (_end == -1);
 	}
 	
+	/** Returns true if this time interval and the given time interval overlap
+	 * 
+	 * @param interval
+	 * @return
+	 */
+	public boolean overlap(TimeInterval interval) {
+		
+		if ((this.start() == interval.start()) || (this.start() == interval.end()) || (this.end() == interval.start()) || (this.end() == interval.end())) {
+			return true;
+		}
+		
+		if (this.start() <= interval.start()) {
+			if (this.isOpen()) {
+				return true;
+			} else if (this.end() >= interval.start()) {
+				return true;
+			} else {
+				return false;
+			}
+		} else if (this.start() >= interval.start()) {
+			if (interval.isOpen()) {
+				return true;
+			} else if (interval.end() >= this.start()) {
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			return true;
+		}
+	}
+
 	/** The beginning of the interval
 	 * 
 	 */

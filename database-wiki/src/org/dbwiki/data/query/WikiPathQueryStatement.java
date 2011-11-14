@@ -21,13 +21,21 @@
 */
 package org.dbwiki.data.query;
 
-import java.util.Vector;
-
-import org.dbwiki.data.schema.AttributeSchemaNode;
-import org.dbwiki.data.schema.SchemaNode;
-import org.dbwiki.data.schema.GroupSchemaNode;
+import org.dbwiki.data.database.Database;
+import org.dbwiki.data.database.DatabaseGroupNode;
+import org.dbwiki.data.index.DatabaseContent;
+import org.dbwiki.data.query.xaql.AbsoluteTargetPathGenerator;
+import org.dbwiki.data.query.xaql.XAQLSyntaxParser;
+import org.dbwiki.data.query.xaql.XAQLToken;
+import org.dbwiki.data.query.xpath.AbsoluteXPathConsumer;
+import org.dbwiki.data.query.xpath.XPath;
 
 import org.dbwiki.exception.data.WikiQueryException;
+import org.parboiled.Parboiled;
+import org.parboiled.buffers.DefaultInputBuffer;
+import org.parboiled.errors.ErrorUtils;
+import org.parboiled.parserunners.ReportingParseRunner;
+import org.parboiled.support.ParsingResult;
 
 /** A QueryStatement consisting of a vector of path component steps.
  * FIXME #query: Delocalize these queries
@@ -39,7 +47,8 @@ public class WikiPathQueryStatement extends QueryStatement {
 	 * Private Variables
 	 */
 	
-	private Vector<WikiPathComponent> _elements;
+	private Database _database;
+	private XPath _targetPath;
 	
 	
 	/*
@@ -47,22 +56,24 @@ public class WikiPathQueryStatement extends QueryStatement {
 	 */
 	/** Creates a wiki path query statement for a given database from a path expression
 	 */
-	public WikiPathQueryStatement(GroupSchemaNode schema, String pathExpression) throws org.dbwiki.exception.WikiException {
+	public WikiPathQueryStatement(Database database, String pathExpression) throws org.dbwiki.exception.WikiException {
 		//
 		// Expects a XPath-like expression, i.e., /schema-node{[child='...'] | :<<node-index>>}/schema-node{[child='...'] | :<<node-index>>}/...
 		// The [child='...'] | :<<node-index>>-part is optional.
 		// Only one of the options [child='...'] OR :<<node-index>> are allowed.
 		//
-		PathTokenizer tokens = new PathTokenizer(pathExpression);
 		
-		if (tokens.size() > 0) {
-			_elements = new Vector<WikiPathComponent>();
-			for (int iToken = 0; iToken < tokens.size(); iToken++) {
-				this.add(schema, tokens.get(iToken));
-			}
-		} else {
-			throw new WikiQueryException(WikiQueryException.InvalidWikiQuery, pathExpression);
-		}
+		_database = database;
+		
+		XAQLSyntaxParser parser = Parboiled.createParser(XAQLSyntaxParser.class);
+		
+		ParsingResult<XAQLToken> result = new ReportingParseRunner<XAQLToken>(parser.XPathStatement()).run(new DefaultInputBuffer(pathExpression.toCharArray()));
+		
+		if (result.hasErrors()) {
+			throw new WikiQueryException(WikiQueryException.InvalidWikiQuery, pathExpression + "\n" + ErrorUtils.printParseErrors(result));
+        } else {
+        	_targetPath = new AbsoluteTargetPathGenerator().getTargetPath(database.schema().root(), database.versionIndex(), result.parseTreeRoot.getValue().children().firstElement().children().iterator());
+        }
 	}
 	
 	
@@ -70,122 +81,14 @@ public class WikiPathQueryStatement extends QueryStatement {
 	 * Public Methods
 	 */
 	
-	public WikiPathComponent firstElement() {
-		return _elements.firstElement();
-	}
-	
-	public WikiPathComponent get(int index) {
-		return _elements.get(index);
-	}
-	
-	public boolean isNIDStatement() {
-		return false;
-	}
+	public QueryResultSet execute() throws org.dbwiki.exception.WikiException {
 
-	public boolean isWikiPathStatement() {
-		return true;
-	}
-	
-	public int size() {
-		return _elements.size();
-	}
-	
-	
-	/*
-	 * Private Methods
-	 */
-	/** Adds a token to the path.  Basically is doing parsing.
-	 * FIXME #query: Move parsing into parboiled parser.
-	 */
-	private void add(GroupSchemaNode rootSchema, String token) throws org.dbwiki.exception.WikiException {
-		String label = null;
-		String condition = null;
-		
-		boolean isIndexCondition = false;
-		
-		int pos = this.indexOfConditionStart(token);
-		if (pos != -1) {
-			label = token.substring(0, pos);
-			if (token.charAt(pos) == '[') {
-				condition = token.substring(pos + 1);
-				if (!condition.endsWith("]")) {
-					throw new WikiQueryException(WikiQueryException.InvalidWikiPathComponent, token);
-				}
-				condition = condition.substring(0, condition.length() - 1);
-			} else {
-				isIndexCondition = true;
-				condition = token.substring(pos + 1);
-			}
-		} else {
-			label = token;
+		QueryResultSet result = new QueryResultSet();
+		DatabaseContent content = _database.getMatchingEntries(_targetPath.getConditionListing());
+		for (int iEntry = 0; iEntry < content.size(); iEntry++) {
+			DatabaseGroupNode entry = (DatabaseGroupNode)_database.get(content.get(iEntry).identifier());
+			new AbsoluteXPathConsumer().consume(entry, _targetPath, result);
 		}
-		
-		SchemaNode schema = null;
-		
-		if (_elements.size() > 0) {
-			SchemaNode parent = _elements.lastElement().schema();
-			if (parent.isGroup()) {
-				schema = ((GroupSchemaNode)parent).find(label);
-			} else {
-				throw new WikiQueryException(WikiQueryException.InvalidWikiPathComponent, token);
-			}
-		} else {
-			schema = rootSchema;
-			if (!schema.label().equals(label)) {
-				throw new WikiQueryException(WikiQueryException.InvalidWikiPathComponent, token);
-			}
-		}
-		
-		if (condition != null) {
-			if (isIndexCondition) {
-				_elements.add(new WikiPathComponent(schema, new WikiPathIndexCondition(condition)));
-			} else {
-				if (schema.isGroup()) {
-					pos = condition.indexOf('=');
-					if (pos != -1) {
-						SchemaNode child = ((GroupSchemaNode)schema).find(condition.substring(0, pos));
-						if (child.isAttribute()) {
-							String value = condition.substring(pos + 1);
-							if ((value.startsWith("'")) && (value.endsWith("'"))) {
-								_elements.add(new WikiPathComponent(schema, new WikiPathValueCondition((AttributeSchemaNode)child, value)));
-							} else {
-								throw new WikiQueryException(WikiQueryException.InvalidWikiPathComponent, token);							
-							}
-						} else {
-							throw new WikiQueryException(WikiQueryException.InvalidWikiPathComponent, token);
-						}
-					} else {
-						throw new WikiQueryException(WikiQueryException.InvalidWikiPathComponent, token);
-					}
-				} else {
-					throw new WikiQueryException(WikiQueryException.InvalidWikiPathComponent, token);
-				}
-			}
-		} else {
-			_elements.add(new WikiPathComponent(schema));
-		}
+		return result;
 	}
-	
-	
-
-	/** Helper method to find the place where a condition starts.
-	 * 
-	 * @param token
-	 * @return
-	 */
-	private int indexOfConditionStart(String token) {
-		int posIndex = token.indexOf(':');
-		int posValue = token.indexOf('[');
-		
-		if ((posIndex != -1) && (posValue == -1)) {
-			return posIndex;
-		} else if ((posIndex == -1) && (posValue != -1)) {
-			return posValue;
-		} else if ((posIndex != -1) && (posValue != -1)) {
-			return Math.min(posIndex, posValue);
-		} else {
-			return -1;
-		}
-	}
-	
 }

@@ -33,9 +33,9 @@ public class LabelAlignment {
 	 * Private Constants
 	 */
 	
-	private static final String alignLeft = "left";
-	private static final String alignNone = "none";
-	private static final String alignTop = "top";
+	public static final String alignLeft = "left";
+	public static final String alignNone = "none";
+	public static final String alignTop = "top";
 	
 	
 	/*

@@ -923,7 +923,7 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 		if (isGetRequest) {
 			contentGenerator.put(DatabaseWikiContentGenerator.ContentTimemachine, new TimemachinePrinter(request));
 			contentGenerator.put(DatabaseWikiContentGenerator.ContentMenu, new SchemaMenuPrinter(request));
-			contentGenerator.put(DatabaseWikiContentGenerator.ContentObjectLink, new SchemaPathPrinter(request, _layouter));
+			contentGenerator.put(DatabaseWikiContentGenerator.ContentObjectLink, new SchemaPathPrinter(request));
 			contentGenerator.put(DatabaseWikiContentGenerator.ContentContent, new SchemaNodePrinter(request, _layouter));
 		} else if ((isIndexRequest) || (request.type().isDelete())) { // || (action.actionInsert())) {
 			contentGenerator.put(DatabaseWikiContentGenerator.ContentTimemachine, new TimemachinePrinter(request));

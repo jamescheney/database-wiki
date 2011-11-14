@@ -23,10 +23,12 @@
 package org.dbwiki.driver.rdbms;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.Vector;
 
 import org.dbwiki.data.annotation.Annotation;
 
@@ -61,11 +63,10 @@ import org.dbwiki.data.provenance.ProvenanceInsert;
 import org.dbwiki.data.provenance.ProvenanceUnknown;
 import org.dbwiki.data.provenance.ProvenanceUpdate;
 
-import org.dbwiki.data.query.NIDQueryStatement;
 import org.dbwiki.data.query.QueryResultSet;
 import org.dbwiki.data.query.QueryStatement;
-import org.dbwiki.data.query.VectorQueryResultSet;
-import org.dbwiki.data.query.WikiPathQueryStatement;
+import org.dbwiki.data.query.condition.AttributeCondition;
+import org.dbwiki.data.query.condition.AttributeConditionListing;
 
 import org.dbwiki.data.resource.DatabaseIdentifier;
 import org.dbwiki.data.resource.SchemaNodeIdentifier;
@@ -299,6 +300,54 @@ public class RDBMSDatabase implements Database, DatabaseConstants {
 		}
 	}
 
+	public DatabaseContent getMatchingEntries(AttributeConditionListing listing) throws org.dbwiki.exception.WikiException {
+		
+		Vector<String> sqlStatements = new Vector<String>();
+		Vector<String> parameters = new Vector<String>();
+		
+		for (int iCondition = 0; iCondition < listing.size(); iCondition++) {
+			AttributeCondition condition = listing.get(iCondition);
+			if (condition.isINDEX()) {
+				this.addSchemaIndexStatement(sqlStatements, parameters, condition);
+			} else {
+				this.addSchemaValueStatement(sqlStatements, parameters, condition);
+			}
+		}
+		
+		String sql = null;
+		
+		if (sqlStatements.size() > 0) {
+			sql = "SELECT DISTINCT " + RelDataColEntry + " FROM (" + sqlStatements.firstElement();
+			for (int iStatement = 1; iStatement < sqlStatements.size(); iStatement++) {
+				sql = sql + " INTERSECT " + sqlStatements.get(iStatement);
+			}
+			sql = sql + ") q ORDER BY " + RelDataColEntry;
+		} else {
+			sql = "SELECT DISTINCT " + RelDataColEntry + " FROM " + this.name() + RelationData + " ORDER BY " + RelDataColEntry;
+		}
+		
+		VectorDatabaseListing result = new VectorDatabaseListing();
+		
+		try {
+			Connection con = _connector.getConnection();
+			PreparedStatement pStmt = con.prepareStatement(sql);
+			for (int iParameter = 0; iParameter < parameters.size(); iParameter++) {
+				pStmt.setString(iParameter + 1, parameters.get(iParameter));
+			}
+			ResultSet rs = pStmt.executeQuery();
+			RDBMSDatabaseListing content = this.content();
+			while (rs.next()) {
+				result.add(content.get(new NodeIdentifier(rs.getInt(1))));
+			}
+			rs.close();
+			con.close();
+		} catch (java.sql.SQLException sqlException) {
+			throw new WikiFatalException(sqlException);
+		}
+		
+		return result;
+	}
+	
 	public ResourceIdentifier getNodeIdentifierForURL(RequestURL url) throws org.dbwiki.exception.WikiException {
 		return new NodeIdentifier(url);
 	}
@@ -460,21 +509,7 @@ public class RDBMSDatabase implements Database, DatabaseConstants {
 
 	/** Evaluates a wiki query with respect to the database */
 	public QueryResultSet query(String query) throws org.dbwiki.exception.WikiException {
-		QueryStatement qStmt = QueryStatement.createStatement(this.schema().root(),query);
-		if (qStmt.isNIDStatement()) {
-			return new VectorQueryResultSet(get(new NodeIdentifier(((NIDQueryStatement)qStmt).nodeID())));
-		} else if (qStmt.isWikiPathStatement()) {
-			try {
-				Connection con = _connector.getConnection();
-				QueryResultSet rs = QueryEvaluator.evaluate(con, this, (WikiPathQueryStatement)qStmt);
-				con.close();
-				return rs;
-			} catch (java.sql.SQLException sqlException) {
-				throw new WikiFatalException(sqlException);
-			}
-		} else {
-			throw new WikiFatalException("Unexpected query: " + query);
-		}
+		return QueryStatement.createStatement(this,query).execute();
 	}
 
 	public DatabaseSchema schema() {
@@ -827,7 +862,22 @@ public class RDBMSDatabase implements Database, DatabaseConstants {
 		node.setTimestamp(timestamp);
 	}
 	
-	
-	
+	private void addSchemaIndexStatement(Vector<String> sqlStatements, Vector<String> parameters, AttributeCondition condition) {
+		sqlStatements.add("SELECT DISTINCT " + RelDataColEntry + " " +
+			"FROM " + this.name() + ViewSchemaIndex + " " +
+			"WHERE " + ViewSchemaIndexColMaxCount + " >= " + condition.sqlPreparedStatement() + " " +
+			"AND " + RelDataColSchema + " = " + condition.entity().id());
+	}
+
+	private void addSchemaValueStatement(Vector<String> sqlStatements, Vector<String> parameters, AttributeCondition condition) {
+		
+		sqlStatements.add("SELECT DISTINCT d1." + RelDataColEntry + " " +
+			"FROM " + this.name() + RelationData + " d1, " + this.name() + RelationData + " d2 " +
+			"WHERE d1." + RelDataColSchema + " = " + RelDataColSchemaValUnknown + " " +
+			"AND d1." + RelDataColValue + " " + condition.sqlPreparedStatement() + "" +
+			"AND d1." + RelDataColParent + " = d2." + RelDataColID + " " +
+			"AND d2." + RelDataColSchema + " = " + condition.entity().id());
+		condition.listValues(parameters);
+	}
 }
 

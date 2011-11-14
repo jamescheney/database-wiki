@@ -30,14 +30,17 @@ public class WikiQueryException extends WikiException {
 	
 	public static final long serialVersionUID = 8815L;
 
-	public static final int InvalidIndexCondition    = 250;
-	public static final int InvalidNIDQuery          = 500;
-	public static final int InvalidPathExpression    = 575;
-	public static final int InvalidQueryFormat       = 1000;
-	public static final int InvalidWikiPathComponent = 1500;
-	public static final int InvalidWikiQuery         = 1625;
-	public static final int QueryFormatNotSupported  = 1750;
-	public static final int UnknownQueryFormat       = 2000;
+	public static final int DuplicateVariableDefinition = 125;
+	public static final int InvalidIndexCondition       = 250;
+	public static final int InvalidNIDQuery             = 500;
+	public static final int InvalidPathExpression       = 575;
+	public static final int InvalidQueryFormat          = 1000;
+	public static final int InvalidQueryStatement       = 1250;
+	public static final int InvalidWikiPathComponent    = 1500;
+	public static final int InvalidWikiQuery            = 1625;
+	public static final int QueryFormatNotSupported     = 1750;
+	public static final int UnknownQueryFormat          = 2000;
+	public static final int UnknownVariable             = 3000;
 	
 	
 	/*
@@ -70,6 +73,8 @@ public class WikiQueryException extends WikiException {
 	
 	public String errorCodeMessage() {
 		switch(_errorCode) {
+		case DuplicateVariableDefinition:
+			return " {Duplicate variable definition]";
 		case InvalidIndexCondition:
 			return " [Invalid node index value]";
 		case InvalidNIDQuery:
@@ -78,6 +83,8 @@ public class WikiQueryException extends WikiException {
 			return " [Invalid path expression]";
 		case InvalidQueryFormat:
 			return " [Invalid query string format]";
+		case InvalidQueryStatement:
+			return " [Invalid query statement]";
 		case InvalidWikiPathComponent:
 			return " [Invalid wiki-path component]";
 		case InvalidWikiQuery:
@@ -86,6 +93,8 @@ public class WikiQueryException extends WikiException {
 			return " [Query format not supported by database implementation]";
 		case UnknownQueryFormat:
 			return " [Unknown query format]";
+		case UnknownVariable:
+			return " [Unknown variable]";
 		default:
 			return "";
 		}

@@ -61,6 +61,10 @@ public class PageIdentifier implements ResourceIdentifier {
 	/*
 	 * Public Methods
 	 */
+	public int compareTo(ResourceIdentifier identifier) {
+		return this.toURLString().compareTo(((PageIdentifier)identifier).toURLString());
+	}
+	
 	public boolean equals(ResourceIdentifier identifier) {
 		return this.toURLString().equals(((PageIdentifier)identifier).toURLString());
 	}

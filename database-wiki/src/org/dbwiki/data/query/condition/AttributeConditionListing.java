@@ -19,36 +19,32 @@
     along with Database Wiki.  If not, see <http://www.gnu.org/licenses/>.
     END LICENSE BLOCK
 */
-package org.dbwiki.data.query;
+package org.dbwiki.data.query.condition;
 
-import org.dbwiki.data.schema.SchemaNode;
-
-/** Struct holding components of a wiki path, including a schema and optional condition
+/** Lists the attribute conditions within a XAQL query statement. These conditions
+ * are used to generate the SQL statement which retireves the candidate entries 
+ * during query evaluation. 
  * 
- * 
- * @author jcheney
+ * @author hmueller
  *
  */
-public class WikiPathComponent {
+import java.util.Vector;
+
+public class AttributeConditionListing {
+
 	/*
 	 * Private Variables
 	 */
 	
-	private WikiPathCondition _condition;
-	private SchemaNode _schema;
+	private Vector<AttributeCondition> _conditions;
 	
 	
 	/*
-	 * Constructors 
+	 * Constructors
 	 */
 	
-	public WikiPathComponent(SchemaNode schema, WikiPathCondition condition) {
-		_schema = schema;
-		_condition = condition;
-	}
-	
-	public WikiPathComponent(SchemaNode schema) {
-		this(schema, null);
+	public AttributeConditionListing() {
+		_conditions = new Vector<AttributeCondition>();
 	}
 	
 	
@@ -56,15 +52,20 @@ public class WikiPathComponent {
 	 * Public Methods
 	 */
 	
-	public WikiPathCondition condition() {
-		return _condition;
+	public void add(AttributeCondition condition) {
+		// The MATCHES condition currently cannot be translated into a SQL query due
+		// to the general lack of support for regular expressions in SQL queries. Thus,
+		// queries with MATCHES conditions add null conditions.
+		if (condition != null) {
+			_conditions.add(condition);
+		}
 	}
 	
-	public SchemaNode schema() {
-		return _schema;
+	public AttributeCondition get(int index) {
+		return _conditions.get(index);
 	}
 	
-	public boolean hasCondition() {
-		return (_condition != null);
+	public int size() {
+		return _conditions.size();
 	}
 }

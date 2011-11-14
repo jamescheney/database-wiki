@@ -30,7 +30,7 @@ package org.dbwiki.data.resource;
  * @author jcheney
  *
  */
-public interface ResourceIdentifier {
+public interface ResourceIdentifier extends Comparable<ResourceIdentifier> {
 	/*
 	 * Interface Methods
 	 */

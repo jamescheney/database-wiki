@@ -106,7 +106,7 @@ public class SQLDatabaseSchema extends DatabaseSchema implements DatabaseConstan
 				if(schema.hasTimestamp()) {
 					schema.getTimestamp().elongate(start, end);
 				} else {
-					schema.setTimestamp(new TimeSequence(start, end, versionIndex));
+					schema.setTimestamp(new TimeSequence(start, end));
 				}
 			}
 			

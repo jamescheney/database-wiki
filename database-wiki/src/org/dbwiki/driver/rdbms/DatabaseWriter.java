@@ -246,7 +246,7 @@ public class DatabaseWriter implements DatabaseConstants {
 	 */
 	public ResourceIdentifier insertRootNode(DocumentGroupNode node, Version version) throws org.dbwiki.exception.WikiException {
 		try {
-			RDBMSDatabaseGroupNode root = this.insertGroupNode((GroupSchemaNode)node.schema(), null, -1, new TimeSequence(version.number(), _database.versionIndex()));
+			RDBMSDatabaseGroupNode root = this.insertGroupNode((GroupSchemaNode)node.schema(), null, -1, new TimeSequence(version.number()));
 			this.insertGroupChildren(node, root, root.identifier().nodeID());
 			PreparedStatement pStmtUpdateNode = _con.prepareStatement(
 				"UPDATE " + _database.name() + RelationData + " " +

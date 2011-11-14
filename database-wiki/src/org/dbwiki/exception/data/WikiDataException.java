@@ -35,11 +35,12 @@ public class WikiDataException extends WikiException {
 	public static final int InvaldIdentifier   = 1500;
 	public static final int InvaldIndexValue   = 2000;
 	public static final int InvaldInputData    = 3000;
+	public static final int InvalidTimestamp   = 3250;
 	public static final int UnexcpectedEOD     = 3500;
 	public static final int UnknownDriverName  = 3750;
 	public static final int UnknownNodeID      = 4000;
 	public static final int InvalidPasteTarget = 4500;
-	public static final int UnknownSchemaNode      = 4750;
+	public static final int UnknownSchemaNode  = 4750;
 	public static final int UnknownResource    = 5000;
 
 	
@@ -79,6 +80,8 @@ public class WikiDataException extends WikiException {
 			return "[Invalid input data]";
 		case InvalidPasteTarget:
 			return "[Invalid target node type for copy/paste operation]";
+		case InvalidTimestamp:
+			return "[Invalid timestamp]";
 		case UnexcpectedEOD:
 			return "[Unexpected end of document]";
 		case UnknownDriverName:

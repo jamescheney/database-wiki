@@ -21,7 +21,7 @@
 */
 package org.dbwiki.data.query;
 
-import org.dbwiki.data.schema.GroupSchemaNode;
+import org.dbwiki.data.database.Database;
 import org.dbwiki.exception.data.WikiQueryException;
 
 /** An interface for QueryStatements
@@ -45,7 +45,7 @@ public abstract class QueryStatement {
 	public static final String QueryNID   = "nid";
 	
 	//
-	// XPATH-like expression (called Wiki-Path), i.e., wpath://<<schema-node-name>>{[<<child>>='...'] | :<<node-index>>}/...
+	// XPATH-like expression (called Wiki-Path), i.e., wpath://<<schema-node-name>>{[<<child-path>>='...'] | :<<node-index>>}/...
 	//
 	public static final String QueryWikiPath = "wpath";
 	
@@ -54,15 +54,16 @@ public abstract class QueryStatement {
 	 * Interface Methods
 	 */
 	
-	public abstract boolean isNIDStatement();
-	public abstract boolean isWikiPathStatement();
+	public abstract QueryResultSet execute() throws org.dbwiki.exception.WikiException;
 	
-	public static QueryStatement createStatement(GroupSchemaNode schema, String query) throws org.dbwiki.exception.WikiException {
+	public static QueryStatement createStatement(Database database, String query) throws org.dbwiki.exception.WikiException {
 		if (query != null) {
 			if (query.toLowerCase().startsWith(QueryStatement.QueryNID.toLowerCase() + "://")) {
-				return new NIDQueryStatement(query.substring(QueryStatement.QueryNID.length() + 3));
+				return new NIDQueryStatement(database, query.substring(QueryStatement.QueryNID.length() + 3));
 			} else if (query.toLowerCase().startsWith(QueryStatement.QueryWikiPath.toLowerCase() + "://")) {
-				return new WikiPathQueryStatement(schema, query.substring(QueryStatement.QueryWikiPath.length() + 2));
+				return new WikiPathQueryStatement(database, query.substring(QueryStatement.QueryWikiPath.length() + 2));
+			} else if (query.toLowerCase().startsWith("select ")) {
+				return new XAQLQueryStatement(database, query);
 			} else {
 				throw new WikiQueryException(WikiQueryException.UnknownQueryFormat, query);
 			}

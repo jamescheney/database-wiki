@@ -29,7 +29,6 @@ import java.util.Hashtable;
 import java.util.Vector;
 
 import org.dbwiki.data.index.DatabaseContent;
-import org.dbwiki.data.index.DatabaseEntry;
 
 import org.dbwiki.data.resource.NodeIdentifier;
 import org.dbwiki.data.time.TimeSequence;
@@ -111,13 +110,13 @@ public class RDBMSDatabaseListing implements DatabaseContent {
 					int start = rs.getInt(2);
 					int end = rs.getInt(3);
 					if (entry == null) {
-						entry = new RDBMSDatabaseEntry(new NodeIdentifier(id), new TimeSequence(start, end, database.versionIndex()));
+						entry = new RDBMSDatabaseEntry(new NodeIdentifier(id), new TimeSequence(start, end));
 						add(entry);
 					} else {
 						if (entry.identifier().nodeID() == id) {
 							entry.timestamp().elongate(start, end);
 						} else {
-							entry = new RDBMSDatabaseEntry(new NodeIdentifier(id), new TimeSequence(start, end, database.versionIndex()));
+							entry = new RDBMSDatabaseEntry(new NodeIdentifier(id), new TimeSequence(start, end));
 							add(entry);
 						}
 					}

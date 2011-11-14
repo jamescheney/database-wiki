@@ -58,7 +58,7 @@ public class SchemaNodeList {
 		_elements = new Vector<DatabaseElementNode>();
 		_elements.add((DatabaseElementNode)rs.get(0));
 		
-		_schemaNode = _elements.lastElement().schema();
+		_schemaNode = rs.schema();
 		
 		for (int iNode = 1; iNode < rs.size(); iNode++) {
 			this.add((DatabaseElementNode)rs.get(iNode));

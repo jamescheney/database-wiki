@@ -91,6 +91,10 @@ public class DatabaseElementList {
 		return matches;
 	}
 
+	public void remove(int index) {
+		_elements.remove(index);
+	}
+	
 	public int size() {
 		return _elements.size();
 	}

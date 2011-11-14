@@ -112,7 +112,11 @@ public class DatabaseWikiContentGenerator extends HtmlContentGenerator {
 		if (key.equals(ContentDatabaseLink)) {
 			String title = null;
 			if (args != null) {
-				title = args.get(0);
+				if (args.size() > 0) {
+					title = args.get(0);
+				} else {
+					title = "";
+				}
 			} else {
 				title = _title;
 			}

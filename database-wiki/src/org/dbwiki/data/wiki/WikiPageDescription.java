@@ -73,6 +73,6 @@ public class WikiPageDescription implements DatabaseEntry {
 	}
 
 	public TimeSequence timestamp() {
-		return new TimeSequence(1, null);
+		return new TimeSequence(1);
 	}
 }

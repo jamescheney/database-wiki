@@ -80,7 +80,6 @@ public abstract class DatabaseNode extends TimestampedObject {
 		return !this.isElement();
 	}
 	
-	
 	/*
 	 * Finding nodes
 	 * 

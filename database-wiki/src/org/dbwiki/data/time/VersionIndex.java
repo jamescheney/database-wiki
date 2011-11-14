@@ -148,6 +148,24 @@ public class VersionIndex {
 				date.getTime(), provenance, this);
 	}
 	
+	/** Get the version that was valid at a given date
+	 * 
+	 * @param date
+	 * @return
+	 */
+	public synchronized Version getVersionAt(Date date) {
+		
+		Version version = null;
+		for (int iVersion = 0; iVersion < this.size(); iVersion++) {
+			if (this.get(iVersion).time() <= date.getTime()) {
+				version = this.get(iVersion);
+			} else {
+				break;
+			}
+		}
+		return version;
+	}
+
 	/** Is version index empty?
 	 * 
 	 * @return

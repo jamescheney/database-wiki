@@ -75,6 +75,10 @@ public class NodeIdentifier implements ResourceIdentifier {
 	 * Public Methods
 	 */
 	
+	public int compareTo(ResourceIdentifier identifier) {
+		return (nodeID() - ((NodeIdentifier)identifier).nodeID());
+	}
+	
 	public boolean equals(ResourceIdentifier identifier) {
 		return (nodeID() == ((NodeIdentifier)identifier).nodeID());
 	}

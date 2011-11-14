@@ -100,6 +100,10 @@ public class DatabaseNodeValue {
 		return "";
 	}
 
+	public void remove(int index) {
+		_values.remove(index);
+	}
+	
 	public int size() {
 		return _values.size();
 	}

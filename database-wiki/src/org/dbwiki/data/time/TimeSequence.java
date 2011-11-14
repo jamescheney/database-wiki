@@ -23,6 +23,8 @@ package org.dbwiki.data.time;
 
 import java.util.Vector;
 
+import org.dbwiki.exception.data.WikiDataException;
+
 /** Represents a set of time points using a sequence of intervals.
  * Invariants we should maintain: 
  * 1.  The intervals are disjoint
@@ -44,21 +46,41 @@ public class TimeSequence {
 	 */
 	
 	private Vector<TimeInterval> _intervals;
-	//private TimestampPrinter _timestampPrinter;
-	private VersionIndex _index;
 	
 	/*
 	 * Constructors
 	 */
 	
-
+	/** Make a time sequence with an empty set of time intervals
+	 * 
+	 */
+	public TimeSequence() {
+		_intervals = new Vector<TimeInterval>();
+	}
+	
+	/** Generate a time sequence from a text representation of the timestamp
+	 * 
+	 * @param text
+	 * @throws org.dbwiki.exception.WikiException
+	 */
+	public TimeSequence(String text) throws org.dbwiki.exception.WikiException {
+		_intervals = new Vector<TimeInterval>();
+		
+		int pos;
+		while ((pos = text.indexOf(',')) != -1) {
+			_intervals.add(this.parseInterval(text.substring(0, pos).trim()));
+			text = text.substring(pos + 1).trim();
+		}
+		_intervals.add(this.parseInterval(text));
+		this.checkForConsistency();
+	}
+	
 	/** Make set with single interval starting at time and ending at "now"
 	 * 
 	 * @param time
 	 * @param timestampPrinter
 	 */
-	public TimeSequence(int time, VersionIndex index) {
-		_index = index;
+	public TimeSequence(int time) {
 		_intervals = new Vector<TimeInterval>();
 		_intervals.add(new TimeInterval(time));
 	}
@@ -69,8 +91,7 @@ public class TimeSequence {
 	 * @param end
 	 * @param timestampPrinter
 	 */
-	public TimeSequence(int start, int end, VersionIndex index) {
-		_index = index;
+	public TimeSequence(int start, int end) {
 		_intervals = new Vector<TimeInterval>();
 		_intervals.add(new TimeInterval(start, end));
 	}
@@ -80,7 +101,15 @@ public class TimeSequence {
 	 * @param version
 	 */
 	public TimeSequence(Version version) {
-		this(version.number(), version.index());
+		this(version.number());
+	}
+
+	/** Make a time sequence from a given set of time intervals
+	 * 
+	 * @param intervals
+	 */
+	public TimeSequence(Vector<TimeInterval> intervals) {
+		_intervals = intervals;
 	}
 
 	/** Make a time sequence from a vector of intervals
@@ -90,13 +119,38 @@ public class TimeSequence {
 	 */
 	public TimeSequence(Vector<TimeInterval> intervals, VersionIndex index) {
 		_intervals = intervals;
-		_index = index;
 	}
 
 	
 	/*
 	 * Public Methods
 	 */
+
+	/** Adds the given time interval to the time sequence
+	 * 
+	 * @param interval
+	 */
+	public void add(TimeInterval interval) {
+		
+		if (_intervals.isEmpty()) {
+			_intervals.add(interval);
+		} else {
+			if (!_intervals.lastElement().isOpen()) {
+				if (_intervals.lastElement().end() > interval.start()) {
+					if (interval.isOpen()) {
+						_intervals.lastElement().extend(interval.end());
+					} else {
+						_intervals.lastElement().extend(Math.max(_intervals.lastElement().end(), interval.end()));
+					}
+				} else if (_intervals.lastElement().end() == (interval.start() - 1)) {
+					_intervals.lastElement().extend(interval.end());
+				} else {
+					_intervals.add(interval);
+				}
+			}
+		}
+	}
+
 	/** Tests whether there is a change between the given time and now
 	 * 
 	 */
@@ -135,7 +189,7 @@ public class TimeSequence {
 			intervals.add(_intervals.get(iInterval));
 		}
 		intervals.add(new TimeInterval(time));
-		return new TimeSequence(intervals, _index);
+		return new TimeSequence(intervals);
 	}
 	
 	/** 
@@ -166,13 +220,43 @@ public class TimeSequence {
 		}
 		TimeInterval interval = _intervals.lastElement();
 		intervals.add(new TimeInterval(interval.start(), time));
-		return new TimeSequence(intervals, _index);
+		return new TimeSequence(intervals);
 	}
 	
 	/** The first (smallest?) value 
 	 * */
 	public int firstValue() {
 		return _intervals.get(0).start();
+	}
+
+	/** Returns the time interval at position index
+	 * 
+	 * @param index
+	 * @return
+	 */
+	public TimeInterval get(int index) {
+		return _intervals.get(index);
+	}
+	
+	/** Create a new TimeSequence that is an intersection of all the intervals
+	 * of this TimeSequence and a given TimeSequence
+	 * @param timestamp
+	 * @return
+	 * @throws org.dbwiki.exception.WikiException
+	 */
+	public TimeSequence intersect(TimeSequence timestamp) {
+		
+		Vector<TimeInterval> intervals = new Vector<TimeInterval>();
+		for (int iInterval = 0; iInterval < _intervals.size(); iInterval++) {
+			TimeInterval intervalI = this.get(iInterval);
+			for (int jInterval = 0; jInterval < timestamp.size(); jInterval++) {
+				TimeInterval intervalJ = timestamp.get(jInterval);
+				if (intervalI.overlap(intervalJ)) {
+					intervals.add(intervalI.intersect(intervalJ));
+				}
+			}
+		}
+		return new TimeSequence(intervals);
 	}
 
 	/** Creates a copy of the list of intervals
@@ -197,6 +281,14 @@ public class TimeSequence {
 		return _intervals.lastElement().isOpen();
 	}
 
+	/**
+	 * Determine whether the timestamp is empty
+	 * @return
+	 */
+	public boolean isEmpty() {
+		return _intervals.isEmpty();
+	}
+	
 	/** 
 	 * Fetch the last interval in the set.
 	 * @return
@@ -216,6 +308,14 @@ public class TimeSequence {
 		} else {
 			return interval.end();
 		}
+	}
+	
+	/** Returns the number of intervals in this time sequence
+	 * 
+	 * @return
+	 */
+	public int size() {
+		return _intervals.size();
 	}
 	
 	/** Builds a string of start-end pairs 
@@ -243,21 +343,46 @@ public class TimeSequence {
 		return _timestampPrinter.toString(this);
 	}*/
 	
-	/** Builds a string representing the interval, using a VersionIndex
-	 * 
-	 * @return
-	 * @throws org.dbwiki.exception.WikiException
-	 */
-	public synchronized String toPrintString() throws org.dbwiki.exception.WikiException {
-		TimeInterval[] intervals = intervals();
-		String text = getTextString(intervals[0]);
-		for (int iInterval = 1; iInterval < intervals.length; iInterval++) {
-			text = text + ", " + getTextString(intervals[iInterval]);
+	public TimeSequence union(TimeSequence timestamp) {
+		
+		TimeSequence result = new TimeSequence();
+		
+		int idxI = 0;
+		int idxJ = 0;
+		
+		while ((idxI < this.size()) && (idxJ < timestamp.size())) {
+			TimeInterval intervalI = this.get(idxI);
+			TimeInterval intervalJ = timestamp.get(idxJ);
+			if (intervalI.contains(intervalJ)) {
+				idxJ++;
+			} else if (intervalJ.contains(intervalI)) {
+				idxI++;
+			} else if (intervalI.overlap(intervalJ)) {
+				if ((intervalI.isOpen()) || (intervalJ.isOpen())) {
+					result.add(new TimeInterval(Math.min(intervalI.start(), intervalJ.start())));
+				} else {
+					result.add(new TimeInterval(Math.min(intervalI.start(), intervalJ.start()), Math.max(intervalI.end(), intervalJ.end())));
+				}
+				idxI++;
+				idxJ++;
+			} else if (intervalI.start() < intervalJ.start()) {
+				result.add(intervalI.copy());
+				idxI++;
+			} else {
+				result.add(intervalJ.copy());
+				idxJ++;
+			}
 		}
-		return text;
+		while (idxI < this.size()) {
+			result.add(this.get(idxI++).copy());
+		}
+		while (idxJ < timestamp.size()) {
+			result.add(timestamp.get(idxJ++).copy());
+		}
+		
+		return result;
 	}
-	
-	
+
 	/** Parses a string of the form s-e,...,s-e to a time sequence
 	 * 
 	 * @param text
@@ -286,14 +411,33 @@ public class TimeSequence {
 	 * FIXME: A bit hacky.
 	 * 
 	 */
-	private String getTextString(TimeInterval interval) throws org.dbwiki.exception.WikiException {
-		String text = _index.getByNumber(interval.start()).name();
-		if (interval.isOpen()) {
-			return text + "-now";
-		} else if (interval.start() != interval.end()) {
-			return text + "-" + _index.getByNumber(interval.end()).name();
-		} else {
-			return text;
+	private void checkForConsistency() throws org.dbwiki.exception.WikiException {
+		
+		for (int iInterval = 1; iInterval < _intervals.size(); iInterval++) {
+			if (_intervals.get(iInterval - 1).isOpen()) {
+				throw new WikiDataException(WikiDataException.InvalidTimestamp, this.toIntString());
+			}
+			if (_intervals.get(iInterval).start() <= _intervals.get(iInterval - 1).end()) {
+				throw new WikiDataException(WikiDataException.InvalidTimestamp, this.toIntString());
+			}
 		}
 	}
+
+	private TimeInterval parseInterval(String text) {
+		
+		int pos  = text.indexOf('-');
+		if (pos != -1) {
+			int start = Integer.parseInt(text.substring(0, pos));
+			String end = text.substring(pos + 1);
+			if (end.equals(OpenIntervalChar)) {
+				return new TimeInterval(start);
+			} else {
+				return new TimeInterval(start, Integer.parseInt(end));
+			}
+		} else {
+			int time = Integer.parseInt(text);
+			return new TimeInterval(time, time);
+		}
+	}
+
 }

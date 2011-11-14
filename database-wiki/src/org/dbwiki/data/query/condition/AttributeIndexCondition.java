@@ -19,26 +19,32 @@
     along with Database Wiki.  If not, see <http://www.gnu.org/licenses/>.
     END LICENSE BLOCK
 */
-package org.dbwiki.data.query;
+package org.dbwiki.data.query.condition;
 
-/** A path condition
- * Path conditions can be either index or value conditions (subclasses)
- * @author jcheney
+/** Attribute condition for node index. 
+ * 
+ * @author hmueller
  *
  */
-public abstract class WikiPathCondition {
-	/*
-	 * Abstract Methods
-	 */
+import java.util.Vector;
+
+import org.dbwiki.data.schema.AttributeSchemaNode;
+
+public class AttributeIndexCondition extends AttributeCondition {
+
+	private int _index;
 	
-	public abstract boolean isIndexCondition();
+	public AttributeIndexCondition(AttributeSchemaNode entity, byte type, int index, boolean isNegated) {
+		super(entity, type, isNegated);
+		
+		_index = index;
+	}
 	
-	
-	/*
-	 * Public Methods
-	 */
-	
-	public boolean isValueCondition() {
-		return !this.isIndexCondition();
+	public void listValues(Vector<String> parameters) {
+		parameters.add(String.valueOf(_index));
+	}
+
+	public String sqlPreparedStatement() {
+		return "?";
 	}
 }

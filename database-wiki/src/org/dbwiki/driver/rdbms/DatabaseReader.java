@@ -167,7 +167,7 @@ public class DatabaseReader implements DatabaseConstants {
 				if (!rs.wasNull()) {
 					end = rs.getInt(ViewDataColTimestampEnd);
 					if (!node.hasTimestamp()) {
-						node.setTimestamp(new TimeSequence(start, end, database.versionIndex()));
+						node.setTimestamp(new TimeSequence(start, end));
 					} else {
 						node.getTimestamp().elongate(start, end);
 					}

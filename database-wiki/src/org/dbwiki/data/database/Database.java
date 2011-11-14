@@ -37,6 +37,7 @@ import org.dbwiki.data.schema.GroupSchemaNode;
 import org.dbwiki.data.time.VersionIndex;
 
 import org.dbwiki.data.query.QueryResultSet;
+import org.dbwiki.data.query.condition.AttributeConditionListing;
 
 import org.dbwiki.data.resource.DatabaseIdentifier;
 import org.dbwiki.data.resource.ResourceIdentifier;
@@ -72,6 +73,7 @@ public interface Database {
 	public void deleteSchemaNode(ResourceIdentifier identifier, User user) throws org.dbwiki.exception.WikiException;
 	public void export(ResourceIdentifier identifier, int version, NodeWriter out) throws org.dbwiki.exception.WikiException;
 	public DatabaseNode get(ResourceIdentifier identifier) throws org.dbwiki.exception.WikiException;
+	public DatabaseContent getMatchingEntries(AttributeConditionListing listing) throws org.dbwiki.exception.WikiException;
 	public SchemaNode getSchemaNode(ResourceIdentifier identifier) throws org.dbwiki.exception.WikiException;
 	public ResourceIdentifier getIdentifierForParameterString(String urlString) throws org.dbwiki.exception.WikiException;
 	public ResourceIdentifier getNodeIdentifierForURL(RequestURL url) throws org.dbwiki.exception.WikiException;
