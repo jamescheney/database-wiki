@@ -874,7 +874,7 @@ public class RDBMSDatabase implements Database, DatabaseConstants {
 		sqlStatements.add("SELECT DISTINCT d1." + RelDataColEntry + " " +
 			"FROM " + this.name() + RelationData + " d1, " + this.name() + RelationData + " d2 " +
 			"WHERE d1." + RelDataColSchema + " = " + RelDataColSchemaValUnknown + " " +
-			"AND d1." + RelDataColValue + " " + condition.sqlPreparedStatement() + "" +
+			"AND d1." + RelDataColValue + " " + condition.sqlPreparedStatement() + " " +
 			"AND d1." + RelDataColParent + " = d2." + RelDataColID + " " +
 			"AND d2." + RelDataColSchema + " = " + condition.entity().id());
 		condition.listValues(parameters);

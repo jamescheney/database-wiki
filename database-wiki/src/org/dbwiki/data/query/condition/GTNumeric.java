@@ -21,27 +21,27 @@
 */
 package org.dbwiki.data.query.condition;
 
-/** Value operator > for INTEGERs.
+/** Value operator > for numeric values.
  * 
  * @author hmueller
  *
  */
 import org.dbwiki.data.schema.AttributeSchemaNode;
 
-public class GTInt extends ValueOp {
+public class GTNumeric extends ValueOp {
 
 	/*
 	 * Private Variables
 	 */
 	
-	private int _value;
+	private double _value;
 	
 	
 	/*
 	 * Constructors
 	 */
 	
-	public GTInt(int value) {
+	public GTNumeric(double value) {
 		
 		_value = value;
 	}
@@ -53,13 +53,13 @@ public class GTInt extends ValueOp {
 	
 	public AttributeCondition getQueryCondition(AttributeSchemaNode entity, boolean isNegated) {
 		
-		return new AttributeValueCondition(entity, AttributeCondition.GT, String.valueOf(_value), isNegated);
+		return null;
 	}
 
 	public boolean eval(String value) {
 
 		try {
-			return (_value < Integer.parseInt(value));
+			return (_value < Double.parseDouble(value));
 		} catch (java.lang.NumberFormatException nfe) {
 			return false;
 		}

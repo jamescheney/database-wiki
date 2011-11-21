@@ -197,6 +197,13 @@ public class XAQLSyntaxParser extends BaseParser<XAQLToken> {
 		return Sequence(
 					push(new XAQLToken(XAQLToken.VARIABLE_SELECT_STATEMENT, new Vector<XAQLToken>())),
 					VariableOptionalTargetPath(),
+					Optional(
+							Spacing(),
+							AS,
+							Spacing(),
+							Identifier(),
+							push(new XAQLToken(pop(), new XAQLToken(XAQLToken.SELECT_STATEMENT_LABEL, matchOrDefault(""))))
+					),
 					push(new XAQLToken(pop(1), pop()))
 				);
 	}

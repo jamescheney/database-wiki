@@ -21,27 +21,27 @@
 */
 package org.dbwiki.data.query.condition;
 
-/** Value operator for equality of INTEGERs.
+/** Value operator >= for numeric values.
  * 
  * @author hmueller
  *
  */
 import org.dbwiki.data.schema.AttributeSchemaNode;
 
-public class EQInt extends ValueOp {
+public class GEQNumeric extends ValueOp {
 
 	/*
 	 * Private Variables
 	 */
 	
-	private int _value;
+	private double _value;
 	
 	
 	/*
 	 * Constructors
 	 */
 	
-	public EQInt(int value) {
+	public GEQNumeric(double value) {
 		
 		_value = value;
 	}
@@ -50,24 +50,24 @@ public class EQInt extends ValueOp {
 	/*
 	 * Public Methods
 	 */
-
+	
 	public AttributeCondition getQueryCondition(AttributeSchemaNode entity, boolean isNegated) {
 		
-		return new AttributeValueCondition(entity, AttributeCondition.EQ, String.valueOf(_value), isNegated);
+		return null;
 	}
 
 	public boolean eval(String value) {
 
 		try {
-			return (_value == Integer.parseInt(value));
+			return (_value <= Double.parseDouble(value));
 		} catch (java.lang.NumberFormatException nfe) {
 			return false;
 		}
 	}
-
+	
 	public String toString() {
 		
-		return "= " + _value;
+		return ">= " + _value;
 	}
 	
 	public String value() {

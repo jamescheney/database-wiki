@@ -84,6 +84,10 @@ public class SelectClauseGenerator {
 		}
 		VariableXPath targetPath = new VariableTargetPathGenerator().getTargetPath(variable.targetEntity(), versionIndex, statementTokens.firstElement().children().iterator());
 		
-		return new SubTreeSelectStatement(targetPath);
+		String label = null;
+		if (statementTokens.size() > 1) {
+			label = statementTokens.get(1).value();
+		}
+		return new SubTreeSelectStatement(targetPath, label);
 	}
 }

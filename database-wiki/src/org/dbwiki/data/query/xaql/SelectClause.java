@@ -26,6 +26,8 @@ package org.dbwiki.data.query.xaql;
  * @author hmueller
  *
  */
+import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.Vector;
 
 import org.dbwiki.data.database.DatabaseElementNode;
@@ -38,9 +40,13 @@ import org.dbwiki.data.query.handler.ResultGroupNode;
 
 import org.dbwiki.data.query.xpath.RelativeXPathConsumer;
 
+import org.dbwiki.data.schema.AttributeSchemaNode;
 import org.dbwiki.data.schema.GroupSchemaNode;
+import org.dbwiki.data.schema.SchemaNode;
 
 import org.dbwiki.data.time.TimeSequence;
+
+import org.dbwiki.lib.Counter;
 
 public class SelectClause {
 
@@ -48,7 +54,7 @@ public class SelectClause {
 	 * Private Variables
 	 */
 	
-	private GroupSchemaNode _resultEntity;
+	private GroupSchemaNode _resultSchema = null;
 	private Vector<SubTreeSelectStatement> _statements;
 	
 	
@@ -59,8 +65,6 @@ public class SelectClause {
 	public SelectClause() throws org.dbwiki.exception.WikiException {
 		
 		_statements = new Vector<SubTreeSelectStatement>();
-		
-		_resultEntity = new GroupSchemaNode(-1, "result", null, new TimeSequence(1));
 	}
 	
 	
@@ -74,6 +78,64 @@ public class SelectClause {
 	}
 	
 	public void consume(QueryNodeSet nodeSet, QueryNodeHandler consumer) {
+
+		if (_resultSchema == null) {
+			// Create the schema node of the result. Make sure to rename schema nodes
+			// having the same name.
+			Hashtable<String, Counter> labelIndex = new Hashtable<String, Counter>();
+			// Hash table for labels that occur more than once in the output schema
+			Hashtable<String, Counter> labelCounter = new Hashtable<String, Counter>();
+			for (SubTreeSelectStatement stmt : _statements) {
+				String label = null;
+				if (stmt.label() != null) {
+					label = stmt.label();
+				} else {
+					label = stmt.targetPath().lastElement().entity().label();
+				}
+				if (labelIndex.containsKey(label)) {
+					if (!labelCounter.containsKey(label)) {
+						labelCounter.put(label,  labelIndex.get(label));
+					}
+					labelIndex.get(label).inc();
+				} else {
+					labelIndex.put(label,  new Counter());
+				}
+			}
+			// Reset the counter for labels that occur more than once
+			Iterator<Counter> elements = labelCounter.values().iterator();
+			while (elements.hasNext()) {
+				elements.next().reset(1);
+			}
+			try {
+				_resultSchema = new GroupSchemaNode(-1, "result", null, new TimeSequence(1));
+				for (SubTreeSelectStatement stmt : _statements) {
+					SchemaNode schema = stmt.targetPath().lastElement().entity();
+					String label = null;
+					if (stmt.label() != null) {
+						label = stmt.label();
+					} else {
+						label = schema.label();
+					}
+					if (labelCounter.containsKey(label)) {
+						Counter counter = labelCounter.get(label);
+						label = label + Integer.toString(counter.value());
+						counter.inc();
+					}
+					SchemaNode renamedSchema = null;
+					if (schema.isAttribute()) {
+						renamedSchema = new AttributeSchemaNode(schema.id(), label, _resultSchema, schema.getTimestamp());
+					} else {
+						renamedSchema = new GroupSchemaNode(schema.id(), label, _resultSchema, schema.getTimestamp());
+						for (int iChild = 0; iChild < ((GroupSchemaNode)schema).children().size(); iChild++) {
+							((GroupSchemaNode)renamedSchema).children().add(((GroupSchemaNode)schema).children().get(iChild));
+						}
+					}
+				}
+			} catch (org.dbwiki.exception.WikiException wikiException) {
+				wikiException.printStackTrace();
+				return;
+			}
+		}
 
 		Vector<DatabaseElementNode> outputNodes = new Vector<DatabaseElementNode>();
 		for (SubTreeSelectStatement stmt : _statements) {
@@ -90,15 +152,8 @@ public class SelectClause {
 				} else {
 					timestamp = node.getTimestamp();
 				}
-				if (_resultEntity.children().get(node.schema().label()) == null) {
-					try {
-						_resultEntity.children().add(node.schema());
-					} catch (org.dbwiki.exception.WikiException wikiException) {
-						wikiException.printStackTrace();
-					}
-				}
 			}
-			DatabaseGroupNode result = new ResultGroupNode(_resultEntity, timestamp);
+			DatabaseGroupNode result = new ResultGroupNode(_resultSchema, timestamp);
 			for (DatabaseElementNode node : outputNodes) {
 				result.children().add(node);
 			}

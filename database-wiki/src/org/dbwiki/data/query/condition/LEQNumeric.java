@@ -21,27 +21,27 @@
 */
 package org.dbwiki.data.query.condition;
 
-/** Value operator != for INTEGERs.
+/** Value operator <= for numeric values.
  * 
  * @author hmueller
  *
  */
 import org.dbwiki.data.schema.AttributeSchemaNode;
 
-public class NEQInt extends ValueOp {
+public class LEQNumeric extends ValueOp {
 
 	/*
 	 * Private Variables
 	 */
 	
-	private int _value;
+	private double _value;
 	
 	
 	/*
 	 * Constructors
 	 */
 	
-	public NEQInt(int value) {
+	public LEQNumeric(double value) {
 		
 		_value = value;
 	}
@@ -53,21 +53,21 @@ public class NEQInt extends ValueOp {
 	
 	public AttributeCondition getQueryCondition(AttributeSchemaNode entity, boolean isNegated) {
 		
-		return new AttributeValueCondition(entity, AttributeCondition.NEQ, String.valueOf(_value), isNegated);
+		return null;
 	}
 
 	public boolean eval(String value) {
 
 		try {
-			return (_value != Integer.parseInt(value));
+			return (_value >= Double.parseDouble(value));
 		} catch (java.lang.NumberFormatException nfe) {
-			return true;
+			return false;
 		}
 	}
 	
 	public String toString() {
 		
-		return "!= " + _value;
+		return "<= " + _value;
 	}
 	
 	public String value() {

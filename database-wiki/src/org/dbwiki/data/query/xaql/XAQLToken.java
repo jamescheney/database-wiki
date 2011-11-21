@@ -50,6 +50,7 @@ public class XAQLToken extends ImmutableTreeNode<XAQLToken> {
 	public static final int SUBTREE_SELECT_LIST           = 1004;
 	public static final int VARIABLE_SELECT_STATEMENT     = 1006;
 	public static final int DELETE_SELECT_CLAUSE          = 1007;
+	public static final int SELECT_STATEMENT_LABEL        = 1008;
 	
 	// FROM CLAUSE
 	public static final int FROM_CLAUSE                   = 1500;

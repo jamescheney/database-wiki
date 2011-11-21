@@ -56,7 +56,7 @@ public class ValueOpFactory {
 		final byte typeInt = 1;
 		final byte typeString = 2;
 
-		int intValue = 0;
+		double numericValue = 0;
 		String strValue = null;
 		byte type;
 		
@@ -70,7 +70,7 @@ public class ValueOpFactory {
 			}
 		} else {
 			try {
-				intValue = Integer.parseInt(value);
+				numericValue = Double.parseDouble(value);
 				type = typeInt;
 			} catch (java.lang.NumberFormatException nfe) {
 				throw new WikiQueryException(WikiQueryException.InvalidQueryStatement, "Format of " + value + " not recognized");
@@ -79,37 +79,37 @@ public class ValueOpFactory {
 
 		if (operatorDef.equals(EQ)) {
 			if (type == typeInt) {
-				return new EQInt(intValue);
+				return new EQNumeric(numericValue);
 			} else {
 				return new EQString(strValue);
 			}
 		} else if ((operatorDef.equals(NEQ1)) || (operatorDef.equals(NEQ2))) {
 			if (type == typeInt) {
-				return new NEQInt(intValue);
+				return new NEQDouble(numericValue);
 			} else {
 				return new NEQString(strValue);
 			}
 		} else if (operatorDef.equals(LT)) {
 			if (type == typeInt) {
-				return new LTInt(intValue);
+				return new LTNumeric(numericValue);
 			} else {
 				return new LTString(strValue);
 			}
 		} else if (operatorDef.equals(LEQ)) {
 			if (type == typeInt) {
-				return new LEQInt(intValue);
+				return new LEQNumeric(numericValue);
 			} else {
 				return new LEQString(strValue);
 			}
 		} else if (operatorDef.equals(GT)) {
 			if (type == typeInt) {
-				return new GTInt(intValue);
+				return new GTNumeric(numericValue);
 			} else {
 				return new GTString(strValue);
 			}
 		} else if (operatorDef.equals(GEQ)) {
 			if (type == typeInt) {
-				return new GEQInt(intValue);
+				return new GEQNumeric(numericValue);
 			} else {
 				return new GEQString(strValue);
 			}
@@ -120,7 +120,7 @@ public class ValueOpFactory {
 		} else if (operatorDef.equalsIgnoreCase(IN)) {
 			INOp inOp = new INOp();
 			if (type == typeInt) {
-				inOp.add(new EQInt(intValue));
+				inOp.add(new EQNumeric(numericValue));
 			} else {
 				inOp.add(new EQString(strValue));
 			}

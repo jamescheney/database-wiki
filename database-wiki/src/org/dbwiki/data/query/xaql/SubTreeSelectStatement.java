@@ -34,6 +34,7 @@ public class SubTreeSelectStatement {
 	 * Private Variables
 	 */
 	
+	private String _label;
 	private VariableXPath _targetPath;
 	
 	
@@ -41,15 +42,21 @@ public class SubTreeSelectStatement {
 	 * Constructors
 	 */
 	
-	public SubTreeSelectStatement(VariableXPath targetPath) {
+	public SubTreeSelectStatement(VariableXPath targetPath, String label) {
 		
 		_targetPath = targetPath;
+		_label = label;
 	}
 	
 	
 	/*
 	 * Public Methods
 	 */
+	
+	public String label() {
+		
+		return _label;
+	}
 	
 	public VariableXPath targetPath() {
 		
