@@ -81,7 +81,7 @@ public interface WikiServerConstants {
 	public static final int RelConfigFileColFileTypeValCSS         = 1;
 	public static final int RelConfigFileColFileTypeValLayout      = 2;
 	public static final int RelConfigFileColFileTypeValTemplate    = 3;
-	public static final int RelConfigFileColFileTypeValURLDecoding =4;
+	public static final int RelConfigFileColFileTypeValURLDecoding = 4;
 	
 	public static final int RelConfigFileColFileVersionValUnknown = -1;
 	

@@ -18,7 +18,7 @@
     You should have received a copy of the GNU General Public License
     along with Database Wiki.  If not, see <http://www.gnu.org/licenses/>.
     END LICENSE BLOCK
-*/
+ */
 package org.dbwiki.web.ui.printer;
 
 import java.util.Vector;
@@ -29,62 +29,65 @@ import org.dbwiki.data.query.QueryResultSet;
 import org.dbwiki.data.schema.SchemaNode;
 import org.dbwiki.exception.WikiFatalException;
 
-/** A struct containing a list of schema nodes.
- * Used in printing data nodes and query results.
+/**
+ * A struct containing a list of schema nodes. Used in printing data nodes and
+ * query results.
+ * 
  * @author jcheney
- *
+ * 
+ * FIXME: why do we need this as well as QueryResultSet?
+ * 
  */
 public class SchemaNodeList {
 	/*
 	 * Private Variables
 	 */
-	
+
 	private Vector<DatabaseElementNode> _elements;
 	private SchemaNode _schemaNode;
-	
-	
+
 	/*
 	 * Constructors
 	 */
-	
+
 	public SchemaNodeList(DatabaseElementNode node) {
 		_elements = new Vector<DatabaseElementNode>();
 		_elements.add(node);
-		
+
 		_schemaNode = node.schema();
 	}
-	
-	public SchemaNodeList(QueryResultSet rs) throws org.dbwiki.exception.WikiException {
+
+	public SchemaNodeList(QueryResultSet rs)
+			throws org.dbwiki.exception.WikiException {
 		_elements = new Vector<DatabaseElementNode>();
-		_elements.add((DatabaseElementNode)rs.get(0));
-		
 		_schemaNode = rs.schema();
-		
-		for (int iNode = 1; iNode < rs.size(); iNode++) {
-			this.add((DatabaseElementNode)rs.get(iNode));
+
+		for (int i = 0; i < rs.size(); i++) {
+			add((DatabaseElementNode) rs.get(i));
 		}
 	}
-	
-	
+
 	/*
 	 * Public Methods
 	 */
-	
-	public void add(DatabaseElementNode node) throws org.dbwiki.exception.WikiException {
+
+	public void add(DatabaseElementNode node)
+			throws org.dbwiki.exception.WikiException {
 		if (!node.schema().equals(_schemaNode)) {
-			throw new WikiFatalException("Incomparable entities in SchemaNodeList");
+			throw new WikiFatalException(
+					"Incomparable entities in SchemaNodeList");
 		}
 		_elements.add(node);
 	}
-	
+
 	public SchemaNode schema() {
 		return _schemaNode;
 	}
-	
+
 	public DatabaseElementNode get(int index) {
 		return _elements.get(index);
 	}
-	
+
 	public boolean isActive() {
 		for (int iNode = 0; iNode < _elements.size(); iNode++) {
 			if (_elements.get(iNode).getTimestamp().isCurrent()) {
@@ -93,7 +96,7 @@ public class SchemaNodeList {
 		}
 		return false;
 	}
-	
+
 	public int size() {
 		return _elements.size();
 	}

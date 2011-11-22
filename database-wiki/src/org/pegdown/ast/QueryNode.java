@@ -24,8 +24,12 @@ package org.pegdown.ast;
 import java.util.ArrayList;
 
 import org.dbwiki.data.database.Database;
+import org.dbwiki.data.database.DatabaseAttributeNode;
+import org.dbwiki.data.database.DatabaseElementNode;
+import org.dbwiki.data.database.DatabaseGroupNode;
 import org.dbwiki.data.database.DatabaseTextNode;
 import org.dbwiki.data.query.QueryResultSet;
+import org.dbwiki.data.schema.GroupSchemaNode;
 import org.dbwiki.exception.WikiException;
 import org.dbwiki.web.html.HtmlLinePrinter;
 import org.dbwiki.web.html.HtmlPage;
@@ -51,6 +55,91 @@ public class QueryNode extends Node {
         	_path.add(n.getText());
     }
     
+    /**
+     * Output HTML / JavaScript to draw a chart
+     * using the supplied query result set
+     * which should be a list of (string, number) pairs
+     * 
+     * @param rs
+     * @param body
+     */
+    private void drawChart(QueryResultSet rs, HtmlLinePrinter body) {
+		String xlabel = ((GroupSchemaNode)rs.schema()).children().get(0).label();
+		String ylabel = ((GroupSchemaNode)rs.schema()).children().get(1).label();
+		
+		body.add("<div id=\"chart\"/>");
+		body.add("<script>");
+		body.add("  drawColumnChart('Some chart', '" + xlabel + "', '" + ylabel + "' , [");
+		
+		boolean nonEmpty = false;
+		for (int i = 0; i < rs.size(); i++) {
+			DatabaseGroupNode r = (DatabaseGroupNode)rs.get(i);
+			try {
+				DatabaseAttributeNode rx = (DatabaseAttributeNode)r.children().get(0);
+				DatabaseAttributeNode ry = (DatabaseAttributeNode)r.children().get(1);
+				try {
+					String x = rx.value().getCurrent().value();
+					x = x.replace("'", "\\'");
+					int y = Integer.parseInt(ry.value().getCurrent().value());
+					
+					String prefix;
+					if(nonEmpty) prefix = ", ";
+					else prefix = "";
+
+					body.add(prefix + "{x : '" + x + "', y : " + y + "}");
+					nonEmpty = true;
+				} catch (NumberFormatException e) {
+					continue;
+				}
+			} catch (ArrayIndexOutOfBoundsException e) {
+				continue;
+			}
+		}
+		
+		body.add("])");
+		body.add("</script>");
+    }
+    
+    /**
+     * Output HTML / JavaScript to draw a map
+     * using the supplied query result set
+     * which should be a list of locations
+     * 
+     * @param rs
+     * @param body
+     */
+    private void drawMap(QueryResultSet rs, HtmlLinePrinter body) {
+		body.add("<div id=\"map\"/>");
+		body.add("<script>");
+		body.add("  drawMap([");
+		
+		boolean nonEmpty = false;
+		for (int i = 0; i < rs.size(); i++) {
+			DatabaseGroupNode r = (DatabaseGroupNode)rs.get(i);
+			try {
+				DatabaseAttributeNode rl = (DatabaseAttributeNode)r.children().get(0);
+				try {
+					String location = rl.value().getCurrent().value();
+					location = location.replace("'", "\\'");
+					
+					String prefix;
+					if(nonEmpty) prefix = ",\n";
+					else prefix = "";
+
+					body.add(prefix + "'" + location + "'");
+					nonEmpty = true;
+				} catch (NumberFormatException e) {
+					continue;
+				}
+			} catch (ArrayIndexOutOfBoundsException e) {
+				continue;
+			}
+		}
+		
+		body.add("])");
+		body.add("</script>");
+    }
+    
     /**  FIXME #wiki: Clean this up and make queries independent of database.
      * Implements printing queries by finding the database associated with the printer and querying it.
      */
@@ -62,16 +151,34 @@ public class QueryNode extends Node {
         Database database = contentPrinter.getDatabase();
     	
     	try {
-			QueryResultSet rs = database.query(_queryString);
+    		boolean drawChart = false;
+    		boolean drawMap = false;
+    		
+    		String query = _queryString;
+    		if(query.toLowerCase().startsWith("chart:")) {
+    			drawChart = true;
+    			query = query.substring("chart:".length());
+    		} else if(query.toLowerCase().startsWith("map:")) {
+    			drawMap = true;
+    			query = query.substring("map:".length());
+    		}
+    		    		
+			QueryResultSet rs = database.query(query);
 			if (!rs.isEmpty()) {
 				body.openPARAGRAPH(CSS.CSSPageText);
-				if (rs.isElement()) {
+				
+				if(drawChart) {
+					drawChart(rs, body);
+				} else if (drawMap) {
+					drawMap(rs, body);
+				} else if (rs.isElement()) {
 					body.add(contentPrinter.getLinesForNodeList(new SchemaNodeList(rs), new RequestParameterVersionCurrent()));
 				} else {
-					for (int iNode = 0; iNode < rs.size(); iNode++) {
-						contentPrinter.printTextNode((DatabaseTextNode)rs.get(iNode), body);
+					for (int i = 0; i < rs.size(); i++) {
+						contentPrinter.printTextNode((DatabaseTextNode)rs.get(i), body);
 					}
 				}
+				
 				body.closePARAGRAPH();
 			}
 		} catch (org.dbwiki.exception.data.WikiQueryException queryException) {
