@@ -288,7 +288,9 @@ public abstract class DatabaseConnector implements DatabaseConstants, WikiServer
 				"PRIMARY KEY (" + RelDataColID + "))");
 		
 		stmt.execute("CREATE INDEX idx_" + relName + "_" + RelDataColSchema + " ON " + relName + " (" + RelDataColSchema + ")");
-
+		stmt.execute("CREATE INDEX idx_ID_" + relName + "_" + RelDataColID + " ON " + relName + " USING hash "+ " (" + RelDataColID +")");
+		stmt.execute("CREATE INDEX idx_entry_" + relName + "_" + RelDataColEntry + " ON " + relName + " USING hash "+ " (" + RelDataColEntry +")");
+		
 		stmt.close();
 	}
 	
