@@ -40,7 +40,8 @@ public class RequestParameter {
 	public static final String ParameterCreateSchemaNode = "new_schema_node";
 	public static final String ParameterDelete           = "delete";
 	public static final String ParameterEdit             = "edit";
-	public static final String ParameterExport           = "xml";
+	public static final String ParameterExportXML        = "xml";
+	public static final String ParameterExportJSON       = "json";
 	public static final String ParameterHistory          = "history";
 	public static final String ParameterIndexPosition    = "idxpos";
 	public static final String ParameterLayout           = "layout";

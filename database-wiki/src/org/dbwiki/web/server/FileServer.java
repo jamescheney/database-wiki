@@ -154,6 +154,10 @@ public abstract class FileServer implements HttpHandler {
 	}
 	
 	public void sendXML(HttpExchange exchange, InputStream is) throws java.io.IOException {
-		this.sendData(exchange, "text/plain", is);
+		this.sendData(exchange, "application/xml", is);
+	}
+	
+	public void sendJSON(HttpExchange exchange, InputStream is) throws java.io.IOException {
+		this.sendData(exchange, "application/json", is);
 	}
 }

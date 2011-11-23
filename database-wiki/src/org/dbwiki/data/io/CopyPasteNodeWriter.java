@@ -39,7 +39,10 @@ public class CopyPasteNodeWriter extends NodeWriter {
 	/*
 	 * Public Methods
 	 */
-
+	
+	public void writeInit() throws java.io.IOException {
+		this.writeln("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+	}
 
 	public void startDatabase(Database database, int version) throws org.dbwiki.exception.WikiException {
 		try {

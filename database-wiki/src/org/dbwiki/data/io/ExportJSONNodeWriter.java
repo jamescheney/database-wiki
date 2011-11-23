@@ -1,50 +1,24 @@
-/* 
-    BEGIN LICENSE BLOCK
-    Copyright 2010-2011, Heiko Mueller, Sam Lindley, James Cheney and
-    University of Edinburgh
-
-    This file is part of Database Wiki.
-
-    Database Wiki is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Database Wiki is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Database Wiki.  If not, see <http://www.gnu.org/licenses/>.
-    END LICENSE BLOCK
-*/
 package org.dbwiki.data.io;
 
 import org.dbwiki.data.database.Database;
 import org.dbwiki.data.database.DatabaseAttributeNode;
 import org.dbwiki.data.database.DatabaseGroupNode;
 import org.dbwiki.data.database.DatabaseTextNode;
-
 import org.dbwiki.exception.WikiFatalException;
 
-/** A NodeWriter that provides hooks for exporting as plain XML.
- * 
- * @author jcheney
- *
- */
-public class ExportNodeWriter extends NodeWriter {
-	/*
-	 * Public Methods
-	 */
-	
+// TODO #json: Change to generate valid json.
+// Avoid trailing commas
+// Generate object brackets around group nodes
+
+public class ExportJSONNodeWriter extends NodeWriter {
+ 
 	public void writeInit() throws java.io.IOException {
-		this.writeln("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+		
 	}
 	
 	public void startDatabase(Database database, int version) throws org.dbwiki.exception.WikiException {
 		try {
-			this.writeln("<" + database.name() + " version=\"" + version + "\">");
+			this.writeln("{\"name\":" + "\"" + database.name()+ "\"" + ",  \"version\" : \"" + version + "\",\"entries\" : [");
 		} catch (java.io.IOException ioException) {
 			throw new WikiFatalException(ioException);
 		}
@@ -52,7 +26,7 @@ public class ExportNodeWriter extends NodeWriter {
 	
 	public void endDatabase(Database database) throws org.dbwiki.exception.WikiException {
 		try {
-			this.writeln("</" + database.name() + ">");
+			this.writeln("]}");
 		} catch (java.io.IOException ioException) {
 			throw new WikiFatalException(ioException);
 		}
@@ -60,7 +34,7 @@ public class ExportNodeWriter extends NodeWriter {
 	
 	public void startGroupNode(DatabaseGroupNode node) throws org.dbwiki.exception.WikiException {
 		try {
-			this.writeln("<" + node.label() + ">");
+			this.writeln("\"" + node.label() + "\" : {");
 		} catch (java.io.IOException ioException) {
 			throw new WikiFatalException(ioException);
 		}
@@ -68,7 +42,7 @@ public class ExportNodeWriter extends NodeWriter {
 	
 	public void endGroupNode(DatabaseGroupNode node) throws org.dbwiki.exception.WikiException {
 		try {
-			this.writeln("</" + node.label() + ">");
+			this.writeln("}");
 		} catch (java.io.IOException ioException) {
 			throw new WikiFatalException(ioException);
 		}
@@ -76,9 +50,9 @@ public class ExportNodeWriter extends NodeWriter {
 
 	public void writeAttributeNode(DatabaseAttributeNode node, DatabaseTextNode value) throws org.dbwiki.exception.WikiException {
 		try {
-			this.write("<" + node.label() + ">");
-			this.write(org.dbwiki.lib.XML.maskText(value.getValue()));
-			this.writeln("</" + node.label() + ">");
+			this.write("\"" + node.label() + "\" : ");
+			this.write("\"" + value.getValue() + "\",");
+			
 		} catch (java.io.IOException ioException) {
 			throw new WikiFatalException(ioException);
 		}
@@ -86,9 +60,10 @@ public class ExportNodeWriter extends NodeWriter {
 
 	public void writeTextNode(DatabaseTextNode node) throws org.dbwiki.exception.WikiException {
 		try {
-			this.write(org.dbwiki.lib.XML.maskText(node.getValue()));
+			this.write("\"" + node.getValue() + "\"");
 		} catch (java.io.IOException ioException) {
 			throw new WikiFatalException(ioException);
 		}
 	}
+
 }

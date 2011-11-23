@@ -30,7 +30,7 @@ import org.dbwiki.data.database.DatabaseTextNode;
 
 import org.dbwiki.exception.WikiFatalException;
 
-/** Abstract class providing the capability to write a node out as XML.
+/** Abstract class providing the capability to write a node out as XML/JSON.
  * Instantiated by ExportNodeWriter and CopyPasteNodeWriter
  * 
  * @author jcheney
@@ -49,6 +49,7 @@ public abstract class NodeWriter {
 	 * Abstract Methods
 	 */
 	
+	public abstract void writeInit() throws java.io.IOException;
 	public abstract void endDatabase(Database database) throws org.dbwiki.exception.WikiException;
 	public abstract void endGroupNode(DatabaseGroupNode node) throws org.dbwiki.exception.WikiException;
 	public abstract void startDatabase(Database database, int version) throws org.dbwiki.exception.WikiException;
@@ -69,7 +70,7 @@ public abstract class NodeWriter {
 		_out = out;
 		
 		try {
-			this.writeln("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+			writeInit();
 		} catch (java.io.IOException ioException) {
 			throw new WikiFatalException(ioException);
 		}

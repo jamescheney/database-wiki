@@ -76,9 +76,11 @@ public class RequestType {
 	//?pagehistory=...
 	private static final byte requestTypePageHistory = 20;
 	//?xml [?version]
-	private static final byte requestTypeExport = 21;
+	private static final byte requestTypeExportXML = 21;
 	//?url_decoding resource=...
 	private static final byte requestTypeURLDecoding = 22;
+	// ?json[?version]
+	private static final byte requestTypeExportJSON = 23;
 	
 	
 	
@@ -163,9 +165,12 @@ public class RequestType {
 			} else if (parameters.hasParameter(RequestParameter.ParameterChangesSince)) {
 				//?changes
 				_type = requestTypeTimemachineChanges;
-			} else if (parameters.hasParameter(RequestParameter.ParameterExport)) {
+			} else if (parameters.hasParameter(RequestParameter.ParameterExportXML)) {
 				//?xml
-				_type = requestTypeExport;
+				_type = requestTypeExportXML;
+			} else if (parameters.hasParameter(RequestParameter.ParameterExportJSON)) {
+				//?xml
+				_type = requestTypeExportJSON;
 			} else if (parameters.hasParameter(RequestParameter.ParameterHistory)) {
 				_type = requestTypePageHistory;
 			} else if (url.isRoot()) {
@@ -209,12 +214,23 @@ public class RequestType {
 				if ((parameters.hasParameter(RequestParameter.ParameterVersion)) && (parameters.hasParameter(RequestParameter.ParameterIndexPosition))) {
 					_type = requestTypeIndex;
 				}
-			} else if ((parameters.hasParameter(RequestParameter.ParameterVersion)) && (parameters.hasParameter(RequestParameter.ParameterExport))) {
+			} else if ((parameters.hasParameter(RequestParameter.ParameterVersion)) && (parameters.hasParameter(RequestParameter.ParameterExportXML))) {
 				//?version=x && ?xml
 				try {
 					RequestParameterVersion version = RequestParameter.versionParameter(parameters.get(RequestParameter.ParameterVersion));
 					if (version.versionSingle()) {
-						_type = requestTypeExport;
+						_type = requestTypeExportXML;
+					}
+				} catch (org.dbwiki.exception.WikiException wikiException) {
+					// silently ignore wiki exceptions
+					// FIXME #requestparsing: is this really the behaviour we want?
+				}
+			} else if ((parameters.hasParameter(RequestParameter.ParameterVersion)) && (parameters.hasParameter(RequestParameter.ParameterExportJSON))) {
+				//?version=x && ?json
+				try {
+					RequestParameterVersion version = RequestParameter.versionParameter(parameters.get(RequestParameter.ParameterVersion));
+					if (version.versionSingle()) {
+						_type = requestTypeExportJSON;
 					}
 				} catch (org.dbwiki.exception.WikiException wikiException) {
 					// silently ignore wiki exceptions
@@ -261,8 +277,12 @@ public class RequestType {
 		return (_type == requestTypeEdit);
 	}
 	
-	public boolean isExport() {
-		return (_type == requestTypeExport);
+	public boolean isExportXML() {
+		return (_type == requestTypeExportXML);
+	}
+	
+	public boolean isExportJSON() {
+		return (_type == requestTypeExportJSON);
 	}
 	
 	public boolean isGet() {
