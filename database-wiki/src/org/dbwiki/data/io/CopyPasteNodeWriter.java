@@ -27,6 +27,7 @@ import org.dbwiki.data.database.DatabaseElementNode;
 import org.dbwiki.data.database.DatabaseGroupNode;
 import org.dbwiki.data.database.DatabaseTextNode;
 
+import org.dbwiki.exception.WikiException;
 import org.dbwiki.exception.WikiFatalException;
 
 /** A NodeWriter that provides callbacks for exporting data as XML
@@ -75,7 +76,7 @@ public class CopyPasteNodeWriter extends NodeWriter {
 	}
 	
 
-	public void endGroupNode(DatabaseGroupNode node) throws org.dbwiki.exception.WikiException {
+	public void endGroupNode(DatabaseGroupNode node, boolean isLast) throws org.dbwiki.exception.WikiException {
 		try {
 			this.writeln(this.closeNode());
 		} catch (java.io.IOException ioException) {
@@ -83,7 +84,7 @@ public class CopyPasteNodeWriter extends NodeWriter {
 		}
 	}
 
-	public void writeAttributeNode(DatabaseAttributeNode node, DatabaseTextNode value) throws org.dbwiki.exception.WikiException {
+	public void writeAttributeNode(DatabaseAttributeNode node, DatabaseTextNode value, boolean isLast) throws org.dbwiki.exception.WikiException {
 		try {
 			this.writeln(this.openAttributeNode(node));
 			this.writeTextNode(value);
@@ -137,4 +138,18 @@ public class CopyPasteNodeWriter extends NodeWriter {
 				+ "\" " + CopyPasteConstants.AttributeLabelID 
 				+ "=\"" + node.identifier().toURLString() + "\">"; 
 	}
+
+	@Override
+	public void startEntry() throws WikiException {
+		;
+		
+	}
+
+	@Override
+	public void endEntry() throws WikiException {
+		;
+		
+	}
+
+	
 }

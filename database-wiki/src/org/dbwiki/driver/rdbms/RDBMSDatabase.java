@@ -263,10 +263,12 @@ public class RDBMSDatabase implements Database, DatabaseConstants {
 		if (identifier.isRootIdentifier()) {
 			RDBMSDatabaseListing entries = content();
 			for (int iEntry = 0; iEntry < entries.size(); iEntry++) {
-				exportNode(get(entries.get(iEntry).identifier()), version, out);
+				exportEntry(get(entries.get(iEntry).identifier()), version, out);
 			}
 		} else {
-			exportNode(get(identifier), version, out);
+			out.startEntry();
+			exportNode(get(identifier), version, out, true);
+			out.endEntry();
 		}
 		out.endDatabase(this);
 	}
@@ -664,7 +666,14 @@ public class RDBMSDatabase implements Database, DatabaseConstants {
 		}
 	}
 	
-	private void exportNode(DatabaseNode node, int version, NodeWriter out) throws org.dbwiki.exception.WikiException {
+	private void exportEntry(DatabaseNode node, int version, NodeWriter out) throws org.dbwiki.exception.WikiException {
+		
+		out.startEntry();
+		exportNode(node, version, out, true);
+		out.endEntry();
+	}
+	
+	private void exportNode(DatabaseNode node, int version, NodeWriter out, boolean last) throws org.dbwiki.exception.WikiException {
 		if (node.getTimestamp().contains(version)) {
 			if (node.isElement()) {
 				DatabaseElementNode element = (DatabaseElementNode)node;
@@ -677,14 +686,15 @@ public class RDBMSDatabase implements Database, DatabaseConstants {
 							break;
 						}
 					}
-					out.writeAttributeNode(attribute, value);
+					out.writeAttributeNode(attribute, value,last);
 				} else {
 					DatabaseGroupNode group = (DatabaseGroupNode)element;
 					out.startGroupNode(group);
 					for (int iChild = 0; iChild < group.children().size(); iChild++) {
-						exportNode(group.children().get(iChild), version, out);
+						boolean newLast = iChild == group.children().size() - 1;
+						exportNode(group.children().get(iChild), version, out, newLast);
 					}
-					out.endGroupNode(group);
+					out.endGroupNode(group,last);
 				}
 			} else {
 				out.writeTextNode((DatabaseTextNode)node);

@@ -4,11 +4,10 @@ import org.dbwiki.data.database.Database;
 import org.dbwiki.data.database.DatabaseAttributeNode;
 import org.dbwiki.data.database.DatabaseGroupNode;
 import org.dbwiki.data.database.DatabaseTextNode;
+import org.dbwiki.exception.WikiException;
 import org.dbwiki.exception.WikiFatalException;
 
-// TODO #json: Change to generate valid json.
-// Avoid trailing commas
-// Generate object brackets around group nodes
+
 
 public class ExportJSONNodeWriter extends NodeWriter {
  
@@ -40,19 +39,24 @@ public class ExportJSONNodeWriter extends NodeWriter {
 		}
 	}
 	
-	public void endGroupNode(DatabaseGroupNode node) throws org.dbwiki.exception.WikiException {
+	public void endGroupNode(DatabaseGroupNode node, boolean isLast) throws org.dbwiki.exception.WikiException {
 		try {
 			this.writeln("}");
+			if (!isLast) {
+				this.write(",");
+			}
 		} catch (java.io.IOException ioException) {
 			throw new WikiFatalException(ioException);
 		}
 	}
 
-	public void writeAttributeNode(DatabaseAttributeNode node, DatabaseTextNode value) throws org.dbwiki.exception.WikiException {
+	public void writeAttributeNode(DatabaseAttributeNode node, DatabaseTextNode value, boolean isLast) throws org.dbwiki.exception.WikiException {
 		try {
 			this.write("\"" + node.label() + "\" : ");
-			this.write("\"" + value.getValue() + "\",");
-			
+			this.write("\"" + value.getValue() + "\"");
+			if (!isLast) {
+				this.write(",");
+			}
 		} catch (java.io.IOException ioException) {
 			throw new WikiFatalException(ioException);
 		}
@@ -65,5 +69,22 @@ public class ExportJSONNodeWriter extends NodeWriter {
 			throw new WikiFatalException(ioException);
 		}
 	}
+	@Override
+	public void startEntry() throws WikiException {
+		try {
+			this.write("{");
+		} catch (java.io.IOException ioException) {
+			throw new WikiFatalException(ioException);
+		}
+	}
 
+	@Override
+	public void endEntry() throws WikiException {
+		try {
+			this.write("}");
+		} catch (java.io.IOException ioException) {
+			throw new WikiFatalException(ioException);
+		}
+	}
+	
 }

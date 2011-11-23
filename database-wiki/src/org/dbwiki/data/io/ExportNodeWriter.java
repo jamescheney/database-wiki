@@ -26,6 +26,7 @@ import org.dbwiki.data.database.DatabaseAttributeNode;
 import org.dbwiki.data.database.DatabaseGroupNode;
 import org.dbwiki.data.database.DatabaseTextNode;
 
+import org.dbwiki.exception.WikiException;
 import org.dbwiki.exception.WikiFatalException;
 
 /** A NodeWriter that provides hooks for exporting as plain XML.
@@ -66,7 +67,7 @@ public class ExportNodeWriter extends NodeWriter {
 		}
 	}
 	
-	public void endGroupNode(DatabaseGroupNode node) throws org.dbwiki.exception.WikiException {
+	public void endGroupNode(DatabaseGroupNode node, boolean isLast) throws org.dbwiki.exception.WikiException {
 		try {
 			this.writeln("</" + node.label() + ">");
 		} catch (java.io.IOException ioException) {
@@ -74,7 +75,7 @@ public class ExportNodeWriter extends NodeWriter {
 		}
 	}
 
-	public void writeAttributeNode(DatabaseAttributeNode node, DatabaseTextNode value) throws org.dbwiki.exception.WikiException {
+	public void writeAttributeNode(DatabaseAttributeNode node, DatabaseTextNode value, boolean isLast) throws org.dbwiki.exception.WikiException {
 		try {
 			this.write("<" + node.label() + ">");
 			this.write(org.dbwiki.lib.XML.maskText(value.getValue()));
@@ -90,5 +91,17 @@ public class ExportNodeWriter extends NodeWriter {
 		} catch (java.io.IOException ioException) {
 			throw new WikiFatalException(ioException);
 		}
+	}
+	
+	@Override
+	public void startEntry() throws WikiException {
+		;
+		
+	}
+
+	@Override
+	public void endEntry() throws WikiException {
+		;
+		
 	}
 }

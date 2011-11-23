@@ -51,12 +51,13 @@ public abstract class NodeWriter {
 	
 	public abstract void writeInit() throws java.io.IOException;
 	public abstract void endDatabase(Database database) throws org.dbwiki.exception.WikiException;
-	public abstract void endGroupNode(DatabaseGroupNode node) throws org.dbwiki.exception.WikiException;
+	public abstract void endGroupNode(DatabaseGroupNode node, boolean isLast) throws org.dbwiki.exception.WikiException;
 	public abstract void startDatabase(Database database, int version) throws org.dbwiki.exception.WikiException;
 	public abstract void startGroupNode(DatabaseGroupNode node) throws org.dbwiki.exception.WikiException;
-	public abstract void writeAttributeNode(DatabaseAttributeNode node, DatabaseTextNode value) throws org.dbwiki.exception.WikiException;
+	public abstract void writeAttributeNode(DatabaseAttributeNode node, DatabaseTextNode value, boolean isLast) throws org.dbwiki.exception.WikiException;
 	public abstract void writeTextNode(DatabaseTextNode node) throws org.dbwiki.exception.WikiException;
-	
+	public abstract void startEntry() throws org.dbwiki.exception.WikiException;
+	public abstract void endEntry() throws org.dbwiki.exception.WikiException;
 	
 	/*
 	 * Public Methods
