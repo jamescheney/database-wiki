@@ -1,6 +1,6 @@
 google.load('visualization', 1, {packages:['corechart']});
 
-function drawColumnChart(title, xlabel, ylabel, points) {
+function drawColumnChart(chartId, title, xlabel, ylabel, points) {
 	var data = new google.visualization.DataTable();
 	
 	data.addColumn("string", xlabel);
@@ -13,14 +13,14 @@ function drawColumnChart(title, xlabel, ylabel, points) {
 		data.setValue(i, 1, points[i].y);
 	}
 	
-	var chart = new google.visualization.ColumnChart(document.getElementById("chart"));
+	var chart = new google.visualization.ColumnChart(document.getElementById(chartId));
     chart.draw(data, {width: 400, height: 240, title: title,
         hAxis: {title: xlabel, titleTextStyle: {color: 'red'}},
         vAxis: {title: ylabel, titleTextStyle: {color: 'red'}}
        });	
 }
 
-function drawMap(points) {	
+function drawMap(mapId, points) {	
 	var geocoder;
 	var map;
     geocoder = new google.maps.Geocoder();
@@ -28,7 +28,7 @@ function drawMap(points) {
       zoom: 4,
       mapTypeId: google.maps.MapTypeId.ROADMAP
     }
-    map = new google.maps.Map(document.getElementById("map"), myOptions);
+    map = new google.maps.Map(document.getElementById(mapId), myOptions);
 	 
     // Google currently (November 2011) has a quota of 2500 geocode requests per day per IP address.
     // There is also an unspecified restriction on the rate at which requests can be made.

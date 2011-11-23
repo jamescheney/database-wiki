@@ -42,7 +42,13 @@ import org.pegdown.ExtendedPrinter;
 import org.pegdown.Printer;
 
 public class QueryNode extends Node {
+	private static int counter = 0;
 	private ArrayList<String> _path = new ArrayList<String>();
+	
+	private String freshName(String prefix) {
+		counter++;
+		return prefix + counter;
+	}
 	
 	private String _queryString;
 	
@@ -67,9 +73,11 @@ public class QueryNode extends Node {
 		String xlabel = ((GroupSchemaNode)rs.schema()).children().get(0).label();
 		String ylabel = ((GroupSchemaNode)rs.schema()).children().get(1).label();
 		
-		body.add("<div id=\"chart\" style=\"width:400px; height:300px;\"/>");
+		String chartId = freshName("chart");
+		body.add("<div id=\"" + chartId + "\" style=\"width:400px; height:300px;\"/>");
 		body.add("<script>");
-		body.add("  drawColumnChart('Some chart', '" + xlabel + "', '" + ylabel + "' , [");
+		body.add("  drawColumnChart('" + chartId +
+						"', 'Some chart', '" + xlabel + "', '" + ylabel + "' , [");
 		
 		boolean nonEmpty = false;
 		for (int i = 0; i < rs.size(); i++) {
@@ -111,9 +119,10 @@ public class QueryNode extends Node {
      * @param body
      */
     private void drawMap(QueryResultSet rs, HtmlLinePrinter body) {
-		body.add("<div id=\"map\" style=\"width:400px; height:300px;\"/>");
+    	String mapId = freshName("map");
+		body.add("<div id=\"" + mapId +"\" style=\"width:400px; height:300px;\"/>");
 		body.add("<script>");
-		body.add("  drawMap([");
+		body.add("  drawMap('"+ mapId +"', [");
 		
 		boolean nonEmpty = false;
 		for (int i = 0; i < rs.size(); i++) {
