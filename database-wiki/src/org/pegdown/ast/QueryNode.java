@@ -67,7 +67,7 @@ public class QueryNode extends Node {
 		String xlabel = ((GroupSchemaNode)rs.schema()).children().get(0).label();
 		String ylabel = ((GroupSchemaNode)rs.schema()).children().get(1).label();
 		
-		body.add("<div id=\"chart\"/>");
+		body.add("<div id=\"chart\" style=\"width:400px; height:300px;\"/>");
 		body.add("<script>");
 		body.add("  drawColumnChart('Some chart', '" + xlabel + "', '" + ylabel + "' , [");
 		
@@ -77,18 +77,20 @@ public class QueryNode extends Node {
 			try {
 				DatabaseAttributeNode rx = (DatabaseAttributeNode)r.children().get(0);
 				DatabaseAttributeNode ry = (DatabaseAttributeNode)r.children().get(1);
-				try {
-					String x = rx.value().getCurrent().value();
-					x = x.replace("'", "\\'");
-					int y = Integer.parseInt(ry.value().getCurrent().value());
-					
+				
+				String x = rx.value().getCurrent().value();
+				x = x.replace("'", "\\'");
+				String y = ry.value().getCurrent().value();
+
+				if (y.matches("((-|\\+)?[0-9]+(\\.[0-9]+)?)+")) {
 					String prefix;
 					if(nonEmpty) prefix = ", ";
 					else prefix = "";
 
 					body.add(prefix + "{x : '" + x + "', y : " + y + "}");
 					nonEmpty = true;
-				} catch (NumberFormatException e) {
+				} else {  
+					// not a number
 					continue;
 				}
 			} catch (ArrayIndexOutOfBoundsException e) {
@@ -109,7 +111,7 @@ public class QueryNode extends Node {
      * @param body
      */
     private void drawMap(QueryResultSet rs, HtmlLinePrinter body) {
-		body.add("<div id=\"map\"/>");
+		body.add("<div id=\"map\" style=\"width:400px; height:300px;\"/>");
 		body.add("<script>");
 		body.add("  drawMap([");
 		
@@ -166,7 +168,6 @@ public class QueryNode extends Node {
 			QueryResultSet rs = database.query(query);
 			if (!rs.isEmpty()) {
 				body.openPARAGRAPH(CSS.CSSPageText);
-				
 				if(drawChart) {
 					drawChart(rs, body);
 				} else if (drawMap) {
@@ -178,8 +179,6 @@ public class QueryNode extends Node {
 						contentPrinter.printTextNode((DatabaseTextNode)rs.get(i), body);
 					}
 				}
-				
-				body.closePARAGRAPH();
 			}
 		} catch (org.dbwiki.exception.data.WikiQueryException queryException) {
 			queryException.printStackTrace();

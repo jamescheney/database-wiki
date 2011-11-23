@@ -37,7 +37,7 @@ function drawMap(points) {
     
     // HACK: JavaScript's handling of closures is stupid so we have to
     // beta-expand the function passed to setTimeout.
-    for(var i = 0; i < 5; i++) {
+    for(var i = 0; i < Math.min(5, points.length); i++) {
     	// 
 		setTimeout(
 			(function (address) {
@@ -56,7 +56,7 @@ function drawMap(points) {
 								 map.setZoom(8);
 							 });
 						 } else {
-							 alert("Geocode was not successful for the following reason: " + status);
+							 //alert("Geocode was not successful for the following reason: " + status);
 						 }
 					 }
 				 )}})(points[i]), 1000);
