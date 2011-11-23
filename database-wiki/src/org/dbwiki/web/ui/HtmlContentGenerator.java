@@ -66,7 +66,7 @@ public abstract class HtmlContentGenerator {
 	public static final String ContentSearch       = "search";
 	public static final String ContentTimemachine  = "timemachine";
 	public static final String ContentTitle        = "title";
-	
+	public static final String ContentImport       = "import"; 
 	
 	/*
 	 * Private Variables

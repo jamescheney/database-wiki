@@ -35,6 +35,7 @@ import org.dbwiki.web.request.parameter.RequestParameterList;
 import org.dbwiki.web.server.DatabaseWiki;
 import org.dbwiki.web.ui.printer.CSSLinePrinter;
 import org.dbwiki.web.ui.printer.ExceptionPrinter;
+import org.dbwiki.web.ui.printer.ImportPrinter;
 
 
 /** Extends HtmlContentGenerator to provide behavior specific to DBWiki pages */
@@ -64,6 +65,7 @@ public class DatabaseWikiContentGenerator extends HtmlContentGenerator {
 		_title = title;
 		
 		this.put(ContentCSS, cssPrinter);
+		this.put(ContentImport, new ImportPrinter());
 	}
 
 	public DatabaseWikiContentGenerator(DatabaseWiki wiki, WikiRequest request) {
