@@ -416,10 +416,20 @@ public class XAQLSyntaxParser extends BaseParser<XAQLToken> {
 				Variable(),
 				ZeroOrMore(AbsoluteTargetPathExpression()),
 				Optional(PATHSEPARATOR),
+//				Optional(AsExpression()),
 				push(new XAQLToken(pop(1), pop()))
 			);
 	}
 
+//	public Rule AsExpression() {
+//		return Sequence(
+//				Spacing(),
+//				AS,
+//				Spacing(),
+//				Identifier()
+//				);
+//	}
+	
 	public Rule AbsoluteTargetPathExpression() {
 		
 		return Sequence(

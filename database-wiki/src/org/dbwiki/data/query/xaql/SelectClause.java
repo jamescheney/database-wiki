@@ -45,6 +45,7 @@ import org.dbwiki.data.schema.GroupSchemaNode;
 import org.dbwiki.data.schema.SchemaNode;
 
 import org.dbwiki.data.time.TimeSequence;
+import org.dbwiki.exception.WikiException;
 
 import org.dbwiki.lib.Counter;
 
@@ -119,6 +120,7 @@ public class SelectClause {
 					if (labelCounter.containsKey(label)) {
 						Counter counter = labelCounter.get(label);
 						label = label + Integer.toString(counter.value());
+						stmt.setLabel(label);
 						counter.inc();
 					}
 					SchemaNode renamedSchema = null;
@@ -140,7 +142,16 @@ public class SelectClause {
 		Vector<DatabaseElementNode> outputNodes = new Vector<DatabaseElementNode>();
 		for (SubTreeSelectStatement stmt : _statements) {
 			DatabaseElementNode node = nodeSet.get(stmt.targetPath().variableName());
-			QueryOutputNodeCollector nodeMarker = new QueryOutputNodeCollector(outputNodes);
+			QueryOutputNodeCollector nodeMarker = null;
+			if(stmt.label() == null)
+				nodeMarker = new QueryOutputNodeCollector(outputNodes);
+			else
+				try {
+					nodeMarker = new QueryOutputNodeCollector(outputNodes, _resultSchema.find(stmt.label()));
+				} catch (WikiException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			new RelativeXPathConsumer().consume(node, stmt.targetPath(), nodeMarker);
 		}
 		if (outputNodes.size() > 0) {

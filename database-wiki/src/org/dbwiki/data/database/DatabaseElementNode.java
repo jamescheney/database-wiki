@@ -47,9 +47,7 @@ public abstract class DatabaseElementNode extends DatabaseNode {
 	
 	public DatabaseElementNode(SchemaNode schema, DatabaseGroupNode parent, TimeSequence timestamp, AnnotationList annotation) {
 		super(parent, timestamp, annotation);
-		
 		_schema = schema;
-		
 		_label = schema.label();
 	}
 	
@@ -57,7 +55,7 @@ public abstract class DatabaseElementNode extends DatabaseNode {
 	/*
 	 * Public Methods
 	 */
-	
+		
 	public SchemaNode schema() {
 		return _schema;
 	}
@@ -76,6 +74,10 @@ public abstract class DatabaseElementNode extends DatabaseNode {
 
 	public String label() {
 		return _label;
+	}
+	
+	public void setLabel(String label) {
+		_label = label;
 	}
 	
 }

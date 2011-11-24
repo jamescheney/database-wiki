@@ -83,11 +83,9 @@ public class QueryNode extends Node {
      * using the supplied query result set
      * which should be a list of (string, number) pairs
      * 
-     * This function will only work if the length of each row
-     * matches the number of columns in the schema.
-     * 
-     * FIXME: the data columns returned by a query don't necessarily appear
-     * in the same order as the schema columns 
+     * This function won't necessarily do the right thing if
+     * multiple results are returned for the same column (as is allowed
+     * by the system).
      * 
      * @param rs
      * @param body
@@ -96,15 +94,19 @@ public class QueryNode extends Node {
     	org.dbwiki.data.schema.SchemaNodeList schemaChildren = ((GroupSchemaNode)rs.schema()).children();
     	
     	int schemaSize = schemaChildren.size();
-    	
+
 		String xlabel = "'" + escapeString(schemaChildren.get(0).label()) + "'";
 		
 		String[] ylabels = new String[schemaSize-1];
 		for(int i = 1; i < schemaSize; i++) {
-			ylabels[i-1] = "'" + escapeString(schemaChildren.get(i).label()) + "'";
+			ylabels[i-1] = schemaChildren.get(i).label();
 		}
 		
-		String ylabel = "[" + stringConcat(ylabels, ", ") + "]";
+		String escapedylabels[] = new String[schemaSize-1];
+		for(int i = 0; i < schemaSize-1; i++) {
+			escapedylabels[i] = "'" + escapeString(ylabels[i]) + "'";
+		}
+		String ylabel = "[" + stringConcat(escapedylabels, ", ") + "]";
 				
 		String chartId = freshName("chart");
 		body.add("<div id=\"" + chartId + "\">&nbsp;</div>");
@@ -119,7 +121,7 @@ public class QueryNode extends Node {
 				DatabaseElementList children = r.children();
 				if(children.size() < 2)
 					continue;
-				
+
 				DatabaseAttributeNode rx = (DatabaseAttributeNode)children.get(0);
 				String x = "'" + escapeString(rx.value().getCurrent().value()) + "'";
 				
@@ -127,12 +129,14 @@ public class QueryNode extends Node {
 				
 				String yvalues[] = new String[n-1];
 				
-				for (int j = 1; j < n; j++) {
-					String y = ((DatabaseAttributeNode)(r.children().get(j))).value().getCurrent().value();
+				for (int j = 0; j < schemaSize-1; j++) {
+					DatabaseElementList matches = children.get(ylabels[j]);
+					String y = ((DatabaseAttributeNode)(matches.get(0))).value().getCurrent().value();
+
 					if (y.matches("((-|\\+)?[0-9]+(\\.[0-9]+)?)+")) {
-						yvalues[j-1] = y;
+						yvalues[j] = y;
 					} else {
-						yvalues[j-1] = "";
+						yvalues[j] = "";
 					}
 				}
 				

@@ -88,7 +88,7 @@ public abstract class SchemaNode extends TimestampedObject {
 	}
 	
 	public boolean equals(SchemaNode schema) {
-		return this.id() == schema.id();
+		return (id() == schema.id()) && (label() == schema.label());
 	}
 	
 	public int id() {

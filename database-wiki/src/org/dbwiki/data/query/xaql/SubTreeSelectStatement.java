@@ -58,6 +58,10 @@ public class SubTreeSelectStatement {
 		return _label;
 	}
 	
+	public void setLabel(String label) {
+		_label = label;
+	}
+	
 	public VariableXPath targetPath() {
 		
 		return _targetPath;

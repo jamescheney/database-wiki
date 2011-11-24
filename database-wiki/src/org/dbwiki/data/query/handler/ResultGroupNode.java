@@ -34,7 +34,6 @@ import org.dbwiki.data.schema.GroupSchemaNode;
 import org.dbwiki.data.time.TimeSequence;
 
 public class ResultGroupNode extends DatabaseGroupNode {
-
 	public ResultGroupNode(GroupSchemaNode entity, TimeSequence timestamp) {
 		super(entity, null, timestamp, new AnnotationList());
 	}
@@ -44,7 +43,6 @@ public class ResultGroupNode extends DatabaseGroupNode {
 	 */
 	
 	public ResourceIdentifier identifier() {
-
 		return new NodeIdentifier();
 	}
 }
