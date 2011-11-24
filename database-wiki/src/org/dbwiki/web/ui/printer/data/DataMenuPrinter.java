@@ -56,6 +56,8 @@ public class DataMenuPrinter extends MenuPrinter {
 	private static final String menuLabelPaste         = "Paste ...";
 	private static final String menuLabelPasteExternal = "Enter URL ...";
 	private static final String menuLabelPasteLocal    = "Copy buffer ...";
+	private static final String menuLabelExportXML     = "Export as XML...";
+	private static final String menuLabelExportJSON     = "Export as JSON...";
 	
 	
 	/*
@@ -193,7 +195,7 @@ public class DataMenuPrinter extends MenuPrinter {
 		}
 
 		printer.add("\t\t\t\t\t<li><a href=\"" + _request.wri().getURL() + "?" + RequestParameter.ParameterEdit + "\">" + menuLabelEdit + "</a></li>");
-
+		
 		RequestParameterVersion version = RequestParameter.versionParameter(_request.parameters().get(RequestParameter.ParameterVersion));
 		String target = _request.wri().getURL() + "?" + RequestParameter.ParameterCopy;
 		if (version.versionSingle()) {
@@ -202,6 +204,10 @@ public class DataMenuPrinter extends MenuPrinter {
 		printer.add("\t\t\t\t\t<li><a href=\"" + target + "\">" + menuLabelCopy + "</a></li>");
 		
 		this.printPasteSubMenu(printer);
+		
+		printer.add("\t\t\t\t\t<li><a href=\"" + _request.wri().getURL() + "?" + RequestParameter.ParameterExportXML + "\">" + menuLabelExportXML + "</a></li>");
+		printer.add("\t\t\t\t\t<li><a href=\"" + _request.wri().getURL() + "?" + RequestParameter.ParameterExportJSON + "\">" + menuLabelExportJSON + "</a></li>");
+
 		
 		printer.add("\t\t\t\t\t<li><a href=\"#\" onclick=\"loadPopup();return false\">" + menuLabelDelete + "</a></li>");
 
