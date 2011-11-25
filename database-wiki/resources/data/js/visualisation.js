@@ -41,7 +41,7 @@ function drawMap(mapId, points) {
     // HACK: JavaScript's handling of closures is stupid so we have to
     // beta-expand the function passed to setTimeout. This has the effect
     // of converting points[i] from a reference to a value.
-    for(var i = 0; i < Math.min(5, points.length); i++) {
+    for(var i = 0; i < Math.min(10, points.length); i++) {
 		setTimeout(
 			(function (address) {
 				 return function () {
@@ -56,13 +56,12 @@ function drawMap(mapId, points) {
 							 });
 							 google.maps.event.addListener(marker, 'click', function() {
 								 map.setCenter(pos);
-								 map.setZoom(8);
 							 });
 						 } else {
 							 //alert("Geocode was not successful for the following reason: " + status);
 						 }
 					 }
-				 )}})(points[i]), 1000);
+				 )}})(points[i]), 100*i);
 	}
 }
 

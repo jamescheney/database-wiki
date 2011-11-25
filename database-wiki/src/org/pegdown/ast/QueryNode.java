@@ -22,6 +22,8 @@
 package org.pegdown.ast;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 
 import org.dbwiki.data.database.Database;
 import org.dbwiki.data.database.DatabaseAttributeNode;
@@ -61,96 +63,147 @@ public class QueryNode extends Node {
         for(Node n : path.getChildren())
         	_path.add(n.getText());
     }
-    
-    private String stringConcat(String[] ss, String delim) {
+
+    /**
+     * Concatenate the collection of strings ss using delimiter delim.
+     * 
+     * @param ss
+     * @param delim
+     * @return
+     */
+    private String stringConcat(Collection<String> ss, String delim) { 
+    	Iterator<String> p = ss.iterator();
+    	return stringConcat(p, delim);
+    }
+
+    /**
+     * Concatenate the collection of strings starting at p using delimiter delim.
+     * 
+     * @param p
+     * @param delim
+     * @return
+     */
+    private String stringConcat(Iterator<String> p, String delim) {
     	StringBuffer buf = new StringBuffer();
-    	if(ss.length > 0) {
-    		buf.append(ss[0]);
-    		for(int i = 1; i < ss.length; i++) {
+     	if(p.hasNext()) {
+    		buf.append(p.next());
+    		while(p.hasNext()) {
     			buf.append(delim);
-    			buf.append(ss[i]);
+    			buf.append(p.next());
     		}
     	}
     	return buf.toString();
-    }
+    }  
     
+    /**
+     * Escape a string for JavaScript output.
+     *  
+     * @param s
+     * @return
+     */
     private String escapeString(String s) {
     	return s.replace("'", "\\'");
     }
     
     /**
+     * Return an ArrayList<String> containing the labels from the schema of
+     * the result set.
+     * 
+     * @param rs
+     * @return
+     */
+    private ArrayList<String> resultLabels(QueryResultSet rs) {
+    	org.dbwiki.data.schema.SchemaNodeList schemaChildren = ((GroupSchemaNode)rs.schema()).children();
+    	ArrayList<String> labels = new ArrayList<String>(schemaChildren.size());
+    	for(int i = 0; i < schemaChildren.size(); i++) {
+    		labels.add(schemaChildren.get(i).label());
+    	}
+    	return labels;
+    }
+    
+    /**
      * Output HTML / JavaScript to draw a chart
      * using the supplied query result set
-     * which should be a list of (string, number) pairs
+     * which should be a list of (string, number, ..., number) tuples.
      * 
      * This function won't necessarily do the right thing if
      * multiple results are returned for the same column (as is allowed
      * by the system).
      * 
+     * The function relies on the schema labels appearing in the
+     * correct order. But it does not rely on the result columns
+     * appearing in the right order - which they sometimes don't
+     * because DatabaseElementLists are not lists!
+     * 
      * @param rs
      * @param body
      */
     private void drawChart(QueryResultSet rs, HtmlLinePrinter body) {
-    	org.dbwiki.data.schema.SchemaNodeList schemaChildren = ((GroupSchemaNode)rs.schema()).children();
+    	ArrayList<String> labels = resultLabels(rs);
+       	int schemaSize = labels.size();
+    
+       	if(schemaSize < 2) {
+    		body.add("<p>Error: a chart needs at least two data columns</p>");
+    		return;
+    	}
     	
-    	int schemaSize = schemaChildren.size();
-
-		String xlabel = "'" + escapeString(schemaChildren.get(0).label()) + "'";
+    	ArrayList<String> escapedLabels = new ArrayList<String>(schemaSize);
+    	for(String l : labels)
+    		escapedLabels.add("'" + escapeString(l) + "'");
+    	
+    	Iterator<String> p = escapedLabels.iterator();
+    	p.next();
+    	String xl = "'" + escapeString(escapedLabels.get(0)) + "'";
+    	String yl = "[" + stringConcat(p, ", ") + "]";
 		
-		String[] ylabels = new String[schemaSize-1];
-		for(int i = 1; i < schemaSize; i++) {
-			ylabels[i-1] = schemaChildren.get(i).label();
-		}
-		
-		String escapedylabels[] = new String[schemaSize-1];
-		for(int i = 0; i < schemaSize-1; i++) {
-			escapedylabels[i] = "'" + escapeString(ylabels[i]) + "'";
-		}
-		String ylabel = "[" + stringConcat(escapedylabels, ", ") + "]";
-				
 		String chartId = freshName("chart");
 		body.add("<div id=\"" + chartId + "\">&nbsp;</div>");
 		body.add("<script>");
 		body.add("  drawColumnChart('" + chartId +
-						"', 'Some chart', " + xlabel + ", " + ylabel + " , [");
+						"', '', " + xl + ", " + yl + " , [");
 		
 		boolean nonEmpty = false;
 		for (int i = 0; i < rs.size(); i++) {
 			DatabaseGroupNode r = (DatabaseGroupNode)rs.get(i);
-			try {
-				DatabaseElementList children = r.children();
-				if(children.size() < 2)
-					continue;
 
-				DatabaseAttributeNode rx = (DatabaseAttributeNode)children.get(0);
-				String x = "'" + escapeString(rx.value().getCurrent().value()) + "'";
-				
-				int n = children.size();
-				
-				String yvalues[] = new String[n-1];
-				
-				for (int j = 0; j < schemaSize-1; j++) {
-					DatabaseElementList matches = children.get(ylabels[j]);
-					String y = ((DatabaseAttributeNode)(matches.get(0))).value().getCurrent().value();
-
-					if (y.matches("((-|\\+)?[0-9]+(\\.[0-9]+)?)+")) {
-						yvalues[j] = y;
-					} else {
-						yvalues[j] = "";
-					}
-				}
-				
-				String y = "[" + stringConcat(yvalues, ", ") + "]";
-
-				String prefix;
-				if(nonEmpty) prefix = ", ";
-				else prefix = "";
-
-				body.add(prefix + "{x : " + x + ", y : " + y + "}");
-				nonEmpty = true;
-			} catch (ArrayIndexOutOfBoundsException e) {
+			DatabaseElementList children = r.children();
+			if(children.size() < 2)
 				continue;
+
+			DatabaseElementList matches = children.get(labels.get(0));
+			if(matches.size() == 0)
+				continue;
+
+			DatabaseAttributeNode rx = (DatabaseAttributeNode)matches.get(0);
+			String x = "'" + escapeString(rx.value().getCurrent().value()) + "'";
+
+			ArrayList<String> yvalues = new ArrayList<String>(schemaSize-1);
+
+			for (int j = 1; j < schemaSize; j++) {
+				// Add the empty string if there are no matches
+				// or the result isn't a number.
+				// Otherwise add the first matching number.
+
+				matches = children.get(labels.get(j));
+				if(matches.size() == 0) {
+					yvalues.add("");
+					continue;
+				}
+
+				String y = ((DatabaseAttributeNode)(matches.get(0))).value().getCurrent().value();
+				if (!y.matches("((-|\\+)?[0-9]+(\\.[0-9]+)?)+"))
+					y = "";
+				yvalues.add(y);
 			}
+
+			String y = "[" + stringConcat(yvalues, ", ") + "]";
+
+			String prefix;
+			if(nonEmpty) prefix = ",\n";
+			else prefix = "";
+
+			body.add(prefix + "{x : " + x + ", y : " + y + "}");
+			nonEmpty = true;
 		}
 		
 		body.add("])");
@@ -162,10 +215,24 @@ public class QueryNode extends Node {
      * using the supplied query result set
      * which should be a list of locations
      * 
+     * This function supports multiple columns in the result set.
+     * Multiple columns are concatenated together (delimited by commas)
+     * before geocoding.
+     * 
+     * It relies on the schema columns appearing in the right order, but
+     * does not the data columns being in the right order.
+     * 
      * @param rs
      * @param body
      */
     private void drawMap(QueryResultSet rs, HtmlLinePrinter body) {
+    	ArrayList<String> labels = resultLabels(rs);
+    	
+    	if(labels.size() == 0) {
+    		body.add("<p>Error: a map needs at least one data column</p>");
+    		return;
+    	}
+    	
     	String mapId = freshName("map");
 		body.add("<div id=\"" + mapId +"\" style=\"width:400px; height:300px;\">&nbsp;</div>");
 		body.add("<script>");
@@ -174,27 +241,26 @@ public class QueryNode extends Node {
 		boolean nonEmpty = false;
 		for (int i = 0; i < rs.size(); i++) {
 			DatabaseGroupNode r = (DatabaseGroupNode)rs.get(i);
-			try {
-				DatabaseElementList children = r.children();
-				if(children.size() == 0)
-					continue;
-				
-				int n = children.size();
 
-				String location = ((DatabaseAttributeNode)children.get(0)).value().getCurrent().value();
-				for(int j = 1; j < n; j++) {
-					location = location + ", " + ((DatabaseAttributeNode)children.get(j)).value().getCurrent().value();
-				}
-
-				String prefix;
-				if(nonEmpty) prefix = ",\n";
-				else prefix = "";
-
-				body.add(prefix + "'" + escapeString(location) + "'");
-				nonEmpty = true;
-			} catch (ArrayIndexOutOfBoundsException e) {
+			DatabaseElementList children = r.children();
+			if(children.size() == 0)
 				continue;
+
+			ArrayList<String> components = new ArrayList<String>();
+			for(int j = 0; j < labels.size(); j++) {
+				DatabaseElementList matches = children.get(labels.get(j));
+				for (int k = 0; k < matches.size(); k++) {
+					components.add(((DatabaseAttributeNode)(matches.get(k))).value().getCurrent().value());
+				}
 			}
+			String location = stringConcat(components, ", ");
+
+			String prefix;
+			if(nonEmpty) prefix = ",\n";
+			else prefix = "";
+
+			body.add(prefix + "'" + escapeString(location) + "'");
+			nonEmpty = true;
 		}
 		
 		body.add("])");

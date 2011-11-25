@@ -27,6 +27,9 @@ import org.dbwiki.data.schema.SchemaNode;
 
 /** A vector of database element nodes used for the list of children of a group node.
  * 
+ * Invariant: this data structure (very inefficiently) tries to enforce the invariant
+ * that the elements are ordered by schema id. Why?
+ * 
  * @author jcheney
  *
  */
@@ -53,6 +56,12 @@ public class DatabaseElementList {
 	
 	public void add(DatabaseElementNode node) {
 		boolean added = false;
+		
+		// FIXME: use an ordered set data structure to do this!
+		// Do we actually need this data structure to be ordered?
+		// If so, then this class shouldn't be called DatabaseElementList
+		// but rather something like DatabaseElementSet. In fact, why not just use
+		// a standard Java collection class instead?
 		for (int iElement = 0; iElement < _elements.size(); iElement++) {
 			if (_elements.get(iElement).schema().id() > node.schema().id()) {
 				_elements.add(iElement, node);
