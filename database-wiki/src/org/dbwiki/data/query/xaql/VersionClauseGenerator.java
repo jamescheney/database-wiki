@@ -92,7 +92,8 @@ public class VersionClauseGenerator {
 				clipped = true;
 			}
 		}
-		if (!timestamp.equals("")) {
+		
+		if (!timestamp.equals("") && !timestamp.equals(TimeSequence.OpenIntervalChar)) {
 			return new VersionClause(new TimeSequence(timestamp));
 		} else {
 			return new VersionClause(new TimeSequence(Integer.MAX_VALUE));

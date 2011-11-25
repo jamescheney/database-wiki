@@ -27,6 +27,7 @@ package org.dbwiki.data.query.xaql;
  *
  */
 import org.dbwiki.data.database.Database;
+import org.dbwiki.data.time.TimeSequence;
 import org.dbwiki.exception.WikiFatalException;
 
 public class QueryStatementGenerator {
@@ -56,6 +57,12 @@ public class QueryStatementGenerator {
     			whereClause = new WhereClauseGenerator().getWhereClause(fromClause.variables(), nodeSet, database.versionIndex());
     		}
     	}
+    	
+    	// If there is no version clause, set it to NOW
+    	if (versionClause == null) {
+    		versionClause = new VersionClause(new TimeSequence(Integer.MAX_VALUE));
+    	}
+    	
     	return new XAQLQuery(selectClause, fromClause, versionClause, whereClause);
 	}	
 }

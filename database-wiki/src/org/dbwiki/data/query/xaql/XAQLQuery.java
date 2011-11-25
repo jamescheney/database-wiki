@@ -81,7 +81,7 @@ public class XAQLQuery {
 	public QueryNodeHandler getQueryHandler(QueryNodeHandler consumer) {
 		
 		if (_fromClause.variables().size() > 1) {
-			return  new MultiVariableQueryNodeHandler(_selectClause, _whereClause, _fromClause.rootVariable(), _fromClause.variables(), consumer);
+			return new MultiVariableQueryNodeHandler(_selectClause, _whereClause, _fromClause.rootVariable(), _fromClause.variables(), consumer);
 		} else {
 			return new SingleVariableQueryNodeHandler(_selectClause, _whereClause, _fromClause.rootVariable(), consumer);
 		}

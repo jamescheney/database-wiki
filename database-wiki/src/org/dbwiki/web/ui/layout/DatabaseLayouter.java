@@ -220,7 +220,7 @@ public class DatabaseLayouter {
 	
 	public SchemaLayout get(SchemaNode schema) {
 		Integer key = new Integer(schema.id());
-		if (_layouter.containsKey(key)) {
+		if (_layouter.containsKey(key)) { // FIXME #columnlabels: This is where the layout information overrides the AS/label information.
 			return _layouter.get(key);
 		} else if (schema.id() == -1) {
 			return new SchemaLayout(schema.label(), schema.label(), LabelAlignment.alignNone, schema.label(), 0, DisplayStyle.styleTable, false, true, null, 0);
