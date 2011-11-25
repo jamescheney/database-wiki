@@ -509,7 +509,8 @@ public class DataNodePrinter implements HtmlContentPrinter {
 			if (versionParameter.matches(groupNode)) {
 				content.openTR();
 				for (int iColumn = 0; iColumn < schemaNode.children().size(); iColumn++) {
-					DatabaseElementList nodes = groupNode.children().get(schemaNode.children().get(iColumn));
+					//DatabaseElementList nodes = groupNode.children().get(schemaNode.children().get(iColumn));
+					DatabaseElementList nodes = groupNode.children().get(schemaNode.children().get(iColumn).label());
 					if (groupNode.getTimestamp().isCurrent()) {
 						content.openTD(layout.getCSS(CSS.CSSContentCellActive));
 					} else {

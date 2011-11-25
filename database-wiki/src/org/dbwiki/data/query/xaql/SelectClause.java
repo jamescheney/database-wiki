@@ -125,9 +125,11 @@ public class SelectClause {
 					}
 					SchemaNode renamedSchema = null;
 					if (schema.isAttribute()) {
-						renamedSchema = new AttributeSchemaNode(schema.id(), label, _resultSchema, schema.getTimestamp());
+						renamedSchema = new AttributeSchemaNode(-1, label, _resultSchema, schema.getTimestamp());
+						//renamedSchema = new AttributeSchemaNode(schema.id(), label, _resultSchema, schema.getTimestamp());
 					} else {
-						renamedSchema = new GroupSchemaNode(schema.id(), label, _resultSchema, schema.getTimestamp());
+						renamedSchema = new GroupSchemaNode(-1, label, _resultSchema, schema.getTimestamp());
+						//renamedSchema = new GroupSchemaNode(schema.id(), label, _resultSchema, schema.getTimestamp());
 						for (int iChild = 0; iChild < ((GroupSchemaNode)schema).children().size(); iChild++) {
 							((GroupSchemaNode)renamedSchema).children().add(((GroupSchemaNode)schema).children().get(iChild));
 						}
