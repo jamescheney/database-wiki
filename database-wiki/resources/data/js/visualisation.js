@@ -1,6 +1,6 @@
 google.load('visualization', 1, {packages:['corechart']});
 
-function drawColumnChart(chartId, title, xlabel, ylabels, points) {
+function drawColumnChart(chartId, title, xSize, ySize, xlabel, ylabels, points) {
 	var data = new google.visualization.DataTable();
 	
 	data.addColumn("string", xlabel);
@@ -16,10 +16,10 @@ function drawColumnChart(chartId, title, xlabel, ylabels, points) {
 	}
 	
 	var chart = new google.visualization.ColumnChart(document.getElementById(chartId));
-    chart.draw(data, {width: 400, height: 240, title: title,
-        hAxis: {title: xlabel, titleTextStyle: {color: 'red'}},
-        //vAxis: {title: ylabel, titleTextStyle: {color: 'red'}}
-       });	
+    chart.draw(data, {width: xSize, height: ySize, title: title,
+        hAxis: {title: xlabel, titleTextStyle: {color: 'black'}}
+        //vAxis: {title: ylabel, titleTextStyle: {color: 'black'}}
+    });	
 }
 
 function drawMap(mapId, points) {	

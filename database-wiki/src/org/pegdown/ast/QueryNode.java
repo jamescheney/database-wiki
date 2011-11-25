@@ -34,6 +34,7 @@ import org.dbwiki.data.database.DatabaseTextNode;
 import org.dbwiki.data.query.QueryResultSet;
 import org.dbwiki.data.schema.GroupSchemaNode;
 import org.dbwiki.exception.WikiException;
+import org.dbwiki.exception.data.WikiQueryException;
 import org.dbwiki.web.html.HtmlLinePrinter;
 import org.dbwiki.web.html.HtmlPage;
 import org.dbwiki.web.request.parameter.RequestParameterVersionCurrent;
@@ -132,13 +133,13 @@ public class QueryNode extends Node {
      * 
      * The function relies on the schema labels appearing in the
      * correct order. But it does not rely on the result columns
-     * appearing in the right order - which they sometimes don't
+     * appearing in the correct order - they sometimes don't
      * because DatabaseElementLists are not lists!
      * 
      * @param rs
      * @param body
      */
-    private void drawChart(QueryResultSet rs, HtmlLinePrinter body) {
+    private void drawChart(String xSize, String ySize, QueryResultSet rs, HtmlLinePrinter body) {
     	ArrayList<String> labels = resultLabels(rs);
        	int schemaSize = labels.size();
     
@@ -153,14 +154,14 @@ public class QueryNode extends Node {
     	
     	Iterator<String> p = escapedLabels.iterator();
     	p.next();
-    	String xl = "'" + escapeString(escapedLabels.get(0)) + "'";
+    	String xl = escapedLabels.get(0);
     	String yl = "[" + stringConcat(p, ", ") + "]";
 		
 		String chartId = freshName("chart");
 		body.add("<div id=\"" + chartId + "\">&nbsp;</div>");
 		body.add("<script>");
-		body.add("  drawColumnChart('" + chartId +
-						"', '', " + xl + ", " + yl + " , [");
+		body.add("  drawColumnChart('" + chartId + "', '', '" + xSize + "', '"+ ySize +
+						"', " + xl + ", " + yl + " , [");
 		
 		boolean nonEmpty = false;
 		for (int i = 0; i < rs.size(); i++) {
@@ -219,8 +220,8 @@ public class QueryNode extends Node {
      * Multiple columns are concatenated together (delimited by commas)
      * before geocoding.
      * 
-     * It relies on the schema columns appearing in the right order, but
-     * does not the data columns being in the right order.
+     * It relies on the schema columns appearing in the correct order, but
+     * does not rely on the data columns being in the correct order.
      * 
      * @param rs
      * @param body
@@ -277,34 +278,50 @@ public class QueryNode extends Node {
         PageContentPrinter contentPrinter = (PageContentPrinter)((ExtendedPrinter) printer).getExtension();
         Database database = contentPrinter.getDatabase();
     	
-    	try {
-    		boolean drawChart = false;
-    		boolean drawMap = false;
-    		
+    	try {  		
     		String query = _queryString;
-    		if(query.toLowerCase().startsWith("chart:")) {
-    			drawChart = true;
-    			query = query.substring("chart:".length());
+    		if(query.toLowerCase().startsWith("chart:") || query.toLowerCase().startsWith("chart(")) {
+    			// FIXME: should parse the arguments to charts in a more
+    			// sensible scalable way.
+    			query = query.substring("chart".length());
+    			String xSize = "800";
+    			String ySize = "600";
+    			if(query.startsWith("(")) {
+    				int comma = query.indexOf(",");
+    				int closeParen = query.indexOf(")", comma);
+    				int colon = query.indexOf(":", closeParen);
+    				
+    				if(comma == -1 || closeParen == -1 || colon != closeParen+1)
+    					throw new WikiQueryException(WikiQueryException.UnknownQueryFormat, _queryString);
+    				
+    				xSize = query.substring(1, comma);
+    				ySize = query.substring(comma+1, closeParen);
+    				query = query.substring(colon+1);
+    			} else {
+    				query = query.substring(1);
+    			}
+    			QueryResultSet rs = database.query(query);
+    			body.openPARAGRAPH(CSS.CSSPageText);
+    			drawChart(xSize, ySize, rs, body);
     		} else if(query.toLowerCase().startsWith("map:")) {
-    			drawMap = true;
+    			QueryResultSet rs = database.query(query);
+    			body.openPARAGRAPH(CSS.CSSPageText);
     			query = query.substring("map:".length());
+    			drawMap(rs, body);
+    		} else {
+    			QueryResultSet rs = database.query(query);
+    			if (!rs.isEmpty()) {
+    				body.openPARAGRAPH(CSS.CSSPageText);
+    				if (rs.isElement()) {
+    					body.add(contentPrinter.getLinesForNodeList(new SchemaNodeList(rs),
+    																new RequestParameterVersionCurrent()));
+    				} else {
+    					for (int i = 0; i < rs.size(); i++) {
+    						contentPrinter.printTextNode((DatabaseTextNode)rs.get(i), body);
+    					}
+    				}
+    			}
     		}
-    		    		
-			QueryResultSet rs = database.query(query);
-			if (!rs.isEmpty()) {
-				body.openPARAGRAPH(CSS.CSSPageText);
-				if(drawChart) {
-					drawChart(rs, body);
-				} else if (drawMap) {
-					drawMap(rs, body);
-				} else if (rs.isElement()) {
-					body.add(contentPrinter.getLinesForNodeList(new SchemaNodeList(rs), new RequestParameterVersionCurrent()));
-				} else {
-					for (int i = 0; i < rs.size(); i++) {
-						contentPrinter.printTextNode((DatabaseTextNode)rs.get(i), body);
-					}
-				}
-			}
 		} catch (org.dbwiki.exception.data.WikiQueryException queryException) {
 			queryException.printStackTrace();
 			body.paragraph("<b> " + queryException.toString() + "</b>", CSS.CSSPageText);
