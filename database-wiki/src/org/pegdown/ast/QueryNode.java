@@ -306,9 +306,9 @@ public class QueryNode extends Node {
     			body.openPARAGRAPH(CSS.CSSPageText);
     			drawChart(xSize, ySize, rs, body);
     		} else if(query.toLowerCase().startsWith("map:")) {
+    			query = query.substring("map:".length());
     			QueryResultSet rs = database.query(query);
     			body.openPARAGRAPH(CSS.CSSPageText);
-    			query = query.substring("map:".length());
     			drawMap(rs, body);
     		} else {
     			QueryResultSet rs = database.query(query);
