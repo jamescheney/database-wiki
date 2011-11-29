@@ -29,6 +29,7 @@ import org.dbwiki.data.database.DatabaseNode;
 import org.dbwiki.data.query.handler.QueryNodeHandler;
 
 import org.dbwiki.data.schema.SchemaNode;
+import org.dbwiki.data.time.TimeSequence;
 
 /** Implements the set of results of a query as a list/vector of database
  * nodes which are all assumed to be of the same type.
@@ -42,6 +43,7 @@ public class QueryResultSet implements QueryNodeHandler {
 	 */
 	
 	private Vector<DatabaseNode> _nodes;
+	private TimeSequence _timestamp;
 	
 	
 	/*
@@ -51,20 +53,29 @@ public class QueryResultSet implements QueryNodeHandler {
 	/** Creates an empty query result set
 	 * 
 	 */
-	public QueryResultSet() {
+	public QueryResultSet(TimeSequence timestamp) {
+		_timestamp = timestamp;
 		_nodes = new Vector<DatabaseNode>();
 	}
 	
+	public QueryResultSet() {
+		this((TimeSequence)null);
+	}
+
 	/** Creates a query result set that contains the given node
 	 * 
 	 * @param node: Initial DatabaseNode contained in the new query result set.
 	 */
-	public QueryResultSet(DatabaseNode node) {
-		this();
+	public QueryResultSet(TimeSequence timestamp, DatabaseNode node) {
+		this(timestamp);
 		
 		this.add(node);
 	}
 	
+	public QueryResultSet(DatabaseNode node) {
+		this((TimeSequence)null, node);
+	}
+
 	
 	/*
 	 * Public Methods
@@ -86,6 +97,15 @@ public class QueryResultSet implements QueryNodeHandler {
 	public DatabaseNode get(int index) {
 		return _nodes.get(index);
 	}
+	
+	/** The timestamp specified in the VERSION clause of the query
+	 * 
+	 * @return timestamp or null if no version clause was given (always null
+	 * for results of queries other than XAQL queries).
+	 */
+	public TimeSequence getTimestamp() {
+		return _timestamp;
+	}
 
 	/** Implements QueryNodeHandler.handle(). Adds the given query result node
 	 * to the result set.
@@ -93,6 +113,14 @@ public class QueryResultSet implements QueryNodeHandler {
 	 */
 	public void handle(DatabaseElementNode node) {
 		this.add(node);
+	}
+	
+	/** Check whether the result set is restricted to a certain timestamp
+	 * 
+	 * @return true if a version clause was specified for the query
+	 */
+	public boolean hasTimestamp() {
+		return (_timestamp != null);
 	}
 	
 	/** Test whether the query returned element nodes or text nodes

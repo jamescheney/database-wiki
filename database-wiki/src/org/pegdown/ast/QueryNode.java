@@ -37,7 +37,9 @@ import org.dbwiki.exception.WikiException;
 import org.dbwiki.exception.data.WikiQueryException;
 import org.dbwiki.web.html.HtmlLinePrinter;
 import org.dbwiki.web.html.HtmlPage;
+import org.dbwiki.web.request.parameter.RequestParameterVersion;
 import org.dbwiki.web.request.parameter.RequestParameterVersionCurrent;
+import org.dbwiki.web.request.parameter.RequestParameterVersionTimestamp;
 import org.dbwiki.web.ui.CSS;
 import org.dbwiki.web.ui.printer.SchemaNodeList;
 import org.dbwiki.web.ui.printer.page.PageContentPrinter;
@@ -313,8 +315,14 @@ public class QueryNode extends Node {
     			if (!rs.isEmpty()) {
     				body.openPARAGRAPH(CSS.CSSPageText);
     				if (rs.isElement()) {
+    					RequestParameterVersion versionParameter = null;
+    					if (rs.hasTimestamp()) {
+    						versionParameter = new RequestParameterVersionTimestamp(rs.getTimestamp());
+    					} else {
+    						versionParameter = new RequestParameterVersionCurrent();
+    					}
     					body.add(contentPrinter.getLinesForNodeList(new SchemaNodeList(rs),
-    																new RequestParameterVersionCurrent()));
+    																versionParameter));
     				} else {
     					for (int i = 0; i < rs.size(); i++) {
     						contentPrinter.printTextNode((DatabaseTextNode)rs.get(i), body);

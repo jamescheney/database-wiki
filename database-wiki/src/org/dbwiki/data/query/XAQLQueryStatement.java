@@ -87,7 +87,12 @@ public class XAQLQueryStatement extends QueryStatement {
 	 */
 	public QueryResultSet execute() throws WikiException {
 
-		QueryResultSet result = new QueryResultSet();
+		QueryResultSet result = null;
+		if (_query.getVersionClause() != null) {
+			result = new QueryResultSet(_query.getVersionClause().getTimestamp());
+		} else {
+			result = new QueryResultSet();
+		}
 		
 		QueryNodeHandler queryHandler = _query.getQueryHandler(result);
 		

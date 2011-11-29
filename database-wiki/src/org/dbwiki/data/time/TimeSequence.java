@@ -309,6 +309,29 @@ public class TimeSequence {
 			return interval.end();
 		}
 	}
+
+	public boolean overlap(TimeSequence timestamp) {
+		
+		if ((this.isCurrent()) && (timestamp.isCurrent())) {
+			return true;
+		}
+		
+		int idxI = 0;
+		int idxJ = 0;
+		
+		while ((idxI < this.size()) && (idxJ < timestamp.size())) {
+			TimeInterval intervalI = this.get(idxI);
+			TimeInterval intervalJ = timestamp.get(idxJ);
+			if (intervalI.overlap(intervalJ)) {
+				return true;
+			} else if (intervalI.start() < intervalJ.start()) {
+				idxI++;
+			} else {
+				idxJ++;
+			}
+		}
+		return false;
+	}
 	
 	/** Returns the number of intervals in this time sequence
 	 * 
