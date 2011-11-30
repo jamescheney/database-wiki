@@ -1,6 +1,27 @@
-google.load('visualization', 1, {packages:['corechart']});
+google.load('visualization', 1, {packages:['corechart', 'map']});
 
-function drawColumnChart(chartId, title, xSize, ySize, xlabel, ylabels, points) {
+/** Use the Google visualization API to draw a map
+ *
+ * @chartId is the id of the DIV to draw it in
+ * @addresses is an array of addresses
+ */
+function drawMap(chartId, addresses) {
+	var data = new google.visualization.DataTable();
+	
+	data.addColumn('string', 'address');
+	data.addRows(addresses.length);
+	
+	for(var i = 0; i < addresses.length; i++) {
+		data.setCell(i, 0, addresses[i]);
+	}
+	
+	var map = new google.visualization.Map(document.getElementById(chartId));
+	map.draw(data, {mapType: 'normal', enableScrollWheel: true, showTip: true});
+}
+
+/** Draw a chart.
+ */
+function drawChart(type, chartId, title, xSize, ySize, xlabel, ylabels, points) {
 	var data = new google.visualization.DataTable();
 	
 	data.addColumn("string", xlabel);
@@ -15,19 +36,31 @@ function drawColumnChart(chartId, title, xSize, ySize, xlabel, ylabels, points) 
 			data.setValue(i, 1+j, points[i].y[j]);
 	}
 	
-	var chart = new google.visualization.ColumnChart(document.getElementById(chartId));
+	var chart;
+	switch (type) {
+		case 'pie':
+	    	chart = new google.visualization.PieChart(document.getElementById(chartId));
+	    	break;
+		case 'column':
+	    default:
+	    	chart = new google.visualization.ColumnChart(document.getElementById(chartId));
+	    	break;
+	};
+	
     chart.draw(data, {width: xSize, height: ySize, title: title,
         hAxis: {title: xlabel, titleTextStyle: {color: 'black'}}
         //vAxis: {title: ylabel, titleTextStyle: {color: 'black'}}
     });	
 }
 
-function drawMap(mapId, points) {	
+// This uses the Google Maps API directly.
+// It's simpler to use the visualization API.
+function drawMapRaw(mapId, points) {	
 	var geocoder;
 	var map;
     geocoder = new google.maps.Geocoder();
     var options = {
-      zoom: 6,
+      zoom: 3,
       center: new google.maps.LatLng(0, 0),
       mapTypeId: google.maps.MapTypeId.ROADMAP
     }
@@ -35,13 +68,13 @@ function drawMap(mapId, points) {
 	 
     // Google currently (November 2011) has a quota of 2500 geocode requests per day per IP address.
     // There is also an unspecified restriction on the rate at which requests can be made.
-    // To avoid hitting the rate restriction we use setTimeout to ensure that each
-    // request is at least a second apart.
+    // To avoid hitting the rate restriction we use setTimeout to ensure that there is a delay
+    // between consecutive requests apart.
     
     // HACK: JavaScript's handling of closures is stupid so we have to
     // beta-expand the function passed to setTimeout. This has the effect
     // of converting points[i] from a reference to a value.
-    for(var i = 0; i < Math.min(10, points.length); i++) {
+    for(var i = 0; i < Math.min(15, points.length); i++) {
 		setTimeout(
 			(function (address) {
 				 return function () {
@@ -61,7 +94,7 @@ function drawMap(mapId, points) {
 							 //alert("Geocode was not successful for the following reason: " + status);
 						 }
 					 }
-				 )}})(points[i]), 100*i);
+				 )}})(points[i]), 250*i);
 	}
 }
 

@@ -51,6 +51,8 @@ public class QueryNode extends Node {
 	private static int counter = 0;
 	private ArrayList<String> _path = new ArrayList<String>();
 	
+	private enum ChartType {Column, Pie, Map}; 
+	
 	private String freshName(String prefix) {
 		counter++;
 		return prefix + counter;
@@ -141,7 +143,7 @@ public class QueryNode extends Node {
      * @param rs
      * @param body
      */
-    private void drawChart(String xSize, String ySize, QueryResultSet rs, HtmlLinePrinter body) {
+    private void drawChart(ChartType type, String xSize, String ySize, QueryResultSet rs, HtmlLinePrinter body) {
     	ArrayList<String> labels = resultLabels(rs);
        	int schemaSize = labels.size();
     
@@ -159,11 +161,22 @@ public class QueryNode extends Node {
     	String xl = escapedLabels.get(0);
     	String yl = "[" + stringConcat(p, ", ") + "]";
 		
+    	String typeString = "column";
+    	switch (type) {
+    		case Column:
+    			typeString = "column";
+    			break;
+    		case Pie:
+    			typeString = "pie";
+    			break;
+    	};
+    	
 		String chartId = freshName("chart");
-		body.add("<div id=\"" + chartId + "\">&nbsp;</div>");
+		body.add("<div id=\"" + chartId + "\", style=\"width:" +
+				                 xSize + "px; height:" + ySize + "px;\">&nbsp;</div>");
 		body.add("<script>");
-		body.add("  drawColumnChart('" + chartId + "', '', '" + xSize + "', '"+ ySize +
-						"', " + xl + ", " + yl + " , [");
+		body.add("  drawChart('" + typeString + "', '" + chartId + "', '', '" + xSize + "', '"+ ySize +
+						"', " + xl + ", " + yl + ",\n[");
 		
 		boolean nonEmpty = false;
 		for (int i = 0; i < rs.size(); i++) {
@@ -176,7 +189,8 @@ public class QueryNode extends Node {
 			DatabaseElementList matches = children.get(labels.get(0));
 			if(matches.size() == 0)
 				continue;
-
+			
+			// take the first value (the system allows multiple values)
 			DatabaseAttributeNode rx = (DatabaseAttributeNode)matches.get(0);
 			String x = "'" + escapeString(rx.value().getCurrent().value()) + "'";
 
@@ -239,7 +253,7 @@ public class QueryNode extends Node {
     	String mapId = freshName("map");
 		body.add("<div id=\"" + mapId +"\" style=\"width:400px; height:300px;\">&nbsp;</div>");
 		body.add("<script>");
-		body.add("  drawMap('"+ mapId +"', [");
+		body.add("  drawMap('"+ mapId +"',\n[");
 		
 		boolean nonEmpty = false;
 		for (int i = 0; i < rs.size(); i++) {
@@ -282,7 +296,10 @@ public class QueryNode extends Node {
     	
     	try {  		
     		String query = _queryString;
-    		if(query.toLowerCase().startsWith("chart:") || query.toLowerCase().startsWith("chart(")) {
+    		if(query.toLowerCase().startsWith("ignore:")) {
+    			return;
+    		}
+    		else if(query.toLowerCase().startsWith("chart:") || query.toLowerCase().startsWith("chart(")) {
     			// FIXME: should parse the arguments to charts in a more
     			// sensible scalable way.
     			query = query.substring("chart".length());
@@ -304,7 +321,30 @@ public class QueryNode extends Node {
     			}
     			QueryResultSet rs = database.query(query);
     			body.openPARAGRAPH(CSS.CSSPageText);
-    			drawChart(xSize, ySize, rs, body);
+    			drawChart(ChartType.Column, xSize, ySize, rs, body);
+    		} else if(query.toLowerCase().startsWith("pie:") || query.toLowerCase().startsWith("pie(")) {
+    			// FIXME: should parse the arguments to charts in a more
+    			// sensible scalable way.
+    			query = query.substring("pie".length());
+    			String xSize = "800";
+    			String ySize = "600";
+    			if(query.startsWith("(")) {
+    				int comma = query.indexOf(",");
+    				int closeParen = query.indexOf(")", comma);
+    				int colon = query.indexOf(":", closeParen);
+
+    				if(comma == -1 || closeParen == -1 || colon != closeParen+1)
+    					throw new WikiQueryException(WikiQueryException.UnknownQueryFormat, _queryString);
+
+    				xSize = query.substring(1, comma);
+    				ySize = query.substring(comma+1, closeParen);
+    				query = query.substring(colon+1);
+    			} else {
+    				query = query.substring(1);
+    			}
+    			QueryResultSet rs = database.query(query);
+    			body.openPARAGRAPH(CSS.CSSPageText);
+    			drawChart(ChartType.Pie, xSize, ySize, rs, body);
     		} else if(query.toLowerCase().startsWith("map:")) {
     			query = query.substring("map:".length());
     			QueryResultSet rs = database.query(query);
