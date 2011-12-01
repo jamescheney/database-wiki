@@ -189,8 +189,12 @@ public class ConditionGenerator {
 					matches = ((version.time() >= startDate.getTime()) && (version.time() <= endDate.getTime()));
 				}
 			}
-			if ((matches) && (username != null)) {
-				matches = version.provenance().user().login().equals(username);
+			if ((matches) && (username != null) ) {
+				if (version.provenance().user() != null) {
+					matches = version.provenance().user().login().equals(username);
+				} else { // unknown user differs from any specific user name
+					matches = false;
+				}
 			}
 			if ((matches) && (provenanceType != Provenance.ProvenanceTypeUnknown)) {
 				matches = (version.provenance().type() == provenanceType);
