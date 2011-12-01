@@ -46,6 +46,7 @@ public final class DateTime {
 		int pos = dateValue.indexOf(' ');
 		if (pos > 0) {
 			String time = value.substring(pos + 1).trim();
+			time = time.replace(":", "");
 			while (time.length() < 9) {
 				time = time + "0";
 			}
