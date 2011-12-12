@@ -21,6 +21,8 @@
 */
 package org.pegdown.ast;
 
+import static org.parboiled.errors.ErrorUtils.printParseErrors;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -32,6 +34,7 @@ import org.dbwiki.data.database.DatabaseElementNode;
 import org.dbwiki.data.database.DatabaseGroupNode;
 import org.dbwiki.data.database.DatabaseTextNode;
 import org.dbwiki.data.query.QueryResultSet;
+import org.dbwiki.data.query.visual.VisualisationNode;
 import org.dbwiki.data.schema.GroupSchemaNode;
 import org.dbwiki.exception.WikiException;
 import org.dbwiki.exception.data.WikiQueryException;
@@ -44,7 +47,11 @@ import org.dbwiki.web.ui.CSS;
 import org.dbwiki.web.ui.printer.SchemaNodeList;
 import org.dbwiki.web.ui.printer.page.PageContentPrinter;
 
+import org.parboiled.Parboiled;
+import org.parboiled.support.ParsingResult;
 import org.pegdown.ExtendedPrinter;
+import org.pegdown.Extensions;
+import org.pegdown.Parser;
 import org.pegdown.Printer;
 
 public class QueryNode extends Node {
@@ -282,6 +289,19 @@ public class QueryNode extends Node {
 		
 		body.add("])");
 		body.add("</script>");
+    }
+    
+    private VisualisationNode parseVisualisationQuery(String source) {
+    	org.dbwiki.data.query.visual.Parser parser =
+    		Parboiled.createParser(org.dbwiki.data.query.visual.Parser.class, Extensions.NONE);
+        ParsingResult<org.dbwiki.data.query.visual.Node> result = parser.parse(source);
+        if (result.hasErrors()) {
+            throw new RuntimeException("Internal error during markdown parsing:\n--- ParseErrors ---\n" +
+                    printParseErrors(result)
+            );
+        }
+
+        return (VisualisationNode)(result.resultValue);
     }
     
     /**  FIXME #wiki: Clean this up and make queries independent of database.
