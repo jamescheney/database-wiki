@@ -31,12 +31,17 @@ import java.io.OutputStreamWriter;
 import java.util.Properties;
 import java.util.zip.GZIPOutputStream;
 
+
+import org.dbwiki.data.index.DatabaseContent;
 import org.dbwiki.data.io.ExportNodeWriter;
 import org.dbwiki.data.io.NodeWriter;
 import org.dbwiki.data.resource.NodeIdentifier;
+import org.dbwiki.data.wiki.DatabaseWikiPage;
+import org.dbwiki.data.wiki.WikiPageDescription;
 import org.dbwiki.exception.WikiException;
 import org.dbwiki.web.server.DatabaseWiki;
 import org.dbwiki.web.server.WikiServer;
+import org.dbwiki.lib.XML;
 import org.dbwiki.main.ImportPresentationFiles.PresentationFileType;
 
 /** Imports a database "package".  Arguments:
@@ -48,14 +53,70 @@ import org.dbwiki.main.ImportPresentationFiles.PresentationFileType;
  * HTML template
  * CSS
  * Layout
+ * URL encoding
  * User 
  * 
  * Alternative usage:
  * Config file
  * Path to a directory that contains a "package descriptor", which is a properties file providing the above arguments.
  * FIXME #import: Refactor this and DatabasePackageImport and ImportPresentationFiles to avoid duplication.
+ * TODO: Export wiki data (eventually including page history!)
+ * TODO: Export full history, provenance, and annotations 
+ * TODO: Make wiki and presentation import/export more modular - via wiki and presentation subdirectories with naming conventions
  * @author jcheney
  *
+ */
+
+/* Design of existing packages
+ * 
+ * A package is a directory that contains:
+ * 
+ * pkginfo - properties file specifying 
+ *   NAME - short name
+ *   TITLE - long name
+ *   INPUT_XML - raw or zipped xml file with data
+ *   PATH - path to entries in XML file 
+ * 	 TEMPLATE - filename of template
+ *   CSS - filename of CSS file
+ *   LAYOUT - filename of layout, XML serialization 
+ *   URLDECODING - filename of URL decoding rules file
+ *   WIKI - directory name for wiki pages.
+ *   
+ *   The wiki subdirectory contains:
+ * 
+ * page1.xml ... page_n.xml
+ * 
+ * i.e. one file for each wiki page, tagged by id.   
+ */
+ 
+
+/* Design of new package design
+ * 
+ * A package is a directory that contains:
+ * 
+ * pkginfo - properties file specifying 
+ *   NAME - short name
+ *   TITLE - long name
+ *   INPUT_XML - raw or zipped xml file with data
+ *   PATH - path to entries in XML file 
+ * 	 PRESENTATION - name of directory containing presentation files, by defaule "presentation"
+ *   WIKI - name of directory containing wiki files, by default "wiki"
+ * 
+ * along with the named xml file and subdirectories.
+ * 
+ * The presentation file subdirectory contains:
+ * pkginfo - properties file specifying:
+ *   TEMPLATE - filename of template
+ *   CSS - filename of CSS file
+ *   LAYOUT - filename of layout, XML serialization 
+ *   URLDECODING - filename of URL decoding rules file
+ * along with the named files.
+ * 
+ * The wiki subdirectory contains:
+ * 
+ * page1.xml ... page_n.xml
+ * 
+ * i.e. one file for each wiki page, tagged by id.   
  */
 public class DatabasePackageExport {
 	/*
@@ -72,7 +133,9 @@ public class DatabasePackageExport {
 	private static String PackageInfoInputXML = "INPUT_XML";
 	private static String PackageInfoTemplate = "TEMPLATE";
 	private static String PackageInfoCSS = "CSS";
+	private static String PackageInfoURLDecoding = "URLDECODING";
 	private static String PackageInfoLayout = "LAYOUT";
+	private static String PackageInfoWiki = "WIKI";
 	/*
 	 * Public Methods
 	 */
@@ -93,6 +156,9 @@ public class DatabasePackageExport {
 			case Template:
 				configFile = _server.getTemplate(_wiki, version);
 				break;
+			case URLDecoding:
+				configFile = _server.getURLDecoding(_wiki, version);
+				break;
 		}
 		
 		writer.write(configFile);
@@ -111,11 +177,13 @@ public class DatabasePackageExport {
 		String xmlFile = null;
 		String htmlTemplate = null;
 		String cssTemplate = null;
+		String urldecoding = null;
 		String layout = null;
+		String wikiDir = null;
 		
 		public Args (String[] args) throws IOException {
 			configFile = new File(args[0]);
-			if(args.length == 8) {
+			if(args.length == 10) {
 				name = args[1];
 				title = args[2];
 				path = args[3];
@@ -123,6 +191,8 @@ public class DatabasePackageExport {
 				htmlTemplate = args[5];
 				cssTemplate = args[6];
 				layout = args[7];
+				urldecoding = args[8];
+				wikiDir = args[9];
 			} else if (args.length == 2) {
 				String packageInfo = args[1];
 				File packageFile = new File(packageInfo);
@@ -133,7 +203,7 @@ public class DatabasePackageExport {
 				} else {
 					packageDir = new File(packageFile.getParent());
 				}
-				
+				// TODO: Make this create new pkginfo if the file is missing.
 				Properties packageProperties = org.dbwiki.lib.IO.loadProperties(packageFile);
 				name = packageProperties.getProperty(PackageInfoName);
 				title = packageProperties.getProperty(PackageInfoTitle,name);
@@ -141,7 +211,9 @@ public class DatabasePackageExport {
 				xmlFile = packageDir + File.separator + packageProperties.getProperty(PackageInfoInputXML,name + ".xml");
 				htmlTemplate = packageDir + File.separator+ packageProperties.getProperty(PackageInfoTemplate,File.separator+"presentation"+File.separator+name+".html");
 				cssTemplate = packageDir + File.separator+ packageProperties.getProperty(PackageInfoCSS,File.separator+"presentation"+File.separator+name+".css");
-				layout = packageDir + File.separator+ packageProperties.getProperty(PackageInfoLayout,File.separator+"presentation"+File.separator+name+".layout");
+				urldecoding = packageDir +  File.separator+ packageProperties.getProperty(PackageInfoURLDecoding,File.separator+"presentation"+File.separator+name+".urldecoding");
+				layout = packageDir + File.separator + packageProperties.getProperty(PackageInfoLayout,File.separator+"presentation"+File.separator+name+".layout");
+				wikiDir = packageDir + File.separator + packageProperties.getProperty(PackageInfoWiki,"wiki");
 			} else {
 				System.out.println("Usage: " + commandLine);
 				System.exit(0);
@@ -193,7 +265,45 @@ public class DatabasePackageExport {
 			savePresentationFile(args.cssTemplate, _wiki.getCSSVersion(), PresentationFileType.CSS);
 			savePresentationFile(args.htmlTemplate, _wiki.getTemplateVersion(), PresentationFileType.Template);
 			savePresentationFile(args.layout, _wiki.getLayoutVersion(), PresentationFileType.Layout);
+			savePresentationFile(args.urldecoding, _wiki.getURLDecodingVersion(), PresentationFileType.URLDecoding);
 
+			//TODO: Move this to Wiki class.
+			// Save the wiki pages to WIKI page path.
+			assert(_wiki.wiki() != null);
+			DatabaseContent wikiContent = _wiki.wiki().content();
+			File wikiDirFile = new File(args.wikiDir);
+			// Ensure directory for wiki pages exists
+			if(!wikiDirFile.exists()) {
+				System.err.println("Creating wiki directory " + args.wikiDir);
+				wikiDirFile.mkdir();
+			}
+			if(wikiDirFile.isDirectory()) { 
+				for(int i = 0; i < wikiContent.size(); i++) {
+					WikiPageDescription wikiEntry = (WikiPageDescription)wikiContent.get(i);
+					
+					File wikiFile = new File(args.wikiDir+ File.separator + "page_" + i +".xml" );
+					OutputStream wikioutstream = new FileOutputStream(wikiFile);
+					OutputStreamWriter wikiout = new OutputStreamWriter(wikioutstream);
+					
+					DatabaseWikiPage content = _wiki.wiki().get(wikiEntry.identifier());
+					// TODO: Move this to DatabaseWikiPage
+					// For each wiki page
+					// Create file named <wikipagedir>/page<id>.xml
+					// Write content of each file
+					wikiout.write("<page id=\"" + content.getID() 
+							+ "\" title=\"" + content.getName() 
+							+ "\" user=\"" + content.getUser().login()
+							+ "\" timestamp=\"" + content.getTimestamp() + "\" >\n");
+					wikiout.write(XML.maskText(content.getContent())); // Need to be careful about escaping here
+					wikiout.write("</page>");
+					// Close file
+					wikiout.close();
+					wikioutstream.close();
+				}
+			} else {
+				throw new Exception("Wiki directory path is not a directory");
+			}
+			
 		} catch (Exception exception) {
 			exception.printStackTrace();
 			System.exit(0);

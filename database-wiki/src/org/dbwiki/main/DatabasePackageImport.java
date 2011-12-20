@@ -51,12 +51,17 @@ import org.dbwiki.main.ImportPresentationFiles.PresentationFileType;
  * HTML template
  * CSS
  * Layout
+ * URLDecoding 
  * User 
  * 
  * Alternative usage:
  * Config file
  * Path to a directory that contains a "package descriptor", which is a properties file providing the above arguments.
  * FIXME #import: Refactor this and ImportPresentationFiles.
+ * TODO: make this robust if fields are missing (by using default presentation files for example)
+ * TODO: Make this import wiki pages.
+ * TODO: Support zip file import/export
+ * TODO: Import full history, provenance, and annotations
  * @author jcheney
  *
  */
@@ -76,6 +81,7 @@ public class DatabasePackageImport {
 	private static String PackageInfoTemplate = "TEMPLATE";
 	private static String PackageInfoCSS = "CSS";
 	private static String PackageInfoLayout = "LAYOUT";
+	private static String PackageInfoURLDecoding = "URLDECODING";
 	/*
 	 * Public Methods
 	 */
@@ -109,10 +115,13 @@ public class DatabasePackageImport {
 		String htmlTemplate = null;
 		String cssTemplate = null;
 		String layout = null;
+		String urldecoding = null;
 		String username = null;
+		
 		public Args (String[] args) throws IOException {
 			configFile = new File(args[0]);
-			if(args.length == 9) {
+			if(args.length == 10) {
+				// TODO: Pkginfo only.
 				name = args[1];
 				title = args[2];
 				path = args[3];
@@ -120,7 +129,8 @@ public class DatabasePackageImport {
 				htmlTemplate = args[5];
 				cssTemplate = args[6];
 				layout = args[7];
-				username = args[8];
+				urldecoding = args[8];
+				username = args[9];
 			} else if (args.length == 3) {
 				String packageInfo = args[1];
 				File packageFile = new File(packageInfo);
@@ -140,6 +150,7 @@ public class DatabasePackageImport {
 				htmlTemplate = packageDir + File.separator+ packageProperties.getProperty(PackageInfoTemplate,File.separator+"presentation"+File.separator+name+".html");
 				cssTemplate = packageDir + File.separator+ packageProperties.getProperty(PackageInfoCSS,File.separator+"presentation"+File.separator+name+".css");
 				layout = packageDir + File.separator+ packageProperties.getProperty(PackageInfoLayout,File.separator+"presentation"+File.separator+name+".layout");
+				urldecoding = packageDir + File.separator+ packageProperties.getProperty(PackageInfoURLDecoding,File.separator+"presentation"+File.separator+name+".urldecoding");
 				username = args[2];
 			} else {
 				System.out.println("Usage: " + commandLine);
@@ -197,6 +208,10 @@ public class DatabasePackageImport {
 			loadPresentationFile(args.cssTemplate, PresentationFileType.CSS,user);
 			loadPresentationFile(args.htmlTemplate, PresentationFileType.Template,user);
 			loadPresentationFile(args.layout, PresentationFileType.Layout,user);
+			loadPresentationFile(args.urldecoding, PresentationFileType.URLDecoding,user);
+			
+			// TODO: Load wiki pages back in 
+			
 			con.close();
 
 		} catch (Exception exception) {

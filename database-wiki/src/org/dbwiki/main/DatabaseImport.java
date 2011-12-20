@@ -33,7 +33,7 @@ import org.dbwiki.data.schema.DatabaseSchema;
 import org.dbwiki.web.server.WikiServer;
 
 /** Imports a database serialized as an XML file, infers a schema and creates a new DBWiki.
- * TODO: Make this take a "descriptor file" that contains title, name, XML 
+ * TODO: Remove this in favor of package import/export
  * @author jcheney
  *
  */

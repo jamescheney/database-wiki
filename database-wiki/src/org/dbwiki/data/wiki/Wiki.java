@@ -31,7 +31,7 @@ import org.dbwiki.data.resource.ResourceIdentifier;
 import org.dbwiki.user.User;
 
 /** Interface for HTML wiki objects, providing a collection of entries each of which is a WikiPageDescription
- * FIXME #wiki: Is this abstraction necessary?
+ * FIXME #wiki: Is this abstraction necessary?  Only one instance of this interface.
  * @author jcheney
  *
  */

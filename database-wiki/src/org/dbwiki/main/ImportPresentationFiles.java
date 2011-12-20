@@ -45,18 +45,20 @@ import org.dbwiki.web.server.WikiServer;
  *   <db-name>.css
  *   <db-name>.layout
  *   <db-name>.template
+ *   <db-name>.urldecoding
  *   
  * to the path. Any missing files are reported.
  * 
- * TODO: Unify this with the DatabaseImport command.
+ * TODO: Remove this in favor of package import/export
  */
 
 public class ImportPresentationFiles {
 	/*
 	 * Private Constants
 	 */
+	// FIXME: We store these constants in 2 different places, unify.
 	public enum PresentationFileType {
-		CSS(1), Layout(2), Template(3);	
+		CSS(1), Layout(2), Template(3), URLDecoding(4);	
 		private int _number;
 		PresentationFileType(int number) {
 			_number = number;
@@ -131,6 +133,7 @@ public class ImportPresentationFiles {
 			p.loadPresentationFile(path + wikiName + ".css", PresentationFileType.CSS);
 			p.loadPresentationFile(path + wikiName + ".layout", PresentationFileType.Layout);
 			p.loadPresentationFile(path + wikiName + ".template", PresentationFileType.Template);
+			p.loadPresentationFile(path + wikiName + ".urldecoding", PresentationFileType.URLDecoding);
 			
 			con.close();
 		} catch (Exception exception) {

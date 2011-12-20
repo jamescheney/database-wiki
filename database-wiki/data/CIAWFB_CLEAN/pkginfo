@@ -5,3 +5,5 @@ INPUT_XML=CIAWFB_CLEAN_20110506.xml.gz
 TEMPLATE=presentation/CIAWFB.template
 CSS=presentation/CIAWFB.css
 LAYOUT=presentation/CIAWFB.layout
+URLDECODING=presentation/CIAWFB.urldecoding
+WIKI=wiki
