@@ -291,10 +291,12 @@ public class DatabasePackageExport {
 					// Create file named <wikipagedir>/page<id>.xml
 					// Write content of each file
 					wikiout.write("<page id=\"" + content.getID() 
-							+ "\" title=\"" + content.getName() 
-							+ "\" user=\"" + content.getUser().login()
-							+ "\" timestamp=\"" + content.getTimestamp() + "\" >\n");
-					wikiout.write(XML.maskText(content.getContent())); // Need to be careful about escaping here
+							    + "\" title=\"" + content.getName());
+					if(content.getUser() != null) {
+						wikiout.write( "\" user=\"" + content.getUser().login());
+					}
+					wikiout.write("\" timestamp=\"" + content.getTimestamp() + "\" >\n");
+					wikiout.write(XML.maskText(content.getContent())); 
 					wikiout.write("</page>");
 					// Close file
 					wikiout.close();
