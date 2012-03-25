@@ -88,4 +88,9 @@ public class IndexCondition extends XPathCondition {
 		
 		return ":" + _index;
 	}
+	
+	public int index() {
+		return _index;
+	}
+	
 }

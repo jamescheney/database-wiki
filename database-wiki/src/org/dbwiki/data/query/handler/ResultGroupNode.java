@@ -35,14 +35,15 @@ import org.dbwiki.data.time.TimeSequence;
 
 public class ResultGroupNode extends DatabaseGroupNode {
 	public ResultGroupNode(GroupSchemaNode entity, TimeSequence timestamp) {
-		super(entity, null, timestamp, new AnnotationList());
+		//FIXME: Pre/post numbers for result nodes are nonsense and should never be used! 
+		super(entity, null, timestamp, new AnnotationList(),-1,-1);
 	}
 
 	/*
 	 * Public Methods
 	 */
 	
-	public ResourceIdentifier identifier() {
+	public NodeIdentifier identifier() {
 		return new NodeIdentifier();
 	}
 }

@@ -49,8 +49,8 @@ public abstract class DatabaseGroupNode extends DatabaseElementNode {
 	 * Constructors
 	 */
 	
-	public DatabaseGroupNode(GroupSchemaNode schema, DatabaseGroupNode parent, TimeSequence timestamp, AnnotationList annotation) {
-		super(schema, parent, timestamp, annotation);
+	public DatabaseGroupNode(GroupSchemaNode schema, DatabaseGroupNode parent, TimeSequence timestamp, AnnotationList annotation, int pre, int post) {
+		super(schema, parent, timestamp, annotation, pre, post);
 		
 		_children = new DatabaseElementList();
 	}

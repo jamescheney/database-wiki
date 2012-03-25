@@ -130,6 +130,7 @@ public class SimpleWiki implements Wiki {
 		DatabaseWikiPage page = null;
 		
 		PageIdentifier p = (PageIdentifier)identifier;
+ 
 				
 		if (p.isRootIdentifier()) {
 			return null;

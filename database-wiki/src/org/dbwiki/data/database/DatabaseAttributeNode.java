@@ -45,8 +45,8 @@ public abstract class DatabaseAttributeNode extends DatabaseElementNode {
 	 * Constructors
 	 */
 	
-	public DatabaseAttributeNode(AttributeSchemaNode schema, DatabaseGroupNode parent, TimeSequence timestamp, AnnotationList annotation) {
-		super(schema, parent, timestamp, annotation);
+	public DatabaseAttributeNode(AttributeSchemaNode schema, DatabaseGroupNode parent, TimeSequence timestamp, AnnotationList annotation, int pre, int post) {
+		super(schema, parent, timestamp, annotation, pre, post);
 		
 		_value = new DatabaseNodeValue();
 	}
@@ -56,7 +56,7 @@ public abstract class DatabaseAttributeNode extends DatabaseElementNode {
 	 * Abstract Methods
 	 */
 	
-	public abstract void add(String value, TimeSequence timestamp);
+	public abstract void add(String value, TimeSequence timestamp, int pre, int post);
 	
 	
 	

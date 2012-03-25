@@ -37,7 +37,8 @@ public class XPath {
 	 */
 	
 	private Vector<XPathComponent> _elements;
-	private int _start;
+	// FIXME: is this the depth of the start of the path? why is this better than just taking subvectors?
+	private int _start; 
 	
 	/*
 	 * Constructors

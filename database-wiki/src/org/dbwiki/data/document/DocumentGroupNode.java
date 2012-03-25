@@ -35,6 +35,8 @@ public class DocumentGroupNode extends DocumentNode {
 	private DocumentNodeList _children;
 	
 	
+
+	
 	/*
 	 * Constructors
 	 */
@@ -73,6 +75,24 @@ public class DocumentGroupNode extends DocumentNode {
 	public boolean isElement() {
 		return true;
 	}
+	
+	public void doNumberingRoot() {
+        doNumbering(1);
+
+    }
+
+    public int doNumbering(int startingFrom) {
+        _pre = startingFrom;
+        int next = _pre+1;
+        for(int i = 0; i < children().size(); i++) {
+                DocumentNode child = children().get(i);
+                next = child.doNumbering(next);
+        }
+        _post = next;
+        return next+1;
+    }
+
+
 	
 	/* Static methods
 	 * 

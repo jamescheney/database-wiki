@@ -28,6 +28,8 @@ package org.dbwiki.data.query.condition;
  * @author hmueller
  *
  */
+// TODO: Rename this to ConditionedNodeHandler; move to handler package
+
 import org.dbwiki.data.database.DatabaseElementNode;
 import org.dbwiki.data.query.handler.QueryNodeHandler;
 

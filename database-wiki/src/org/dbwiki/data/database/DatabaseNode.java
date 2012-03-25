@@ -40,17 +40,23 @@ public abstract class DatabaseNode extends TimestampedObject {
 	private AnnotationList _annotation;
 	private DatabaseElementNode _parent;
 
-	
+	private int _pre;
+	private int _post;
+		
+
 	
 	/*
 	 * Constructors
 	 */
 	
-	public DatabaseNode(DatabaseElementNode parent, TimeSequence timestamp, AnnotationList annotation) {
+	public DatabaseNode(DatabaseElementNode parent, TimeSequence timestamp, AnnotationList annotation, int pre, int post) {
 		super(parent, timestamp);
 		
 		_annotation = annotation;
 		_parent = parent;
+		_pre= pre;
+		_post= post;
+
 	}
 	
 	
@@ -79,7 +85,18 @@ public abstract class DatabaseNode extends TimestampedObject {
 	public boolean isText() {
 		return !this.isElement();
 	}
+    
+	public int getpre() {
+		
+		return _pre;
+	}
 	
+
+	public int getpost() {
+		
+		return _post;
+	}
+
 	/*
 	 * Finding nodes
 	 * 

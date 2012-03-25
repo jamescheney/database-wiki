@@ -43,8 +43,8 @@ public abstract class DatabaseTextNode extends DatabaseNode {
 	 * Constructors
 	 */
 	
-	public DatabaseTextNode(DatabaseAttributeNode parent, TimeSequence timestamp, String value, AnnotationList annotation) {
-		super(parent, timestamp, annotation);
+	public DatabaseTextNode(DatabaseAttributeNode parent, TimeSequence timestamp, String value, AnnotationList annotation, int pre, int post) {
+		super(parent, timestamp, annotation, pre, post);
 
 		_value = value;
 	}

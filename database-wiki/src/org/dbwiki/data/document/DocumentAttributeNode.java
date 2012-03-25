@@ -31,6 +31,8 @@ public class DocumentAttributeNode extends DocumentNode {
 	private String _value;
 	
 	
+
+	
 	/*
 	 * Constructors
 	 */
@@ -75,4 +77,12 @@ public class DocumentAttributeNode extends DocumentNode {
 	public String value() {
 		return _value;
 	}
+	
+	public int doNumbering(int startingFrom) {
+        _pre = startingFrom;
+        _post = _pre+1;
+        return _post+1;
+}
+
+
 }

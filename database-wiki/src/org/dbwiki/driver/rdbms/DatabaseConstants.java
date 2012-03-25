@@ -50,6 +50,9 @@ public interface DatabaseConstants {
 	public static final String RelDataColEntry        = "entry";
 	public static final String RelDataColValue        = "value";
 	public static final String RelDataColTimesequence = "timesequence";
+	public static final String RelDataColPre = "pre";
+	public static final String RelDataColPost = "post";
+    
 
 	public static final int RelDataColIDValUnknown        = -1;
 	public static final int RelDataColSchemaValUnknown    = -1;
@@ -65,6 +68,8 @@ public interface DatabaseConstants {
 	public static final String ViewDataColNodeSchema     = "n_schema";
 	public static final String ViewDataColNodeEntry      = "n_entry";
 	public static final String ViewDataColNodeValue      = "n_value";
+	public static final String ViewDataColNodePre      = "n_pre";
+	public static final String ViewDataColNodePost      = "n_post";
 	
 	public static final String ViewDataColAnnotationID   = "a_id";
 	public static final String ViewDataColAnnotationDate = "a_date";

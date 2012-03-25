@@ -511,7 +511,9 @@ public class RDBMSDatabase implements Database, DatabaseConstants {
 
 	/** Evaluates a wiki query with respect to the database */
 	public QueryResultSet query(String query) throws org.dbwiki.exception.WikiException {
+
 		return QueryStatement.createStatement(this,query).execute();
+
 	}
 
 	public DatabaseSchema schema() {
@@ -844,7 +846,8 @@ public class RDBMSDatabase implements Database, DatabaseConstants {
 						return true;
 					}
 				}
-				attribute.add(update.value(), new TimeSequence(version));
+				attribute.add(update.value(), new TimeSequence(version), node.getpre(),node.getpost());
+
 				return true;
 			}
 		}

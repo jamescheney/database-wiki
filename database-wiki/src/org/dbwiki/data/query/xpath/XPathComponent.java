@@ -37,29 +37,43 @@ public class XPathComponent {
 	 */
 	
 	private XPathCondition _condition;
-	private SchemaNode _entity;
-	
+	private SchemaNode _schema;
+	private String _axis;
 	
 	/*
 	 * Constructors
 	 */
 	
-	public XPathComponent(SchemaNode entity, XPathCondition condition) {
+	public XPathComponent(SchemaNode entity, XPathCondition condition, String axis) {
 		
-		_entity = entity;
+		_schema = entity;
 		_condition = condition;
+		_axis = axis;
 	}
 	
+public XPathComponent(SchemaNode entity, XPathCondition condition) {
+		
+		_schema = entity;
+		_condition = condition;
+		_axis = null;
+	}
 	public XPathComponent(SchemaNode entity) {
 		
-		this(entity, null);
+		this(entity, null, null);
 	}
 	
 	
+	public XPathComponent(SchemaNode schema, String axis) {
+		this(schema, null, axis);
+	}
 	/*
 	 * Public Methods
 	 */
 	
+	
+	public SchemaNode schema() {
+		return _schema;
+	}
 	public XPathCondition condition() {
 		
 		return _condition;
@@ -67,7 +81,7 @@ public class XPathComponent {
 	
 	public SchemaNode entity() {
 		
-		return _entity;
+		return _schema;
 	}
 	
 	public boolean hasCondition() {
@@ -77,7 +91,7 @@ public class XPathComponent {
 	
 	public boolean matches(DatabaseElementNode node) {
 		
-		if (node.schema().equals(_entity)) {
+		if (node.schema().equals(_schema)) {
 			if (_condition != null) {
 				return _condition.matches(node);
 			}
@@ -90,9 +104,17 @@ public class XPathComponent {
 	public String toString() {
 		
 		if (_condition != null) {
-			return _entity.label() + _condition.toString();
+			return _schema.label() + _condition.toString();
 		} else {
-			return _entity.label();
+			return _schema.label();
 		}
+	}
+
+	public String axis() {
+		return _axis;
+	}
+	
+	public boolean hasAxis() {
+		return (_axis != null);
 	}
 }

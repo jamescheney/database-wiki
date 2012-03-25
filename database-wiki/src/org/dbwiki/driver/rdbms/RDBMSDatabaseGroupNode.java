@@ -50,20 +50,23 @@ public class RDBMSDatabaseGroupNode extends DatabaseGroupNode {
 	 * Constructors
 	 */
 	
-	public RDBMSDatabaseGroupNode(int id, GroupSchemaNode schema, DatabaseGroupNode parent, TimeSequence timestamp, AnnotationList annotation) {
-		super(schema, parent, timestamp, annotation);
+	public RDBMSDatabaseGroupNode(int id, GroupSchemaNode schema, DatabaseGroupNode parent, TimeSequence timestamp, AnnotationList annotation, int pre, int post) {
+		super(schema, parent, timestamp, annotation, pre, post);
 		
 		_identifier = new NodeIdentifier(id);
 	}
 
-	public RDBMSDatabaseGroupNode(int id, GroupSchemaNode schema, DatabaseGroupNode parent, TimeSequence timestamp) {
-		this(id, schema, parent, timestamp, new AnnotationList());
+	public RDBMSDatabaseGroupNode(int id, GroupSchemaNode schema, DatabaseGroupNode parent, TimeSequence timestamp, int pre, int post) {
+		this(id, schema, parent, timestamp, new AnnotationList(), pre, post);
 	}
 
 	public RDBMSDatabaseGroupNode(int id, GroupSchemaNode schema, DatabaseGroupNode parent) {
-		this(id, schema, parent, null);
+		this(id, schema, parent, null, -1, -1);
 	}
 	
+	public RDBMSDatabaseGroupNode(int id, GroupSchemaNode schema, DatabaseGroupNode parent, int pre, int post) {
+		this(id, schema, parent, null, pre, post);
+	}
 	
 	/*
 	 * Public Methods

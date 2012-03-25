@@ -23,6 +23,8 @@ package org.dbwiki.data.database;
 
 import org.dbwiki.data.annotation.AnnotationList;
 
+import org.dbwiki.data.resource.NodeIdentifier;
+import org.dbwiki.data.resource.ResourceIdentifier;
 import org.dbwiki.data.schema.SchemaNode;
 
 import org.dbwiki.data.time.TimeSequence;
@@ -45,8 +47,8 @@ public abstract class DatabaseElementNode extends DatabaseNode {
 	 * Constructors
 	 */
 	
-	public DatabaseElementNode(SchemaNode schema, DatabaseGroupNode parent, TimeSequence timestamp, AnnotationList annotation) {
-		super(parent, timestamp, annotation);
+	public DatabaseElementNode(SchemaNode schema, DatabaseGroupNode parent, TimeSequence timestamp, AnnotationList annotation, int pre, int post) {
+		super(parent, timestamp, annotation, pre, post);
 		_schema = schema;
 		_label = schema.label();
 	}
@@ -76,8 +78,10 @@ public abstract class DatabaseElementNode extends DatabaseNode {
 		return _label;
 	}
 	
+	public abstract NodeIdentifier identifier();
+	
 	public void setLabel(String label) {
 		_label = label;
 	}
-	
+
 }

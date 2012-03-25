@@ -284,10 +284,15 @@ public abstract class DatabaseConnector implements DatabaseConstants, WikiServer
 				RelDataColParent + " int NOT NULL, " +
 				RelDataColEntry + " int NOT NULL, " +
 				RelDataColValue + " text, " +
-				RelDataColTimesequence + " int NOT NULL DEFAULT (-1), " +				
+				RelDataColTimesequence + " int NOT NULL DEFAULT (-1), " +	
+				RelDataColPre + " int NOT NULL, " +
+				RelDataColPost + " int NOT NULL, " +
 				"PRIMARY KEY (" + RelDataColID + "))");
 		
-		stmt.execute("CREATE INDEX idx_" + relName + "_" + RelDataColSchema + " ON " + relName + " (" + RelDataColSchema + ")");
+		stmt.execute("CREATE INDEX idx_pre_" + relName + "_" + RelDataColPre + " ON " + relName + " USING btree " + " (" + RelDataColPre + ")" );
+		stmt.execute("CREATE INDEX idx_post_" + relName + "_" + RelDataColPost + " ON " + relName + " USING btree "+ " (" + RelDataColPost +")");
+		stmt.execute("CREATE INDEX idx_par_" + relName + "_" + RelDataColParent + " ON " + relName + " USING hash "+ " (" + RelDataColParent +")");
+		stmt.execute("CREATE INDEX idx_schema_" + relName + "_" + RelDataColSchema + " ON " + relName + " USING hash "+ " (" + RelDataColSchema +")");		
 		stmt.execute("CREATE INDEX idx_ID_" + relName + "_" + RelDataColID + " ON " + relName + " USING hash "+ " (" + RelDataColID +")");
 		stmt.execute("CREATE INDEX idx_entry_" + relName + "_" + RelDataColEntry + " ON " + relName + " USING hash "+ " (" + RelDataColEntry +")");
 		
@@ -304,6 +309,8 @@ public abstract class DatabaseConnector implements DatabaseConstants, WikiServer
 					"d." + RelDataColSchema + " " + ViewDataColNodeSchema + ", " +
 					"d." + RelDataColEntry + " " + ViewDataColNodeEntry + ", " +
 					"d." + RelDataColValue + " " + ViewDataColNodeValue + ", " +
+					"d." + RelDataColPre + " " + ViewDataColNodePre + ", " +
+					"d." + RelDataColPost + " " + ViewDataColNodePost + ", " +
 					"t." + RelTimesequenceColStart + " " + ViewDataColTimestampStart + ", " +
 					"t." + RelTimesequenceColStop + " " + ViewDataColTimestampEnd + ", " +
 					"a." + RelAnnotationColID + " " + ViewDataColAnnotationID + ", " +

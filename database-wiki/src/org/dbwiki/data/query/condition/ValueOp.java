@@ -26,6 +26,8 @@ package org.dbwiki.data.query.condition;
  * @author hmueller
  *
  */
+
+// TODO: Simplify and generalize this flat / broad class hierarchy
 import org.dbwiki.data.schema.AttributeSchemaNode;
 
 public abstract class ValueOp {

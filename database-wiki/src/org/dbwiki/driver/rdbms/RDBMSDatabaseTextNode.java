@@ -47,18 +47,18 @@ public class RDBMSDatabaseTextNode extends DatabaseTextNode {
 	 * Constructors
 	 */
 
-	public RDBMSDatabaseTextNode(int id, DatabaseAttributeNode parent, TimeSequence timestamp, String value, AnnotationList annotation) {
-		super(parent, timestamp, value, annotation);
+	public RDBMSDatabaseTextNode(int id, DatabaseAttributeNode parent, TimeSequence timestamp, String value, AnnotationList annotation, int pre, int post) {
+		super(parent, timestamp, value, annotation, pre, post);
 		
 		_identifier = new NodeIdentifier(id);
 	}
 
-	public RDBMSDatabaseTextNode(int id, DatabaseAttributeNode parent, TimeSequence timestamp, String value) {
-		this(id, parent, timestamp, value, new AnnotationList());
+	public RDBMSDatabaseTextNode(int id, DatabaseAttributeNode parent, TimeSequence timestamp, String value, int pre, int post) {
+		this(id, parent, timestamp, value, new AnnotationList(), pre, post);
 	}
 
 	public RDBMSDatabaseTextNode(int id, DatabaseAttributeNode parent, String value) {
-		this(id, parent, null, value);
+		this(id, parent, null, value, -1, -1);
 	}
 	
 	

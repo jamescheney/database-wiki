@@ -35,7 +35,8 @@ public abstract class DocumentNode implements Comparable<DocumentNode> {
 	 */
 	
 	private SchemaNode _schema;
-	
+	protected int _pre = -1;
+	protected int _post = -1;
 	
 	/*
 	 * Constructors
@@ -56,7 +57,9 @@ public abstract class DocumentNode implements Comparable<DocumentNode> {
 	/*
 	 * Public Methods
 	 */
-	
+	public abstract int doNumbering(int startingFrom);
+
+	   
 	public int compareTo(DocumentNode element) {
 		if (this.schema().id() < element.schema().id()) {
 			return -1;
@@ -77,5 +80,12 @@ public abstract class DocumentNode implements Comparable<DocumentNode> {
 	
 	public String label() {
 		return _schema.label();
+	}
+	
+	public int getpre(){
+		return _pre;
+	}
+	public int getpost(){
+		return _post;
 	}
 }

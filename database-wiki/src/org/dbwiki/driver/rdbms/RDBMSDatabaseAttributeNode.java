@@ -50,33 +50,36 @@ public class RDBMSDatabaseAttributeNode extends DatabaseAttributeNode {
 	 * Constructors
 	 */
 	
-	public RDBMSDatabaseAttributeNode(int id, AttributeSchemaNode schema, DatabaseGroupNode parent, TimeSequence timestamp, AnnotationList annotation) {
-		super(schema, parent, timestamp, annotation);
+	public RDBMSDatabaseAttributeNode(int id, AttributeSchemaNode schema, DatabaseGroupNode parent, TimeSequence timestamp, AnnotationList annotation, int pre, int post) {
+		super(schema, parent, timestamp, annotation, pre, post);
 		
 		_identifier = new NodeIdentifier(id);
 	}
 
-	public RDBMSDatabaseAttributeNode(int id, AttributeSchemaNode schema, DatabaseGroupNode parent, TimeSequence timestamp) {
-		this(id, schema, parent, timestamp, new AnnotationList());
+	public RDBMSDatabaseAttributeNode(int id, AttributeSchemaNode schema, DatabaseGroupNode parent, TimeSequence timestamp, int pre, int post) {
+		this(id, schema, parent, timestamp, new AnnotationList(), pre, post);
 	}
 	
-	public RDBMSDatabaseAttributeNode(int id, AttributeSchemaNode schema, DatabaseGroupNode parent, TimeSequence timestamp, String value, AnnotationList annotation) {
-		this(id, schema, parent, timestamp, annotation);
+	public RDBMSDatabaseAttributeNode(int id, AttributeSchemaNode schema, DatabaseGroupNode parent, TimeSequence timestamp, String value, AnnotationList annotation, int pre, int post) {
+		this(id, schema, parent, timestamp, annotation, pre, post);
 		
-		this.value().add(new RDBMSDatabaseTextNode(DatabaseConstants.RelDataColIDValUnknown, this, null, value));
+		this.value().add(new RDBMSDatabaseTextNode(DatabaseConstants.RelDataColIDValUnknown, this, null, value, pre, post));
 	}
 
-	public RDBMSDatabaseAttributeNode(int id, AttributeSchemaNode schema, DatabaseGroupNode parent) {
-		this(id, schema, parent, null, new AnnotationList());
+	public RDBMSDatabaseAttributeNode(int id, AttributeSchemaNode schema, DatabaseGroupNode parent, int pre, int post) {
+		this(id, schema, parent, null, new AnnotationList(), pre, post);
 	}
 	
+	public RDBMSDatabaseAttributeNode(int id, AttributeSchemaNode schema, DatabaseGroupNode parent) {
+		this(id, schema, parent, null, new AnnotationList(), -1, -1);
+	}
 		
 	/*
 	 * Public Methods
 	 */
 	
-	public void add(String value, TimeSequence timestamp) {
-		this.value().add(new RDBMSDatabaseTextNode(DatabaseConstants.RelDataColIDValUnknown, this, timestamp, value));
+	public void add(String value, TimeSequence timestamp, int pre, int post) {
+		this.value().add(new RDBMSDatabaseTextNode(DatabaseConstants.RelDataColIDValUnknown, this, timestamp, value, pre, post));
 	}
 	
 	public NodeIdentifier identifier() {

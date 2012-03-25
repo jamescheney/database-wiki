@@ -856,7 +856,7 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 			}
 			_wikiListing.add(wiki);
 			Collections.sort(_wikiListing);
-			
+			con.commit();
 			//
 			// Import data into created database wiki if the user specified an import resource.
 			//

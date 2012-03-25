@@ -107,7 +107,8 @@ public class XAQLQueryStatement extends QueryStatement {
 				if (entry != null) {
 					new AbsoluteXPathConsumer().consume(entry, _query.rootTargetPath(), queryHandler);
 				}
-			} else {
+			} else { // This is dead code because version clause defaults to NOW.  
+				// Could handle "interpret missing version as NOW" here. 
 				new AbsoluteXPathConsumer().consume(entry, _query.rootTargetPath(), queryHandler);
 			}
 		}

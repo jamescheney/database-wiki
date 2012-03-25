@@ -155,9 +155,9 @@ public class QueryResultSet implements QueryNodeHandler {
 	
 	/** Returns the schema node for the query result set.
 	 * 
-	 * @return Schema node of the first element in the result set (assuiming that
+	 * @return Schema node of the first element in the result set (assuming that
 	 * all nodes in the result set have the same schema). Returns null if the result
-	 * set is empty or if the reslut node(s) are TextNodes.
+	 * set is empty or if the result node(s) are TextNodes.
 	 * 
 	 */
 	public SchemaNode schema() {

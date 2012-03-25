@@ -21,6 +21,7 @@
 */
 package org.dbwiki.driver.rdbms;
 
+ 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -244,9 +245,11 @@ public class DatabaseWriter implements DatabaseConstants {
 	 * @return
 	 * @throws org.dbwiki.exception.WikiException
 	 */
+
 	public ResourceIdentifier insertRootNode(DocumentGroupNode node, Version version) throws org.dbwiki.exception.WikiException {
 		try {
-			RDBMSDatabaseGroupNode root = this.insertGroupNode((GroupSchemaNode)node.schema(), null, -1, new TimeSequence(version.number()));
+			node.doNumberingRoot();
+			RDBMSDatabaseGroupNode root = this.insertGroupNode((GroupSchemaNode)node.schema(), null, -1, new TimeSequence(version.number()), node.getpre(),node.getpost());
 			this.insertGroupChildren(node, root, root.identifier().nodeID());
 			PreparedStatement pStmtUpdateNode = _con.prepareStatement(
 				"UPDATE " + _database.name() + RelationData + " " +
@@ -268,7 +271,11 @@ public class DatabaseWriter implements DatabaseConstants {
 	 * @param version
 	 * @return
 	 * @throws org.dbwiki.exception.WikiException
+	 * @throws IOException 
 	 */
+	// TODO #indexing: Fix this to work correctly in presence of pre/post indexing
+	
+	
 	public ResourceIdentifier insertNode(NodeIdentifier identifier, DocumentNode node, Version version) throws org.dbwiki.exception.WikiException {
 		RDBMSDatabaseGroupNode parent = (RDBMSDatabaseGroupNode)DatabaseReader.get(_con, _database, identifier);
 		
@@ -277,21 +284,51 @@ public class DatabaseWriter implements DatabaseConstants {
 			entry = entry.parent();
 		}
 
+		// Idea:  Find size of inserted subtree.
+		// Let newpre be the post index of the parent.
+		// Index to-be-inserted nodes starting from post, ending at newpost
+		// Let delta = newpost - post = the size of the inserted subtree *2
+		int newPre = parent.getpost();
+		int newPost = node.doNumbering(newPre);
+		int delta = newPost - newPre;
+		
 		ResourceIdentifier nodeIdentifier = null;
 		
 		try {
+			int entryID = ((NodeIdentifier)entry.identifier()).nodeID();
+			// Shift all node indexes that are >= newpre
+			shiftNodes(RelDataColPre, entryID,newPre,delta);
+			shiftNodes(RelDataColPost, entryID,newPre,delta);
+			// Add the new nodes
 			if (node.isAttribute()) {
-				nodeIdentifier = insertAttributeNode((AttributeSchemaNode)node.schema(), parent, ((NodeIdentifier)entry.identifier()).nodeID(), new TimeSequence(version), ((DocumentAttributeNode)node).value()).identifier();
+				nodeIdentifier = insertAttributeNode((AttributeSchemaNode)node.schema(), parent, entryID, new TimeSequence(version), ((DocumentAttributeNode)node).value(), node.getpre(), node.getpost()).identifier();
 			} else {
-				RDBMSDatabaseGroupNode group = insertGroupNode((GroupSchemaNode)node.schema(), parent, ((NodeIdentifier)entry.identifier()).nodeID(), new TimeSequence(version));
-				insertGroupChildren((DocumentGroupNode)node, group, ((NodeIdentifier)entry.identifier()).nodeID());
+				RDBMSDatabaseGroupNode group = insertGroupNode((GroupSchemaNode)node.schema(), parent, entryID, new TimeSequence(version),node.getpre(), node.getpost());
+				insertGroupChildren((DocumentGroupNode)node, group, entryID);
 				nodeIdentifier = group.identifier();
 			}
+			
 		} catch (java.sql.SQLException sqlException) {
 			throw new WikiFatalException(sqlException);
 		}
 		
 		return nodeIdentifier;
+	}
+	
+	private void shiftNodes(String pre_post, int entryID, int newPre, int delta) throws SQLException {
+		// TODO Bump all the existing pre/post numbers in the entry up by newpost via SQL UPDATE.
+		// (It is fine to insert at the end or beginning or anywhere in the middle of the parent list; 
+		// seems like the common case of inserting at the end will be fine.)
+		PreparedStatement pStmtUpdatePre = _con.prepareStatement(
+				"UPDATE " + _database.name() + RelationData + " " +
+					"SET " + pre_post + " = ? + " + pre_post + " " +
+					"WHERE " + pre_post + " >= ? AND " + RelDataColEntry + " = ?");
+			pStmtUpdatePre.setInt(1, delta);
+			pStmtUpdatePre.setInt(2, newPre);
+			pStmtUpdatePre.setInt(3, entryID);
+			pStmtUpdatePre.execute();
+			pStmtUpdatePre.close();
+
 	}
 
 	/** Update the time interval starting at interval.start() associated with an identified resource with a new end.
@@ -420,10 +457,13 @@ public class DatabaseWriter implements DatabaseConstants {
 				AttributeSchemaNode schema, 
 				RDBMSDatabaseGroupNode parent, 
 				int entry, TimeSequence timestamp, 
-				String value)
+				String value,
+				int pre, 
+				int post) 
+
 			throws java.sql.SQLException, org.dbwiki.exception.WikiException {
-		RDBMSDatabaseAttributeNode attribute = new RDBMSDatabaseAttributeNode(this.insertNode(schema, parent, entry, timestamp, null), schema, parent, timestamp);
-		this.insertNode(null, attribute, entry, null, value);
+		RDBMSDatabaseAttributeNode attribute = new RDBMSDatabaseAttributeNode(this.insertNode(schema, parent, entry, timestamp, null, pre, post), schema, parent, timestamp, pre, post);
+		this.insertNode(null, attribute, entry, null, value, pre, post);
 		return attribute;
 	}
 
@@ -437,10 +477,12 @@ public class DatabaseWriter implements DatabaseConstants {
 			DocumentNode element = group.children().get(iChild);
 			if (element.isAttribute()) {
 				DocumentAttributeNode attributeChild = (DocumentAttributeNode)element;
-				insertAttributeNode((AttributeSchemaNode)attributeChild.schema(), parent, entry, null, attributeChild.value());
+				insertAttributeNode((AttributeSchemaNode)attributeChild.schema(), parent, entry, null, attributeChild.value(), attributeChild.getpre(), attributeChild.getpost());
+
 			} else {
 				DocumentGroupNode groupChild = (DocumentGroupNode)element;
-				RDBMSDatabaseGroupNode node = insertGroupNode((GroupSchemaNode)groupChild.schema(), parent, entry, null);
+				RDBMSDatabaseGroupNode node = insertGroupNode((GroupSchemaNode)groupChild.schema(), parent, entry, null, groupChild.getpre(), groupChild.getpost());
+
 				insertGroupChildren(groupChild, node, entry);
 			}
 		}
@@ -451,12 +493,21 @@ public class DatabaseWriter implements DatabaseConstants {
 				GroupSchemaNode schema, 
 				RDBMSDatabaseGroupNode parent, 
 				int entry, 
-				TimeSequence timestamp)
+				TimeSequence timestamp,
+				int pre,
+				int post) 
 	 		throws java.sql.SQLException, org.dbwiki.exception.WikiException {
-		return new RDBMSDatabaseGroupNode(insertNode(schema, parent, entry, timestamp, null), schema, parent, timestamp);
+		return new RDBMSDatabaseGroupNode(insertNode(schema, parent, entry, timestamp, null, pre, post), schema, parent, timestamp, pre, post);
 	}
 	
-	private int insertNode(SchemaNode schema, DatabaseNode parent, int entry, TimeSequence timestamp, String value) throws java.sql.SQLException, org.dbwiki.exception.WikiException {
+	private int insertNode(
+			SchemaNode schema, 
+			DatabaseNode parent, 
+			int entry, 
+			TimeSequence timestamp, 
+			String value,
+			int pre, 
+			int post) throws java.sql.SQLException, org.dbwiki.exception.WikiException {
 		PreparedStatement insert = prepareInsertNode();
 		if (schema != null) {
 			insert.setInt(1, schema.id());
@@ -474,6 +525,8 @@ public class DatabaseWriter implements DatabaseConstants {
 		} else {
 			insert.setString(4, null);
 		}
+		insert.setInt(5, pre);
+        insert.setInt(6, post);
 		insert.execute();
 		int nodeID = getGeneratedKey(insert);
 		insert.close();
@@ -491,8 +544,8 @@ public class DatabaseWriter implements DatabaseConstants {
 	    return nodeID;
 	}
 	
-	private  RDBMSDatabaseTextNode insertTextNode(RDBMSDatabaseAttributeNode parent, int entry, TimeSequence timestamp, String value) throws java.sql.SQLException, org.dbwiki.exception.WikiException {
-		return new RDBMSDatabaseTextNode(this.insertNode(null, parent, entry, timestamp, value), parent, timestamp, value);
+	private  RDBMSDatabaseTextNode insertTextNode(RDBMSDatabaseAttributeNode parent, int entry, TimeSequence timestamp, String value, int pre, int post) throws java.sql.SQLException, org.dbwiki.exception.WikiException {
+		return new RDBMSDatabaseTextNode(this.insertNode(null, parent, entry, timestamp, value, pre, post), parent, timestamp, value, pre, post);
 	}
 
 	private PreparedStatement prepareInsertNode() throws java.sql.SQLException {		
@@ -501,7 +554,9 @@ public class DatabaseWriter implements DatabaseConstants {
 				RelDataColSchema + ", " +
 				RelDataColParent + ", " +
 				RelDataColEntry + ", " +
-				RelDataColValue + ") VALUES(? ,? , ?, ?)", Statement.RETURN_GENERATED_KEYS);
+				RelDataColValue + ", " +
+				RelDataColPre + ", " +
+				RelDataColPost + ") VALUES(?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
 	}
 
 	private PreparedStatement prepareInsertTimestamp(boolean fresh) throws java.sql.SQLException {		
@@ -528,7 +583,8 @@ public class DatabaseWriter implements DatabaseConstants {
 				if (node.hasTimestamp()) {
 					timestamp = node.getTimestamp();
 				}
-				this.insertTextNode(attribute, entry, timestamp, node.value());
+				this.insertTextNode(attribute, entry, timestamp, node.value(), attribute.getpre(), attribute.getpost());
+
 			}
 		}
 	}
@@ -543,4 +599,6 @@ public class DatabaseWriter implements DatabaseConstants {
 			}
 		}
 	}
+	
+	
 }

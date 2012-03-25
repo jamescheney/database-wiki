@@ -10,16 +10,17 @@ import org.dbwiki.driver.rdbms.RDBMSDatabaseTextNode;
 
 public class ResultAttributeNode extends DatabaseAttributeNode {
 	public ResultAttributeNode(AttributeSchemaNode entity, TimeSequence timestamp) {
-		super(entity, null, timestamp, new AnnotationList());
+		// FIXME: Pre/post numbers for result attribute nodes are nonsense and should never be used 
+		super(entity, null, timestamp, new AnnotationList(),-1,-1);
 	}
 	
 	@Override
-	public void add(String value, TimeSequence timestamp) {
-		this.value().add(new RDBMSDatabaseTextNode(DatabaseConstants.RelDataColIDValUnknown, this, timestamp, value));
+	public void add(String value, TimeSequence timestamp, int pre, int post) {
+		this.value().add(new RDBMSDatabaseTextNode(DatabaseConstants.RelDataColIDValUnknown, this, timestamp, value,pre,post));
 	}
 
-	@Override
-	public ResourceIdentifier identifier() {
+	
+	public NodeIdentifier identifier() {
 		return new NodeIdentifier();
 	}
 
