@@ -21,14 +21,17 @@
 */
 package org.dbwiki.web.server;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 
 import java.net.HttpURLConnection;
 
 import org.dbwiki.web.html.FileNotFoundPage;
+import org.dbwiki.web.html.HtmlPage;
 
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
@@ -139,6 +142,7 @@ public abstract class FileServer implements HttpHandler {
 		os.close();
 	}
 	
+	// FIXME #security: Seems like a bad idea for the default behavior to be to send files from file sys...
 	public void sendFile(HttpExchange exchange) throws java.io.IOException {
 		String contentType = this.contentType(exchange);
 		
@@ -152,6 +156,7 @@ public abstract class FileServer implements HttpHandler {
 			HtmlSender.send(new FileNotFoundPage(path),exchange);
 		}
 	}
+	
 	
 	public void sendXML(HttpExchange exchange, InputStream is) throws java.io.IOException {
 		this.sendData(exchange, "application/xml", is);

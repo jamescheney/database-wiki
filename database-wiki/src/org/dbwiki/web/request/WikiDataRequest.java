@@ -27,10 +27,8 @@ import org.dbwiki.data.resource.ResourceIdentifier;
 import org.dbwiki.data.resource.WRI;
 
 import org.dbwiki.data.time.VersionIndex;
-import org.dbwiki.exception.web.WikiRequestException;
 
 import org.dbwiki.web.request.parameter.RequestParameter;
-import org.dbwiki.web.request.parameter.RequestParameterVersion;
 import org.dbwiki.web.server.DatabaseWiki;
 
 public class WikiDataRequest extends WikiRequest {
@@ -76,11 +74,18 @@ public class WikiDataRequest extends WikiRequest {
     	_wri = new WRI(wiki.database().identifier(), nodeIdentifier);
     	_node = null;
     	
+    	/*
 	    if (url.exchange().getRequestMethod().equalsIgnoreCase("GET")) {
 	    	_requestType = requestTypeGET;
 	    } else if (url.exchange().getRequestMethod().equalsIgnoreCase("POST")) {
 	    	_requestType = requestTypePOST;
-	    }	
+	    }
+	    */	
+    	if (url.isGET()) {
+	    	_requestType = requestTypeGET;
+	    } else if (url.isPOST()) {
+	    	_requestType = requestTypePOST;
+	    }
 	}
 	
 	
@@ -109,7 +114,7 @@ public class WikiDataRequest extends WikiRequest {
 	}
 	
 	public String toString() {
-		return this.exchange().getRequestURI().toString();
+		return getRequestURI().toString();
 	}
 	
 	public VersionIndex versionIndex() {

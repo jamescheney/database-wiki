@@ -167,7 +167,7 @@ public class URLDecodingRules {
 
 		if (pos != -1) {
 			String nodeLabel = nodeIdentifier.substring(0, pos);
-			rule = this.get(schemaNode.children().get(nodeIdentifier.substring(0, pos)));
+			rule = this.get(schemaNode.children().get(nodeLabel));
 			keyValue = nodeIdentifier.substring(pos + 1);
 		} else {
 			// If it's the last element of the URL path the nodeIdentifier could be the node label

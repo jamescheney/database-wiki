@@ -29,7 +29,6 @@ package org.dbwiki.data.query.handler;
 import org.dbwiki.data.annotation.AnnotationList;
 import org.dbwiki.data.database.DatabaseGroupNode;
 import org.dbwiki.data.resource.NodeIdentifier;
-import org.dbwiki.data.resource.ResourceIdentifier;
 import org.dbwiki.data.schema.GroupSchemaNode;
 import org.dbwiki.data.time.TimeSequence;
 

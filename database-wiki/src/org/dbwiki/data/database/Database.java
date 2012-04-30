@@ -66,27 +66,64 @@ public interface Database {
 	 * Interface Methods
 	 */
 	
-	public void activate(ResourceIdentifier identifier, User user) throws org.dbwiki.exception.WikiException;
-	public void annotate(ResourceIdentifier identifier, Annotation annotation) throws org.dbwiki.exception.WikiException;
-	public DatabaseContent content() throws org.dbwiki.exception.WikiException;
-	public void delete(ResourceIdentifier identifier, User user) throws org.dbwiki.exception.WikiException;
-	public void deleteSchemaNode(ResourceIdentifier identifier, User user) throws org.dbwiki.exception.WikiException;
-	public void export(ResourceIdentifier identifier, int version, NodeWriter out) throws org.dbwiki.exception.WikiException;
-	public DatabaseNode get(ResourceIdentifier identifier) throws org.dbwiki.exception.WikiException;
-	public DatabaseContent getMatchingEntries(AttributeConditionListing listing) throws org.dbwiki.exception.WikiException;
-	public SchemaNode getSchemaNode(ResourceIdentifier identifier) throws org.dbwiki.exception.WikiException;
-	public ResourceIdentifier getIdentifierForParameterString(String urlString) throws org.dbwiki.exception.WikiException;
-	public ResourceIdentifier getNodeIdentifierForURL(RequestURL url) throws org.dbwiki.exception.WikiException;
-	public ResourceIdentifier getSchemaNodeIdentifierForURL(RequestURL url) throws org.dbwiki.exception.WikiException;
+	
+	/* General stuff */
+	/** Identifier of this database
+	 * @return The database id
+	 * @throws org.dbwiki.exception.WikiException
+	 */
 	public DatabaseIdentifier identifier();
-	public ResourceIdentifier insertNode(ResourceIdentifier identifier, DocumentNode node, User user) throws org.dbwiki.exception.WikiException;
-	public void insertSchemaNode(GroupSchemaNode parent, String name, byte type, User user) throws org.dbwiki.exception.WikiException;
+	
+	/**
+	 * @return Name of the database
+	 */
 	public String name();
-	public void paste(ResourceIdentifier target, PasteNode pasteNode, String sourceURL, User user) throws org.dbwiki.exception.WikiException;
-	public QueryResultSet query(String query) throws org.dbwiki.exception.WikiException;
-	public DatabaseSchema schema();
-	public DatabaseContent search(String keywords) throws org.dbwiki.exception.WikiException;
-	public void update(ResourceIdentifier identifier, Update update, User user) throws org.dbwiki.exception.WikiException;
+	/**
+	 * @return List of entries of the database.
+	 * @throws org.dbwiki.exception.WikiException
+	 */
+	public DatabaseContent content() throws org.dbwiki.exception.WikiException;
+
 	public UserListing users();
 	public VersionIndex versionIndex();
+	
+	/* Queries
+	 */
+	public DatabaseNode get(ResourceIdentifier identifier) throws org.dbwiki.exception.WikiException;
+	public DatabaseContent getMatchingEntries(AttributeConditionListing listing) throws org.dbwiki.exception.WikiException;
+	public ResourceIdentifier getIdentifierForParameterString(String urlString) throws org.dbwiki.exception.WikiException;
+	public ResourceIdentifier getNodeIdentifierForURL(RequestURL url) throws org.dbwiki.exception.WikiException;
+	
+	public QueryResultSet query(String query) throws org.dbwiki.exception.WikiException;
+	public DatabaseContent search(String keywords) throws org.dbwiki.exception.WikiException;
+	
+	/* Updates
+	 */
+	/** Insert node /subtree into database
+	 * 
+	 * @param identifier Node into which to insert
+	 * @param node Subtree to insert
+	 * @param user User performing the action
+	 * @return Identifier of inserted node
+	 * @throws org.dbwiki.exception.WikiException
+	 */
+	public ResourceIdentifier insertNode(ResourceIdentifier identifier, DocumentNode node, User user) throws org.dbwiki.exception.WikiException;
+	public void update(ResourceIdentifier identifier, Update update, User user) throws org.dbwiki.exception.WikiException;
+	public void delete(ResourceIdentifier identifier, User user) throws org.dbwiki.exception.WikiException;
+	public void activate(ResourceIdentifier identifier, User user) throws org.dbwiki.exception.WikiException;
+	public void annotate(ResourceIdentifier identifier, Annotation annotation) throws org.dbwiki.exception.WikiException;
+	public void paste(ResourceIdentifier target, PasteNode pasteNode, String sourceURL, User user) throws org.dbwiki.exception.WikiException;
+	
+	/* Import/export */
+	public void export(ResourceIdentifier identifier, int version, NodeWriter out) throws org.dbwiki.exception.WikiException;
+
+	
+	/* Schema operations */
+	public DatabaseSchema schema();
+	public SchemaNode getSchemaNode(ResourceIdentifier identifier) throws org.dbwiki.exception.WikiException;
+	public ResourceIdentifier getSchemaNodeIdentifierForURL(RequestURL url) throws org.dbwiki.exception.WikiException;
+
+	public void deleteSchemaNode(ResourceIdentifier identifier, User user) throws org.dbwiki.exception.WikiException;
+	public void insertSchemaNode(GroupSchemaNode parent, String name, byte type, User user) throws org.dbwiki.exception.WikiException;
+
 }

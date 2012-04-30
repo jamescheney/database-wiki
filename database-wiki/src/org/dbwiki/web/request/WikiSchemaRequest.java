@@ -50,11 +50,19 @@ public class WikiSchemaRequest extends WikiRequest {
     	_wri = new WRI(wiki.database().identifier(), wiki.database().getSchemaNodeIdentifierForURL(url));
     	_schemaNode = this.wiki().database().getSchemaNode(_wri.resourceIdentifier());
     	
+    	if (url.isGET()) {
+	    	_requestType = requestTypeGET;
+	    } else if (url.isPOST()) {
+	    	_requestType = requestTypePOST;
+	    }	
+    	
+    	/*
 	    if (url.exchange().getRequestMethod().equalsIgnoreCase("GET")) {
 	    	_requestType = requestTypeGET;
 	    } else if (url.exchange().getRequestMethod().equalsIgnoreCase("POST")) {
 	    	_requestType = requestTypePOST;
 	    }	
+	    */
 	}
 	
 	public boolean isGET() {

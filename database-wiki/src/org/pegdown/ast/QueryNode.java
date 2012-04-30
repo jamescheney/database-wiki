@@ -30,7 +30,6 @@ import java.util.Iterator;
 import org.dbwiki.data.database.Database;
 import org.dbwiki.data.database.DatabaseAttributeNode;
 import org.dbwiki.data.database.DatabaseElementList;
-import org.dbwiki.data.database.DatabaseElementNode;
 import org.dbwiki.data.database.DatabaseGroupNode;
 import org.dbwiki.data.database.DatabaseTextNode;
 import org.dbwiki.data.query.QueryResultSet;
@@ -51,7 +50,6 @@ import org.parboiled.Parboiled;
 import org.parboiled.support.ParsingResult;
 import org.pegdown.ExtendedPrinter;
 import org.pegdown.Extensions;
-import org.pegdown.Parser;
 import org.pegdown.Printer;
 
 public class QueryNode extends Node {

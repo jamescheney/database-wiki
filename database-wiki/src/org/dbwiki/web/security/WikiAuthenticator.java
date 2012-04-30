@@ -21,7 +21,6 @@
 */
 package org.dbwiki.web.security;
 
-import java.net.URLDecoder;
 
 import org.dbwiki.exception.WikiFatalException;
 import org.dbwiki.user.User;
@@ -84,6 +83,9 @@ public class WikiAuthenticator extends Authenticator {
 		// a '.' in the request path), then no authorization is
 		// required.
 		// FIXME #security: Security hole? Generalize the test for whether something is a file.
+		
+		// FIXME: #security: If the request is to log in then we should check the username and password no matter what!
+		// Currently we don't if we happen to be at a page that doesn't require authentication.
 		
 		if (exchange.getRequestURI().getPath().indexOf('.') != -1) {
 			return new Authenticator.Success(new HttpPrincipal("", _realm));

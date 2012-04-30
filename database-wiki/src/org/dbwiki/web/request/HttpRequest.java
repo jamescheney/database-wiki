@@ -59,13 +59,13 @@ public abstract class HttpRequest {
 		
 		_url = url;
 
-    	if (_url.exchange().getPrincipal() != null) {
-    		_user = users.get(url.exchange().getPrincipal().getUsername());
+    	if (_url.getUsername() != null) {
+    		_user = users.get(_url.getUsername());
     	} else {
     		_user = null;
     	}
 
-		String cookie = url.exchange().getRequestHeaders().getFirst("Cookie");
+		String cookie = _url.getCookie();
 		if (cookie != null) {
 			StringTokenizer tokens = new StringTokenizer(cookie, ";");
 			while (tokens.hasMoreTokens()) {
@@ -99,7 +99,7 @@ public abstract class HttpRequest {
 	}
 	
 	public URI getRequestURI() {
-		return exchange().getRequestURI();
+		return _url.getRequestURI();
 	}
 
 	public RequestType type() {

@@ -48,6 +48,9 @@ public class RequestURL {
 	}
 	
 	private Type _type;
+	private URI _uri;
+	private String _username = null;
+	private String _cookie = null;
 	
 	private Vector<URLComponent> _components;
 	private HttpExchange _exchange = null;
@@ -63,11 +66,16 @@ public class RequestURL {
 	public RequestURL(HttpExchange exchange, String ignorePathPrefix) throws org.dbwiki.exception.WikiException {
 		_exchange = exchange;
 		
-		URI uri = exchange.getRequestURI();
-		
+		_uri = exchange.getRequestURI();
+		if (exchange.getPrincipal() != null) {
+			_username = exchange.getPrincipal().getUsername();
+		}
+		if (exchange().getRequestHeaders().getFirst("Cookie") != null) {
+			_cookie = exchange().getRequestHeaders().getFirst("Cookie");
+		}	
 		// assume this is a request for data until proven otherwise
 		_type = Type.Data;
-		_components = this.split(uri.getPath().substring(ignorePathPrefix.length()));
+		_components = this.split(_uri.getPath().substring(ignorePathPrefix.length()));
 		if (_components.size() > 0) {
 			String firstComponent = _components.get(0).decodedText();
 			if (firstComponent.equals(DatabaseWiki.WikiPageRequestPrefix)) {
@@ -80,10 +88,11 @@ public class RequestURL {
 		}
 
 		String urlParameter = null;
+		// FIXME: It should be an error if the request is neither GET nor POST.
 		try {
 		    if (exchange.getRequestMethod().equalsIgnoreCase("GET")) {
 		    	_isGETRequest = true;
-		    	String rawQuery = exchange.getRequestURI().getRawQuery();
+		    	String rawQuery = _uri.getRawQuery();
 				if (rawQuery != null) {
 					urlParameter = URLDecoder.decode(rawQuery, "UTF-8");
 				}
@@ -167,6 +176,17 @@ public class RequestURL {
 		return url + _parameters.toString();
 	}
 	
+	public URI getRequestURI() {
+		return _uri;	
+	}
+	
+	public String getUsername() {
+		return _username;
+	}
+	
+	public String getCookie () {
+		return _cookie;
+	}
 	/*
 	 * Private Methods
 	 */
