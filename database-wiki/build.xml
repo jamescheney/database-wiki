@@ -1,4 +1,4 @@
-<project name="DatabaseWiki" default="build" basedir=".">
+<project name="DatabaseWiki" default="compile" basedir=".">
   <description>
     Database Wiki build file
   </description>

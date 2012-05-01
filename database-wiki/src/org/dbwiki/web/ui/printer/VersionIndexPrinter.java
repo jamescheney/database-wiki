@@ -61,14 +61,14 @@ public class VersionIndexPrinter implements HtmlContentPrinter {
 	 * Private Variables
 	 */
 	
-	private WikiDataRequest _request;
+	private WikiDataRequest<?>  _request;
 	
 	
 	/*
 	 * Constructors
 	 */
 	
-	public VersionIndexPrinter(WikiDataRequest request) {
+	public VersionIndexPrinter(WikiDataRequest<?>  request) {
 		_request = request;
 	}
 	
@@ -115,14 +115,14 @@ public class VersionIndexPrinter implements HtmlContentPrinter {
 	
 	
 		
-	private void printDatabaseVersionIndex(WikiDataRequest request, String url, HtmlLinePrinter body) {
+	private void printDatabaseVersionIndex(WikiDataRequest<?>  request, String url, HtmlLinePrinter body) {
 		for (int iVersion = 0; iVersion < request.versionIndex().size(); iVersion++) {
 			Version version = request.versionIndex().get(iVersion);
 			this.printVersionLine(request, version, url, body);
 		}
 	}
 	
-	private void printNodeVersionIndex(WikiDataRequest request, String url, HtmlLinePrinter body) throws org.dbwiki.exception.WikiException {
+	private void printNodeVersionIndex(WikiDataRequest<?>  request, String url, HtmlLinePrinter body) throws org.dbwiki.exception.WikiException {
 		Vector<Version> versions = request.versionIndex().getNodeChanges(request.node());
 		for (int iVersion = 0; iVersion < versions.size(); iVersion++) {
 			Version version = versions.get(iVersion);
@@ -130,7 +130,7 @@ public class VersionIndexPrinter implements HtmlContentPrinter {
 		}
 	}
 	
-	private void printVersionLine(WikiDataRequest request, Version version, String url, HtmlLinePrinter body) {
+	private void printVersionLine(WikiDataRequest<?>  request, Version version, String url, HtmlLinePrinter body) {
 		String target = url + version.number();
 
 		body.openTR();

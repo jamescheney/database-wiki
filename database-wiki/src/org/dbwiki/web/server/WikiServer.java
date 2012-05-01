@@ -121,6 +121,7 @@ import com.sun.net.httpserver.HttpServer;
  *
  */
 
+@SuppressWarnings("restriction")
 public class WikiServer extends FileServer implements WikiServerConstants {
 	/*
 	 * Public Constants
@@ -401,7 +402,7 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 			} else if ((path.startsWith(SpecialFolderDatabaseWikiStyle + "/")) && (path.endsWith(".css"))) {
 	    		this.sendCSSFile(path.substring(SpecialFolderDatabaseWikiStyle.length() + 1, path.length() - 4), exchange);
 			} else if (path.equals(SpecialFolderLogin)) {
-				HtmlSender.send(new RedirectPage(new ServerRequest(this, exchange).parameters().get(RequestParameter.ParameterResource).value()),exchange);
+				HtmlSender.send(new RedirectPage(new ServerRequest<HttpExchange>(this, new HttpExchangeWrapper(exchange)).parameters().get(RequestParameter.ParameterResource).value()),exchange);
 	    	// The following code is necessary if using only a single HttpContext
 	    	// instead of multiple ones (i.e., one per Database Wiki).
 	    	//} else if (path.length() > 1) {
@@ -645,7 +646,7 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 	/** Creates appropriate response handler for homepage 
 	 * 
 	 */
-	private ServerResponseHandler getHomepageResponseHandler(ServerRequest request) {
+	private ServerResponseHandler getHomepageResponseHandler(ServerRequest<?> request) {
 		ServerResponseHandler responseHandler = new ServerResponseHandler(request, _wikiTitle);
 		responseHandler.put(HtmlContentGenerator.ContentMenu, new ServerMenuPrinter(request.server()));
 		responseHandler.put(HtmlContentGenerator.ContentContent, new DatabaseWikiListingPrinter(request.server()));
@@ -661,7 +662,7 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 	 * @throws MalformedURLException
 	 * @throws IOException
 	 */
-	private ServerResponseHandler getInsertWikiResponseHandler(ServerRequest request) throws org.dbwiki.exception.WikiException, MalformedURLException, IOException {
+	private ServerResponseHandler getInsertWikiResponseHandler(ServerRequest<?> request) throws org.dbwiki.exception.WikiException, MalformedURLException, IOException {
 		
 		DatabaseWikiProperties properties = new DatabaseWikiProperties(request.parameters());
 		
@@ -890,7 +891,7 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 	 * @return
 	 * @throws org.dbwiki.exception.WikiException
 	 */
-	private DatabaseWiki getRequestWiki(ServerRequest request, String key) throws org.dbwiki.exception.WikiException {
+	private DatabaseWiki getRequestWiki(ServerRequest<?> request, String key) throws org.dbwiki.exception.WikiException {
 		RequestParameter parameter = request.parameters().get(key);
 		if (parameter.hasValue()) {
 			try {
@@ -917,7 +918,7 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 	 * @return
 	 * @throws org.dbwiki.exception.WikiException
 	 */
-	private ServerResponseHandler getUpdateWikiResponseHandler(ServerRequest request) throws org.dbwiki.exception.WikiException {
+	private ServerResponseHandler getUpdateWikiResponseHandler(ServerRequest<?> request) throws org.dbwiki.exception.WikiException {
 		//TODO: Simplify validation/control flow.  
 		
 		// Validate data passed in from form
@@ -1063,7 +1064,7 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 	private void respondTo(HttpExchange exchange) throws java.io.IOException, org.dbwiki.exception.WikiException {
 		ServerResponseHandler responseHandler = null;
 		
-		ServerRequest request = new ServerRequest(this, exchange);
+		ServerRequest<HttpExchange> request = new ServerRequest<HttpExchange>(this, new HttpExchangeWrapper(exchange));
 
 		if (request.type().isIndex()) {
 			responseHandler = this.getHomepageResponseHandler(request);

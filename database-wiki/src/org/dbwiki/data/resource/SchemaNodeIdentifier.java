@@ -50,7 +50,7 @@ public class SchemaNodeIdentifier implements ResourceIdentifier {
 		_nodeID = nodeID;
 	}
 	
-	public SchemaNodeIdentifier(RequestURL url) throws org.dbwiki.exception.WikiException {
+	public SchemaNodeIdentifier(RequestURL<?> url) throws org.dbwiki.exception.WikiException {
 		if (url.size() == 0) {
 			_nodeID = -1;
 		} else if (url.size() == 1) {

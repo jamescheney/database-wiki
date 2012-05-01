@@ -52,14 +52,14 @@ public abstract class MenuPrinter implements HtmlContentPrinter {
 	 * Private Variables
 	 */
 	
-	private WikiRequest _request;
+	private WikiRequest<?>  _request;
 	
 	
 	/*
 	 * Constructors
 	 */
 	
-	public MenuPrinter(WikiRequest request) {
+	public MenuPrinter(WikiRequest<?>  request) {
 		_request = request;
 	}
 	

@@ -46,14 +46,14 @@ public class PageMenuPrinter extends MenuPrinter {
 	 * Private Variables
 	 */
 	
-	private WikiPageRequest _request;
+	private WikiPageRequest<?> _request;
 	
 	
 	/*
 	 * Constructors
 	 */
 	
-	public PageMenuPrinter(WikiPageRequest request) {
+	public PageMenuPrinter(WikiPageRequest<?> request) {
 		super(request);
 		
 		_request = request;

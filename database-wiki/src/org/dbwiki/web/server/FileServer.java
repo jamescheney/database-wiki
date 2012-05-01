@@ -21,17 +21,13 @@
 */
 package org.dbwiki.web.server;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-
 import java.net.HttpURLConnection;
 
 import org.dbwiki.web.html.FileNotFoundPage;
-import org.dbwiki.web.html.HtmlPage;
 
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
@@ -43,6 +39,7 @@ import com.sun.net.httpserver.HttpHandler;
  * @author jcheney
  *
  */
+@SuppressWarnings("restriction")
 public abstract class FileServer implements HttpHandler {
 	/*
 	 * Private Variables

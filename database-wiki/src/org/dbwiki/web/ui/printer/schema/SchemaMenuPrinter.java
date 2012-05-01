@@ -43,14 +43,14 @@ public class SchemaMenuPrinter extends MenuPrinter {
 	private static final String menuLabelEdit   = "Edit";
 	private static final String menuLabelNew    = "New ...";
 	
-	private WikiSchemaRequest _request;
+	private WikiSchemaRequest<?> _request;
 	
 	
 	/*
 	 * Constructors
 	 */
 	
-	public SchemaMenuPrinter(WikiSchemaRequest request) {
+	public SchemaMenuPrinter(WikiSchemaRequest<?> request) {
 		super(request);
 		
 		_request = request;

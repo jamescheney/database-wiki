@@ -49,14 +49,14 @@ public class PageHistoryPrinter implements HtmlContentPrinter {
 	 * Private Variables
 	 */
 	
-	private WikiPageRequest _request;
+	private WikiPageRequest<?> _request;
 	
 	
 	/*
 	 * Constructors
 	 */
 	
-	public PageHistoryPrinter(WikiPageRequest request) {	
+	public PageHistoryPrinter(WikiPageRequest<?> request) {	
 		_request = request;
 	}
 	
@@ -76,7 +76,7 @@ public class PageHistoryPrinter implements HtmlContentPrinter {
 	 * Private Methods
 	 */
 	
-	private void printPageVersions(WikiPageRequest request, HtmlLinePrinter body) {
+	private void printPageVersions(WikiPageRequest<?> request, HtmlLinePrinter body) {
 		List<DatabaseWikiPage> versions = null;
 		try {
 			versions = request.versions();

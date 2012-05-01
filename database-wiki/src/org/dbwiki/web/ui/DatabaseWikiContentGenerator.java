@@ -57,7 +57,7 @@ public class DatabaseWikiContentGenerator extends HtmlContentGenerator {
 	 */
 	
 	// FIXME #inline next two constructors
-	protected DatabaseWikiContentGenerator(WikiRequest request, String title, CSSLinePrinter cssPrinter) {
+	protected DatabaseWikiContentGenerator(WikiRequest<?> request, String title, CSSLinePrinter cssPrinter) {
 		super(request);
 		
 		_dbIdentifier = request.wri().databaseIdentifier();
@@ -68,7 +68,7 @@ public class DatabaseWikiContentGenerator extends HtmlContentGenerator {
 		this.put(ContentImport, new ImportPrinter());
 	}
 
-	public DatabaseWikiContentGenerator(DatabaseWiki wiki, WikiRequest request) {
+	public DatabaseWikiContentGenerator(DatabaseWiki wiki, WikiRequest<?> request) {
 		this(request, request.wiki().getTitle(), wiki.cssLinePrinter());
 	}
 	

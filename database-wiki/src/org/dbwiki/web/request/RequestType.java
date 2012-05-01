@@ -95,7 +95,7 @@ public class RequestType {
 	 * Constructors
 	 */
 	
-	public RequestType(RequestURL url) {
+	public RequestType(RequestURL<?> url) {
 		RequestParameterList parameters = url.parameters();
 		
 		_type = requestTypeUnknown;

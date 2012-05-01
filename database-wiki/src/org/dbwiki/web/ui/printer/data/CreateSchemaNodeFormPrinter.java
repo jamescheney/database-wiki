@@ -43,14 +43,14 @@ public class CreateSchemaNodeFormPrinter implements HtmlContentPrinter {
 	 * Private Variables
 	 */
 	
-	private WikiRequest _request;
+	private WikiRequest<?>  _request;
 	
 	
 	/*
 	 * Constructors
 	 */
 	
-	public CreateSchemaNodeFormPrinter(WikiRequest request) {
+	public CreateSchemaNodeFormPrinter(WikiRequest<?>  request) {
 		_request = request;
 	}
 	

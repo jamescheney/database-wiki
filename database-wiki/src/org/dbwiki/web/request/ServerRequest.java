@@ -23,9 +23,9 @@ package org.dbwiki.web.request;
 
 import org.dbwiki.web.server.WikiServer;
 
-import com.sun.net.httpserver.HttpExchange;
 
-public class ServerRequest extends HttpRequest {
+
+public class ServerRequest<T> extends HttpRequest<T> {
 	/*
 	 * Private Variables
 	 */
@@ -37,8 +37,8 @@ public class ServerRequest extends HttpRequest {
 	 * Constructors
 	 */
 	
-	public ServerRequest(WikiServer server, HttpExchange exchange) throws org.dbwiki.exception.WikiException {
-		super(new RequestURL(exchange, ""), server.users());
+	public ServerRequest(WikiServer server, Exchange<T> exchange) throws org.dbwiki.exception.WikiException {
+		super(new RequestURL<T>(exchange, ""), server.users());
 		
 		_server = server;
 	}

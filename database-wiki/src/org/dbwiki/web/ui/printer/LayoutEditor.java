@@ -54,14 +54,14 @@ public class LayoutEditor implements HtmlContentPrinter {
 	 * Private Variables
 	 */
 	
-	private WikiRequest _request;
+	private WikiRequest<?> _request;
 	
 	
 	/*
 	 * Constructors
 	 */
 	
-	public LayoutEditor(WikiRequest request) {
+	public LayoutEditor(WikiRequest<?> request) {
 		_request = request;
 	}
 	

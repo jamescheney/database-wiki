@@ -56,14 +56,14 @@ public class ObjectProvenancePrinter implements HtmlContentPrinter {
 	 */
 	
 	private DatabaseLayouter _layouter;
-	private WikiDataRequest _request;
+	private WikiDataRequest<?> _request;
 	
 	
 	/*
 	 * Constructors
 	 */
 	
-	public ObjectProvenancePrinter(WikiDataRequest request, DatabaseLayouter layouter) {
+	public ObjectProvenancePrinter(WikiDataRequest<?> request, DatabaseLayouter layouter) {
 		_request = request;
 		_layouter = layouter;
 	}

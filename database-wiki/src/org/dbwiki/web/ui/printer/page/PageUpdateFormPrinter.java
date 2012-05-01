@@ -39,14 +39,14 @@ public class PageUpdateFormPrinter implements HtmlContentPrinter {
 	 * Private Variables
 	 */
 	
-	private WikiPageRequest _request;
+	private WikiPageRequest<?> _request;
 	
 	
 	/*
 	 * Constructors
 	 */
 	
-	public PageUpdateFormPrinter(WikiPageRequest request) {
+	public PageUpdateFormPrinter(WikiPageRequest<?> request) {
 		_request = request;
 	}
 	

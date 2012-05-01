@@ -52,14 +52,14 @@ public class SearchResultPrinter implements HtmlContentPrinter {
 	 */
 	
 	private DatabaseContent _content;
-	private WikiRequest _request;
+	private WikiRequest<?> _request;
 	
 	
 	/*
 	 * Constructors
 	 */
 	
-	public SearchResultPrinter(WikiRequest request, DatabaseContent content) {
+	public SearchResultPrinter(WikiRequest<?> request, DatabaseContent content) {
 		_request = request;
 		_content = content;
 	}

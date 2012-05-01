@@ -36,9 +36,9 @@ import org.dbwiki.web.request.parameter.RequestParameterList;
 
 import org.dbwiki.web.server.DatabaseWiki;
 
-import com.sun.net.httpserver.HttpExchange;
+// TODO: Abstract over the part of HttpExchange interface that we need to remove dependency
 
-public class RequestURL {
+public class RequestURL<T> {
 	/*
 	 * Private Variables
 	 */
@@ -53,7 +53,7 @@ public class RequestURL {
 	private String _cookie = null;
 	
 	private Vector<URLComponent> _components;
-	private HttpExchange _exchange = null;
+	private Exchange<T> _exchange = null;
 	
 	private boolean _isGETRequest = false;
 	private RequestParameterList _parameters = null;
@@ -63,16 +63,13 @@ public class RequestURL {
 	 * Constructors
 	 */
 	
-	public RequestURL(HttpExchange exchange, String ignorePathPrefix) throws org.dbwiki.exception.WikiException {
+	public RequestURL(Exchange<T> exchange, String ignorePathPrefix) throws org.dbwiki.exception.WikiException {
 		_exchange = exchange;
 		
 		_uri = exchange.getRequestURI();
-		if (exchange.getPrincipal() != null) {
-			_username = exchange.getPrincipal().getUsername();
-		}
-		if (exchange().getRequestHeaders().getFirst("Cookie") != null) {
-			_cookie = exchange().getRequestHeaders().getFirst("Cookie");
-		}	
+		_username = exchange.getUsername();
+		_cookie = exchange.getCookie();
+		
 		// assume this is a request for data until proven otherwise
 		_type = Type.Data;
 		_components = this.split(_uri.getPath().substring(ignorePathPrefix.length()));
@@ -90,15 +87,15 @@ public class RequestURL {
 		String urlParameter = null;
 		// FIXME: It should be an error if the request is neither GET nor POST.
 		try {
-		    if (exchange.getRequestMethod().equalsIgnoreCase("GET")) {
+		    if (_exchange.isGet()) {
 		    	_isGETRequest = true;
 		    	String rawQuery = _uri.getRawQuery();
 				if (rawQuery != null) {
 					urlParameter = URLDecoder.decode(rawQuery, "UTF-8");
 				}
-		    } else if (exchange.getRequestMethod().equalsIgnoreCase("POST")) {
+		    } else if (_exchange.isPost()) {
 		    	_isGETRequest = false;
-				BufferedReader in = new BufferedReader(new InputStreamReader(exchange.getRequestBody()));
+				BufferedReader in = new BufferedReader(new InputStreamReader(_exchange.getRequestBody()));
 				String line;
 				while ((line = in.readLine()) != null) {
 					if (urlParameter != null) {
@@ -128,8 +125,8 @@ public class RequestURL {
 		_components.add(component);
 	}
 	
-	public HttpExchange exchange() {
-		return _exchange;
+	public T exchange() {
+		return _exchange.get();
 	}
 	
 	public URLComponent get(int index) {

@@ -145,6 +145,7 @@ import com.sun.net.httpserver.HttpHandler;
  * @author jcheney
  *
  */
+@SuppressWarnings("restriction")
 public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 	/*
 	 * Public Constants
@@ -410,13 +411,13 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 				if (_server.serverLog() != null) {
 					_server.serverLog().logRequest(exchange.getRequestURI(),exchange.getRemoteAddress(),exchange.getResponseHeaders());
 				}
-				RequestURL url = new RequestURL(exchange, _database.identifier().linkPrefix());
+				RequestURL<HttpExchange> url = new RequestURL<HttpExchange>(new HttpExchangeWrapper(exchange), _database.identifier().linkPrefix());
 				if (url.isDataRequest()) {
-					respondToDataRequest(new WikiDataRequest(this, url));
+					respondToDataRequest(new WikiDataRequest<HttpExchange>(this, url));
 				} else if (url.isPageRequest()) {
-					respondToPageRequest(new WikiPageRequest(this, url));
+					respondToPageRequest(new WikiPageRequest<HttpExchange>(this, url));
 				} else if (url.isSchemaRequest()) {
-					respondToSchemaRequest(new WikiSchemaRequest(this, url));
+					respondToSchemaRequest(new WikiSchemaRequest<HttpExchange>(this, url));
 				}
 			}
 		} catch (org.dbwiki.exception.WikiException wikiException) {
@@ -444,7 +445,7 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 	 * @return
 	 * @throws org.dbwiki.exception.WikiException
 	 */
-	private DocumentNode getInsertNode(WikiDataRequest request) throws org.dbwiki.exception.WikiException {
+	private DocumentNode getInsertNode(WikiDataRequest<?>  request) throws org.dbwiki.exception.WikiException {
 		SchemaNode schemaNode = database().schema().get(Integer.parseInt(request.parameters().get(RequestParameter.ActionValueSchemaNode).value()));
 		if (schemaNode.isAttribute()) {
 			AttributeSchemaNode attributeSchemaNode = (AttributeSchemaNode)schemaNode;
@@ -485,7 +486,7 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 	 * @return
 	 * @throws org.dbwiki.exception.WikiException
 	 */
-	private Update getNodeUpdates(WikiDataRequest request) throws org.dbwiki.exception.WikiException {
+	private Update getNodeUpdates(WikiDataRequest<?>  request) throws org.dbwiki.exception.WikiException {
 		Update updates = new Update();
 		
 		for (int iParameter = 0; iParameter < request.parameters().size(); iParameter++) {
@@ -508,7 +509,7 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 	 * @param url
 	 * @throws org.dbwiki.exception.WikiException
 	 */
-	private void pasteURL(WikiDataRequest request, String url) throws org.dbwiki.exception.WikiException {
+	private void pasteURL(WikiDataRequest<?>  request, String url) throws org.dbwiki.exception.WikiException {
 		if (url != null) {
 			CopyPasteInputHandler ioHandler = new CopyPasteInputHandler();
 			String sourceURL = url;
@@ -560,7 +561,7 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 	 * @param writer
 	 * @throws org.dbwiki.exception.WikiException
 	 */
-	private void respondToExportXMLRequest(WikiDataRequest request, NodeWriter writer) throws org.dbwiki.exception.WikiException {
+	private void respondToExportXMLRequest(WikiDataRequest<HttpExchange> request, NodeWriter writer) throws org.dbwiki.exception.WikiException {
 		int versionNumber = database().versionIndex().getLastVersion().number();
 		if (request.parameters().hasParameter(RequestParameter.ParameterVersion)) {
 			versionNumber = ((RequestParameterVersionSingle)RequestParameter.versionParameter(request.parameters().get(RequestParameter.ParameterVersion))).versionNumber();
@@ -597,7 +598,7 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 	 * @param writer
 	 * @throws org.dbwiki.exception.WikiException
 	 */
-	private void respondToExportJSONRequest(WikiDataRequest request, NodeWriter writer) throws org.dbwiki.exception.WikiException {
+	private void respondToExportJSONRequest(WikiDataRequest<HttpExchange> request, NodeWriter writer) throws org.dbwiki.exception.WikiException {
 		int versionNumber = database().versionIndex().getLastVersion().number();
 		if (request.parameters().hasParameter(RequestParameter.ParameterVersion)) {
 			versionNumber = ((RequestParameterVersionSingle)RequestParameter.versionParameter(request.parameters().get(RequestParameter.ParameterVersion))).versionNumber();
@@ -640,7 +641,7 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 	 * @throws java.io.IOException
 	 * @throws org.dbwiki.exception.WikiException
 	 */
-	private void respondToDataRequest(WikiDataRequest request) throws java.io.IOException, org.dbwiki.exception.WikiException {
+	private void respondToDataRequest(WikiDataRequest<HttpExchange> request) throws java.io.IOException, org.dbwiki.exception.WikiException {
 		HtmlPage page = null;
 		
 		// The following test is just an additional security check in case someone
@@ -825,7 +826,7 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 	 * @throws java.io.IOException
 	 * @throws org.dbwiki.exception.WikiException
 	 */
-	private void respondToPageRequest(WikiPageRequest request) throws java.io.IOException, org.dbwiki.exception.WikiException {
+	private void respondToPageRequest(WikiPageRequest<HttpExchange> request) throws java.io.IOException, org.dbwiki.exception.WikiException {
 		// Again, we need to further distinguish the request type
 		// for .isAction() requests (see above).
 		boolean isGetRequest = request.type().isGet();
@@ -901,7 +902,7 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 	 * @throws java.io.IOException
 	 * @throws org.dbwiki.exception.WikiException
 	 */
-	private void respondToSchemaRequest(WikiSchemaRequest request) throws java.io.IOException, org.dbwiki.exception.WikiException {
+	private void respondToSchemaRequest(WikiSchemaRequest<HttpExchange> request) throws java.io.IOException, org.dbwiki.exception.WikiException {
 		// TODO: fill in and tidy up
 		// 
 		// Most of the code here is copied and pasted from above.
@@ -1014,7 +1015,7 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 	 * @throws org.dbwiki.exception.WikiException
 	 */
 	  
-	private synchronized void updateConfigurationFile(WikiRequest request) throws org.dbwiki.exception.WikiException {
+	private synchronized void updateConfigurationFile(WikiRequest<?>  request) throws org.dbwiki.exception.WikiException {
 		int wikiID = Integer.valueOf(request.parameters().get(ParameterDatabaseID).value());
 		int fileType = Integer.valueOf(request.parameters().get(ParameterFileType).value());
 		

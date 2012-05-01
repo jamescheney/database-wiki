@@ -350,11 +350,11 @@ public class RDBMSDatabase implements Database, DatabaseConstants {
 		return result;
 	}
 	
-	public ResourceIdentifier getNodeIdentifierForURL(RequestURL url) throws org.dbwiki.exception.WikiException {
+	public ResourceIdentifier getNodeIdentifierForURL(RequestURL<?> url) throws org.dbwiki.exception.WikiException {
 		return new NodeIdentifier(url);
 	}
 
-	public ResourceIdentifier getSchemaNodeIdentifierForURL(RequestURL url) throws org.dbwiki.exception.WikiException {
+	public ResourceIdentifier getSchemaNodeIdentifierForURL(RequestURL<?> url) throws org.dbwiki.exception.WikiException {
 		return new SchemaNodeIdentifier(url);
 	}
 	

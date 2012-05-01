@@ -90,7 +90,7 @@ public class URLDecodingRules {
 		}
 	}
 	
-	public ResourceIdentifier decode(Database database, RequestURL url, RequestParameterVersion versionParameter) throws org.dbwiki.exception.WikiException {
+	public ResourceIdentifier decode(Database database, RequestURL<?> url, RequestParameterVersion versionParameter) throws org.dbwiki.exception.WikiException {
 		
 		// FORMAT: {/[<label>:<key-value>|<key-value>]}+ /[<label>|<label>:<key-value>|<key-value>]
 
@@ -153,7 +153,7 @@ public class URLDecodingRules {
 	 * Private Methods
 	 */
 	
-	public ResourceIdentifier decode(Database database, DatabaseGroupNode node, RequestParameterVersion versionParameter, RequestURL url, int pathIndex) throws org.dbwiki.exception.WikiException {
+	public ResourceIdentifier decode(Database database, DatabaseGroupNode node, RequestParameterVersion versionParameter, RequestURL<?> url, int pathIndex) throws org.dbwiki.exception.WikiException {
 		
 		// FORMAT: {/[<label>:<key-value>|<key-value>]}+ /[<label>|<label>:<key-value>|<key-value>]
 

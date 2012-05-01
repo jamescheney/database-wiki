@@ -79,7 +79,7 @@ public class DataNodePrinter implements HtmlContentPrinter {
 		_timestampPrinter = timestampPrinter;
 	}
 	
-	public DataNodePrinter(WikiDataRequest request, DatabaseLayouter layouter) throws org.dbwiki.exception.WikiException {
+	public DataNodePrinter(WikiDataRequest<?>  request, DatabaseLayouter layouter) throws org.dbwiki.exception.WikiException {
 		_databaseIdentifier = request.wri().databaseIdentifier();
 		_layouter = layouter;
 		_timestampPrinter = new TimestampPrinter(request.wiki().database().versionIndex());

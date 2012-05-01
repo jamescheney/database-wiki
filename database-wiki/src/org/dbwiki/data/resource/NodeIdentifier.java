@@ -56,7 +56,7 @@ public class NodeIdentifier implements ResourceIdentifier {
 		_nodeID = nodeID;
 	}
 	
-	public NodeIdentifier(RequestURL url) throws org.dbwiki.exception.WikiException {
+	public NodeIdentifier(RequestURL<?> url) throws org.dbwiki.exception.WikiException {
 		if (url.size() == 0) {
 			_nodeID = -1;
 		} else if (url.size() == 1) {

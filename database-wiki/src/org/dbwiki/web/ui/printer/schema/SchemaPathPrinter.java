@@ -43,13 +43,13 @@ public class SchemaPathPrinter implements HtmlContentPrinter {
 	 * Private Variables
 	 */
 	
-	private WikiSchemaRequest _request;
+	private WikiSchemaRequest<?> _request;
 	
 	/*
 	 * Constructors
 	 */
 	
-	public SchemaPathPrinter(WikiSchemaRequest request) {
+	public SchemaPathPrinter(WikiSchemaRequest<?> request) {
 		_request = request;
 	}
 	

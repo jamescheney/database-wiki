@@ -51,14 +51,14 @@ public abstract class IndexContentPrinter implements HtmlContentPrinter {
 	 */
 	
 	private DatabaseContent _content;
-	private WikiRequest _request;
+	private WikiRequest<?>  _request;
 	
 	
 	/*
 	 * Constructors
 	 */
 	
-	public IndexContentPrinter(WikiRequest request, DatabaseContent content) {
+	public IndexContentPrinter(WikiRequest<?>  request, DatabaseContent content) {
 		_request = request;
 		_content = content;
 	}
@@ -68,7 +68,7 @@ public abstract class IndexContentPrinter implements HtmlContentPrinter {
 	 * Abstract Methods
 	 */
 	
-	public abstract void listContent(DatabaseIdentifier databaseIdentifier, ContentIterator iterator, WikiRequest request, HtmlLinePrinter body) throws org.dbwiki.exception.WikiException;
+	public abstract void listContent(DatabaseIdentifier databaseIdentifier, ContentIterator iterator, WikiRequest<?>  request, HtmlLinePrinter body) throws org.dbwiki.exception.WikiException;
 	
 	
 	/*

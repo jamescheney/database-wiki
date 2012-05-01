@@ -41,14 +41,14 @@ public class SettingsListingPrinter implements HtmlContentPrinter {
 	 * Private Variables
 	 */
 	
-	private WikiRequest _request;
+	private WikiRequest<?> _request;
 	
 	
 	/*
 	 * Constructors
 	 */
 	
-	public SettingsListingPrinter(WikiRequest request) {
+	public SettingsListingPrinter(WikiRequest<?> request) {
 		_request = request;
 	}
 	

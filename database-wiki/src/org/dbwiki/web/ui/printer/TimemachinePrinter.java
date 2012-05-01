@@ -42,14 +42,14 @@ public class TimemachinePrinter implements HtmlContentPrinter {
 	 * Private Variables
 	 */
 	
-	private WikiRequest _request;
+	private WikiRequest<?>  _request;
 	
 	
 	/*
 	 * Constructors
 	 */
 	
-	public TimemachinePrinter(WikiRequest request) {
+	public TimemachinePrinter(WikiRequest<?>  request) {
 		_request = request;
 	}
 	

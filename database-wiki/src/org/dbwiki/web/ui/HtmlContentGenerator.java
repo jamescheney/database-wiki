@@ -74,14 +74,14 @@ public abstract class HtmlContentGenerator {
 	/** _contentPrinter maps keys to actual printers that will be used.  */
 	private Hashtable<String, HtmlContentPrinter> _contentPrinter;
 	/** _request is used to determine whether user is logged in, and if so, to find out user name */
-	private HttpRequest _request;
+	private HttpRequest<?> _request;
 	
 	
 	/*
 	 * Constructors
 	 */
 	
-	public HtmlContentGenerator(HttpRequest request) {
+	public HtmlContentGenerator(HttpRequest<?> request) {
 		_request = request;
 		
 		_contentPrinter = new Hashtable<String, HtmlContentPrinter>();

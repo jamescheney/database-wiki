@@ -4,16 +4,16 @@ import java.io.BufferedWriter;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 
-import com.sun.net.httpserver.Headers;
-import com.sun.net.httpserver.HttpExchange;
-
 import org.dbwiki.web.html.HtmlPage;
+import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.Headers;
 
 /** A class providing static methods for sending HtmlPages to HttpExchanges.
- * 
+ *  TODO: Remove this in favor of Exchange.send.
  * @author jcheney
  *
  */
+@SuppressWarnings("restriction") 
 public class HtmlSender {
 	public static void send(HtmlPage page, HttpExchange exchange) throws java.io.IOException {
 		send(page, exchange, HttpURLConnection.HTTP_OK);
@@ -30,4 +30,7 @@ public class HtmlSender {
     	}
     	out.close();
 	}
+
+
+	
 }

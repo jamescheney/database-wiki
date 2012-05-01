@@ -42,6 +42,7 @@ import com.sun.net.httpserver.HttpPrincipal;
  *
  */
 
+@SuppressWarnings("restriction")
 public class WikiAuthenticator extends Authenticator {
 	/*
 	 * Public Constants

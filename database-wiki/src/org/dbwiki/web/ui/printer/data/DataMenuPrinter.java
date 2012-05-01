@@ -65,14 +65,14 @@ public class DataMenuPrinter extends MenuPrinter {
 	 */
 	
 	private DatabaseLayouter _layouter;
-	private WikiDataRequest _request;
+	private WikiDataRequest<?>  _request;
 	
 	
 	/*
 	 * Constructors
 	 */
 	
-	public DataMenuPrinter(WikiDataRequest request, DatabaseLayouter layouter) {
+	public DataMenuPrinter(WikiDataRequest<?>  request, DatabaseLayouter layouter) {
 		super(request);
 		
 		_request = request;

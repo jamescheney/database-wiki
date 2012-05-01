@@ -36,7 +36,7 @@ public class RedirectPage extends HtmlPage {
 	 */
 	
 	/** Redirects to a given resource identifier under the prefix of the wiki request */
-	public RedirectPage(WikiRequest request, ResourceIdentifier identifier) {
+	public RedirectPage(WikiRequest<?> request, ResourceIdentifier identifier) {
 		this(request.wri().databaseIdentifier().linkPrefix() + identifier.toURLString());
 	}
 	

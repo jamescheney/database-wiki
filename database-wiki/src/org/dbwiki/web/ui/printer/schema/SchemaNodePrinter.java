@@ -64,7 +64,7 @@ public class SchemaNodePrinter implements HtmlContentPrinter {
 	 * Constructors
 	 */
 		
-	public SchemaNodePrinter(WikiSchemaRequest request, DatabaseLayouter layouter) throws org.dbwiki.exception.WikiException {
+	public SchemaNodePrinter(WikiSchemaRequest<?>  request, DatabaseLayouter layouter) throws org.dbwiki.exception.WikiException {
 		_databaseIdentifier = request.wri().databaseIdentifier();
 		_layouter = layouter;
 		_schemaNode = request.schema();

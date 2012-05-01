@@ -48,14 +48,14 @@ public class NodePathPrinter implements HtmlContentPrinter {
 	 */
 	
 	private DatabaseLayouter _layouter;
-	private WikiDataRequest _request;
+	private WikiDataRequest<?> _request;
 	
 	
 	/*
 	 * Constructors
 	 */
 	
-	public NodePathPrinter(WikiDataRequest request, DatabaseLayouter layouter) {
+	public NodePathPrinter(WikiDataRequest<?>  request, DatabaseLayouter layouter) {
 		_request = request;
 		_layouter = layouter;
 	}

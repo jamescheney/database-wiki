@@ -45,7 +45,7 @@ public class FileEditor implements HtmlContentPrinter {
 	 * Private Variables
 	 */
 	
-	private WikiRequest _request;
+	private WikiRequest<?> _request;
 	private String _title;
 	
 	
@@ -53,7 +53,7 @@ public class FileEditor implements HtmlContentPrinter {
 	 * Constructors
 	 */
 	
-	public FileEditor(WikiRequest request, String title) {
+	public FileEditor(WikiRequest<?> request, String title) {
 		_request = request;
 		_title = title;
 	}

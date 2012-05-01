@@ -41,7 +41,7 @@ public class ServerResponseHandler extends HtmlContentGenerator {
 	 * Constructors
 	 */
 	
-	public ServerResponseHandler(ServerRequest request, String title) {
+	public ServerResponseHandler(ServerRequest<?> request, String title) {
 		super(request);
 		
 		_title = title;

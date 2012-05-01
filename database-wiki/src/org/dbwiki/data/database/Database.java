@@ -92,7 +92,7 @@ public interface Database {
 	public DatabaseNode get(ResourceIdentifier identifier) throws org.dbwiki.exception.WikiException;
 	public DatabaseContent getMatchingEntries(AttributeConditionListing listing) throws org.dbwiki.exception.WikiException;
 	public ResourceIdentifier getIdentifierForParameterString(String urlString) throws org.dbwiki.exception.WikiException;
-	public ResourceIdentifier getNodeIdentifierForURL(RequestURL url) throws org.dbwiki.exception.WikiException;
+	public ResourceIdentifier getNodeIdentifierForURL(RequestURL<?> url) throws org.dbwiki.exception.WikiException;
 	
 	public QueryResultSet query(String query) throws org.dbwiki.exception.WikiException;
 	public DatabaseContent search(String keywords) throws org.dbwiki.exception.WikiException;
@@ -121,7 +121,7 @@ public interface Database {
 	/* Schema operations */
 	public DatabaseSchema schema();
 	public SchemaNode getSchemaNode(ResourceIdentifier identifier) throws org.dbwiki.exception.WikiException;
-	public ResourceIdentifier getSchemaNodeIdentifierForURL(RequestURL url) throws org.dbwiki.exception.WikiException;
+	public ResourceIdentifier getSchemaNodeIdentifierForURL(RequestURL<?> url) throws org.dbwiki.exception.WikiException;
 
 	public void deleteSchemaNode(ResourceIdentifier identifier, User user) throws org.dbwiki.exception.WikiException;
 	public void insertSchemaNode(GroupSchemaNode parent, String name, byte type, User user) throws org.dbwiki.exception.WikiException;

@@ -52,11 +52,11 @@ public class MultiColumnIndexPrinter extends IndexContentPrinter {
 	 * Constructors
 	 */
 	
-	public MultiColumnIndexPrinter(WikiRequest request, DatabaseContent content) {
+	public MultiColumnIndexPrinter(WikiRequest<?> request, DatabaseContent content) {
 		super(request, content);
 	}
 
-	public MultiColumnIndexPrinter(WikiRequest request, DatabaseContent content, int columns) {
+	public MultiColumnIndexPrinter(WikiRequest<?> request, DatabaseContent content, int columns) {
 		super(request, content);
 		_columns=columns;
 	}
@@ -66,7 +66,7 @@ public class MultiColumnIndexPrinter extends IndexContentPrinter {
 	 * Public Methods
 	 */
 
-	public void listContent(DatabaseIdentifier databaseIdentifier, ContentIterator iterator, WikiRequest request, HtmlLinePrinter body) throws org.dbwiki.exception.WikiException {
+	public void listContent(DatabaseIdentifier databaseIdentifier, ContentIterator iterator, WikiRequest<?> request, HtmlLinePrinter body) throws org.dbwiki.exception.WikiException {
 		
 		DatabaseEntry entry = null;
 		
