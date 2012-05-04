@@ -74,6 +74,7 @@ import org.dbwiki.web.log.FileServerLog;
 import org.dbwiki.web.log.ServerLog;
 import org.dbwiki.web.log.StandardOutServerLog;
 
+import org.dbwiki.web.request.RequestURL;
 import org.dbwiki.web.request.ServerRequest;
 
 import org.dbwiki.web.request.parameter.RequestParameter;
@@ -402,7 +403,8 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 			} else if ((path.startsWith(SpecialFolderDatabaseWikiStyle + "/")) && (path.endsWith(".css"))) {
 	    		this.sendCSSFile(path.substring(SpecialFolderDatabaseWikiStyle.length() + 1, path.length() - 4), exchange);
 			} else if (path.equals(SpecialFolderLogin)) {
-				HtmlSender.send(new RedirectPage(new ServerRequest<HttpExchange>(this, new HttpExchangeWrapper(exchange)).parameters().get(RequestParameter.ParameterResource).value()),exchange);
+				//FIXME: #request This is a convoluted way of parsing the request parameter!
+				HtmlSender.send(new RedirectPage(new RequestURL<HttpExchange>( new HttpExchangeWrapper(exchange),"").parameters().get(RequestParameter.ParameterResource).value()),exchange);
 	    	// The following code is necessary if using only a single HttpContext
 	    	// instead of multiple ones (i.e., one per Database Wiki).
 	    	//} else if (path.length() > 1) {
@@ -418,7 +420,9 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 	    	//	} else {
 		    //		this.sendFile(exchange);
 	    	//	}
-    		} else {
+			} else if (path.equals(SpecialFolderLogout)) {
+				HtmlSender.send(new RedirectPage(new RequestURL<HttpExchange>(new HttpExchangeWrapper(exchange),"").parameters().get(RequestParameter.ParameterResource).value()),exchange);
+	    	} else {
 	    		this.sendFile(exchange);
 	    	}
 		} catch (Exception exception) {

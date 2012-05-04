@@ -81,7 +81,6 @@ public class PageHistoryPrinter implements HtmlContentPrinter {
 		try {
 			versions = request.versions();
 		} catch (WikiException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		

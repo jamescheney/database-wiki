@@ -79,16 +79,22 @@ public class WikiAuthenticator extends Authenticator {
 	 * Public Methods
 	 */
 	
-	public synchronized Result authenticate(HttpExchange exchange) {
+	private boolean allowedFileRequest(String path ) {
 		// If the request is for a file (currently indicated by
 		// a '.' in the request path), then no authorization is
 		// required.
 		// FIXME #security: Security hole? Generalize the test for whether something is a file.
+		System.err.println(path);
+		return path .indexOf('.') != -1;
+	}
+	
+	public synchronized Result authenticate(HttpExchange exchange) {
+
 		
 		// FIXME: #security: If the request is to log in then we should check the username and password no matter what!
 		// Currently we don't if we happen to be at a page that doesn't require authentication.
 		
-		if (exchange.getRequestURI().getPath().indexOf('.') != -1) {
+		if (allowedFileRequest(exchange.getRequestURI().getPath())) {
 			return new Authenticator.Success(new HttpPrincipal("", _realm));
 		}
 		
@@ -117,7 +123,9 @@ public class WikiAuthenticator extends Authenticator {
 			int colon = userpass.indexOf(':');
 			String uname = userpass.substring(0, colon);
 			String pass = userpass.substring(colon + 1);
-			if ((_mode == AuthenticateAlways) || ((_mode == AuthenticateWriteOnly) && (isProtectedRequest))) {
+			if ((_mode == AuthenticateAlways) 
+					|| ((_mode == AuthenticateWriteOnly) && (isProtectedRequest))
+					|| (exchange.getRequestURI().getPath().equals(WikiServer.SpecialFolderLogin))) {
 				if (checkCredentials(uname, pass)) {
 					return new Authenticator.Success(new HttpPrincipal(uname, _realm));
 				} else {

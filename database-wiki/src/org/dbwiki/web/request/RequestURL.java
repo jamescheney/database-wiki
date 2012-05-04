@@ -63,6 +63,7 @@ public class RequestURL<T> {
 	 * Constructors
 	 */
 	
+	// TODO #request: Factor the URL / request parsing code out
 	public RequestURL(Exchange<T> exchange, String ignorePathPrefix) throws org.dbwiki.exception.WikiException {
 		_exchange = exchange;
 		
@@ -84,18 +85,22 @@ public class RequestURL<T> {
 			}
 		}
 
+		if (_exchange.isGet()) {
+			_isGETRequest = true;
+		} else if (_exchange.isPost()) {
+			_isGETRequest = false;
+		}
+		
 		String urlParameter = null;
 		// FIXME: It should be an error if the request is neither GET nor POST.
 		try {
-		    if (_exchange.isGet()) {
-		    	_isGETRequest = true;
+		    if (_isGETRequest) {
 		    	String rawQuery = _uri.getRawQuery();
 				if (rawQuery != null) {
 					urlParameter = URLDecoder.decode(rawQuery, "UTF-8");
 				}
-		    } else if (_exchange.isPost()) {
-		    	_isGETRequest = false;
-				BufferedReader in = new BufferedReader(new InputStreamReader(_exchange.getRequestBody()));
+		    } else {
+		    	BufferedReader in = new BufferedReader(new InputStreamReader(_exchange.getRequestBody()));
 				String line;
 				while ((line = in.readLine()) != null) {
 					if (urlParameter != null) {
@@ -112,6 +117,8 @@ public class RequestURL<T> {
 		_parameters = new RequestParameterList(urlParameter);
 	}
 
+
+	
 	public RequestURL(String path) {
 		_components = this.split(path);
 	}

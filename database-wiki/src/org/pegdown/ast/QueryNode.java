@@ -21,8 +21,6 @@
 */
 package org.pegdown.ast;
 
-import static org.parboiled.errors.ErrorUtils.printParseErrors;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -33,7 +31,6 @@ import org.dbwiki.data.database.DatabaseElementList;
 import org.dbwiki.data.database.DatabaseGroupNode;
 import org.dbwiki.data.database.DatabaseTextNode;
 import org.dbwiki.data.query.QueryResultSet;
-import org.dbwiki.data.query.visual.VisualisationNode;
 import org.dbwiki.data.schema.GroupSchemaNode;
 import org.dbwiki.exception.WikiException;
 import org.dbwiki.exception.data.WikiQueryException;
@@ -46,10 +43,7 @@ import org.dbwiki.web.ui.CSS;
 import org.dbwiki.web.ui.printer.SchemaNodeList;
 import org.dbwiki.web.ui.printer.page.PageContentPrinter;
 
-import org.parboiled.Parboiled;
-import org.parboiled.support.ParsingResult;
 import org.pegdown.ExtendedPrinter;
-import org.pegdown.Extensions;
 import org.pegdown.Printer;
 
 public class QueryNode extends Node {
@@ -289,6 +283,8 @@ public class QueryNode extends Node {
 		body.add("</script>");
     }
     
+    // TODO: Wire this up
+    /*
     private VisualisationNode parseVisualisationQuery(String source) {
     	org.dbwiki.data.query.visual.Parser parser =
     		Parboiled.createParser(org.dbwiki.data.query.visual.Parser.class, Extensions.NONE);
@@ -301,6 +297,8 @@ public class QueryNode extends Node {
 
         return (VisualisationNode)(result.resultValue);
     }
+    */
+    
     
     /**  FIXME #wiki: Clean this up and make queries independent of database.
      * Implements printing queries by finding the database associated with the printer and querying it.
@@ -392,8 +390,8 @@ public class QueryNode extends Node {
 			queryException.printStackTrace();
 			body.paragraph("<b> " + queryException.toString() + "</b>", CSS.CSSPageText);
 		} catch (WikiException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			// don't throw exception because we can't
 		}
     	
 		HtmlPage lines = body.lines();

@@ -8,5 +8,9 @@ public class VisualisationTypeNode extends Node {
 	public VisualisationTypeNode(String visualisationType) {
 		_visualisationType = visualisationType;
 	}
+	
+	public String getVisualisationType() {
+		return _visualisationType;
+	}
 
 }

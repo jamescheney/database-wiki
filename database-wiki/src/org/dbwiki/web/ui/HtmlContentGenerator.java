@@ -123,14 +123,14 @@ public abstract class HtmlContentGenerator {
 	public void print(String key, Vector<String> args, HtmlPage page, String indention) throws org.dbwiki.exception.WikiException {
 	if (key.equals(ContentLogin)) {
 		if (_request != null) {
-			if (_request.user() != null) {
-				page.add(indention + "<p CLASS=\"" + CSS.CSSLogin + "\">You are currently logged in as <span CLASS=\"" + CSS.CSSLogin + "\">" + _request.user().fullName() + "</span></p>");
-			} else {
-				try {
+			try {
+				if (_request.user() != null) {
+					page.add(indention + "<p CLASS=\"" + CSS.CSSLogin + "\">You are currently logged in as <span CLASS=\"" + CSS.CSSLogin + "\">" + _request.user().fullName() + "</span></p>");
+				} else {
 					String loginRedirectLink = WikiServer.SpecialFolderLogin + "?" + RequestParameter.ParameterResource + "=" + URLEncoder.encode(_request.getRequestURI().toASCIIString(), "UTF-8");
 					page.add(indention + "<p CLASS=\"" + CSS.CSSLogin + "\"><a CLASS=\"" + CSS.CSSLogin + "\" HREF=\"" + loginRedirectLink + "\">Login</a></p>");
-				} catch (java.io.UnsupportedEncodingException uee) {
 				}
+			} catch (java.io.UnsupportedEncodingException uee) {
 			}
 		}
 	} else if (_contentPrinter.containsKey(key)) {

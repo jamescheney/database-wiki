@@ -36,7 +36,7 @@ import org.dbwiki.exception.data.WikiSchemaException;
 
 /** Implementation of DatabaseSchema for RDBMS.
  * Main difference is that the constructor loads the schema from the database using queries.
- * FIXME #database This could be implemented as a factory class instead of as a subclass if DatabaseSchema
+ * FIXME #database This could be implemented as a factory class instead of as a subclass of DatabaseSchema
  * @author jcheney
  *
  */

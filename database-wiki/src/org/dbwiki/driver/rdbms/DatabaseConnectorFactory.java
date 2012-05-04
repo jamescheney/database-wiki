@@ -24,7 +24,6 @@ package org.dbwiki.driver.rdbms;
 import java.util.Properties;
 
 import org.dbwiki.exception.WikiFatalException;
-
 /** 
  * Uses the database-related properties in the config file, generate a connection to the appropriate database.
  * @author jcheney
@@ -48,6 +47,7 @@ public class DatabaseConnectorFactory {
 	private static final String rdbmsTypeMySQL      = "MYSQL";
 	private static final String rdbmsTypePostgreSQL = "PSQL";
 	private static final String rdbmsTypeSQLServer  = "SQLSERVER";
+	private static final String rdbmsTypeGoogleCloudSQL  = "CLOUDSQL";
 
 	
 	/*
@@ -63,10 +63,13 @@ public class DatabaseConnectorFactory {
 
 		try {
 			if (rdbmsTypePostgreSQL.equalsIgnoreCase(rdbmsType)) {
-				Class.forName("org.postgresql.Driver");
+				//Class.forName("org.postgresql.Driver");
 				return new PSQLDatabaseConnector(url, user, password);
 			} else if (rdbmsTypeMySQL.equalsIgnoreCase(rdbmsType)) {
 				Class.forName("com.mysql.jdbc.Driver");
+				return new MySQLDatabaseConnector(url, user, password);
+			} else if (rdbmsTypeGoogleCloudSQL.equalsIgnoreCase(rdbmsType)) {
+				Class.forName("com.google.appengine.api.rdbms.AppEngineDriver");
 				return new MySQLDatabaseConnector(url, user, password);
 			} else if (rdbmsTypeSQLServer.equalsIgnoreCase(rdbmsType)) {
 				Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
@@ -76,6 +79,6 @@ public class DatabaseConnectorFactory {
 			}
 		} catch (ClassNotFoundException exception) {
 			throw new WikiFatalException(exception);
-		}
+		} 
 	}
 }

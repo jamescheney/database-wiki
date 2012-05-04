@@ -151,7 +151,6 @@ public class SelectClause {
 				try {
 					nodeMarker = new QueryOutputNodeCollector(outputNodes, _resultSchema.find(stmt.label()));
 				} catch (WikiException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			new RelativeXPathConsumer().consume(node, stmt.targetPath(), nodeMarker);

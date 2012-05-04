@@ -56,7 +56,6 @@ public class RequestParameterList {
 	    		try {
 					this.add(new RequestParameter(URLDecoder.decode(tokens.nextToken(), "UTF-8")));
 				} catch (UnsupportedEncodingException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 					throw new WikiFatalException(e);
 				}

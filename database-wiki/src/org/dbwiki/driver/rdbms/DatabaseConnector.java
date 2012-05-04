@@ -176,6 +176,8 @@ public abstract class DatabaseConnector implements DatabaseConstants, WikiServer
 					RelUserColPassword + " varchar(80) NOT NULL, " +
 					"PRIMARY KEY (" + RelUserColID + "))");
 			
+			// TODO #users: Split this off into a separate reader for List<User>, so that this isn't dependent on File.
+			
 			if (file != null) {
 				BufferedReader in = new BufferedReader(new FileReader(file));
 				String line;
@@ -185,6 +187,7 @@ public abstract class DatabaseConnector implements DatabaseConstants, WikiServer
 						String login = tokens.nextToken();
 						String fullName = tokens.nextToken();
 						String password = tokens.nextToken();
+						// TODO: prepared statements
 						String sql = "INSERT INTO " + RelationUser + "(" +
 							RelUserColLogin + ", " +
 							RelUserColFullName + ", " +

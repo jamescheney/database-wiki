@@ -37,6 +37,7 @@ public interface WikiServerConstants {
 	public static final String SpecialFileDatabaseWikiDefaultCSS = "/html/style/wiki_template.css";
 	public static final String SpecialFolderDatabaseWikiStyle = "/html/style/dbwiki";
 	public static final String SpecialFolderLogin = "/login";
+	public static final String SpecialFolderLogout = "/logout";
 	public static final String SpecialFolderMarkdown = "/markdown";
 	public static final String SpecialFolderPage = "/page";
 
@@ -76,7 +77,7 @@ public interface WikiServerConstants {
 	public static final String RelPresentationColTime     = "time";
 	public static final String RelPresentationColUser     = "uid";
 	public static final String RelPresentationColValue    = "value";
-	public static final String RelPresentationColDatabase = "database";
+	public static final String RelPresentationColDatabase = "database_id";
 
 	public static final int RelConfigFileColFileTypeValCSS         = 1;
 	public static final int RelConfigFileColFileTypeValLayout      = 2;

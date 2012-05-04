@@ -315,20 +315,27 @@ public class DatabaseWriter implements DatabaseConstants {
 		return nodeIdentifier;
 	}
 	
-	private void shiftNodes(String pre_post, int entryID, int newPre, int delta) throws SQLException {
-		// TODO Bump all the existing pre/post numbers in the entry up by newpost via SQL UPDATE.
-		// (It is fine to insert at the end or beginning or anywhere in the middle of the parent list; 
-		// seems like the common case of inserting at the end will be fine.)
+	/**
+	 *  Bumps all the existing pre/post numbers in the entry up by newpost via SQL UPDATE.
+		 (It is fine to insert at the end or beginning or anywhere in the middle of the parent list; 
+		 seems like the common case of inserting at the end will be fine.)
+		
+	 * @param field Field to increment (typically "pre" or "post")
+	 * @param entryID Entry ID in which to increment
+	 * @param n The index number above which the fields should be incremented 
+	 * @param delta The size of the increment
+	 * @throws SQLException
+	 */
+	private void shiftNodes(String field, int entryID, int n, int delta) throws SQLException {
 		PreparedStatement pStmtUpdatePre = _con.prepareStatement(
 				"UPDATE " + _database.name() + RelationData + " " +
-					"SET " + pre_post + " = ? + " + pre_post + " " +
-					"WHERE " + pre_post + " >= ? AND " + RelDataColEntry + " = ?");
+					"SET " + field + " = ? + " + field + " " +
+					"WHERE " + field + " >= ? AND " + RelDataColEntry + " = ?");
 			pStmtUpdatePre.setInt(1, delta);
-			pStmtUpdatePre.setInt(2, newPre);
+			pStmtUpdatePre.setInt(2, n);
 			pStmtUpdatePre.setInt(3, entryID);
 			pStmtUpdatePre.execute();
 			pStmtUpdatePre.close();
-
 	}
 
 	/** Update the time interval starting at interval.start() associated with an identified resource with a new end.
