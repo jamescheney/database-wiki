@@ -120,8 +120,8 @@ public class DatabaseReader implements DatabaseConstants {
 				   	" AND v1.post <= v2.n_post " +
 				 	" AND v2.n_entry=v1.entry "+
 					" ORDER BY n_id, t_start, a_id ");
-			 */
 			
+			 */
 			ResultSet rs= stmt.executeQuery(
 					" SELECT v2.* "+
 					" FROM "+ database.name() + RelationData +" v1, " + database.name() + ViewData + " v2 "+
@@ -129,7 +129,9 @@ public class DatabaseReader implements DatabaseConstants {
 				 	" AND ((v1.pre <= v2.n_pre AND v1.post >= v2.n_post ) OR (v1.pre >= v2.n_pre AND v1.post <= v2.n_post))" +
 					" AND v2.n_entry=v1.entry" +
 					" ORDER BY n_id, t_start, a_id ");
-			
+	
+
+
 			DatabaseNode node = null;
 			int i=0;
 			 
