@@ -57,6 +57,7 @@ public class RequestParameter {
 	public static final String ParameterURL              = "url";
 	public static final String ParameterURLDecoding      = "url_decoding";
 	public static final String ParameterVersion          = "version";
+	public static final String ParameterVisualisation    = "visualise";
 	
 	public static final String ActionValueAnnotation      = "annotation";
 	public static final String ActionValueSchemaNode      = "schema_node";

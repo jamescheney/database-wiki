@@ -81,6 +81,8 @@ public class RequestType {
 	private static final byte requestTypeURLDecoding = 22;
 	// ?json[?version]
 	private static final byte requestTypeExportJSON = 23;
+	//?visualise
+	private static final byte requestTypeVisualise = 24;
 	
 	
 	
@@ -173,6 +175,8 @@ public class RequestType {
 				_type = requestTypeExportJSON;
 			} else if (parameters.hasParameter(RequestParameter.ParameterHistory)) {
 				_type = requestTypePageHistory;
+			} else if (parameters.hasParameter(RequestParameter.ParameterVisualisation)) {
+				_type = requestTypeVisualise;
 			} else if (url.isRoot()) {
 				// / [index_pos=...] [version=...]
 				if (parameters.hasParameter(RequestParameter.ParameterVersion)) {
@@ -343,6 +347,10 @@ public class RequestType {
 	
 	public boolean isURLDecoding() {
 		return (_type == requestTypeURLDecoding);
+	}
+	
+	public boolean isVisualise() {
+		return (_type == requestTypeVisualise);
 	}
 	
 	public String toString() {
