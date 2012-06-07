@@ -63,14 +63,11 @@ public class TimemachinePrinter implements HtmlContentPrinter {
 		String fullHistory = "<a CLASS=\"" + CSS.CSSTimemachineTab + "\" HREF=\"" + _request.wri().getURL()  + "?" + RequestParameter.ParameterVersion + "=" + RequestParameterVersion.VersionAll + "\">Full history</a>";
 		String previousVersion = "<a CLASS=\"" + CSS.CSSTimemachineTab + "\" HREF=\"" + _request.wri().getURL() + "?" + RequestParameter.ParameterPreviousVersion + "\">Previous version</a>";
 		String changesSince = "<a CLASS=\"" + CSS.CSSTimemachineTab + "\" HREF=\"" + _request.wri().getURL() + "?" + RequestParameter.ParameterChangesSince + "\">Changes since ...</a>";
-		String updateVisualisation = "<a CLASS=\"" + CSS.CSSTimemachineTab + "\" HREF=\"" + _request.wri().getURL() + "?" + RequestParameter.ParameterVisualisation + "\">Visualisation</a>";
 		
 		if (_request.parameters().hasParameter(RequestParameter.ParameterChangesSince)) {
 			changesSince = "Changes since ...";
 		} else if (_request.parameters().hasParameter(RequestParameter.ParameterPreviousVersion)) {
 			previousVersion = "Previous version";
-		} else if (_request.parameters().hasParameter(RequestParameter.ParameterVisualisation)) {
-			updateVisualisation = "Visualisation";
 		} else {
 			RequestParameterVersion versionParameter = RequestParameter.versionParameter(_request.parameters().get(RequestParameter.ParameterVersion));
 			if (versionParameter.versionAll()) {
@@ -94,9 +91,6 @@ public class TimemachinePrinter implements HtmlContentPrinter {
 		body.closeTD();
 		body.openTD(CSS.CSSTimemachineTab);
 		body.text(previousVersion);
-		body.closeTD();
-		body.openTD(CSS.CSSTimemachineTab);
-		body.text(updateVisualisation);
 		body.closeTD();
 		body.openTD(CSS.CSSTimemachineTab);
 		body.text(changesSince);

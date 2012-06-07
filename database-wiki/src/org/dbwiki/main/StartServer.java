@@ -47,6 +47,7 @@ public class StartServer {
 			System.out.println("Usage: " + commandLine);
 			System.exit(0);
 		}
+		
 		try {
 			new WikiServer(org.dbwiki.lib.IO.loadProperties(new File(args[0]))).start();
 		} catch (Exception exception) {

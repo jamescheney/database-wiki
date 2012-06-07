@@ -111,7 +111,6 @@ import org.dbwiki.web.ui.printer.ObjectProvenancePrinter;
 import org.dbwiki.web.ui.printer.SettingsListingPrinter;
 import org.dbwiki.web.ui.printer.TimemachinePrinter;
 import org.dbwiki.web.ui.printer.VersionIndexPrinter;
-import org.dbwiki.web.ui.printer.VisualisationPrinter;
 
 import org.dbwiki.web.ui.printer.data.CreateSchemaNodeFormPrinter;
 import org.dbwiki.web.ui.printer.data.DataMenuPrinter;
@@ -799,9 +798,6 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 				}
 				contentGenerator.put(DatabaseWikiContentGenerator.ContentTimemachine, new TimemachinePrinter(request));
 				contentGenerator.put(DatabaseWikiContentGenerator.ContentContent, new VersionIndexPrinter(request));
-			} else if (request.type().isVisualise()) {
-				contentGenerator.put(DatabaseWikiContentGenerator.ContentTimemachine, new TimemachinePrinter(request));
-				contentGenerator.put(DatabaseWikiContentGenerator.ContentContent, new VisualisationPrinter(request));
 			} else if (request.type().isLayout()) { // Editing the layout
 				contentGenerator.put(DatabaseWikiContentGenerator.ContentContent, new LayoutEditor(request));
 			} else if (request.type().isPasteForm()) { // Pasting XML data from a URL

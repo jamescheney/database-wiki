@@ -101,8 +101,7 @@ public class ObjectProvenancePrinter implements HtmlContentPrinter {
 			}
 			this.printProvenanceLine(version, css, body);
 		}
-		body.closeTABLE();	
-		body.link("http://www.delfi.lt", "Visualise");
+		body.closeTABLE();		
 	}
 	
 	
