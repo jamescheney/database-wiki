@@ -160,5 +160,30 @@ public class DatabaseSchema {
 		return buf.toString().trim();
 	}
 
+	public DatabaseSchema getSubSchema(String path) throws org.dbwiki.exception.WikiException {
+		SchemaNode newRoot = get(path);
+		DatabaseSchema newSchema = new DatabaseSchema();
+		duplicate(newSchema, 0, null, newRoot);
+		return newSchema;
+	}
+	
+	// FIXME: This is ugly due to the need to copy & renumber the schema nodes...
+	private void duplicate(DatabaseSchema newSchema, int i, GroupSchemaNode parent, SchemaNode root) throws org.dbwiki.exception.WikiException {
+		if(root.isGroup()) {
+			
+			GroupSchemaNode rootCopy = new GroupSchemaNode(i,root.label(),parent); 
+			newSchema.add(rootCopy);	
+			SchemaNodeList children = ((GroupSchemaNode)root).children();
+			int j = i;
+			for (int iChild = 0; iChild < children.size(); iChild++) {
+				j = j+1;
+				duplicate(newSchema,j, rootCopy,children.get(iChild));
+			}
+		} else { // it's an attribute
+			AttributeSchemaNode rootCopy = new AttributeSchemaNode(i,root.label(),parent);
+			newSchema.add(rootCopy);
+		}
+	}
+	
 	
 }

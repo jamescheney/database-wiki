@@ -774,6 +774,7 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 				String path = null;
 				if (!properties.getSchemaPath().equals("")) {
 					path = properties.getSchemaPath();
+					databaseSchema = databaseSchema.getSubSchema(path);
 				} else {
 					path = databaseSchema.root().path();
 				}
