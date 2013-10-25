@@ -1,0 +1,859 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<festival>
+	<event>
+		<event_token>THE LIST</event_token>
+		<src_code>EMF</src_code>
+		<area_code>EMF</area_code>
+		<event_code>Edinburgh Mela Festival</event_code>
+		<venue_code>Edinburgh Mela Festival Outdoor Space</venue_code>
+		<src_desc>Hub Tickets</src_desc>
+		<area_desc>Edinburgh Mela Festival</area_desc>
+		<event_desc>CARGO World Premiere</event_desc>
+		<venue_desc>Leith Links (West)</venue_desc>
+		<start_date_yyyymmdd>20100806</start_date_yyyymmdd>
+		<start_time_hhmm>2115</start_time_hhmm>
+		<start_time_hhmmss>211500</start_time_hhmmss>
+		<end_date_yyyymmdd>20100806</end_date_yyyymmdd>
+		<end_time_hhmm>2115</end_time_hhmm>
+		<end_time_hhmmss>211500</end_time_hhmmss>
+		<postcode>EH6 7QR</postcode>
+		<event_latitude>55.970964</event_latitude>
+		<event_longitude>-3.164492</event_longitude>
+		<main_class>World Premiere</main_class>
+		<event_info>Edinburgh Mela / Iron Oxide Ltd in Co - production. A risk-taking, water-soaked exploration of the universal need to migrate. This daring large-scale outdoor production weaves together extreme physicality, a stunning soundtrack, intricate imagery and strange yet familiar characters. In a world of dangers, high seas and troubled lands, CARGO tells the tale of two people and their quest for the perfect place to call home. Filled with adventurers, exiles, conquerors and slaves, CARGO explores the primal urge of humans to leave their country of origin, whether it be for a better life, to escape a past, for a new way of living, or to find... themselves.</event_info>
+		<venue_info>Arriving : The site entrance is situated on the corner of Duke Street and East Hermitage Place.  Please not that this is the only entrance to the festival site. Facilities: The festival site is fully equipped with toilets, including accessible toilets, baby changing and breast feeding facilities. Information: There is an information point on site where you can access programme details or ask for assistance if you have a query. This also acts as a 'meeting point' for lost persons. There are also staff, stewards and volunteers throughout the site to help you. First Aid : There is a medical facility and staff on site. Accessibility and Assistance : The site is fully accessible, although it must be noted that the festival is an outdoor event on a largely grass surface. Assessible toilets are available please see our website for furthur details. Assistance is available for disabled patrons at the box office and the site entrance. Disabled Parking : A limited number of parking spaces are available on site for disabled visitors and are marked on the site map on our website. All vehicles parked here must display a Blue Badge Permit. Parking : The Edinburgh Mela Festival is not able to provide a dedicated parking facility. Parking in the surrounding area is very limited and will be strictly controlled by parking and traffic control measures, including vehicle uplift for illegally parked vehicles. Due to this, and to make the festival as environmentally friendly as possible, we strongly advise that you use public transport to travel to the festival. If you need to travel by car for part of the journey please consider the use of one of Edinburgh's many Park and Ride facilities. For more information please visit http://www.edinburgh.gov.uk/internet/Transport/Parking/CEC_park_and_rides</venue_info>
+		<venue_addr>Leith Links (West)</venue_addr>
+		<extra_event_texts>
+			<extra_text>
+				<code>running_time</code>
+				<description>01:00:00</description>
+			</extra_text>
+		</extra_event_texts>
+		<min_seat_price>3</min_seat_price>
+		<event_url>http://www.edinburgh-mela.co.uk/festival/cargo.php</event_url>
+		<using_perf_list>
+			<performance>
+				<is_limited>no</is_limited>
+				<date_yyyymmdd>20100806</date_yyyymmdd>
+				<date_desc>06/08/10</date_desc>
+				<time_hhmmss>211500</time_hhmmss>
+				<time_desc>21:15:00</time_desc>
+				<perf_url>http://www.hubtickets.co.uk/default.asp</perf_url>
+			</performance>
+		</using_perf_list>
+	</event>
+	<event>
+		<event_token>THE LIST</event_token>
+		<src_code>EMF</src_code>
+		<area_code>EMF</area_code>
+		<event_code>Edinburgh Mela Festival</event_code>
+		<venue_code>Edinburgh Mela Festival</venue_code>
+		<src_desc>Hub Tickets</src_desc>
+		<area_desc>Edinburgh Mela Festival</area_desc>
+		<event_desc>Mela Festival</event_desc>
+		<venue_desc>Leith Links (West)</venue_desc>
+		<start_date_yyyymmdd>20100807</start_date_yyyymmdd>
+		<start_time_hhmm>1200</start_time_hhmm>
+		<start_time_hhmmss>120000</start_time_hhmmss>
+		<end_date_yyyymmdd>20100808</end_date_yyyymmdd>
+		<end_time_hhmm>1200</end_time_hhmm>
+		<end_time_hhmmss>120000</end_time_hhmmss>
+		<postcode>EH6 7QR</postcode>
+		<event_latitude>55.970964</event_latitude>
+		<event_longitude>-3.164492</event_longitude>
+		<main_class>Various</main_class>
+		<event_info>Welcome to the 16th Edinburgh Mela festival at our new permanent home, Leith Links.  This year's festival is our biggest and best yet with a varied programme of exciting performances, including two major commissions, CARGO and Naturally Inspired. Alongside this is the usual mix of family entertainment, fantastic food and a packed marketplace that ensures something for all ages. From Lahore, Delhi, Jaipur or Uganda to artists working in the heart of Leith, the Mela represents an exciting celebration of Edinburgh's diverse communites, their heritage and culture and how this continues to develop a strong and evolving, contemporary, Scottish identity. We know we have all the right ingredients. Come and join the feast!</event_info>
+		<venue_info>Arriving : The site entrance is situated on the corner of Duke Street and East Hermitage Place.  Please not that this is the only entrance to the festival site. Facilities: The festival site is fully equipped with toilets, including accessible toilets, baby changing and breast feeding facilities. Information: There is an information point on site where you can access programme details or ask for assistance if you have a query. This also acts as a 'meeting point' for lost persons. There are also staff, stewards and volunteers throughout the site to help you. First Aid : There is a medical facility and staff on site. Accessibility and Assistance : The site is fully accessible, although it must be noted that the festival is an outdoor event on a largely grass surface. Assessible toilets are available please see our website for furthur details. Assistance is available for disabled patrons at the box office and the site entrance. Disabled Parking : A limited number of parking spaces are available on site for disabled visitors and are marked on the site map on our website. All vehicles parked here must display a Blue Badge Permit. Parking : The Edinburgh Mela Festival is not able to provide a dedicated parking facility. Parking in the surrounding area is very limited and will be strictly controlled by parking and traffic control measures, including vehicle uplift for illegally parked vehicles. Due to this, and to make the festival as environmentally friendly as possible, we strongly advise that you use public transport to travel to the festival. If you need to travel by car for part of the journey please consider the use of one of Edinburgh's many Park and Ride facilities. For more information please visit http://www.edinburgh.gov.uk/internet/Transport/Parking/CEC_park_and_rides</venue_info>
+		<venue_addr>Leith Links (West)</venue_addr>
+		<extra_event_texts>
+			<extra_text>
+				<code>running_time</code>
+				<description>09:00:00</description>
+			</extra_text>
+		</extra_event_texts>
+		<min_seat_price>2</min_seat_price>
+		<event_url>http://www.edinburgh-mela.co.uk/festival/saturday.php</event_url>
+		<using_perf_list>
+			<performance>
+				<is_limited>no</is_limited>
+				<date_yyyymmdd>20100807</date_yyyymmdd>
+				<date_desc>07/08/10</date_desc>
+				<time_hhmmss>120000</time_hhmmss>
+				<time_desc>12:00:00</time_desc>
+				<perf_url>http://www.hubtickets.co.uk/default.asp</perf_url>
+			</performance>
+			<performance>
+				<is_limited>no</is_limited>
+				<date_yyyymmdd>20100808</date_yyyymmdd>
+				<date_desc>08/08/10</date_desc>
+				<time_hhmmss>120000</time_hhmmss>
+				<time_desc>12:00:00</time_desc>
+				<perf_url>http://www.hubtickets.co.uk/default.asp</perf_url>
+			</performance>
+		</using_perf_list>
+	</event>
+	<event>
+		<event_token>THE LIST</event_token>
+		<src_code>EMF</src_code>
+		<area_code>EMF</area_code>
+		<event_code>Edinburgh Mela Festival</event_code>
+		<venue_code>Edinburgh Mela Festival Outdoor Space</venue_code>
+		<src_desc>Hub Tickets</src_desc>
+		<area_desc>Edinburgh Mela Festival</area_desc>
+		<event_desc>Outdoor Space</event_desc>
+		<venue_desc>Leith Links (West)</venue_desc>
+		<start_date_yyyymmdd>20100807</start_date_yyyymmdd>
+		<start_time_hhmm>1400</start_time_hhmm>
+		<start_time_hhmmss>140000</start_time_hhmmss>
+		<end_date_yyyymmdd>20100807</end_date_yyyymmdd>
+		<end_time_hhmm>1400</end_time_hhmm>
+		<end_time_hhmmss>140000</end_time_hhmmss>
+		<postcode>EH6 7QR</postcode>
+		<event_latitude>55.970964</event_latitude>
+		<event_longitude>-3.164492</event_longitude>
+		<main_class>Outdoor Theatre</main_class>
+		<event_info>Jaipur Kawa Circus : Charming family story of a travelling circus troupe from Rajasthan arriving with all their materials, rhythm and music. CARGO - Edinburgh Mela / Iron Oxide Ltd in Co - production. A risk-taking, water-soaked exploration of the universal need to migrate. This daring large-scale outdoor production weaves together extreme physicality, a stunning soundtrack, intricate imagery and strange yet familiar characters. Trunk - Pif - Paf : Kamikaze chickens, a strong man, lion and a stage shy elephant come together with wild puppetry, live music a flying dance and water. Jaipur Kawa Brass Band : Rajasthan's exciting street brass band will weave in and out of the crowds.</event_info>
+		<venue_info>Arriving : The site entrance is situated on the corner of Duke Street and East Hermitage Place.  Please not that this is the only entrance to the festival site. Facilities: The festival site is fully equipped with toilets, including accessible toilets, baby changing and breast feeding facilities. Information: There is an information point on site where you can access programme details or ask for assistance if you have a query. This also acts as a 'meeting point' for lost persons. There are also staff, stewards and volunteers throughout the site to help you. First Aid : There is a medical facility and staff on site. Accessibility and Assistance : The site is fully accessible, although it must be noted that the festival is an outdoor event on a largely grass surface. Assessible toilets are available please see our website for furthur details. Assistance is available for disabled patrons at the box office and the site entrance. Disabled Parking : A limited number of parking spaces are available on site for disabled visitors and are marked on the site map on our website. All vehicles parked here must display a Blue Badge Permit. Parking : The Edinburgh Mela Festival is not able to provide a dedicated parking facility. Parking in the surrounding area is very limited and will be strictly controlled by parking and traffic control measures, including vehicle uplift for illegally parked vehicles. Due to this, and to make the festival as environmentally friendly as possible, we strongly advise that you use public transport to travel to the festival. If you need to travel by car for part of the journey please consider the use of one of Edinburgh's many Park and Ride facilities. For more information please visit http://www.edinburgh.gov.uk/internet/Transport/Parking/CEC_park_and_rides</venue_info>
+		<venue_addr>Leith Links (West)</venue_addr>
+		<extra_event_texts>
+			<extra_text>
+				<code>running_time</code>
+				<description>06:00:00</description>
+			</extra_text>
+		</extra_event_texts>
+		<min_seat_price>2</min_seat_price>
+		<event_url>http://www.edinburgh-mela.co.uk/festival/theatre.php</event_url>
+		<using_perf_list>
+			<performance>
+				<is_limited>no</is_limited>
+				<date_yyyymmdd>20100807</date_yyyymmdd>
+				<date_desc>07/08/10</date_desc>
+				<time_hhmmss>140000</time_hhmmss>
+				<time_desc>14:00:00</time_desc>
+				<perf_url>http://www.hubtickets.co.uk/default.asp</perf_url>
+			</performance>
+		</using_perf_list>
+	</event>
+	<event>
+		<event_token>THE LIST</event_token>
+		<src_code>EMF</src_code>
+		<area_code>EMF</area_code>
+		<event_code>Edinburgh Mela Festival</event_code>
+		<venue_code>Edinburgh Mela Festival Outdoor Space </venue_code>
+		<src_desc>Hub Tickets</src_desc>
+		<area_desc>Edinburgh Mela Festival</area_desc>
+		<event_desc>Outdoor Space</event_desc>
+		<venue_desc>Leith Links (West)</venue_desc>
+		<start_date_yyyymmdd>20100808</start_date_yyyymmdd>
+		<start_time_hhmm>1400</start_time_hhmm>
+		<start_time_hhmmss>140000</start_time_hhmmss>
+		<end_date_yyyymmdd>20100808</end_date_yyyymmdd>
+		<end_time_hhmm>1400</end_time_hhmm>
+		<end_time_hhmmss>140000</end_time_hhmmss>
+		<postcode>EH6 7QR</postcode>
+		<event_latitude>55.970964</event_latitude>
+		<event_longitude>-3.164492</event_longitude>
+		<main_class>Outdoor Theatre</main_class>
+		<event_info>CARGO - Edinburgh Mela / Iron Oxide Ltd in Co - production. A risk-taking, water-soaked exploration of the universal need to migrate. This daring large-scale outdoor production weaves together extreme physicality, a stunning soundtrack, intricate imagery and strange yet familiar characters. Trunk - Pif - Paf : Kamikaze chickens, a strong man, lion and a stage shy elephant come together with wild puppetry, live music a flying dance and water.</event_info>
+		<venue_info>Arriving : The site entrance is situated on the corner of Duke Street and East Hermitage Place.  Please not that this is the only entrance to the festival site. Facilities: The festival site is fully equipped with toilets, including accessible toilets, baby changing and breast feeding facilities. Information: There is an information point on site where you can access programme details or ask for assistance if you have a query. This also acts as a 'meeting point' for lost persons. There are also staff, stewards and volunteers throughout the site to help you. First Aid : There is a medical facility and staff on site. Accessibility and Assistance : The site is fully accessible, although it must be noted that the festival is an outdoor event on a largely grass surface. Assessible toilets are available please see our website for furthur details. Assistance is available for disabled patrons at the box office and the site entrance. Disabled Parking : A limited number of parking spaces are available on site for disabled visitors and are marked on the site map on our website. All vehicles parked here must display a Blue Badge Permit. Parking : The Edinburgh Mela Festival is not able to provide a dedicated parking facility. Parking in the surrounding area is very limited and will be strictly controlled by parking and traffic control measures, including vehicle uplift for illegally parked vehicles. Due to this, and to make the festival as environmentally friendly as possible, we strongly advise that you use public transport to travel to the festival. If you need to travel by car for part of the journey please consider the use of one of Edinburgh's many Park and Ride facilities. For more information please visit http://www.edinburgh.gov.uk/internet/Transport/Parking/CEC_park_and_rides</venue_info>
+		<venue_addr>Leith Links (West)</venue_addr>
+		<extra_event_texts>
+			<extra_text>
+				<code>running_time</code>
+				<description>07:00:00</description>
+			</extra_text>
+		</extra_event_texts>
+		<min_seat_price>2</min_seat_price>
+		<event_url>http://www.edinburgh-mela.co.uk/festival/theatre.php</event_url>
+		<using_perf_list>
+			<performance>
+				<is_limited>no</is_limited>
+				<date_yyyymmdd>20100808</date_yyyymmdd>
+				<date_desc>08/08/10</date_desc>
+				<time_hhmmss>140000</time_hhmmss>
+				<time_desc>14:00:00</time_desc>
+				<perf_url>http://www.hubtickets.co.uk/default.asp</perf_url>
+			</performance>
+		</using_perf_list>
+	</event>
+	<event>
+		<event_token>THE LIST</event_token>
+		<src_code>EMF</src_code>
+		<area_code>EMF</area_code>
+		<event_code>Edinburgh Mela Festival</event_code>
+		<venue_code>Edinburgh Mela Festival Garden Stage</venue_code>
+		<src_desc>Hub Tickets</src_desc>
+		<area_desc>Edinburgh Mela Festival</area_desc>
+		<event_desc>Mela Garden Stage</event_desc>
+		<venue_desc>Leith Links (West)</venue_desc>
+		<start_date_yyyymmdd>20100807</start_date_yyyymmdd>
+		<start_time_hhmm>1200</start_time_hhmm>
+		<start_time_hhmmss>120000</start_time_hhmmss>
+		<end_date_yyyymmdd>20100807</end_date_yyyymmdd>
+		<end_time_hhmm>1200</end_time_hhmm>
+		<end_time_hhmmss>120000</end_time_hhmmss>
+		<postcode>EH6 7QR</postcode>
+		<event_latitude>55.970964</event_latitude>
+		<event_longitude>-3.164492</event_longitude>
+		<main_class>Various</main_class>
+		<event_info>Patiala Pipe Band : Return of Mela favourites all the way from Lahore. Egyptian Bellydance : Local bellydancer Natalie brings a little bit of Egypt to the Mela. Pulse of the Place : Leith's own samba band. Lothian and Borders Police Choir : Scotland's first police choir with arrangements of well - known songs. Manushi Dance Company : Classical Kathak dance from North India. Townhouse : Edinburgh acoustic act with their original grooves. Ask i-Trio : Turkish Sufi Music inspired trio. Festival Jam Session : Led by GOL.</event_info>
+		<venue_info>Arriving : The site entrance is situated on the corner of Duke Street and East Hermitage Place.  Please not that this is the only entrance to the festival site. Facilities: The festival site is fully equipped with toilets, including accessible toilets, baby changing and breast feeding facilities. Information: There is an information point on site where you can access programme details or ask for assistance if you have a query. This also acts as a 'meeting point' for lost persons. There are also staff, stewards and volunteers throughout the site to help you. First Aid : There is a medical facility and staff on site. Accessibility and Assistance : The site is fully accessible, although it must be noted that the festival is an outdoor event on a largely grass surface. Assessible toilets are available please see our website for furthur details. Assistance is available for disabled patrons at the box office and the site entrance. Disabled Parking : A limited number of parking spaces are available on site for disabled visitors and are marked on the site map on our website. All vehicles parked here must display a Blue Badge Permit. Parking : The Edinburgh Mela Festival is not able to provide a dedicated parking facility. Parking in the surrounding area is very limited and will be strictly controlled by parking and traffic control measures, including vehicle uplift for illegally parked vehicles. Due to this, and to make the festival as environmentally friendly as possible, we strongly advise that you use public transport to travel to the festival. If you need to travel by car for part of the journey please consider the use of one of Edinburgh's many Park and Ride facilities. For more information please visit http://www.edinburgh.gov.uk/internet/Transport/Parking/CEC_park_and_rides</venue_info>
+		<venue_addr>Leith Links (West)</venue_addr>
+		<extra_event_texts>
+			<extra_text>
+				<code>running_time</code>
+				<description>08:00:00</description>
+			</extra_text>
+		</extra_event_texts>
+		<min_seat_price>2</min_seat_price>
+		<event_url>http://www.edinburgh-mela.co.uk/festival/saturday.php</event_url>
+		<using_perf_list>
+			<performance>
+				<is_limited>no</is_limited>
+				<date_yyyymmdd>20100807</date_yyyymmdd>
+				<date_desc>07/08/10</date_desc>
+				<time_hhmmss>120000</time_hhmmss>
+				<time_desc>12:00:00</time_desc>
+				<perf_url>http://www.hubtickets.co.uk/default.asp</perf_url>
+			</performance>
+		</using_perf_list>
+	</event>
+	<event>
+		<event_token>THE LIST</event_token>
+		<src_code>EMF</src_code>
+		<area_code>EMF</area_code>
+		<event_code>Edinburgh Mela Festival</event_code>
+		<venue_code>Edinburgh Mela Festival Garden Stage</venue_code>
+		<src_desc>Hub Tickets</src_desc>
+		<area_desc>Edinburgh Mela Festival</area_desc>
+		<event_desc>Mela Garden Stage</event_desc>
+		<venue_desc>Leith Links (West)</venue_desc>
+		<start_date_yyyymmdd>20100808</start_date_yyyymmdd>
+		<start_time_hhmm>1200</start_time_hhmm>
+		<start_time_hhmmss>120000</start_time_hhmmss>
+		<end_date_yyyymmdd>20100808</end_date_yyyymmdd>
+		<end_time_hhmm>1200</end_time_hhmm>
+		<end_time_hhmmss>120000</end_time_hhmmss>
+		<postcode>EH6 7QR</postcode>
+		<event_latitude>55.970964</event_latitude>
+		<event_longitude>-3.164492</event_longitude>
+		<main_class>Various</main_class>
+		<event_info>Martin Aelred : Chill - out operatis. Zawadi Choir : The Africa Centre 's  local community choir. Bollywood Unlimited - Swaryatra : Vibrant journey through traditional and contemporary Bollywood. G Band : Popular and authentic Bangladeshi  songs and contemporary Bollywood. Dance Ihayami : Edinburgh's own Dance Ihayami with their student company performing Bharatanatyam : Indian classical dance. Kagumba Andrew Kalyowa : Traditional Ugandan folk music. Andrew is from Mpambire, a village in Uganda famous for drum making. Ask i-Trio : Turkish Sufi Music inspired trio.</event_info>
+		<venue_info>Arriving : The site entrance is situated on the corner of Duke Street and East Hermitage Place.  Please not that this is the only entrance to the festival site. Facilities: The festival site is fully equipped with toilets, including accessible toilets, baby changing and breast feeding facilities. Information: There is an information point on site where you can access programme details or ask for assistance if you have a query. This also acts as a 'meeting point' for lost persons. There are also staff, stewards and volunteers throughout the site to help you. First Aid : There is a medical facility and staff on site. Accessibility and Assistance : The site is fully accessible, although it must be noted that the festival is an outdoor event on a largely grass surface. Assessible toilets are available please see our website for furthur details. Assistance is available for disabled patrons at the box office and the site entrance. Disabled Parking : A limited number of parking spaces are available on site for disabled visitors and are marked on the site map on our website. All vehicles parked here must display a Blue Badge Permit. Parking : The Edinburgh Mela Festival is not able to provide a dedicated parking facility. Parking in the surrounding area is very limited and will be strictly controlled by parking and traffic control measures, including vehicle uplift for illegally parked vehicles. Due to this, and to make the festival as environmentally friendly as possible, we strongly advise that you use public transport to travel to the festival. If you need to travel by car for part of the journey please consider the use of one of Edinburgh's many Park and Ride facilities. For more information please visit http://www.edinburgh.gov.uk/internet/Transport/Parking/CEC_park_and_rides</venue_info>
+		<venue_addr>Leith Links (West)</venue_addr>
+		<extra_event_texts>
+			<extra_text>
+				<code>running_time</code>
+				<description>06:30:00</description>
+			</extra_text>
+		</extra_event_texts>
+		<min_seat_price>2</min_seat_price>
+		<event_url>http://www.edinburgh-mela.co.uk/festival/sunday.php</event_url>
+		<using_perf_list>
+			<performance>
+				<is_limited>no</is_limited>
+				<date_yyyymmdd>20100808</date_yyyymmdd>
+				<date_desc>08/08/10</date_desc>
+				<time_hhmmss>120000</time_hhmmss>
+				<time_desc>12:00:00</time_desc>
+				<perf_url>http://www.hubtickets.co.uk/default.asp</perf_url>
+			</performance>
+		</using_perf_list>
+	</event>
+	<event>
+		<event_token>THE LIST</event_token>
+		<src_code>EMF</src_code>
+		<area_code>EMF</area_code>
+		<event_code>Edinburgh Mela Festival</event_code>
+		<venue_code>Edinburgh Mela Forest Workshop Tent</venue_code>
+		<src_desc>Hub Tickets</src_desc>
+		<area_desc>Edinburgh Mela Festival</area_desc>
+		<event_desc>Mela Forest Workshop Tent</event_desc>
+		<venue_desc>Leith Links (West)</venue_desc>
+		<start_date_yyyymmdd>20100807</start_date_yyyymmdd>
+		<start_time_hhmm>1200</start_time_hhmm>
+		<start_time_hhmmss>120000</start_time_hhmmss>
+		<end_date_yyyymmdd>20100807</end_date_yyyymmdd>
+		<end_time_hhmm>1200</end_time_hhmm>
+		<end_time_hhmmss>120000</end_time_hhmmss>
+		<postcode>EH6 7QR</postcode>
+		<event_latitude>55.970964</event_latitude>
+		<event_longitude>-3.164492</event_longitude>
+		<main_class>Children and Families</main_class>
+		<event_info>For nature inspired activities for the whole family supported by Scottish Natural Heritage and the Forestry Commission Scotland. Drop in arts and crafts activities as well as the Forest Creatures, puppet show and Dr Woody. (Children should be accompained by an adult). Naturally Inspired : Rosina Bonsu and Jean Edmunso - &quot;Gift of colours&quot; storytelling with movement. Children and families - all ages. Andy Cannon and Bob Pegg - stories and music from the forest. Children and family all ages. Kim Ho Ip and Ramesh Meyyapp - Rythmic gestures from nature. 8 - 11 year olds. East and West in the Forest - children and families - all ages. John and Marion Kelly - Scottish forest music. Children and families - all ages. Manushi Dance Company : Asian story telling / music - using hand gestures, eye movements and body shapes. 6 - 11 years + parents / carers. Ask - I Trio : Turkish Rhythms. Children and families all ages.Barnby Brown : Action Songs. 2 to 3 yr oldswith parents and carers. Pulse of the Place : Samba drumming workshop. Children and families. All ages. Natifa Al Nahr : Bellydancing for girls of all ages. Jaipur Kawa Brass Band : The magic of Rajasthan. Children and familes all ages. Northern Xposure: Hip hop in the forest. 8 - 11 year olds. Nepal Scotland Association : Kite-making, leaf painting with real Peepal leaves brought fresh from the Himalayas, Buddhist Thanka colouring, learning how to make dishes from leaves and helping the Ghurkhas to build a Nepali Yak herders hut (a Goth).</event_info>
+		<venue_info>Arriving : The site entrance is situated on the corner of Duke Street and East Hermitage Place.  Please not that this is the only entrance to the festival site. Facilities: The festival site is fully equipped with toilets, including accessible toilets, baby changing and breast feeding facilities. Information: There is an information point on site where you can access programme details or ask for assistance if you have a query. This also acts as a 'meeting point' for lost persons. There are also staff, stewards and volunteers throughout the site to help you. First Aid : There is a medical facility and staff on site. Accessibility and Assistance : The site is fully accessible, although it must be noted that the festival is an outdoor event on a largely grass surface. Assessible toilets are available please see our website for furthur details. Assistance is available for disabled patrons at the box office and the site entrance. Disabled Parking : A limited number of parking spaces are available on site for disabled visitors and are marked on the site map on our website. All vehicles parked here must display a Blue Badge Permit. Parking : The Edinburgh Mela Festival is not able to provide a dedicated parking facility. Parking in the surrounding area is very limited and will be strictly controlled by parking and traffic control measures, including vehicle uplift for illegally parked vehicles. Due to this, and to make the festival as environmentally friendly as possible, we strongly advise that you use public transport to travel to the festival. If you need to travel by car for part of the journey please consider the use of one of Edinburgh's many Park and Ride facilities. For more information please visit http://www.edinburgh.gov.uk/internet/Transport/Parking/CEC_park_and_rides</venue_info>
+		<venue_addr>Leith Links (West)</venue_addr>
+		<extra_event_texts>
+			<extra_text>
+				<code>running_time</code>
+				<description>07:00:00</description>
+			</extra_text>
+		</extra_event_texts>
+		<min_seat_price>2</min_seat_price>
+		<event_url>http://www.edinburgh-mela.co.uk/festival/children.php</event_url>
+		<using_perf_list>
+			<performance>
+				<is_limited>no</is_limited>
+				<date_yyyymmdd>20100807</date_yyyymmdd>
+				<date_desc>07/08/10</date_desc>
+				<time_hhmmss>120000</time_hhmmss>
+				<time_desc>12:00:00</time_desc>
+				<perf_url>http://www.hubtickets.co.uk/default.asp</perf_url>
+			</performance>
+		</using_perf_list>
+	</event>
+	<event>
+		<event_token>THE LIST</event_token>
+		<src_code>EMF</src_code>
+		<area_code>EMF</area_code>
+		<event_code>Edinburgh Mela Festival</event_code>
+		<venue_code>Edinburgh Mela Forest Workshop Tent</venue_code>
+		<src_desc>Hub Tickets</src_desc>
+		<area_desc>Edinburgh Mela Festival</area_desc>
+		<event_desc>Mela Forest Workshop Tent</event_desc>
+		<venue_desc>Leith Links (West)</venue_desc>
+		<start_date_yyyymmdd>20100808</start_date_yyyymmdd>
+		<start_time_hhmm>1200</start_time_hhmm>
+		<start_time_hhmmss>120000</start_time_hhmmss>
+		<end_date_yyyymmdd>20100808</end_date_yyyymmdd>
+		<end_time_hhmm>1200</end_time_hhmm>
+		<end_time_hhmmss>120000</end_time_hhmmss>
+		<postcode>EH6 7QR</postcode>
+		<event_latitude>55.970964</event_latitude>
+		<event_longitude>-3.164492</event_longitude>
+		<main_class>Children and Families</main_class>
+		<event_info>For nature inspired activities for the whole family supported by Scottish Natural Heritage and the Forestry Commission Scotland. Drop in arts and crafts activities as well as the Forest Creatures, puppet show and Dr Woody. (Children should be accompained by an adult). Natifa Al Nahr : belly dancing for girls of all ages. Trunk: Chicken Acrobatics. Ideal for 6 - 11 year olds and families. Shiraz : An introduction to Indian music. Ideal for children and families of all ages. Forests of Pakistan : A walk in the Forests of Pakistan. Children and families all ages. Nepal Scotland Association : Kite-making, leaf painting with real Peepal leaves brought fresh from the Himalayas, Buddhist Thanka colouring, learning how to make dishes from leaves and helping the Ghurkhas to build a Nepali Yak herders hut (a Goth). Kagumba Andrew Kalyowa : Music from Uganda. Children 5 - 11 years old and families. Priyanka  Dasgupta : Communicating through Dance. Learn basic steps and hand gestures of bharatanatyam. Ideal for girls 6 - 11 years. Ask - I Trio : Turkish Rhythms. Children and families all ages. Bollywood Unlimited : Indian Classical music - introducing Raagas and Taals. Ideal for 6 - 11 year olds and families. Dance Ihayami Student Company : Edinburgh's own Dance Ihayami with their Student Company performing Bharatanatyam: Indian Classical Dance. Jaipur Kawa Brass Band : The Magic of Rajasthan. Children and families all ages.</event_info>
+		<venue_info>Arriving : The site entrance is situated on the corner of Duke Street and East Hermitage Place.  Please not that this is the only entrance to the festival site. Facilities: The festival site is fully equipped with toilets, including accessible toilets, baby changing and breast feeding facilities. Information: There is an information point on site where you can access programme details or ask for assistance if you have a query. This also acts as a 'meeting point' for lost persons. There are also staff, stewards and volunteers throughout the site to help you. First Aid : There is a medical facility and staff on site. Accessibility and Assistance : The site is fully accessible, although it must be noted that the festival is an outdoor event on a largely grass surface. Assessible toilets are available please see our website for furthur details. Assistance is available for disabled patrons at the box office and the site entrance. Disabled Parking : A limited number of parking spaces are available on site for disabled visitors and are marked on the site map on our website. All vehicles parked here must display a Blue Badge Permit. Parking : The Edinburgh Mela Festival is not able to provide a dedicated parking facility. Parking in the surrounding area is very limited and will be strictly controlled by parking and traffic control measures, including vehicle uplift for illegally parked vehicles. Due to this, and to make the festival as environmentally friendly as possible, we strongly advise that you use public transport to travel to the festival. If you need to travel by car for part of the journey please consider the use of one of Edinburgh's many Park and Ride facilities. For more information please visit http://www.edinburgh.gov.uk/internet/Transport/Parking/CEC_park_and_rides</venue_info>
+		<venue_addr>Leith Links (West)</venue_addr>
+		<extra_event_texts>
+			<extra_text>
+				<code>running_time</code>
+				<description>07:00:00</description>
+			</extra_text>
+		</extra_event_texts>
+		<min_seat_price>2</min_seat_price>
+		<event_url>http://www.edinburgh-mela.co.uk/festival/children.php</event_url>
+		<using_perf_list>
+			<performance>
+				<is_limited>no</is_limited>
+				<date_yyyymmdd>20100808</date_yyyymmdd>
+				<date_desc>08/08/10</date_desc>
+				<time_hhmmss>120000</time_hhmmss>
+				<time_desc>12:00:00</time_desc>
+				<perf_url>http://www.hubtickets.co.uk/default.asp</perf_url>
+			</performance>
+		</using_perf_list>
+	</event>
+	<event>
+		<event_token>THE LIST</event_token>
+		<src_code>EMF</src_code>
+		<area_code>EMF</area_code>
+		<event_code>Edinburgh Mela Festival</event_code>
+		<venue_code>Edinburgh Mela Festival Big Top</venue_code>
+		<src_desc>Hub Tickets</src_desc>
+		<area_desc>Edinburgh Mela Festival</area_desc>
+		<event_desc>Ceol Mor</event_desc>
+		<venue_desc>Leith Links (West)</venue_desc>
+		<start_date_yyyymmdd>20100807</start_date_yyyymmdd>
+		<start_time_hhmm>1230</start_time_hhmm>
+		<start_time_hhmmss>123000</start_time_hhmmss>
+		<end_date_yyyymmdd>20100807</end_date_yyyymmdd>
+		<end_time_hhmm>1230</end_time_hhmm>
+		<end_time_hhmmss>123000</end_time_hhmmss>
+		<postcode>EH6 7QR</postcode>
+		<event_latitude>55.970964</event_latitude>
+		<event_longitude>-3.164492</event_longitude>
+		<main_class>Live Music</main_class>
+		<event_info>Ceol Mor is the Aberdeen International Youth Festival's traditional music band, compromising of some of Scotland's most promising young musicians. The band performs innovative arrangements of traditional Scottish music as well as original work exploring the margins between traditional music, jazz and contemporary classical music. As well as performing at the Aberdeen International youth Festival since 2006, the group have also performed at several annual events including Celtic connections and the Scots Trad Music Awards.</event_info>
+		<venue_info>Arriving : The site entrance is situated on the corner of Duke Street and East Hermitage Place.  Please not that this is the only entrance to the festival site. Facilities: The festival site is fully equipped with toilets, including accessible toilets, baby changing and breast feeding facilities. Information: There is an information point on site where you can access programme details or ask for assistance if you have a query. This also acts as a 'meeting point' for lost persons. There are also staff, stewards and volunteers throughout the site to help you. First Aid : There is a medical facility and staff on site. Accessibility and Assistance : The site is fully accessible, although it must be noted that the festival is an outdoor event on a largely grass surface. Assessible toilets are available please see our website for furthur details. Assistance is available for disabled patrons at the box office and the site entrance. Disabled Parking : A limited number of parking spaces are available on site for disabled visitors and are marked on the site map on our website. All vehicles parked here must display a Blue Badge Permit. Parking : The Edinburgh Mela Festival is not able to provide a dedicated parking facility. Parking in the surrounding area is very limited and will be strictly controlled by parking and traffic control measures, including vehicle uplift for illegally parked vehicles. Due to this, and to make the festival as environmentally friendly as possible, we strongly advise that you use public transport to travel to the festival. If you need to travel by car for part of the journey please consider the use of one of Edinburgh's many Park and Ride facilities. For more information please visit http://www.edinburgh.gov.uk/internet/Transport/Parking/CEC_park_and_rides</venue_info>
+		<venue_addr>Leith Links (West)</venue_addr>
+		<extra_event_texts>
+			<extra_text>
+				<code>running_time</code>
+				<description>00:45:00</description>
+			</extra_text>
+		</extra_event_texts>
+		<min_seat_price>2</min_seat_price>
+		<event_url>http://www.edinburgh-mela.co.uk/festival/music.php</event_url>
+		<using_perf_list>
+			<performance>
+				<is_limited>no</is_limited>
+				<date_yyyymmdd>20100807</date_yyyymmdd>
+				<date_desc>07/08/10</date_desc>
+				<time_hhmmss>123000</time_hhmmss>
+				<time_desc>12:30:00</time_desc>
+				<perf_url>http://www.hubtickets.co.uk/default.asp</perf_url>
+			</performance>
+		</using_perf_list>
+	</event>
+	<event>
+		<event_token>THE LIST</event_token>
+		<src_code>EMF</src_code>
+		<area_code>EMF</area_code>
+		<event_code>Edinburgh Mela Festival</event_code>
+		<venue_code>Edinburgh Mela Festival Big Top</venue_code>
+		<src_desc>Hub Tickets</src_desc>
+		<area_desc>Edinburgh Mela Festival</area_desc>
+		<event_desc>Naturally Inspired</event_desc>
+		<venue_desc>Leith Links (West)</venue_desc>
+		<start_date_yyyymmdd>20100807</start_date_yyyymmdd>
+		<start_time_hhmm>1345</start_time_hhmm>
+		<start_time_hhmmss>134500</start_time_hhmmss>
+		<end_date_yyyymmdd>20100807</end_date_yyyymmdd>
+		<end_time_hhmm>1645</end_time_hhmm>
+		<end_time_hhmmss>164500</end_time_hhmmss>
+		<postcode>EH6 7QR</postcode>
+		<event_latitude>55.970964</event_latitude>
+		<event_longitude>-3.164492</event_longitude>
+		<main_class>Multi Art Form</main_class>
+		<event_info>New work, inspired by Scotland's landscapes. A collaborative programmme involving the Edinburgh Mela, Edinburgh International Jazz and Blues Festival and Scottish International Storytelling Festival. Supported by the Scottish Government's Edinburgh Festival's Expo Fund and Scottish Natural Heritage. Featuring Saskia and Shubhendra Rao / Bob Pegg and Andy Cannon / Marion and John Kenney / Ramesh Meyyappan and Kim Ho Ip / Rosina Bonsu and Jean Edmiston. In addition to the performances at the Mela site on the 7th you can catch all the above artists / performances at the Royal Botanic Gardens Edinburgh from 12 - 5pm on the 8th August.</event_info>
+		<venue_info>Arriving : The site entrance is situated on the corner of Duke Street and East Hermitage Place.  Please not that this is the only entrance to the festival site. Facilities: The festival site is fully equipped with toilets, including accessible toilets, baby changing and breast feeding facilities. Information: There is an information point on site where you can access programme details or ask for assistance if you have a query. This also acts as a 'meeting point' for lost persons. There are also staff, stewards and volunteers throughout the site to help you. First Aid : There is a medical facility and staff on site. Accessibility and Assistance : The site is fully accessible, although it must be noted that the festival is an outdoor event on a largely grass surface. Assessible toilets are available please see our website for furthur details. Assistance is available for disabled patrons at the box office and the site entrance. Disabled Parking : A limited number of parking spaces are available on site for disabled visitors and are marked on the site map on our website. All vehicles parked here must display a Blue Badge Permit. Parking : The Edinburgh Mela Festival is not able to provide a dedicated parking facility. Parking in the surrounding area is very limited and will be strictly controlled by parking and traffic control measures, including vehicle uplift for illegally parked vehicles. Due to this, and to make the festival as environmentally friendly as possible, we strongly advise that you use public transport to travel to the festival. If you need to travel by car for part of the journey please consider the use of one of Edinburgh's many Park and Ride facilities. For more information please visit http://www.edinburgh.gov.uk/internet/Transport/Parking/CEC_park_and_rides</venue_info>
+		<venue_addr>Leith Links (West)</venue_addr>
+		<extra_event_texts>
+			<extra_text>
+				<code>running_time</code>
+				<description>01:00:00</description>
+			</extra_text>
+		</extra_event_texts>
+		<min_seat_price>2</min_seat_price>
+		<event_url>http://www.edinburgh-mela.co.uk/festival/inspired.php</event_url>
+		<using_perf_list>
+			<performance>
+				<is_limited>no</is_limited>
+				<date_yyyymmdd>20100807</date_yyyymmdd>
+				<date_desc>07/08/10</date_desc>
+				<time_hhmmss>134500</time_hhmmss>
+				<time_desc>13:45:00</time_desc>
+				<perf_url>http://www.hubtickets.co.uk/default.asp</perf_url>
+			</performance>
+			<performance>
+				<is_limited>no</is_limited>
+				<date_yyyymmdd>20100807</date_yyyymmdd>
+				<date_desc>07/08/10</date_desc>
+				<time_hhmmss>164500</time_hhmmss>
+				<time_desc>16:45:00</time_desc>
+				<perf_url>http://www.hubtickets.co.uk/default.asp</perf_url>
+			</performance>
+		</using_perf_list>
+	</event>
+	<event>
+		<event_token>THE LIST</event_token>
+		<src_code>EMF</src_code>
+		<area_code>EMF</area_code>
+		<event_code>Edinburgh Mela Festival</event_code>
+		<venue_code>Edinburgh Mela Festival Big Top</venue_code>
+		<src_desc>Hub Tickets</src_desc>
+		<area_desc>Edinburgh Mela Festival</area_desc>
+		<event_desc>Rizwan Muazzam Qawwali</event_desc>
+		<venue_desc>Leith Links (West)</venue_desc>
+		<start_date_yyyymmdd>20100807</start_date_yyyymmdd>
+		<start_time_hhmm>1515</start_time_hhmm>
+		<start_time_hhmmss>151500</start_time_hhmmss>
+		<end_date_yyyymmdd>20100807</end_date_yyyymmdd>
+		<end_time_hhmm>1515</end_time_hhmm>
+		<end_time_hhmmss>151500</end_time_hhmmss>
+		<postcode>EH6 7QR</postcode>
+		<event_latitude>55.970964</event_latitude>
+		<event_longitude>-3.164492</event_longitude>
+		<main_class>Live Music</main_class>
+		<event_info>When the unforgettable qawwali singer Nusrat Fateh Ali Khan died in Pakistan in 197, he left a musical vacuum into which stepped his two nephews. This visit as part of their extensive European summer tour brings them to the UK for the first time in five years and provides a rare and un-missable opportunity to experience one of the World's greatest music genres.</event_info>
+		<venue_info>Arriving : The site entrance is situated on the corner of Duke Street and East Hermitage Place.  Please not that this is the only entrance to the festival site. Facilities: The festival site is fully equipped with toilets, including accessible toilets, baby changing and breast feeding facilities. Information: There is an information point on site where you can access programme details or ask for assistance if you have a query. This also acts as a 'meeting point' for lost persons. There are also staff, stewards and volunteers throughout the site to help you. First Aid : There is a medical facility and staff on site. Accessibility and Assistance : The site is fully accessible, although it must be noted that the festival is an outdoor event on a largely grass surface. Assessible toilets are available please see our website for furthur details. Assistance is available for disabled patrons at the box office and the site entrance. Disabled Parking : A limited number of parking spaces are available on site for disabled visitors and are marked on the site map on our website. All vehicles parked here must display a Blue Badge Permit. Parking : The Edinburgh Mela Festival is not able to provide a dedicated parking facility. Parking in the surrounding area is very limited and will be strictly controlled by parking and traffic control measures, including vehicle uplift for illegally parked vehicles. Due to this, and to make the festival as environmentally friendly as possible, we strongly advise that you use public transport to travel to the festival. If you need to travel by car for part of the journey please consider the use of one of Edinburgh's many Park and Ride facilities. For more information please visit http://www.edinburgh.gov.uk/internet/Transport/Parking/CEC_park_and_rides</venue_info>
+		<venue_addr>Leith Links (West)</venue_addr>
+		<extra_event_texts>
+			<extra_text>
+				<code>running_time</code>
+				<description>01:00:00</description>
+			</extra_text>
+		</extra_event_texts>
+		<min_seat_price>2</min_seat_price>
+		<event_url>http://www.edinburgh-mela.co.uk/festival/music.php </event_url>
+		<using_perf_list>
+			<performance>
+				<is_limited>no</is_limited>
+				<date_yyyymmdd>20100807</date_yyyymmdd>
+				<date_desc>07/08/10</date_desc>
+				<time_hhmmss>151500</time_hhmmss>
+				<time_desc>15:15:00</time_desc>
+				<perf_url>http://www.hubtickets.co.uk/default.asp</perf_url>
+			</performance>
+		</using_perf_list>
+	</event>
+	<event>
+		<event_token>THE LIST</event_token>
+		<src_code>EMF</src_code>
+		<area_code>EMF</area_code>
+		<event_code>Edinburgh Mela Festival</event_code>
+		<venue_code>Edinburgh Mela Festival Big Top</venue_code>
+		<src_desc>Hub Tickets</src_desc>
+		<area_desc>Edinburgh Mela Festival</area_desc>
+		<event_desc>Something Relevant</event_desc>
+		<venue_desc>Leith Links (West)</venue_desc>
+		<start_date_yyyymmdd>20100807</start_date_yyyymmdd>
+		<start_time_hhmm>1830</start_time_hhmm>
+		<start_time_hhmmss>183000</start_time_hhmmss>
+		<end_date_yyyymmdd>20100807</end_date_yyyymmdd>
+		<end_time_hhmm>1830</end_time_hhmm>
+		<end_time_hhmmss>183000</end_time_hhmmss>
+		<postcode>EH6 7QR</postcode>
+		<event_latitude>55.970964</event_latitude>
+		<event_longitude>-3.164492</event_longitude>
+		<main_class>Live Music</main_class>
+		<event_info>Something Relevant are India's leading Jam Rock Band . Their music is a fusion of funk, blues, reggae, rock, pop, soul &amp; hip hop, resonating with the city sounds of Mumbai. Their songs are original, drawn from personal experiences and dreams, with gripping instrumental jams, youthful effervescence and an irrepressible love for live performance. &quot;tremendous energy on stage and a great attitude...among India's top 25 bands&quot; - Rolling Stone Magazine. &quot;One of Mumbai's hottest acts&quot; - Hindustan Times</event_info>
+		<venue_info>Arriving : The site entrance is situated on the corner of Duke Street and East Hermitage Place.  Please not that this is the only entrance to the festival site. Facilities: The festival site is fully equipped with toilets, including accessible toilets, baby changing and breast feeding facilities. Information: There is an information point on site where you can access programme details or ask for assistance if you have a query. This also acts as a 'meeting point' for lost persons. There are also staff, stewards and volunteers throughout the site to help you. First Aid : There is a medical facility and staff on site. Accessibility and Assistance : The site is fully accessible, although it must be noted that the festival is an outdoor event on a largely grass surface. Assessible toilets are available please see our website for furthur details. Assistance is available for disabled patrons at the box office and the site entrance. Disabled Parking : A limited number of parking spaces are available on site for disabled visitors and are marked on the site map on our website. All vehicles parked here must display a Blue Badge Permit. Parking : The Edinburgh Mela Festival is not able to provide a dedicated parking facility. Parking in the surrounding area is very limited and will be strictly controlled by parking and traffic control measures, including vehicle uplift for illegally parked vehicles. Due to this, and to make the festival as environmentally friendly as possible, we strongly advise that you use public transport to travel to the festival. If you need to travel by car for part of the journey please consider the use of one of Edinburgh's many Park and Ride facilities. For more information please visit http://www.edinburgh.gov.uk/internet/Transport/Parking/CEC_park_and_rides</venue_info>
+		<venue_addr>Leith Links (West)</venue_addr>
+		<extra_event_texts>
+			<extra_text>
+				<code>running_time</code>
+				<description>01:00:00</description>
+			</extra_text>
+		</extra_event_texts>
+		<min_seat_price>2</min_seat_price>
+		<event_url>http://www.edinburgh-mela.co.uk/festival/music.php</event_url>
+		<using_perf_list>
+			<performance>
+				<is_limited>no</is_limited>
+				<date_yyyymmdd>20100807</date_yyyymmdd>
+				<date_desc>07/08/10</date_desc>
+				<time_hhmmss>183000</time_hhmmss>
+				<time_desc>18:30:00</time_desc>
+				<perf_url>http://www.hubtickets.co.uk/default.asp</perf_url>
+			</performance>
+		</using_perf_list>
+	</event>
+	<event>
+		<event_token>THE LIST</event_token>
+		<src_code>EMF</src_code>
+		<area_code>EMF</area_code>
+		<event_code>Edinburgh Mela Festival</event_code>
+		<venue_code>Edinburgh Mela Festival Big Top</venue_code>
+		<src_desc>Hub Tickets</src_desc>
+		<area_desc>Edinburgh Mela Festival</area_desc>
+		<event_desc>Northern Xposure</event_desc>
+		<venue_desc>Leith Links (West)</venue_desc>
+		<start_date_yyyymmdd>20100807</start_date_yyyymmdd>
+		<start_time_hhmm>1945</start_time_hhmm>
+		<start_time_hhmmss>194500</start_time_hhmmss>
+		<end_date_yyyymmdd>20100807</end_date_yyyymmdd>
+		<end_time_hhmm>1945</end_time_hhmm>
+		<end_time_hhmmss>194500</end_time_hhmmss>
+		<postcode>EH6 7QR</postcode>
+		<event_latitude>55.970964</event_latitude>
+		<event_longitude>-3.164492</event_longitude>
+		<main_class>Live Music</main_class>
+		<event_info>Home grown talent, NorthernXposure are Scotland's No.1 rap crew. BAFTA nominated, they have toured in the USA with such groups as 'Naughty By Nature' and 'The Roots', and in the UK and Europe with, 'Busta Rhymes', 'Fatman Scoop', 'Coolio', 'Amy Winehouse', 'Roots Manuva' and 'N-Dubz' to mention a few. The crew have been running for over a decade and their current album 'The Last Piece of The Puzzle' is an amalgam of dub step, reggae, philosophical hip hop and conscious world beats; resulting in a captivating and original hybrid sound.</event_info>
+		<venue_info>Arriving : The site entrance is situated on the corner of Duke Street and East Hermitage Place.  Please not that this is the only entrance to the festival site. Facilities: The festival site is fully equipped with toilets, including accessible toilets, baby changing and breast feeding facilities. Information: There is an information point on site where you can access programme details or ask for assistance if you have a query. This also acts as a 'meeting point' for lost persons. There are also staff, stewards and volunteers throughout the site to help you. First Aid : There is a medical facility and staff on site. Accessibility and Assistance : The site is fully accessible, although it must be noted that the festival is an outdoor event on a largely grass surface. Assessible toilets are available please see our website for furthur details. Assistance is available for disabled patrons at the box office and the site entrance. Disabled Parking : A limited number of parking spaces are available on site for disabled visitors and are marked on the site map on our website. All vehicles parked here must display a Blue Badge Permit. Parking : The Edinburgh Mela Festival is not able to provide a dedicated parking facility. Parking in the surrounding area is very limited and will be strictly controlled by parking and traffic control measures, including vehicle uplift for illegally parked vehicles. Due to this, and to make the festival as environmentally friendly as possible, we strongly advise that you use public transport to travel to the festival. If you need to travel by car for part of the journey please consider the use of one of Edinburgh's many Park and Ride facilities. For more information please visit http://www.edinburgh.gov.uk/internet/Transport/Parking/CEC_park_and_rides</venue_info>
+		<venue_addr>Leith Links (West)</venue_addr>
+		<extra_event_texts>
+			<extra_text>
+				<code>running_time</code>
+				<description>00:30:00</description>
+			</extra_text>
+		</extra_event_texts>
+		<min_seat_price>2</min_seat_price>
+		<event_url>http://www.edinburgh-mela.co.uk/festival/music.php</event_url>
+		<using_perf_list>
+			<performance>
+				<is_limited>no</is_limited>
+				<date_yyyymmdd>20100807</date_yyyymmdd>
+				<date_desc>07/08/10</date_desc>
+				<time_hhmmss>194500</time_hhmmss>
+				<time_desc>19:45:00</time_desc>
+				<perf_url>http://www.hubtickets.co.uk/default.asp</perf_url>
+			</performance>
+		</using_perf_list>
+	</event>
+	<event>
+		<event_token>THE LIST</event_token>
+		<src_code>EMF</src_code>
+		<area_code>EMF</area_code>
+		<event_code>Edinburgh Mela Festival</event_code>
+		<venue_code>Edinburgh Mela Festival Big Top</venue_code>
+		<src_desc>Hub Tickets</src_desc>
+		<area_desc>Edinburgh Mela Festival</area_desc>
+		<event_desc>Bonafide</event_desc>
+		<venue_desc>Leith Links (West)</venue_desc>
+		<start_date_yyyymmdd>20100807</start_date_yyyymmdd>
+		<start_time_hhmm>2015</start_time_hhmm>
+		<start_time_hhmmss>201500</start_time_hhmmss>
+		<end_date_yyyymmdd>20100807</end_date_yyyymmdd>
+		<end_time_hhmm>2015</end_time_hhmm>
+		<end_time_hhmmss>201500</end_time_hhmmss>
+		<postcode>EH6 7QR</postcode>
+		<event_latitude>55.970964</event_latitude>
+		<event_longitude>-3.164492</event_longitude>
+		<main_class>Live Music</main_class>
+		<event_info>Exciting duo Maz and Ziggy are singers, songwriters, rappers and composers performing in Punjabi as well as English.</event_info>
+		<venue_info>Arriving : The site entrance is situated on the corner of Duke Street and East Hermitage Place.  Please not that this is the only entrance to the festival site. Facilities: The festival site is fully equipped with toilets, including accessible toilets, baby changing and breast feeding facilities. Information: There is an information point on site where you can access programme details or ask for assistance if you have a query. This also acts as a 'meeting point' for lost persons. There are also staff, stewards and volunteers throughout the site to help you. First Aid : There is a medical facility and staff on site. Accessibility and Assistance : The site is fully accessible, although it must be noted that the festival is an outdoor event on a largely grass surface. Assessible toilets are available please see our website for furthur details. Assistance is available for disabled patrons at the box office and the site entrance. Disabled Parking : A limited number of parking spaces are available on site for disabled visitors and are marked on the site map on our website. All vehicles parked here must display a Blue Badge Permit. Parking : The Edinburgh Mela Festival is not able to provide a dedicated parking facility. Parking in the surrounding area is very limited and will be strictly controlled by parking and traffic control measures, including vehicle uplift for illegally parked vehicles. Due to this, and to make the festival as environmentally friendly as possible, we strongly advise that you use public transport to travel to the festival. If you need to travel by car for part of the journey please consider the use of one of Edinburgh's many Park and Ride facilities. For more information please visit http://www.edinburgh.gov.uk/internet/Transport/Parking/CEC_park_and_rides</venue_info>
+		<venue_addr>Leith Links (West)</venue_addr>
+		<extra_event_texts>
+			<extra_text>
+				<code>running_time</code>
+				<description>00:45:00</description>
+			</extra_text>
+		</extra_event_texts>
+		<min_seat_price>2</min_seat_price>
+		<event_url>http://www.edinburgh-mela.co.uk/festival/music.php</event_url>
+		<using_perf_list>
+			<performance>
+				<is_limited>no</is_limited>
+				<date_yyyymmdd>20100807</date_yyyymmdd>
+				<date_desc>07/08/10</date_desc>
+				<time_hhmmss>201500</time_hhmmss>
+				<time_desc>20:15:00</time_desc>
+				<perf_url>http://www.hubtickets.co.uk/default.asp</perf_url>
+			</performance>
+		</using_perf_list>
+	</event>
+	<event>
+		<event_token>THE LIST</event_token>
+		<src_code>EMF</src_code>
+		<area_code>EMF</area_code>
+		<event_code>Edinburgh Mela Festival</event_code>
+		<venue_code>Edinburgh Mela Festival Big Top</venue_code>
+		<src_desc>Hub Tickets</src_desc>
+		<area_desc>Edinburgh Mela Festival</area_desc>
+		<event_desc>Mela Fashion Show</event_desc>
+		<venue_desc>Leith Links (West)</venue_desc>
+		<start_date_yyyymmdd>20100808</start_date_yyyymmdd>
+		<start_time_hhmm>1300</start_time_hhmm>
+		<start_time_hhmmss>130000</start_time_hhmmss>
+		<end_date_yyyymmdd>20100808</end_date_yyyymmdd>
+		<end_time_hhmm>1300</end_time_hhmm>
+		<end_time_hhmmss>130000</end_time_hhmmss>
+		<postcode>EH6 7QR</postcode>
+		<event_latitude>55.970964</event_latitude>
+		<event_longitude>-3.164492</event_longitude>
+		<main_class>Fashion</main_class>
+		<event_info>The Edinburgh Mela Fashion Show aims to showcase local and international talent, including local graduates and established designers with a range of clothing from contemporary urban-wear to traditional Asian wedding clothing. The 2010 Edinburgh Mela show is shaping up to one of the best ever with newly established fashion events company Unique Fusion at the helm. Unique Fusion have wide-ranging involvement in delivering fashion show extravaganzas for a variety of Melas, including Glasgow and Newcastle as well as extensive experience of Asian Wedding Fairs such as East meets West. johari - Another exciting development is the sponsorship opportunity which has arisen with Harris Tweed Textiles - selected designers have been brought on board to create unique items of clothing and accessories which re-interpret this historic fabric with a diverse range of ideas from tweed turbans to contemporary evening wear. These exclusive creations will be presented at the 2010 Mela fashion show.</event_info>
+		<venue_info>Arriving : The site entrance is situated on the corner of Duke Street and East Hermitage Place.  Please not that this is the only entrance to the festival site. Facilities: The festival site is fully equipped with toilets, including accessible toilets, baby changing and breast feeding facilities. Information: There is an information point on site where you can access programme details or ask for assistance if you have a query. This also acts as a 'meeting point' for lost persons. There are also staff, stewards and volunteers throughout the site to help you. First Aid : There is a medical facility and staff on site. Accessibility and Assistance : The site is fully accessible, although it must be noted that the festival is an outdoor event on a largely grass surface. Assessible toilets are available please see our website for furthur details. Assistance is available for disabled patrons at the box office and the site entrance. Disabled Parking : A limited number of parking spaces are available on site for disabled visitors and are marked on the site map on our website. All vehicles parked here must display a Blue Badge Permit. Parking : The Edinburgh Mela Festival is not able to provide a dedicated parking facility. Parking in the surrounding area is very limited and will be strictly controlled by parking and traffic control measures, including vehicle uplift for illegally parked vehicles. Due to this, and to make the festival as environmentally friendly as possible, we strongly advise that you use public transport to travel to the festival. If you need to travel by car for part of the journey please consider the use of one of Edinburgh's many Park and Ride facilities. For more information please visit http://www.edinburgh.gov.uk/internet/Transport/Parking/CEC_park_and_rides</venue_info>
+		<venue_addr>Leith Links (West)</venue_addr>
+		<extra_event_texts>
+			<extra_text>
+				<code>running_time</code>
+				<description>01:00:00</description>
+			</extra_text>
+		</extra_event_texts>
+		<min_seat_price>2</min_seat_price>
+		<event_url>http://www.edinburgh-mela.co.uk/festival/fashion.php</event_url>
+		<using_perf_list>
+			<performance>
+				<is_limited>no</is_limited>
+				<date_yyyymmdd>20100808</date_yyyymmdd>
+				<date_desc>08/08/10</date_desc>
+				<time_hhmmss>130000</time_hhmmss>
+				<time_desc>13:00:00</time_desc>
+				<perf_url>http://www.hubtickets.co.uk/default.asp</perf_url>
+			</performance>
+		</using_perf_list>
+	</event>
+	<event>
+		<event_token>THE LIST</event_token>
+		<src_code>EMF</src_code>
+		<area_code>EMF</area_code>
+		<event_code>Edinburgh Mela Festival</event_code>
+		<venue_code>Edinburgh Mela Festival Big Top</venue_code>
+		<src_desc>Hub Tickets</src_desc>
+		<area_desc>Edinburgh Mela Festival</area_desc>
+		<event_desc>Shiraz</event_desc>
+		<venue_desc>Leith Links (West)</venue_desc>
+		<start_date_yyyymmdd>20100808</start_date_yyyymmdd>
+		<start_time_hhmm>1445</start_time_hhmm>
+		<start_time_hhmmss>144500</start_time_hhmmss>
+		<end_date_yyyymmdd>20100808</end_date_yyyymmdd>
+		<end_time_hhmm>1445</end_time_hhmm>
+		<end_time_hhmmss>144500</end_time_hhmmss>
+		<postcode>EH6 7QR</postcode>
+		<event_latitude>55.970964</event_latitude>
+		<event_longitude>-3.164492</event_longitude>
+		<main_class>Live Music / Film</main_class>
+		<event_info>A lavish depiction of the story behind the creation of the Taj Mahal, the woman who inspired it and the two men who loved her. Accompanied by live, specially commissioned music from the Sabri Ensemble. Filmed entirely on location in India with a cast of thousands, this remarkable product of early Indian cinema went on to inspire a generation of film makers by its combination of documentary techniques and epic subject matter. Shiraz is one of an extraordinary trilogy films by German director Franz Osten working in collaboration with Indian actor and producer Himansu Rai. This groundbreaking East &amp; West partnership is echoed in the dynamic, cross-cultural score by Sarvar Sabri. Sabri leads the Sabri ensemble in an exploration of melodic and rhythmic influences drawn from South Asian, Latin American, jazz and Western classical traditions. The line up of tabla, sarangi, violin, piano, vocals, bass, sitar, saxophone and flute combine to create a rich soundscape that seamlessly complements the original film, despite an eighty-year gap in their conception.</event_info>
+		<venue_info>Arriving : The site entrance is situated on the corner of Duke Street and East Hermitage Place.  Please not that this is the only entrance to the festival site. Facilities: The festival site is fully equipped with toilets, including accessible toilets, baby changing and breast feeding facilities. Information: There is an information point on site where you can access programme details or ask for assistance if you have a query. This also acts as a 'meeting point' for lost persons. There are also staff, stewards and volunteers throughout the site to help you. First Aid : There is a medical facility and staff on site. Accessibility and Assistance : The site is fully accessible, although it must be noted that the festival is an outdoor event on a largely grass surface. Assessible toilets are available please see our website for furthur details. Assistance is available for disabled patrons at the box office and the site entrance. Disabled Parking : A limited number of parking spaces are available on site for disabled visitors and are marked on the site map on our website. All vehicles parked here must display a Blue Badge Permit. Parking : The Edinburgh Mela Festival is not able to provide a dedicated parking facility. Parking in the surrounding area is very limited and will be strictly controlled by parking and traffic control measures, including vehicle uplift for illegally parked vehicles. Due to this, and to make the festival as environmentally friendly as possible, we strongly advise that you use public transport to travel to the festival. If you need to travel by car for part of the journey please consider the use of one of Edinburgh's many Park and Ride facilities. For more information please visit http://www.edinburgh.gov.uk/internet/Transport/Parking/CEC_park_and_rides</venue_info>
+		<venue_addr>Leith Links (West)</venue_addr>
+		<extra_event_texts>
+			<extra_text>
+				<code>running_time</code>
+				<description>01:30:00</description>
+			</extra_text>
+		</extra_event_texts>
+		<min_seat_price>2</min_seat_price>
+		<event_url>http://www.edinburgh-mela.co.uk/festival/music.php</event_url>
+		<using_perf_list>
+			<performance>
+				<is_limited>no</is_limited>
+				<date_yyyymmdd>20100808</date_yyyymmdd>
+				<date_desc>08/08/10</date_desc>
+				<time_hhmmss>144500</time_hhmmss>
+				<time_desc>14:45:00</time_desc>
+				<perf_url>http://www.hubtickets.co.uk/default.asp</perf_url>
+			</performance>
+		</using_perf_list>
+	</event>
+	<event>
+		<event_token>THE LIST</event_token>
+		<src_code>EMF</src_code>
+		<area_code>EMF</area_code>
+		<event_code>Edinburgh Mela Festival</event_code>
+		<venue_code>Edinburgh Mela Festival Big Top</venue_code>
+		<src_desc>Hub Tickets</src_desc>
+		<area_desc>Edinburgh Mela Festival</area_desc>
+		<event_desc>Guizhou Ethnic Arts</event_desc>
+		<venue_desc>Leith Links (West)</venue_desc>
+		<start_date_yyyymmdd>20100808</start_date_yyyymmdd>
+		<start_time_hhmm>1700</start_time_hhmm>
+		<start_time_hhmmss>170000</start_time_hhmmss>
+		<end_date_yyyymmdd>20100808</end_date_yyyymmdd>
+		<end_time_hhmm>1700</end_time_hhmm>
+		<end_time_hhmmss>170000</end_time_hhmmss>
+		<postcode>EH6 7QR</postcode>
+		<event_latitude>55.970964</event_latitude>
+		<event_longitude>-3.164492</event_longitude>
+		<main_class>Dance</main_class>
+		<event_info>Guizhou Ethnic Arts Ensemble is a professional group from Southwest China. Their extraordinary dances and polyphonic songs, most of which have never been seen or heard outside China, are performed by dancers who come from the province of Guizhou (GwayJoe). Exuberant drumming, dramatic dance, heartfelt singing, and glorious ethnic costumes create a spectacular show, seen recently during the opening gala events at the Shanghai Expo. Also at New Town Theatre as part fo the Edinburgh Festival Fringe.</event_info>
+		<venue_info>Arriving : The site entrance is situated on the corner of Duke Street and East Hermitage Place.  Please not that this is the only entrance to the festival site. Facilities: The festival site is fully equipped with toilets, including accessible toilets, baby changing and breast feeding facilities. Information: There is an information point on site where you can access programme details or ask for assistance if you have a query. This also acts as a 'meeting point' for lost persons. There are also staff, stewards and volunteers throughout the site to help you. First Aid : There is a medical facility and staff on site. Accessibility and Assistance : The site is fully accessible, although it must be noted that the festival is an outdoor event on a largely grass surface. Assessible toilets are available please see our website for furthur details. Assistance is available for disabled patrons at the box office and the site entrance. Disabled Parking : A limited number of parking spaces are available on site for disabled visitors and are marked on the site map on our website. All vehicles parked here must display a Blue Badge Permit. Parking : The Edinburgh Mela Festival is not able to provide a dedicated parking facility. Parking in the surrounding area is very limited and will be strictly controlled by parking and traffic control measures, including vehicle uplift for illegally parked vehicles. Due to this, and to make the festival as environmentally friendly as possible, we strongly advise that you use public transport to travel to the festival. If you need to travel by car for part of the journey please consider the use of one of Edinburgh's many Park and Ride facilities. For more information please visit http://www.edinburgh.gov.uk/internet/Transport/Parking/CEC_park_and_rides</venue_info>
+		<venue_addr>Leith Links (West)</venue_addr>
+		<extra_event_texts>
+			<extra_text>
+				<code>running_time</code>
+				<description>01:00:00</description>
+			</extra_text>
+		</extra_event_texts>
+		<min_seat_price>2</min_seat_price>
+		<event_url>http://www.edinburgh-mela.co.uk/festival/dance.php</event_url>
+		<using_perf_list>
+			<performance>
+				<is_limited>no</is_limited>
+				<date_yyyymmdd>20100808</date_yyyymmdd>
+				<date_desc>08/08/10</date_desc>
+				<time_hhmmss>170000</time_hhmmss>
+				<time_desc>17:00:00</time_desc>
+				<perf_url>http://www.hubtickets.co.uk/default.asp</perf_url>
+			</performance>
+		</using_perf_list>
+	</event>
+	<event>
+		<event_token>THE LIST</event_token>
+		<src_code>EMF</src_code>
+		<area_code>EMF</area_code>
+		<event_code>Edinburgh Mela Festival</event_code>
+		<venue_code>Edinburgh Mela Festival Big Top</venue_code>
+		<src_desc>Hub Tickets</src_desc>
+		<area_desc>Edinburgh Mela Festival</area_desc>
+		<event_desc>Jaz Dhami</event_desc>
+		<venue_desc>Leith Links (West)</venue_desc>
+		<start_date_yyyymmdd>20100808</start_date_yyyymmdd>
+		<start_time_hhmm>1815</start_time_hhmm>
+		<start_time_hhmmss>181500</start_time_hhmmss>
+		<end_date_yyyymmdd>20100808</end_date_yyyymmdd>
+		<end_time_hhmm>1815</end_time_hhmm>
+		<end_time_hhmmss>181500</end_time_hhmmss>
+		<postcode>EH6 7QR</postcode>
+		<event_latitude>55.970964</event_latitude>
+		<event_longitude>-3.164492</event_longitude>
+		<main_class>Live Music</main_class>
+		<event_info>Rising star of the UK Bhangra scene and winner of of the Best Male at the 2010 Brit Asia Music Awards performs with his full live band.</event_info>
+		<venue_info>Arriving : The site entrance is situated on the corner of Duke Street and East Hermitage Place.  Please not that this is the only entrance to the festival site. Facilities: The festival site is fully equipped with toilets, including accessible toilets, baby changing and breast feeding facilities. Information: There is an information point on site where you can access programme details or ask for assistance if you have a query. This also acts as a 'meeting point' for lost persons. There are also staff, stewards and volunteers throughout the site to help you. First Aid : There is a medical facility and staff on site. Accessibility and Assistance : The site is fully accessible, although it must be noted that the festival is an outdoor event on a largely grass surface. Assessible toilets are available please see our website for furthur details. Assistance is available for disabled patrons at the box office and the site entrance. Disabled Parking : A limited number of parking spaces are available on site for disabled visitors and are marked on the site map on our website. All vehicles parked here must display a Blue Badge Permit. Parking : The Edinburgh Mela Festival is not able to provide a dedicated parking facility. Parking in the surrounding area is very limited and will be strictly controlled by parking and traffic control measures, including vehicle uplift for illegally parked vehicles. Due to this, and to make the festival as environmentally friendly as possible, we strongly advise that you use public transport to travel to the festival. If you need to travel by car for part of the journey please consider the use of one of Edinburgh's many Park and Ride facilities. For more information please visit http://www.edinburgh.gov.uk/internet/Transport/Parking/CEC_park_and_rides</venue_info>
+		<venue_addr>Leith Links (West)</venue_addr>
+		<extra_event_texts>
+			<extra_text>
+				<code>running_time</code>
+				<description>01:15:00</description>
+			</extra_text>
+		</extra_event_texts>
+		<min_seat_price>2</min_seat_price>
+		<event_url>http://www.edinburgh-mela.co.uk/festival/music.php</event_url>
+		<using_perf_list>
+			<performance>
+				<is_limited>no</is_limited>
+				<date_yyyymmdd>20100808</date_yyyymmdd>
+				<date_desc>08/08/10</date_desc>
+				<time_hhmmss>181500</time_hhmmss>
+				<time_desc>18:15:00</time_desc>
+				<perf_url>http://www.hubtickets.co.uk/default.asp</perf_url>
+			</performance>
+		</using_perf_list>
+	</event>
+	<event>
+		<event_token>THE LIST</event_token>
+		<src_code>EMF</src_code>
+		<area_code>EMF</area_code>
+		<event_code>Edinburgh Mela Festival</event_code>
+		<venue_code>Edinburgh Mela Festival Big Top</venue_code>
+		<src_desc>Hub Tickets</src_desc>
+		<area_desc>Edinburgh Mela Festival</area_desc>
+		<event_desc>Taz (Stereo Nation)</event_desc>
+		<venue_desc>Leith Links (West)</venue_desc>
+		<start_date_yyyymmdd>20100808</start_date_yyyymmdd>
+		<start_time_hhmm>1930</start_time_hhmm>
+		<start_time_hhmmss>193000</start_time_hhmmss>
+		<end_date_yyyymmdd>20100808</end_date_yyyymmdd>
+		<end_time_hhmm>1930</end_time_hhmm>
+		<end_time_hhmmss>193000</end_time_hhmmss>
+		<postcode>EH6 7QR</postcode>
+		<event_latitude>55.970964</event_latitude>
+		<event_longitude>-3.164492</event_longitude>
+		<main_class>Live Music</main_class>
+		<event_info>Pop Icon, Bollywood Star, Singer, Songwriter, and Multi Platinum Selling Artist TAZ - STEREO NATION celebrates 21 Years of being in the music business with a live performance at the 2010 festival. His sound is best described as a hybrid of traditional Asia fused with Western pop, infectious melodies and dynamic dance beats. Musical influences include Prince, Stevie Wonder, Ali Khan, Marvin Gaye, Bob Marley and Kuldip Manak to name a few. Taz Stereo Nation' successes includes various UK top 40 entries and dynamic performances all over the world.</event_info>
+		<venue_info>Arriving : The site entrance is situated on the corner of Duke Street and East Hermitage Place.  Please not that this is the only entrance to the festival site. Facilities: The festival site is fully equipped with toilets, including accessible toilets, baby changing and breast feeding facilities. Information: There is an information point on site where you can access programme details or ask for assistance if you have a query. This also acts as a 'meeting point' for lost persons. There are also staff, stewards and volunteers throughout the site to help you. First Aid : There is a medical facility and staff on site. Accessibility and Assistance : The site is fully accessible, although it must be noted that the festival is an outdoor event on a largely grass surface. Assessible toilets are available please see our website for furthur details. Assistance is available for disabled patrons at the box office and the site entrance. Disabled Parking : A limited number of parking spaces are available on site for disabled visitors and are marked on the site map on our website. All vehicles parked here must display a Blue Badge Permit. Parking : The Edinburgh Mela Festival is not able to provide a dedicated parking facility. Parking in the surrounding area is very limited and will be strictly controlled by parking and traffic control measures, including vehicle uplift for illegally parked vehicles. Due to this, and to make the festival as environmentally friendly as possible, we strongly advise that you use public transport to travel to the festival. If you need to travel by car for part of the journey please consider the use of one of Edinburgh's many Park and Ride facilities. For more information please visit http://www.edinburgh.gov.uk/internet/Transport/Parking/CEC_park_and_rides</venue_info>
+		<venue_addr>Leith Links (West)</venue_addr>
+		<extra_event_texts>
+			<extra_text>
+				<code>running_time</code>
+				<description>01:00:00</description>
+			</extra_text>
+		</extra_event_texts>
+		<min_seat_price>2</min_seat_price>
+		<event_url>http://www.edinburgh-mela.co.uk/festival/music.php</event_url>
+		<using_perf_list>
+			<performance>
+				<is_limited>no</is_limited>
+				<date_yyyymmdd>20100808</date_yyyymmdd>
+				<date_desc>08/08/10</date_desc>
+				<time_hhmmss>193000</time_hhmmss>
+				<time_desc>19:30:00</time_desc>
+				<perf_url>http://www.hubtickets.co.uk/default.asp</perf_url>
+			</performance>
+		</using_perf_list>
+	</event>
+	<event>
+		<event_token>THE LIST</event_token>
+		<src_code>EMF</src_code>
+		<area_code>EMF</area_code>
+		<event_code>Edinburgh Mela Festival</event_code>
+		<venue_code>Edinburgh Mela Festival Big Top</venue_code>
+		<src_desc>Hub Tickets</src_desc>
+		<area_desc>Edinburgh Mela Festival</area_desc>
+		<event_desc>DJ Wax</event_desc>
+		<venue_desc>Leith Links (West)</venue_desc>
+		<start_date_yyyymmdd>20100808</start_date_yyyymmdd>
+		<start_time_hhmm>2030</start_time_hhmm>
+		<start_time_hhmmss>203000</start_time_hhmmss>
+		<end_date_yyyymmdd>20100808</end_date_yyyymmdd>
+		<end_time_hhmm>2030</end_time_hhmm>
+		<end_time_hhmmss>203000</end_time_hhmmss>
+		<postcode>EH6 7QR</postcode>
+		<event_latitude>55.970964</event_latitude>
+		<event_longitude>-3.164492</event_longitude>
+		<main_class>Live Music</main_class>
+		<event_info>1 day, 2 DJ's, 3 cities - Mission Impossible? Cardiff, London and Edinburgh Mela's team up this summer for a unique challenge. In 2010 all three cities' celebrate their respective Melas on the same day and to commemorate this have been working together to presenting a exciting challenge for one of the BBC Asian Network's biggest names DJ Wax entitled &quot;Planes, Trains and Rickshaws&quot;. The challenge is this.... to perform at all three events on the same day - in what will be a battle of motorways, airports and stations! Kicking off at the Cardiff Mela with an opening set DJ Wax will be joined by the 'tallest DJ in the world' (in association with Nutkhut) as he then heads along the M4 to London to wow mid afternoon crowds at the Londons's Mela. Before dashing onto a waiting flight at nearby Heathrow airport which will whisk the pair to Edinburgh to bring an exciting close this year's festival. Can they do it? Join us at 8.30pm on Sunday 8th August in the Big Top Tent to find out!</event_info>
+		<venue_info>Arriving : The site entrance is situated on the corner of Duke Street and East Hermitage Place.  Please not that this is the only entrance to the festival site. Facilities: The festival site is fully equipped with toilets, including accessible toilets, baby changing and breast feeding facilities. Information: There is an information point on site where you can access programme details or ask for assistance if you have a query. This also acts as a 'meeting point' for lost persons. There are also staff, stewards and volunteers throughout the site to help you. First Aid : There is a medical facility and staff on site. Accessibility and Assistance : The site is fully accessible, although it must be noted that the festival is an outdoor event on a largely grass surface. Assessible toilets are available please see our website for furthur details. Assistance is available for disabled patrons at the box office and the site entrance. Disabled Parking : A limited number of parking spaces are available on site for disabled visitors and are marked on the site map on our website. All vehicles parked here must display a Blue Badge Permit. Parking : The Edinburgh Mela Festival is not able to provide a dedicated parking facility. Parking in the surrounding area is very limited and will be strictly controlled by parking and traffic control measures, including vehicle uplift for illegally parked vehicles. Due to this, and to make the festival as environmentally friendly as possible, we strongly advise that you use public transport to travel to the festival. If you need to travel by car for part of the journey please consider the use of one of Edinburgh's many Park and Ride facilities. For more information please visit http://www.edinburgh.gov.uk/internet/Transport/Parking/CEC_park_and_rides</venue_info>
+		<venue_addr>Leith Links (West)</venue_addr>
+		<extra_event_texts>
+			<extra_text>
+				<code>running_time</code>
+				<description>00:30:00</description>
+			</extra_text>
+		</extra_event_texts>
+		<min_seat_price>2</min_seat_price>
+		<event_url>http://www.edinburgh-mela.co.uk/festival/music.php</event_url>
+		<using_perf_list>
+			<performance>
+				<is_limited>no</is_limited>
+				<date_yyyymmdd>20100808</date_yyyymmdd>
+				<date_desc>08/08/10</date_desc>
+				<time_hhmmss>203000</time_hhmmss>
+				<time_desc>20:30:00</time_desc>
+				<perf_url>http://www.hubtickets.co.uk/default.asp</perf_url>
+			</performance>
+		</using_perf_list>
+	</event>
+</festival>

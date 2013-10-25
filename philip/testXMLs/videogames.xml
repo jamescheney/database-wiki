@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<VideoGames>
+ <Game genre="action">
+  <title>Counter Strike</title>
+  <players>10</players>
+  <country>USA</country>
+  <price>9.99</price>
+  </Game>
+ <Game genre="strategy">
+  <title>Age of Empires</title>
+  <players>4</players>
+  <country>UK</country>
+  <price>12.99</price>
+ </Game>
+ <Game genre="horror action">
+  <title>Resident Evil</title>
+  <players>2</players>
+  <country>Racoon City</country>
+  <price>15.99</price>
+ </Game>
+</VideoGames> 

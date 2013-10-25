@@ -1,0 +1,4186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CIAWFB>
+	<COUNTRY>
+		<NAME>Russia</NAME>
+		<CATEGORY>
+			<NAME>Introduction</NAME>
+			<PROPERTY>
+				<NAME>Background</NAME>
+				<TEXT>Founded in the 12th century, the Principality of Muscovy, was able to emerge from over 200 years of Mongol domination (13th-15th centuries) and to gradually conquer and absorb surrounding principalities. In the early 17th century, a new Romanov Dynasty continued this policy of expansion across Siberia to the Pacific. Under PETER I (ruled 1682-1725), hegemony was extended to the Baltic Sea and the country was renamed the Russian Empire. During the 19th century, more territorial acquisitions were made in Europe and Asia. Defeat in the Russo-Japanese War of 1904-05 contributed to the Revolution of 1905, which resulted in the formation of a parliament and other reforms. Repeated devastating defeats of the Russian army in World War I led to widespread rioting in the major cities of the Russian Empire and to the overthrow in 1917 of the imperial household. The Communists under Vladimir LENIN seized power soon after and formed the USSR. The brutal rule of Iosif STALIN (1928-53) strengthened Communist rule and Russian dominance of the Soviet Union at a cost of tens of millions of lives. The Soviet economy and society stagnated in the following decades until General Secretary Mikhail GORBACHEV (1985-91) introduced glasnost (openness) and perestroika (restructuring) in an attempt to modernize Communism, but his initiatives inadvertently released forces that by December 1991 splintered the USSR into Russia and 14 other independent republics. Since then, Russia has shifted its post-Soviet democratic ambitions in favor of a centralized semi-authoritarian state whose legitimacy is buttressed, in part, by carefully managed national elections, former President PUTIN&apos;s genuine popularity, and the prudent management of Russia&apos;s windfall energy wealth. Russia has severely disabled a Chechen rebel movement, although violence still occurs throughout the North Caucasus.</TEXT>
+			</PROPERTY>
+		</CATEGORY>
+		<CATEGORY>
+			<NAME>Geography</NAME>
+			<PROPERTY>
+				<NAME>Location</NAME>
+				<TEXT>Northern Asia (the area west of the Urals is considered part of Europe), bordering the Arctic Ocean, between Europe and the North Pacific Ocean</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Geographic coordinates</NAME>
+				<TEXT>60 00 N, 100 00 E</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Map references</NAME>
+				<TEXT>Asia</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Area</NAME>
+				<SUBPROP>
+					<NAME>total</NAME>
+					<TEXT>17,098,242 sq km</TEXT>
+					<RANK>1</RANK>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>land</NAME>
+					<TEXT>16,377,742 sq km</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>water</NAME>
+					<TEXT>720,500 sq km</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Area - comparative</NAME>
+				<TEXT>approximately 1.8 times the size of the US</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Land boundaries</NAME>
+				<SUBPROP>
+					<NAME>total</NAME>
+					<TEXT>20,241.5 km</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>border countries</NAME>
+					<TEXT>Azerbaijan 284 km, Belarus 959 km, China (southeast) 3,605 km, China (south) 40 km, Estonia 290 km, Finland 1,313 km, Georgia 723 km, Kazakhstan 6,846 km, North Korea 17.5 km, Latvia 292 km, Lithuania (Kaliningrad Oblast) 227 km, Mongolia 3,441 km, Norway 196 km, Poland (Kaliningrad Oblast) 432 km, Ukraine 1,576 km</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Coastline</NAME>
+				<TEXT>37,653 km</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Maritime claims</NAME>
+				<SUBPROP>
+					<NAME>territorial sea</NAME>
+					<TEXT>12 nm</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>contiguous zone</NAME>
+					<TEXT>24 nm</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>exclusive economic zone</NAME>
+					<TEXT>200 nm</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>continental shelf</NAME>
+					<TEXT>200 m depth or to the depth of exploitation</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Climate</NAME>
+				<TEXT>ranges from steppes in the south through humid continental in much of European Russia; subarctic in Siberia to tundra climate in the polar north; winters vary from cool along Black Sea coast to frigid in Siberia; summers vary from warm in the steppes to cool along Arctic coast</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Terrain</NAME>
+				<TEXT>broad plain with low hills west of Urals; vast coniferous forest and tundra in Siberia; uplands and mountains along southern border regions</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Elevation extremes</NAME>
+				<SUBPROP>
+					<NAME>lowest point</NAME>
+					<TEXT>Caspian Sea -28 m</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>highest point</NAME>
+					<TEXT>Gora El&apos;brus 5,633 m</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Natural resources</NAME>
+				<NOTE>formidable obstacles of climate, terrain, and distance hinder exploitation of natural resources</NOTE>
+				<TEXT>wide natural resource base including major deposits of oil, natural gas, coal, and many strategic minerals, timber</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Land use</NAME>
+				<SUBPROP>
+					<NAME>arable land</NAME>
+					<TEXT>7.17%</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>permanent crops</NAME>
+					<TEXT>0.11%</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>other</NAME>
+					<TEXT>92.72% (2005)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Irrigated land</NAME>
+				<TEXT>46,000 sq km (2003)</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Total renewable water resources</NAME>
+				<TEXT>4,498 cu km (1997)</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Freshwater withdrawal (domestic/industrial/agricultural)</NAME>
+				<SUBPROP>
+					<NAME>total</NAME>
+					<TEXT>76.68  cu km/yr (19%/63%/18%)</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>per capita</NAME>
+					<TEXT>535  cu m/yr (2000)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Natural hazards</NAME>
+				<TEXT>permafrost over much of Siberia is a major impediment to development; volcanic activity in the Kuril Islands; volcanoes and earthquakes on the Kamchatka Peninsula; spring floods and summer/autumn forest fires throughout Siberia and parts of European Russia</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Environment - current issues</NAME>
+				<TEXT>air pollution from heavy industry, emissions of coal-fired electric plants, and transportation in major cities; industrial, municipal, and agricultural pollution of inland waterways and seacoasts; deforestation; soil erosion; soil contamination from improper application of agricultural chemicals; scattered areas of sometimes intense radioactive contamination; groundwater contamination from toxic waste; urban solid waste management; abandoned stocks of obsolete pesticides</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Environment - international agreements</NAME>
+				<SUBPROP>
+					<NAME>party to</NAME>
+					<TEXT>Air Pollution, Air Pollution-Nitrogen Oxides, Air Pollution-Sulfur 85, Antarctic-Environmental Protocol, Antarctic-Marine Living Resources, Antarctic Seals, Antarctic Treaty, Biodiversity, Climate Change, Climate Change-Kyoto Protocol, Desertification, Endangered Species, Environmental Modification, Hazardous Wastes, Law of the Sea, Marine Dumping, Ozone Layer Protection, Ship Pollution, Tropical Timber 83, Wetlands, Whaling</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>signed, but not ratified</NAME>
+					<TEXT>Air Pollution-Sulfur 94</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Geography - note</NAME>
+				<TEXT>largest country in the world in terms of area but unfavorably located in relation to major sea lanes of the world; despite its size, much of the country lacks proper soils and climates (either too cold or too dry) for agriculture; Mount El&apos;brus is Europe&apos;s tallest peak</TEXT>
+			</PROPERTY>
+		</CATEGORY>
+		<CATEGORY>
+			<NAME>People</NAME>
+			<PROPERTY>
+				<NAME>Population</NAME>
+				<TEXT>140,041,247 (July 2009 est.)</TEXT>
+				<RANK>9</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Age structure</NAME>
+				<SUBPROP>
+					<NAME>0-14 years</NAME>
+					<TEXT>14.8% (male 10,644,833/female 10,095,011)</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>15-64 years</NAME>
+					<TEXT>71.5% (male 48,004,040/female 52,142,313)</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>65 years and over</NAME>
+					<TEXT>13.7% (male 5,880,877/female 13,274,173) (2009 est.)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Median age</NAME>
+				<SUBPROP>
+					<NAME>total</NAME>
+					<TEXT>38.4 years</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>male</NAME>
+					<TEXT>35.2 years</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>female</NAME>
+					<TEXT>41.6 years (2009 est.)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Population growth rate</NAME>
+				<TEXT>-0.467% (2009 est.)</TEXT>
+				<RANK>226</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Birth rate</NAME>
+				<TEXT>11.1 births/1,000 population (2009 est.)</TEXT>
+				<RANK>177</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Death rate</NAME>
+				<TEXT>16.06 deaths/1,000 population (July 2009 est.)</TEXT>
+				<RANK>16</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Net migration rate</NAME>
+				<TEXT>0.28 migrant(s)/1,000 population (2009 est.)</TEXT>
+				<RANK>71</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Urbanization</NAME>
+				<SUBPROP>
+					<NAME>urban population</NAME>
+					<TEXT>73% of total population (2008)</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>rate of urbanization</NAME>
+					<TEXT>-0.5% annual rate of change (2005-10 est.)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Sex ratio</NAME>
+				<SUBPROP>
+					<NAME>at birth</NAME>
+					<TEXT>1.06 male(s)/female</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>under 15 years</NAME>
+					<TEXT>1.05 male(s)/female</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>15-64 years</NAME>
+					<TEXT>0.92 male(s)/female</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>65 years and over</NAME>
+					<TEXT>0.44 male(s)/female</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>total population</NAME>
+					<TEXT>0.86 male(s)/female (2009 est.)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Infant mortality rate</NAME>
+				<SUBPROP>
+					<NAME>total</NAME>
+					<TEXT>10.56 deaths/1,000 live births</TEXT>
+					<RANK>152</RANK>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>male</NAME>
+					<TEXT>12.08 deaths/1,000 live births</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>female</NAME>
+					<TEXT>8.94 deaths/1,000 live births (2009 est.)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Life expectancy at birth</NAME>
+				<SUBPROP>
+					<NAME>total population</NAME>
+					<TEXT>66.03 years</TEXT>
+					<RANK>162</RANK>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>male</NAME>
+					<TEXT>59.33 years</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>female</NAME>
+					<TEXT>73.14 years (2009 est.)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Total fertility rate</NAME>
+				<TEXT>1.41 children born/woman (2009 est.)</TEXT>
+				<RANK>194</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>HIV/AIDS - adult prevalence rate</NAME>
+				<TEXT>1.1% (2007 est.)</TEXT>
+				<RANK>52</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>HIV/AIDS - people living with HIV/AIDS</NAME>
+				<TEXT>940,000 (2007 est.)</TEXT>
+				<RANK>13</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>HIV/AIDS - deaths</NAME>
+				<TEXT>40,000 (2007 est.)</TEXT>
+				<RANK>13</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Major infectious diseases</NAME>
+				<NOTE>highly pathogenic H5N1 avian influenza has been identified in this country; it poses a negligible risk with extremely rare cases possible among US citizens who have close contact with birds(2009)</NOTE>
+				<SUBPROP>
+					<NAME>degree of risk</NAME>
+					<TEXT>intermediate</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>food or waterborne diseases</NAME>
+					<TEXT>bacterial diarrhea</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>vectorborne disease</NAME>
+					<TEXT>tickborne encephalitis</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Nationality</NAME>
+				<SUBPROP>
+					<NAME>noun</NAME>
+					<TEXT>Russian(s)</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>adjective</NAME>
+					<TEXT>Russian</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Ethnic groups</NAME>
+				<TEXT>Russian 79.8%, Tatar 3.8%, Ukrainian 2%, Bashkir 1.2%, Chuvash 1.1%, other or unspecified 12.1% (2002 census)</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Religions</NAME>
+				<NOTE>estimates are of practicing worshipers; Russia has large populations of non-practicing believers and non-believers, a legacy of over seven decades of Soviet rule</NOTE>
+				<TEXT>Russian Orthodox 15-20%, Muslim 10-15%, other Christian 2% (2006 est.)</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Languages</NAME>
+				<TEXT>Russian, many minority languages</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Literacy</NAME>
+				<SUBPROP>
+					<NAME>definition</NAME>
+					<TEXT>age 15 and over can read and write</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>total population</NAME>
+					<TEXT>99.4%</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>male</NAME>
+					<TEXT>99.7%</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>female</NAME>
+					<TEXT>99.2% (2002 census)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>School life expectancy (primary to tertiary education)</NAME>
+				<SUBPROP>
+					<NAME>total</NAME>
+					<TEXT>14 years</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>male</NAME>
+					<TEXT>13 years</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>female</NAME>
+					<TEXT>14 years (2006)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Education expenditures</NAME>
+				<TEXT>3.8% of GDP (2005)</TEXT>
+				<RANK>117</RANK>
+			</PROPERTY>
+		</CATEGORY>
+		<CATEGORY>
+			<NAME>Government</NAME>
+			<PROPERTY>
+				<NAME>Country name</NAME>
+				<SUBPROP>
+					<NAME>conventional long form</NAME>
+					<TEXT>Russian Federation</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>conventional short form</NAME>
+					<TEXT>Russia</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>local long form</NAME>
+					<TEXT>Rossiyskaya Federatsiya</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>local short form</NAME>
+					<TEXT>Rossiya</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>former</NAME>
+					<TEXT>Russian Empire, Russian Soviet Federative Socialist Republic</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Government type</NAME>
+				<TEXT>federation</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Capital</NAME>
+				<NOTE>Russia is divided into 11 time zones</NOTE>
+				<SUBPROP>
+					<NAME>name</NAME>
+					<TEXT>Moscow</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>geographic coordinates</NAME>
+					<TEXT>55 45 N, 37 35 E</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>time difference</NAME>
+					<TEXT>UTC+3 (8 hours ahead of Washington, DC during Standard Time)</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>daylight saving time</NAME>
+					<TEXT>+1hr, begins last Sunday in March; ends last Sunday in October</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Administrative divisions</NAME>
+				<NOTE>administrative divisions have the same names as their administrative centers (exceptions have the administrative center name following in parentheses)</NOTE>
+				<TEXT>46 oblasts (oblastey, singular - oblast), 21 republics (respublik, singular - respublika), 4 autonomous okrugs (avtonomnykh okrugov, singular - avtonomnyy okrug), 9 krays (krayev, singular - kray), 2 federal cities (goroda, singular - gorod), and 1 autonomous oblast (avtonomnaya oblast&apos;)</TEXT>
+				<SUBPROP>
+					<NAME>oblasts</NAME>
+					<TEXT>Amur (Blagoveshchensk), Arkhangel&apos;sk, Astrakhan&apos;, Belgorod, Bryansk, Chelyabinsk, Irkutsk, Ivanovo, Kaliningrad, Kaluga, Kemerovo, Kirov, Kostroma, Kurgan, Kursk, Leningrad, Lipetsk, Magadan, Moscow, Murmansk, Nizhniy Novgorod, Novgorod, Novosibirsk, Omsk, Orenburg, Orel, Penza, Pskov, Rostov, Ryazan&apos;, Sakhalin (Yuzhno-Sakhalinsk), Samara, Saratov, Smolensk, Sverdlovsk (Yekaterinburg), Tambov, Tomsk, Tula, Tver&apos;, Tyumen&apos;, Ul&apos;yanovsk, Vladimir, Volgograd, Vologda, Voronezh, Yaroslavl&apos;</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>republics</NAME>
+					<TEXT>Adygeya (Maykop), Altay (Gorno-Altaysk), Bashkortostan (Ufa), Buryatiya (Ulan-Ude), Chechnya (Groznyy), Chuvashiya (Cheboksary), Dagestan (Makhachkala), Ingushetiya (Magas), Kabardino-Balkariya (Nal&apos;chik), Kalmykiya (Elista), Karachayevo-Cherkesiya (Cherkessk), Kareliya (Petrozavodsk), Khakasiya (Abakan), Komi (Syktyvkar), Mariy-El (Yoshkar-Ola), Mordoviya (Saransk), North Ossetia (Vladikavkaz), Sakha [Yakutiya] (Yakutsk), Tatarstan (Kazan&apos;), Tyva (Kyzyl), Udmurtiya (Izhevsk)</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>autonomous okrugs</NAME>
+					<TEXT>Chukotka (Anadyr&apos;), Khanty-Mansi (Khanty-Mansiysk), Nenets (Nar&apos;yan-Mar), Yamalo-Nenets (Salekhard)</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>krays</NAME>
+					<TEXT>Altay (Barnaul), Kamchatka (Petropavlovsk-Kamchatskiy), Khabarovsk, Krasnodar, Krasnoyarsk, Perm&apos;, Primorskiy [Maritime] (Vladivostok), Stavropol&apos;, Zabaykal&apos;sk (Chita)</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>federal cities</NAME>
+					<TEXT>Moscow [Moskva], Saint Petersburg [Sankt-Peterburg]</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>autonomous oblast</NAME>
+					<TEXT>Yevrey [Jewish] (Birobidzhan)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Independence</NAME>
+				<TEXT>24 August 1991 (from the Soviet Union)</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>National holiday</NAME>
+				<TEXT>Russia Day, 12 June (1990)</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Constitution</NAME>
+				<TEXT>adopted 12 December 1993</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Legal system</NAME>
+				<TEXT>based on civil law system; judicial review of legislative acts; has not accepted compulsory ICJ jurisdiction</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Suffrage</NAME>
+				<TEXT>18 years of age; universal</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Executive branch</NAME>
+				<NOTE>there is also a Presidential Administration (PA) that provides staff and policy support to the president, drafts presidential decrees, and coordinates policy among government agencies; a Security Council also reports directly to the president</NOTE>
+				<SUBPROP>
+					<NAME>chief of state</NAME>
+					<TEXT>President Dmitriy Anatolyevich MEDVEDEV (since 7 May 2008)</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>head of government</NAME>
+					<TEXT>Premier Vladimir Vladimirovich PUTIN (since 8 May 2008); First Deputy Premiers Igor Ivanovich SHUVALOV and Viktor Alekseyevich ZUBKOV (since 12 May 2008); Deputy Premiers Sergey Borisovich IVANOV (since 12 May 2008), Dmitriy Nikolayevich KOZAK (since 14 October 2008), Aleksey Leonidovich KUDRIN (since 24 September 2007), Igor Ivanovich SECHIN (since 12 May 2008), Sergey Semenovich SOBYANIN (since 12 May 2008), Aleksandr Dmitriyevich ZHUKOV (since 9 March 2004)</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>cabinet</NAME>
+					<TEXT>Ministries of the Government or &quot;Government&quot; composed of the premier and his deputies, ministers, and selected other individuals; all are appointed by the president</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>elections</NAME>
+					<TEXT>president elected by popular vote for a four-year term (eligible for a second term); election last held 2 March 2008 (next to be held in March 2012); note - the term length was extended to six years in late 2008, to go into effect following the 2012 presidential election; there is no vice president; if the president dies in office, cannot exercise his powers because of ill health, is impeached, or resigns, the premier serves as acting president until a new presidential election is held, which must be within three months; premier appointed by the president with the approval of the Duma</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>election results</NAME>
+					<TEXT>Dmitriy MEDVEDEV elected president; percent of vote - Dmitriy MEDVEDEV 70.2%, Gennady ZYUGANOV 17.7%, Vladimir ZHIRINOVSKY 9.4%, Andrey BOGDANOV 1.3%</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Legislative branch</NAME>
+				<TEXT>bicameral Federal Assembly or Federalnoye Sobraniye consists of an upper house, the Federation Council or Sovet Federatsii (168 seats; as of July 2000, members appointed by the top executive and legislative officials in each of the 84 federal administrative units - oblasts, krays, republics, autonomous okrugs and oblasts, and the federal cities of Moscow and Saint Petersburg; serve four-year terms) and a lower house, the State Duma or Gosudarstvennaya Duma (450 seats; as of 2007, all members elected by proportional representation from party lists winning at least 7% of the vote; members elected by popular vote to serve four-year terms)</TEXT>
+				<SUBPROP>
+					<NAME>elections</NAME>
+					<TEXT>State Duma - last held 2 December 2007 (next to be held in December 2011)</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>election results</NAME>
+					<TEXT>State Duma - United Russia 64.3%, CPRF 11.5%, LDPR 8.1%, Just Russia 7.7%, other 8.4%; total seats by party - United Russia 315, CPRF 57, LDPR 40, Just Russia 38</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Judicial branch</NAME>
+				<TEXT>Constitutional Court; Supreme Court; Supreme Arbitration Court; judges for all courts are appointed for life by the Federation Council on the recommendation of the president</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Political parties and leaders</NAME>
+				<TEXT>A Just Russia [Sergey MIRONOV]; Communist Party of the Russian Federation or CPRF [Gennadiy Andreyevich ZYUGANOV]; Liberal Democratic Party of Russia or LDPR [Vladimir Volfovich ZHIRINOVSKIY]; Patriots of Russia [Gennadiy SEMIGIN]; People&apos;s Union [Sergey BABURIN]; Right Cause [Leonid Yakovlevich GOZMAN, Boris Yuriyevich TITOV, and Georgiy Georgiyevich BOVT] (registration pending; formed from merger of Union of Right Forces, Democratic Party of Russia, and Civic Force); United Russia [Vladimir Vladimirovich PUTIN]; Yabloko Party [Sergey Sergeyevich MITROKHIN]</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Political pressure groups and leaders</NAME>
+				<TEXT>Association of Citizens with Initiative of Russia (TIGR); Confederation of Labor of Russia (KTR); Federation of Independent Labor Unions of Russia; Freedom of Choice Interregional Organization of Automobilists; Glasnost Defense Foundation; Golos Association in Defense of Voters&apos; Rights; Greenpeace Russia; Human Rights Watch (Russian chapter); Institute for Collective Action; Memorial (human rights group); Movement Against Illegal Migration; Pamjat (preservation of historical monuments and recording of history); Russian Orthodox Church; Russian Federation of Car Owners; Russian-Chechen Friendship Society; SOVA Analytical-Information Center; Union of the Committees of Soldiers&apos; Mothers; World Wildlife Fund (Russian chapter)</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>International organization participation</NAME>
+				<TEXT>APEC, Arctic Council, ARF, ASEAN (dialogue partner), BIS, BSEC, CBSS, CE, CERN (observer), CIS, CSTO, EAEC, EAPC, EBRD, G-20, G-8, GCTU, IAEA, IBRD, ICAO, ICC, ICCt (signatory), ICRM, IDA, IFC, IFRCS, IHO, ILO, IMF, IMO, IMSO, Interpol, IOC, IOM (observer), IPU, ISO, ITSO, ITU, ITUC, LAIA (observer), MIGA, MINURCAT, MINURSO, MONUC, NSG, OAS (observer), OECD (accession state), OIC (observer), OPCW, OSCE, Paris Club, PCA, PFP, SCO, UN, UN Security Council, UNCTAD, UNESCO, UNHCR, UNIDO, UNITAR, UNMIL, UNMIS, UNOCI, UNTSO, UNWTO, UPU, WCO, WFTU, WHO, WIPO, WMO, WTO (observer), ZC</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Diplomatic representation in the US</NAME>
+				<SUBPROP>
+					<NAME>chief of mission</NAME>
+					<TEXT>Ambassador Sergey Ivanovich KISLYAK</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>chancery</NAME>
+					<TEXT>2650 Wisconsin Avenue NW, Washington, DC 20007</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>telephone</NAME>
+					<TEXT>[1] (202) 298-5700, 5701, 5704, 5708</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>FAX</NAME>
+					<TEXT>[1] (202) 298-5735</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>consulate(s) general</NAME>
+					<TEXT>Houston, New York, San Francisco, Seattle</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Diplomatic representation from the US</NAME>
+				<SUBPROP>
+					<NAME>chief of mission</NAME>
+					<TEXT>Ambassador John R. BEYRLE</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>embassy</NAME>
+					<TEXT>Bolshoy Deviatinskiy Pereulok No. 8, 121099 Moscow</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>mailing address</NAME>
+					<TEXT>PSC-77, APO AE 09721</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>telephone</NAME>
+					<TEXT>[7] (495) 728-5000</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>FAX</NAME>
+					<TEXT>[7] (495) 728-5090</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>consulate(s) general</NAME>
+					<TEXT>Saint Petersburg, Vladivostok, Yekaterinburg</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Flag description</NAME>
+				<NOTE>the colors may have been based on those of the Dutch flag; despite many popular interpretations, there is no official meaning assigned to the colors of the Russian flag</NOTE>
+				<TEXT>three equal horizontal bands of white (top), blue, and red</TEXT>
+			</PROPERTY>
+		</CATEGORY>
+		<CATEGORY>
+			<NAME>Economy</NAME>
+			<PROPERTY>
+				<NAME>Economy - overview</NAME>
+				<TEXT>Russia ended 2008 with GDP growth of 5.6%, following 10 straight years of growth averaging 7% annually since the financial crisis of 1998. Over the last six years, fixed capital investment growth and personal income growth have averaged above 10%, but both grew at slower rates in 2008. Growth in 2008 was driven largely by non-tradable services and domestic manufacturing, rather than exports. During the past decade, poverty and unemployment declined steadily and the middle class continued to expand. Russia also improved its international financial position, running balance of payments surpluses since 2000. Foreign exchange reserves grew from $12 billion in 1999 to almost $600 billion by end July 2008, which include $200 billion in two sovereign wealth funds: a reserve fund to support budgetary expenditures in case of a fall in the price of oil and a national welfare fund to help fund pensions and infrastructure development. Total foreign debt is almost one-third of GDP. The state component of foreign debt has declined, but commercial short-term debt to foreigners has risen strongly. These positive trends began to reverse in the second half of 2008. Investor concerns over the Russia-Georgia conflict, corporate governance issues, and the global credit crunch in September caused the Russian stock market to fall by roughly 70%, primarily due to margin calls that were difficult for many Russian companies to meet. The global crisis also affected Russia&apos;s banking system, which faced liquidity problems. Moscow responded quickly in early October 2008, initiating a rescue plan of over $200 billion that was designed to increase liquidity in the financial sector, to help firms refinance foreign debt, and to support the stock market. The government also unveiled a $20 billion tax cut plan and other safety nets for society and industry. Meanwhile, a 70% drop in the price of oil since mid-July further exacerbated imbalances in external accounts and the federal budget. In mid-November, mini-devaluations of the currency by the Central Bank caused increased capital flight and froze domestic credit markets, resulting in growing unemployment, wage arrears, and a severe drop in production. Foreign exchange reserves dropped to around $435 billion by end 2008, as the Central Bank defended an overvalued ruble. In the first year of his term, President MEDVEDEV outlined a number of economic priorities for Russia including improving infrastructure, innovation, investment, and institutions; reducing the state&apos;s role in the economy; reforming the tax system and banking sector; developing one of the biggest financial centers in the world, combating corruption, and improving the judiciary. The Russian government needs to diversify the economy further, as energy and other raw materials still dominate Russian export earnings and federal budget receipts. Russia&apos;s infrastructure requires large investments and must be replaced or modernized if the country is to achieve broad-based economic growth. Corruption, lack of trust in institutions, and more recently, exchange rate uncertainty and the global economic crisis continue to dampen domestic and foreign investor sentiment. Russia has made some progress in building the rule of law, the bedrock of a modern market economy, but much work remains on judicial reform. Moscow continues to seek accession to the WTO and has made some progress, but its timeline for entry into the organization continues to slip, and the negotiating atmosphere has soured in the wake of the Georgia and global economic crises.</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>GDP (purchasing power parity)</NAME>
+				<NOTE>data are in 2008 US dollars</NOTE>
+				<TEXT>$2.271 trillion (2008 est.)</TEXT>
+				<RANK>7</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>GDP (official exchange rate)</NAME>
+				<TEXT>$1.677 trillion (2008 est.)</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>GDP - real growth rate</NAME>
+				<TEXT>5.6% (2008 est.)</TEXT>
+				<RANK>71</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>GDP - per capita (PPP)</NAME>
+				<NOTE>data are in 2008 US dollars</NOTE>
+				<TEXT>$16,100 (2008 est.)</TEXT>
+				<RANK>73</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>GDP - composition by sector</NAME>
+				<SUBPROP>
+					<NAME>agriculture</NAME>
+					<TEXT>4.7%</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>industry</NAME>
+					<TEXT>37.6%</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>services</NAME>
+					<TEXT>57.7% (2008 est.)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Labor force</NAME>
+				<TEXT>75.7 million (2008 est.)</TEXT>
+				<RANK>7</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Labor force - by occupation</NAME>
+				<SUBPROP>
+					<NAME>agriculture</NAME>
+					<TEXT>10.2%</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>industry</NAME>
+					<TEXT>27.4%</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>services</NAME>
+					<TEXT>62.4% (2007 est.)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Unemployment rate</NAME>
+				<TEXT>6.4% (2008 est.)</TEXT>
+				<RANK>82</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Population below poverty line</NAME>
+				<TEXT>15.8% (November 2007)</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Household income or consumption by percentage share</NAME>
+				<SUBPROP>
+					<NAME>lowest 10%</NAME>
+					<TEXT>1.9%</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>highest 10%</NAME>
+					<TEXT>30.4% (September 2007)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Distribution of family income - Gini index</NAME>
+				<TEXT>41.5 (September 2008)</TEXT>
+				<RANK>56</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Investment (gross fixed)</NAME>
+				<TEXT>22.1% of GDP (2008 est.)</TEXT>
+				<RANK>81</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Budget</NAME>
+				<SUBPROP>
+					<NAME>revenues</NAME>
+					<TEXT>$364.6 billion</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>expenditures</NAME>
+					<TEXT>$304.6 billion (2008 est.)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Public debt</NAME>
+				<TEXT>6.5% of GDP (2008 est.)</TEXT>
+				<RANK>117</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Inflation rate (consumer prices)</NAME>
+				<TEXT>14.1% (2008 est.)</TEXT>
+				<RANK>186</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Central bank discount rate</NAME>
+				<TEXT>13% (31 December 2008)</TEXT>
+				<RANK>38</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Commercial bank prime lending rate</NAME>
+				<TEXT>12.23% (31 December 2008)</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Stock of money</NAME>
+				<TEXT>$252.5 billion (31 December 2008)</TEXT>
+				<RANK>6</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Stock of quasi money</NAME>
+				<TEXT>$318.4 billion (31 December 2008)</TEXT>
+				<RANK>11</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Stock of domestic credit</NAME>
+				<TEXT>$367.2 billion (31 December 2008)</TEXT>
+				<RANK>23</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Market value of publicly traded shares</NAME>
+				<TEXT>$397.2 billion (31 December 2008 est.)</TEXT>
+				<RANK>11</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Agriculture - products</NAME>
+				<TEXT>grain, sugar beets, sunflower seed, vegetables, fruits; beef, milk</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Industries</NAME>
+				<TEXT>complete range of mining and extractive industries producing coal, oil, gas, chemicals, and metals; all forms of machine building from rolling mills to high-performance aircraft and space vehicles; defense industries including radar, missile production, and advanced electronic components, shipbuilding; road and rail transportation equipment; communications equipment; agricultural machinery, tractors, and construction equipment; electric power generating and transmitting equipment; medical and scientific instruments; consumer durables, textiles, foodstuffs, handicrafts</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Industrial production growth rate</NAME>
+				<TEXT>3.5% (2008 est.)</TEXT>
+				<RANK>74</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Electricity - production</NAME>
+				<TEXT>958 billion kWh (2007 est.)</TEXT>
+				<RANK>5</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Electricity - consumption</NAME>
+				<TEXT>840.4 billion kWh (2007 est.)</TEXT>
+				<RANK>5</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Electricity - exports</NAME>
+				<TEXT>18.6 billion kWh (2008 est.)</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Electricity - imports</NAME>
+				<TEXT>3.105 billion kWh (2008 est.)</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Oil - production</NAME>
+				<TEXT>9.79 million bbl/day (2008 est.)</TEXT>
+				<RANK>2</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Oil - consumption</NAME>
+				<TEXT>2.9 million bbl/day (2008 est.)</TEXT>
+				<RANK>6</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Oil - exports</NAME>
+				<TEXT>6.845 million bbl/day (2007 est.)</TEXT>
+				<RANK>2</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Oil - imports</NAME>
+				<TEXT>47,360 bbl/day (2007 est.)</TEXT>
+				<RANK>89</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Oil - proved reserves</NAME>
+				<TEXT>60 billion bbl (1 January 2009 est.)</TEXT>
+				<RANK>8</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Natural gas - production</NAME>
+				<TEXT>662.2 billion cu m (2008 est.)</TEXT>
+				<RANK>1</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Natural gas - consumption</NAME>
+				<TEXT>475.7 billion cu m (2008 est.)</TEXT>
+				<RANK>3</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Natural gas - exports</NAME>
+				<TEXT>243.4 billion cu m (2008)</TEXT>
+				<RANK>1</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Natural gas - imports</NAME>
+				<TEXT>56.9 billion cu m (2008 est.)</TEXT>
+				<RANK>6</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Natural gas - proved reserves</NAME>
+				<TEXT>47.57 trillion cu m (1 January 2009 est.)</TEXT>
+				<RANK>1</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Current account balance</NAME>
+				<TEXT>$102.4 billion (2008 est.)</TEXT>
+				<RANK>5</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Exports</NAME>
+				<TEXT>$471.6 billion (2008 est.)</TEXT>
+				<RANK>9</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Exports - commodities</NAME>
+				<TEXT>petroleum and petroleum products, natural gas, wood and wood products, metals, chemicals, and a wide variety of civilian and military manufactures</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Exports - partners</NAME>
+				<TEXT>Netherlands 11.2%, Italy 8.1%, Germany 8%, Turkey 6%, Ukraine 5.1%, Poland 4.5%, China 4.3% (2008)</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Imports</NAME>
+				<TEXT>$291.9 billion (2008 est.)</TEXT>
+				<RANK>18</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Imports - commodities</NAME>
+				<TEXT>vehicles, machinery and equipment, plastics, medicines, iron and steel, consumer goods, meat, fruits and nuts, semifinished metal products</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Imports - partners</NAME>
+				<TEXT>Germany 13.5%, China 13.2%, Japan 6.5%, Ukraine 6%, US 4.5%, Italy 4.3% (2008)</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Reserves of foreign exchange and gold</NAME>
+				<TEXT>$427.1 billion (31 December 2008 est.)</TEXT>
+				<RANK>3</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Debt - external</NAME>
+				<TEXT>$483.5 billion (31 December 2008)</TEXT>
+				<RANK>21</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Stock of direct foreign investment - at home</NAME>
+				<TEXT>$491.2 billion (2007)</TEXT>
+				<RANK>10</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Stock of direct foreign investment - abroad</NAME>
+				<TEXT>$176.7 billion (31 December 2008 est.)</TEXT>
+				<RANK>17</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Exchange rates</NAME>
+				<TEXT>Russian rubles (RUB) per US dollar - 24.3 (2008 est.), 25.659 (2007), 27.19 (2006), 28.284 (2005), 28.814 (2004)</TEXT>
+			</PROPERTY>
+		</CATEGORY>
+		<CATEGORY>
+			<NAME>Communications</NAME>
+			<PROPERTY>
+				<NAME>Telephones - main lines in use</NAME>
+				<TEXT>44.2 million (2008)</TEXT>
+				<RANK>5</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Telephones - mobile cellular</NAME>
+				<TEXT>187.5 million (2008)</TEXT>
+				<RANK>4</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Telephone system</NAME>
+				<SUBPROP>
+					<NAME>general assessment</NAME>
+					<TEXT>the telephone system is experiencing significant changes; there are more than 1,000 companies licensed to offer communication services; access to digital lines has improved, particularly in urban centers; Internet and e-mail services are improving; Russia has made progress toward building the telecommunications infrastructure necessary for a market economy; the estimated number of mobile subscribers jumped from fewer than 1 million in 1998 to nearly 188 million in 2008; a large demand for main line service remains unsatisfied</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>domestic</NAME>
+					<TEXT>cross-country digital trunk lines run from Saint Petersburg to Khabarovsk, and from Moscow to Novorossiysk; the telephone systems in 60 regional capitals have modern digital infrastructures; cellular services, both analog and digital, are available in many areas; in rural areas, the telephone services are still outdated, inadequate, and low density</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>international</NAME>
+					<TEXT>country code - 7; Russia is connected internationally by undersea fiber optic cables; digital switches in several cities provide more than 50,000 lines for international calls; satellite earth stations provide access to Intelsat, Intersputnik, Eutelsat, Inmarsat, and Orbita systems (2008)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Radio broadcast stations</NAME>
+				<TEXT>AM 323, FM 1,500 est., shortwave 62 (2004)</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Television broadcast stations</NAME>
+				<TEXT>7,306 (1998)</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Internet country code</NAME>
+				<TEXT>.ru; note - Russia also has responsibility for a legacy domain &quot;.su&quot; that was allocated to the Soviet Union and is being phased out</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Internet hosts</NAME>
+				<TEXT>7.663 million (2009)</TEXT>
+				<RANK>13</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Internet users</NAME>
+				<TEXT>45.25 million (2008)</TEXT>
+				<RANK>8</RANK>
+			</PROPERTY>
+		</CATEGORY>
+		<CATEGORY>
+			<NAME>Transportation</NAME>
+			<PROPERTY>
+				<NAME>Airports</NAME>
+				<TEXT>1,216 (2009)</TEXT>
+				<RANK>5</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Airports - with paved runways</NAME>
+				<SUBPROP>
+					<NAME>total</NAME>
+					<TEXT>595</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>over 3,047 m</NAME>
+					<TEXT>52</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>2,438 to 3,047 m</NAME>
+					<TEXT>198</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>1,524 to 2,437 m</NAME>
+					<TEXT>129</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>914 to 1,523 m</NAME>
+					<TEXT>99</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>under 914 m</NAME>
+					<TEXT>117 (2009)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Airports - with unpaved runways</NAME>
+				<SUBPROP>
+					<NAME>total</NAME>
+					<TEXT>621</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>over 3,047 m</NAME>
+					<TEXT>3</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>2,438 to 3,047 m</NAME>
+					<TEXT>13</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>1,524 to 2,437 m</NAME>
+					<TEXT>68</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>914 to 1,523 m</NAME>
+					<TEXT>84</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>under 914 m</NAME>
+					<TEXT>453 (2009)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Heliports</NAME>
+				<TEXT>48 (2009)</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Pipelines</NAME>
+				<TEXT>condensate 122 km; gas 158,767 km; liquid petroleum gas 127 km; oil 74,285 km; refined products 13,658 km; water 23 km (2008)</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Railways</NAME>
+				<NOTE>an additional 30,000 km of non-common carrier lines serve industries (2006)</NOTE>
+				<SUBPROP>
+					<NAME>total</NAME>
+					<TEXT>87,157 km</TEXT>
+					<RANK>2</RANK>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>broad gauge</NAME>
+					<TEXT>86,200 km 1.520-m gauge (40,300 km electrified)</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>narrow gauge</NAME>
+					<TEXT>957 km 1.067-m gauge (on Sakhalin Island)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Roadways</NAME>
+				<NOTE>includes public, local, and departmental roads (2006)</NOTE>
+				<SUBPROP>
+					<NAME>total</NAME>
+					<TEXT>933,000 km</TEXT>
+					<RANK>8</RANK>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>paved</NAME>
+					<TEXT>754,984 km (includes 30,000 km of expressways)</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>unpaved</NAME>
+					<TEXT>178,016 km</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Waterways</NAME>
+				<NOTE>72,000 km system in European Russia links Baltic Sea, White Sea, Caspian Sea, Sea of Azov, and Black Sea (2007)</NOTE>
+				<TEXT>102,000 km (including 33,000 km with guaranteed depth)</TEXT>
+				<RANK>2</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Merchant marine</NAME>
+				<SUBPROP>
+					<NAME>total</NAME>
+					<TEXT>1,074</TEXT>
+					<RANK>9</RANK>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>by type</NAME>
+					<TEXT>bulk carrier 25, cargo 663, carrier 2, chemical tanker 27, combination ore/oil 34, container 11, passenger 14, passenger/cargo 7, petroleum tanker 217, refrigerated cargo 59, roll on/roll off 10, specialized tanker 5</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>foreign-owned</NAME>
+					<TEXT>112 (Belgium 4, Cyprus 2, Germany 1, Greece 1, Italy 4, South Korea 1, Latvia 2, Norway 2, Switzerland 3, Turkey 80, Ukraine 11, US 1)</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>registered in other countries</NAME>
+					<TEXT>486 (Antigua and Barbuda 4, Bahamas 4, Belize 31, Bulgaria 1, Cambodia 83, Comoros 12, Cyprus 50, Dominica 3, Georgia 12, Hong Kong 2, Jamaica 3, Liberia 94, Malaysia 2, Malta 58, Marshall Islands 9, Moldova 3, Mongolia 9, Panama 18, Saint Kitts and Nevis 19, Saint Vincent and the Grenadines 21, Sierra Leone 11, Slovakia 1, Tuvalu 2, Ukraine 1, Vanuatu 2, unknown 31) (2008)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Ports and terminals</NAME>
+				<TEXT>Azov, Kaliningrad, Kavkaz, Nakhodka, Novorossiysk, Primorsk, Saint Petersburg, Vostochnyy</TEXT>
+			</PROPERTY>
+		</CATEGORY>
+		<CATEGORY>
+			<NAME>Military</NAME>
+			<PROPERTY>
+				<NAME>Military branches</NAME>
+				<TEXT>Ground Forces (Sukhoputnyye Voyskia, SV), Navy (Voyenno-Morskoy Flot, VMF), Air Forces (Voyenno-Vozdushniye Sily, VVS); Airborne Troops (VDV), Strategic Rocket Forces (Raketnyye Voyska Strategicheskogo Naznacheniya, RVSN), and Space Troops (Kosmicheskiye Voyska, KV) are independent &quot;combat arms,&quot; not subordinate to any of the three branches; Russian Ground Forces include the following combat arms: motorized-rifle troops, tank troops, missile and artillery troops, air defense of ground troops (2009)</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Military service age and obligation</NAME>
+				<TEXT>18-27 years of age for compulsory or voluntary military service; males are registered for the draft at 17 years of age; service obligation - 1 year; reserve obligation to age 50; as of July 2008, a draft military strategy called for the draft to continue up to the year 2030 (2009)</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Manpower available for military service</NAME>
+				<SUBPROP>
+					<NAME>males age 16-49</NAME>
+					<TEXT>36,219,908</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>females age 16-49</NAME>
+					<TEXT>37,019,853 (2008 est.)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Manpower fit for military service</NAME>
+				<SUBPROP>
+					<NAME>males age 16-49</NAME>
+					<TEXT>21,098,306</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>females age 16-49</NAME>
+					<TEXT>27,968,883 (2009 est.)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Manpower reaching militarily significant age annually</NAME>
+				<SUBPROP>
+					<NAME>male</NAME>
+					<TEXT>741,692</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>female</NAME>
+					<TEXT>706,081 (2009 est.)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Military expenditures</NAME>
+				<TEXT>3.9% of GDP (2005)</TEXT>
+				<RANK>30</RANK>
+			</PROPERTY>
+		</CATEGORY>
+		<CATEGORY>
+			<NAME>Transnational Issues</NAME>
+			<PROPERTY>
+				<NAME>Disputes - international</NAME>
+				<TEXT>China and Russia have demarcated the once disputed islands at the Amur and Ussuri confluence and in the Argun River in accordance with the 2004 Agreement, ending their centuries-long border disputes; the sovereignty dispute over the islands of Etorofu, Kunashiri, Shikotan, and the Habomai group, known in Japan as the &quot;Northern Territories&quot; and in Russia as the &quot;Southern Kurils,&quot; occupied by the Soviet Union in 1945, now administered by Russia, and claimed by Japan, remains the primary sticking point to signing a peace treaty formally ending World War II hostilities; Russia and Georgia agree on delimiting all but small, strategic segments of the land boundary and the maritime boundary; OSCE observers monitor volatile areas such as the Pankisi Gorge in the Akhmeti region and the Kodori Gorge in Abkhazia; Azerbaijan, Kazakhstan, and Russia signed equidistance boundaries in the Caspian seabed but the littoral states have no consensus on dividing the water column; Russia and Norway dispute their maritime limits in the Barents Sea and Russia&apos;s fishing rights beyond Svalbard&apos;s territorial limits within the Svalbard Treaty zone; various groups in Finland advocate restoration of Karelia (Kareliya) and other areas ceded to the Soviet Union following the Second World War but the Finnish Government asserts no territorial demands; in May 2005, Russia recalled its signatures to the 1996 border agreements with Estonia (1996) and Latvia (1997), when the two Baltic states announced issuance of unilateral declarations referencing Soviet occupation and ensuing territorial losses; Russia demands better treatment of ethnic Russians in Estonia and Latvia; Estonian citizen groups continue to press for realignment of the boundary based on the 1920 Tartu Peace Treaty that would bring the now divided ethnic Setu people and parts of the Narva region within Estonia; Lithuania and Russia committed to demarcating their boundary in 2006 in accordance with the land and maritime treaty ratified by Russia in May 2003 and by Lithuania in 1999; Lithuania operates a simplified transit regime for Russian nationals traveling from the Kaliningrad coastal exclave into Russia, while still conforming, as an EU member state with an EU external border, where strict Schengen border rules apply; preparations for the demarcation delimitation of land boundary with Ukraine have commenced; the dispute over the boundary between Russia and Ukraine through the Kerch Strait and Sea of Azov remains unresolved despite a December 2003 framework agreement and on-going expert-level discussions; Kazakhstan and Russia boundary delimitation was ratified on November 2005 and field demarcation should commence in 2007; Russian Duma has not yet ratified 1990 Bering Sea Maritime Boundary Agreement with the US</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Refugees and internally displaced persons</NAME>
+				<SUBPROP>
+					<NAME>IDPs</NAME>
+					<TEXT>18,000-160,000 (displacement from Chechnya and North Ossetia) (2007)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Trafficking in persons</NAME>
+				<SUBPROP>
+					<NAME>current situation</NAME>
+					<TEXT>Russia is a source, transit, and destination country for men, women, and children trafficked for various purposes; it remains a significant source of women trafficked to over 50 countries for commercial sexual exploitation; Russia is also a transit and destination country for men and women trafficked from Central Asia, Eastern Europe, and North Korea to Central and Western Europe and the Middle East for purposes of forced labor and sexual exploitation; internal trafficking remains a problem in Russia with women trafficked from rural areas to urban centers for commercial sexual exploitation, and men trafficked internally and from Central Asia for forced labor in the construction and agricultural industries; debt bondage is common among trafficking victims, and child sex tourism remains a concern</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>tier rating</NAME>
+					<TEXT>Tier 2 Watch List - Russia is on the Tier 2 Watch List for a fifth consecutive year for its failure to show evidence of increasing efforts to combat trafficking over the previous year, particularly in providing assistance to victims of trafficking; comprehensive trafficking victim assistance legislation, which would address key deficiencies, has been pending before the Duma since 2003 and was neither passed nor enacted in 2007 (2008)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Illicit drugs</NAME>
+				<TEXT>limited cultivation of illicit cannabis and opium poppy and producer of methamphetamine, mostly for domestic consumption; government has active illicit crop eradication program; used as transshipment point for Asian opiates, cannabis, and Latin American cocaine bound for growing domestic markets, to a lesser extent Western and Central Europe, and occasionally to the US; major source of heroin precursor chemicals; corruption and organized crime are key concerns; major consumer of opiates</TEXT>
+			</PROPERTY>
+		</CATEGORY>
+	</COUNTRY>
+	<COUNTRY>
+		<NAME>Norway</NAME>
+		<CATEGORY>
+			<NAME>Introduction</NAME>
+			<PROPERTY>
+				<NAME>Background</NAME>
+				<TEXT>Two centuries of Viking raids into Europe tapered off following the adoption of Christianity by King Olav TRYGGVASON in 994. Conversion of the Norwegian kingdom occurred over the next several decades. In 1397, Norway was absorbed into a union with Denmark that lasted more than four centuries. In 1814, Norwegians resisted the cession of their country to Sweden and adopted a new constitution. Sweden then invaded Norway but agreed to let Norway keep its constitution in return for accepting the union under a Swedish king. Rising nationalism throughout the 19th century led to a 1905 referendum granting Norway independence. Although Norway remained neutral in World War I, it suffered heavy losses to its shipping. Norway proclaimed its neutrality at the outset of World War II, but was nonetheless occupied for five years by Nazi Germany (1940-45). In 1949, neutrality was abandoned and Norway became a member of NATO. Discovery of oil and gas in adjacent waters in the late 1960s boosted Norway&apos;s economic fortunes. The current focus is on containing spending on the extensive welfare system and planning for the time when petroleum reserves are depleted. In referenda held in 1972 and 1994, Norway rejected joining the EU.</TEXT>
+			</PROPERTY>
+		</CATEGORY>
+		<CATEGORY>
+			<NAME>Geography</NAME>
+			<PROPERTY>
+				<NAME>Location</NAME>
+				<TEXT>Northern Europe, bordering the North Sea and the North Atlantic Ocean, west of Sweden</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Geographic coordinates</NAME>
+				<TEXT>62 00 N, 10 00 E</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Map references</NAME>
+				<TEXT>Europe</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Area</NAME>
+				<SUBPROP>
+					<NAME>total</NAME>
+					<TEXT>323,802 sq km</TEXT>
+					<RANK>67</RANK>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>land</NAME>
+					<TEXT>304,282 sq km</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>water</NAME>
+					<TEXT>19,520 sq km</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Area - comparative</NAME>
+				<TEXT>slightly larger than New Mexico</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Land boundaries</NAME>
+				<SUBPROP>
+					<NAME>total</NAME>
+					<TEXT>2,542 km</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>border countries</NAME>
+					<TEXT>Finland 727 km, Sweden 1,619 km, Russia 196 km</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Coastline</NAME>
+				<TEXT>25,148 km (includes mainland 2,650 km, as well as long fjords, numerous small islands, and minor indentations 22,498 km; length of island coastlines 58,133 km)</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Maritime claims</NAME>
+				<SUBPROP>
+					<NAME>territorial sea</NAME>
+					<TEXT>12 nm</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>contiguous zone</NAME>
+					<TEXT>10 nm</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>exclusive economic zone</NAME>
+					<TEXT>200 nm</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>continental shelf</NAME>
+					<TEXT>200 nm</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Climate</NAME>
+				<TEXT>temperate along coast, modified by North Atlantic Current; colder interior with increased precipitation and colder summers; rainy year-round on west coast</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Terrain</NAME>
+				<TEXT>glaciated; mostly high plateaus and rugged mountains broken by fertile valleys; small, scattered plains; coastline deeply indented by fjords; arctic tundra in north</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Elevation extremes</NAME>
+				<SUBPROP>
+					<NAME>lowest point</NAME>
+					<TEXT>Norwegian Sea 0 m</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>highest point</NAME>
+					<TEXT>Galdhopiggen 2,469 m</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Natural resources</NAME>
+				<TEXT>petroleum, natural gas, iron ore, copper, lead, zinc, titanium, pyrites, nickel, fish, timber, hydropower</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Land use</NAME>
+				<SUBPROP>
+					<NAME>arable land</NAME>
+					<TEXT>2.7%</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>permanent crops</NAME>
+					<TEXT>0%</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>other</NAME>
+					<TEXT>97.3% (2005)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Irrigated land</NAME>
+				<TEXT>1,270 sq km (2003)</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Total renewable water resources</NAME>
+				<TEXT>381.4 cu km (2005)</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Freshwater withdrawal (domestic/industrial/agricultural)</NAME>
+				<SUBPROP>
+					<NAME>total</NAME>
+					<TEXT>2.4  cu km/yr (23%/67%/10%)</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>per capita</NAME>
+					<TEXT>519  cu m/yr (1996)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Natural hazards</NAME>
+				<TEXT>rockslides, avalanches</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Environment - current issues</NAME>
+				<TEXT>water pollution; acid rain damaging forests and adversely affecting lakes, threatening fish stocks; air pollution from vehicle emissions</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Environment - international agreements</NAME>
+				<SUBPROP>
+					<NAME>party to</NAME>
+					<TEXT>Air Pollution, Air Pollution-Nitrogen Oxides, Air Pollution-Persistent Organic Pollutants, Air Pollution-Sulfur 85, Air Pollution-Sulfur 94, Air Pollution-Volatile Organic Compounds, Antarctic-Environmental Protocol, Antarctic-Marine Living Resources, Antarctic Seals, Antarctic Treaty, Biodiversity, Climate Change, Climate Change-Kyoto Protocol, Desertification, Endangered Species, Environmental Modification, Hazardous Wastes, Law of the Sea, Marine Dumping, Ozone Layer Protection, Ship Pollution, Tropical Timber 83, Tropical Timber 94, Wetlands, Whaling</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>signed, but not ratified</NAME>
+					<TEXT>none of the selected agreements</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Geography - note</NAME>
+				<TEXT>about two-thirds mountains; some 50,000 islands off its much-indented coastline; strategic location adjacent to sea lanes and air routes in North Atlantic; one of the most rugged and longest coastlines in the world</TEXT>
+			</PROPERTY>
+		</CATEGORY>
+		<CATEGORY>
+			<NAME>People</NAME>
+			<PROPERTY>
+				<NAME>Population</NAME>
+				<TEXT>4,660,539 (July 2009 est.)</TEXT>
+				<RANK>116</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Age structure</NAME>
+				<SUBPROP>
+					<NAME>0-14 years</NAME>
+					<TEXT>18.5% (male 441,508/female 422,050)</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>15-64 years</NAME>
+					<TEXT>66.2% (male 1,564,482/female 1,522,519)</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>65 years and over</NAME>
+					<TEXT>15.2% (male 305,120/female 404,860) (2009 est.)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Median age</NAME>
+				<SUBPROP>
+					<NAME>total</NAME>
+					<TEXT>39.4 years</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>male</NAME>
+					<TEXT>38.5 years</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>female</NAME>
+					<TEXT>40.2 years (2009 est.)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Population growth rate</NAME>
+				<TEXT>0.341% (2009 est.)</TEXT>
+				<RANK>170</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Birth rate</NAME>
+				<TEXT>10.99 births/1,000 population (2009 est.)</TEXT>
+				<RANK>178</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Death rate</NAME>
+				<TEXT>9.29 deaths/1,000 population (July 2009 est.)</TEXT>
+				<RANK>78</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Net migration rate</NAME>
+				<TEXT>1.71 migrant(s)/1,000 population (2009 est.)</TEXT>
+				<RANK>47</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Urbanization</NAME>
+				<SUBPROP>
+					<NAME>urban population</NAME>
+					<TEXT>77% of total population (2008)</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>rate of urbanization</NAME>
+					<TEXT>0.7% annual rate of change (2005-10 est.)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Sex ratio</NAME>
+				<SUBPROP>
+					<NAME>at birth</NAME>
+					<TEXT>1.05 male(s)/female</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>under 15 years</NAME>
+					<TEXT>1.05 male(s)/female</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>15-64 years</NAME>
+					<TEXT>1.03 male(s)/female</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>65 years and over</NAME>
+					<TEXT>0.75 male(s)/female</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>total population</NAME>
+					<TEXT>0.98 male(s)/female (2009 est.)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Infant mortality rate</NAME>
+				<SUBPROP>
+					<NAME>total</NAME>
+					<TEXT>3.58 deaths/1,000 live births</TEXT>
+					<RANK>214</RANK>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>male</NAME>
+					<TEXT>3.92 deaths/1,000 live births</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>female</NAME>
+					<TEXT>3.22 deaths/1,000 live births (2009 est.)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Life expectancy at birth</NAME>
+				<SUBPROP>
+					<NAME>total population</NAME>
+					<TEXT>79.95 years</TEXT>
+					<RANK>24</RANK>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>male</NAME>
+					<TEXT>77.29 years</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>female</NAME>
+					<TEXT>82.74 years (2009 est.)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Total fertility rate</NAME>
+				<TEXT>1.78 children born/woman (2009 est.)</TEXT>
+				<RANK>161</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>HIV/AIDS - adult prevalence rate</NAME>
+				<TEXT>0.1% (2007 est.)</TEXT>
+				<RANK>130</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>HIV/AIDS - people living with HIV/AIDS</NAME>
+				<TEXT>3,000 (2007 est.)</TEXT>
+				<RANK>132</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>HIV/AIDS - deaths</NAME>
+				<TEXT>fewer than 100 (2003 est.)</TEXT>
+				<RANK>135</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Nationality</NAME>
+				<SUBPROP>
+					<NAME>noun</NAME>
+					<TEXT>Norwegian(s)</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>adjective</NAME>
+					<TEXT>Norwegian</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Ethnic groups</NAME>
+				<TEXT>Norwegian 94.4% (includes Sami, about 60,000), other European 3.6%, other 2% (2007 estimate)</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Religions</NAME>
+				<TEXT>Church of Norway 85.7%, Pentecostal 1%, Roman Catholic 1%, other Christian 2.4%, Muslim 1.8%, other 8.1% (2004)</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Languages</NAME>
+				<TEXT>Bokmal Norwegian (official), Nynorsk Norwegian (official), small Sami- and Finnish-speaking minorities; note - Sami is official in six municipalities</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Literacy</NAME>
+				<SUBPROP>
+					<NAME>definition</NAME>
+					<TEXT>age 15 and over can read and write</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>total population</NAME>
+					<TEXT>100%</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>male</NAME>
+					<TEXT>100%</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>female</NAME>
+					<TEXT>100%</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>School life expectancy (primary to tertiary education)</NAME>
+				<SUBPROP>
+					<NAME>total</NAME>
+					<TEXT>17 years</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>male</NAME>
+					<TEXT>17 years</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>female</NAME>
+					<TEXT>18 years (2006)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Education expenditures</NAME>
+				<TEXT>7.2% of GDP (2005)</TEXT>
+				<RANK>20</RANK>
+			</PROPERTY>
+		</CATEGORY>
+		<CATEGORY>
+			<NAME>Government</NAME>
+			<PROPERTY>
+				<NAME>Country name</NAME>
+				<SUBPROP>
+					<NAME>conventional long form</NAME>
+					<TEXT>Kingdom of Norway</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>conventional short form</NAME>
+					<TEXT>Norway</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>local long form</NAME>
+					<TEXT>Kongeriket Norge</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>local short form</NAME>
+					<TEXT>Norge</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Government type</NAME>
+				<TEXT>constitutional monarchy</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Capital</NAME>
+				<SUBPROP>
+					<NAME>name</NAME>
+					<TEXT>Oslo</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>geographic coordinates</NAME>
+					<TEXT>59 55 N, 10 45 E</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>time difference</NAME>
+					<TEXT>UTC+1 (6 hours ahead of Washington, DC during Standard Time)</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>daylight saving time</NAME>
+					<TEXT>+1hr, begins last Sunday in March; ends last Sunday in October</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Administrative divisions</NAME>
+				<TEXT>19 counties (fylker, singular - fylke); Akershus, Aust-Agder, Buskerud, Finnmark, Hedmark, Hordaland, More og Romsdal, Nordland, Nord-Trondelag, Oppland, Oslo, Ostfold, Rogaland, Sogn og Fjordane, Sor-Trondelag, Telemark, Troms, Vest-Agder, Vestfold</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Dependent areas</NAME>
+				<TEXT>Bouvet Island, Jan Mayen, Svalbard</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Independence</NAME>
+				<TEXT>7 June 1905 (Norway declared the union with Sweden dissolved); 26 October 1905 (Sweden agreed to the repeal of the union)</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>National holiday</NAME>
+				<TEXT>Constitution Day, 17 May (1814)</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Constitution</NAME>
+				<TEXT>17 May 1814; amended many times</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Legal system</NAME>
+				<TEXT>mixture of customary law, civil law system, and common law traditions; Supreme Court renders advisory opinions to legislature when asked; accepts compulsory ICJ jurisdiction with reservations</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Suffrage</NAME>
+				<TEXT>18 years of age; universal</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Executive branch</NAME>
+				<SUBPROP>
+					<NAME>chief of state</NAME>
+					<TEXT>King HARALD V (since 17 January 1991); Heir Apparent Crown Prince HAAKON MAGNUS, son of the monarch (born 20 July 1973)</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>head of government</NAME>
+					<TEXT>Prime Minister Jens STOLTENBERG (since 17 October 2005)</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>cabinet</NAME>
+					<TEXT>State Council appointed by the monarch with the approval of parliament</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>elections</NAME>
+					<TEXT>the monarch is hereditary; following parliamentary elections, the leader of the majority party or the leader of the majority coalition is usually appointed prime minister by the monarch with the approval of the parliament</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Legislative branch</NAME>
+				<NOTE>for certain purposes, the parliament divides itself into two chambers and elects one-fourth of its membership in the Lagting and three-fourths of its membership in the Odelsting</NOTE>
+				<TEXT>modified unicameral Parliament or Storting (169 seats; members are elected by popular vote by proportional representation to serve four-year terms)</TEXT>
+				<SUBPROP>
+					<NAME>elections</NAME>
+					<TEXT>last held 14 September 2009 (next to be held in September 2013)</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>election results</NAME>
+					<TEXT>percent of vote by party - DNA 35.4%, FrP 22.9%, H 17.2%, SV 6.2%, Sp 6.2%, KrF 5.5%, V 3.9%, other 2.7%; seats by party - DNA 64, FrP 41, H 30, SV 11, Sp 11, KrF 10, V 2</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Judicial branch</NAME>
+				<TEXT>Supreme Court or Hoyesterett (justices appointed by the monarch)</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Political parties and leaders</NAME>
+				<TEXT>Center Party (Senterpartiet or Sp) [Liv Signe NAVARSETE]; Christian People&apos;s Party (Kristelig Folkeparti or KrF) [Dagfinn HOYBRATEN]; Conservative Party (Hoyre or H) [Erna SOLBERG]; Labor Party (Det norske Arbeiderpartiet or DNA) [Jens STOLTENBERG]; Liberal Party (Venstre or V) [Lars SPONHEIM]; note - has announced his resignation; Progress Party (Framstegspartiet or FrP) [Siv JENSEN]; Socialist Left Party (Sosialistisk Venstreparti or SV) [Kristin HALVORSEN]</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Political pressure groups and leaders</NAME>
+				<TEXT>Norwegian Aid Committee or NORWAC; Norwegian Association of the Disabled; Pure Salmon Campaign; The Consumer Council (consumer advocacy group)</TEXT>
+				<SUBPROP>
+					<NAME>other</NAME>
+					<TEXT>environmental groups; media; reform movements</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>International organization participation</NAME>
+				<TEXT>ADB (nonregional member), AfDB (nonregional member), Arctic Council, Australia Group, BIS, CBSS, CE, CERN, EAPC, EBRD, EFTA, ESA, FAO, IADB, IAEA, IBRD, ICAO, ICC, ICCt, ICRM, IDA, IEA, IFAD, IFC, IFRCS, IHO, ILO, IMF, IMO, IMSO, Interpol, IOC, IOM, IPU, ISO, ITSO, ITU, ITUC, MIGA, MINURCAT, MONUC, NATO, NC, NEA, NIB, NSG, OAS (observer), OECD, OPCW, OSCE, Paris Club, PCA, Schengen Convention, UN, UNCTAD, UNESCO, UNHCR, UNIDO, UNITAR, UNMIS, UNRWA, UNTSO, UNWTO, UPU, WCO, WEU (associate), WFTU, WHO, WIPO, WMO, WTO, ZC</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Diplomatic representation in the US</NAME>
+				<SUBPROP>
+					<NAME>chief of mission</NAME>
+					<TEXT>Ambassador Wegger C. STROMMEN</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>chancery</NAME>
+					<TEXT>2720 34th Street NW, Washington, DC 20008</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>telephone</NAME>
+					<TEXT>[1] (202) 333-6000</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>FAX</NAME>
+					<TEXT>[1] (202) 337-0870</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>consulate(s) general</NAME>
+					<TEXT>Houston, New York, San Francisco</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Diplomatic representation from the US</NAME>
+				<SUBPROP>
+					<NAME>chief of mission</NAME>
+					<TEXT>Ambassador Barry B. WHITE</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>embassy</NAME>
+					<TEXT>Henrik Ibsens gate 48, 0244 Oslo; note - the embassy will move to Huseby in the near future</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>mailing address</NAME>
+					<TEXT>PSC 69, Box 1000, APO AE 09707</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>telephone</NAME>
+					<TEXT>[47] (22) 44 85 50</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>FAX</NAME>
+					<TEXT>[47] (22) 44 33 63, 56 27 51</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Flag description</NAME>
+				<TEXT>red with a blue cross outlined in white that extends to the edges of the flag; the vertical part of the cross is shifted to the hoist side in the style of the Dannebrog (Danish flag); the colors recall Norway&apos;s past political unions with Denmark (red and white) and Sweden (blue)</TEXT>
+			</PROPERTY>
+		</CATEGORY>
+		<CATEGORY>
+			<NAME>Economy</NAME>
+			<PROPERTY>
+				<NAME>Economy - overview</NAME>
+				<TEXT>The Norwegian economy is a prosperous bastion of welfare capitalism, featuring a combination of free market activity and government intervention. The government controls key areas, such as the vital petroleum sector, through large-scale state enterprises. The country is richly endowed with natural resources - petroleum, hydropower, fish, forests, and minerals - and is highly dependent on the petroleum sector, which accounts for nearly half of exports and over 30% of state revenue. Norway is the world&apos;s third-largest gas exporter; its position as an oil exporter has slipped to seventh-largest as production has begun to decline. Norway opted to stay out of the EU during a referendum in November 1994; nonetheless, as a member of the European Economic Area, it contributes sizably to the EU budget. In anticipation of eventual declines in oil and gas production, Norway saves almost all state revenue from the petroleum sector in a sovereign wealth fund. After lackluster growth of less than 1.5% in 2002-03, GDP growth picked up to 2.5-6.2% in 2004-07, partly due to higher oil prices. Growth fell to 2.6% in 2008 as a result of the slowing world economy and the drop in oil prices.</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>GDP (purchasing power parity)</NAME>
+				<NOTE>data are in 2008 US dollars</NOTE>
+				<TEXT>$276.3 billion (2008 est.)</TEXT>
+				<RANK>41</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>GDP (official exchange rate)</NAME>
+				<TEXT>$451.8 billion (2008 est.)</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>GDP - real growth rate</NAME>
+				<TEXT>2.5% (2008 est.)</TEXT>
+				<RANK>142</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>GDP - per capita (PPP)</NAME>
+				<NOTE>data are in 2008 US dollars</NOTE>
+				<TEXT>$59,500 (2008 est.)</TEXT>
+				<RANK>5</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>GDP - composition by sector</NAME>
+				<SUBPROP>
+					<NAME>agriculture</NAME>
+					<TEXT>2%</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>industry</NAME>
+					<TEXT>44.2%</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>services</NAME>
+					<TEXT>53.8% (2008 est.)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Labor force</NAME>
+				<TEXT>2.591 million (2008 est.)</TEXT>
+				<RANK>108</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Labor force - by occupation</NAME>
+				<SUBPROP>
+					<NAME>agriculture</NAME>
+					<TEXT>2.9%</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>industry</NAME>
+					<TEXT>21.1%</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>services</NAME>
+					<TEXT>76% (2008)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Unemployment rate</NAME>
+				<TEXT>2.6% (2008 est.)</TEXT>
+				<RANK>29</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Population below poverty line</NAME>
+				<TEXT>NA%</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Household income or consumption by percentage share</NAME>
+				<SUBPROP>
+					<NAME>lowest 10%</NAME>
+					<TEXT>3.9%</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>highest 10%</NAME>
+					<TEXT>23.4% (2000)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Distribution of family income - Gini index</NAME>
+				<TEXT>25 (2008)</TEXT>
+				<RANK>131</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Investment (gross fixed)</NAME>
+				<TEXT>20.8% of GDP (2008 est.)</TEXT>
+				<RANK>98</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Budget</NAME>
+				<SUBPROP>
+					<NAME>revenues</NAME>
+					<TEXT>$266.2 billion</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>expenditures</NAME>
+					<TEXT>$178.1 billion (2008 est.)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Public debt</NAME>
+				<TEXT>55.7% of GDP (2008 est.)</TEXT>
+				<RANK>31</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Inflation rate (consumer prices)</NAME>
+				<TEXT>3.8% (2008 est.)</TEXT>
+				<RANK>57</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Central bank discount rate</NAME>
+				<TEXT>4% (31 December 2008)</TEXT>
+				<RANK>71</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Commercial bank prime lending rate</NAME>
+				<TEXT>7.28% (31 December 2008)</TEXT>
+				<RANK>141</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Stock of money</NAME>
+				<TEXT>$NA</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Stock of quasi money</NAME>
+				<TEXT>$NA</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Stock of domestic credit</NAME>
+				<TEXT>$NA</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Market value of publicly traded shares</NAME>
+				<TEXT>$142.5 billion (31 December 2008)</TEXT>
+				<RANK>27</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Agriculture - products</NAME>
+				<TEXT>barley, wheat, potatoes; pork, beef, veal, milk; fish</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Industries</NAME>
+				<TEXT>petroleum and gas, food processing, shipbuilding, pulp and paper products, metals, chemicals, timber, mining, textiles, fishing</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Industrial production growth rate</NAME>
+				<TEXT>-0.2% (2008 est.)</TEXT>
+				<RANK>135</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Electricity - production</NAME>
+				<TEXT>142.7 billion kWh (2008 est.)</TEXT>
+				<RANK>25</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Electricity - consumption</NAME>
+				<TEXT>128.8 billion kWh (2008 est.)</TEXT>
+				<RANK>26</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Electricity - exports</NAME>
+				<TEXT>17.29 billion kWh (2008 est.)</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Electricity - imports</NAME>
+				<TEXT>3.414 billion kWh (2008 est.)</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Oil - production</NAME>
+				<TEXT>2.466 million bbl/day (2008 est.)</TEXT>
+				<RANK>12</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Oil - consumption</NAME>
+				<TEXT>220,200 bbl/day (2008 est.)</TEXT>
+				<RANK>53</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Oil - exports</NAME>
+				<TEXT>2.383 million bbl/day (2008 est.)</TEXT>
+				<RANK>6</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Oil - imports</NAME>
+				<TEXT>104,400 bbl/day (2008 est.)</TEXT>
+				<RANK>66</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Oil - proved reserves</NAME>
+				<TEXT>6.68 billion bbl (1 January 2009 est.)</TEXT>
+				<RANK>20</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Natural gas - production</NAME>
+				<TEXT>99.2 billion cu m (2008 est.)</TEXT>
+				<RANK>6</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Natural gas - consumption</NAME>
+				<TEXT>3.97 billion cu m (2008 est.)</TEXT>
+				<RANK>66</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Natural gas - exports</NAME>
+				<TEXT>95.23 billion cu m (2008)</TEXT>
+				<RANK>3</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Natural gas - imports</NAME>
+				<TEXT>0 cu m (2008 est.)</TEXT>
+				<RANK>146</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Natural gas - proved reserves</NAME>
+				<TEXT>2.313 trillion cu m (1 January 2009 est.)</TEXT>
+				<RANK>16</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Current account balance</NAME>
+				<TEXT>$88.34 billion (2008 est.)</TEXT>
+				<RANK>6</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Exports</NAME>
+				<TEXT>$173.6 billion (2008 est.)</TEXT>
+				<RANK>30</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Exports - commodities</NAME>
+				<TEXT>petroleum and petroleum products, machinery and equipment, metals, chemicals, ships, fish</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Exports - partners</NAME>
+				<TEXT>UK 27%, Germany 12.8%, Netherlands 10.4%, France 9.4%, Sweden 6.5%, US 4.5% (2008)</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Imports</NAME>
+				<TEXT>$85.95 billion (2008 est.)</TEXT>
+				<RANK>39</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Imports - commodities</NAME>
+				<TEXT>machinery and equipment, chemicals, metals, foodstuffs</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Imports - partners</NAME>
+				<TEXT>Sweden 14.4%, Germany 13.4%, Denmark 6.9%, China 6.4%, UK 5.9%, US 5.4%, Netherlands 4.2% (2008)</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Reserves of foreign exchange and gold</NAME>
+				<TEXT>$50.95 billion (31 December 2008 est.)</TEXT>
+				<RANK>26</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Debt - external</NAME>
+				<NOTE>Norway is a net external creditor</NOTE>
+				<TEXT>$475.9 billion (31 December 2008)</TEXT>
+				<RANK>22</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Stock of direct foreign investment - at home</NAME>
+				<TEXT>$91.49 billion (31 December 2008 est.)</TEXT>
+				<RANK>37</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Stock of direct foreign investment - abroad</NAME>
+				<TEXT>$160.1 billion (31 December 2008 est.)</TEXT>
+				<RANK>19</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Exchange rates</NAME>
+				<TEXT>Norwegian kroner (NOK) per US dollar - 5.6361 (2008), 5.86 (2007), 6.418 (2006), 6.445 (2005), 6.7327 (2004)</TEXT>
+			</PROPERTY>
+		</CATEGORY>
+		<CATEGORY>
+			<NAME>Communications</NAME>
+			<PROPERTY>
+				<NAME>Telephones - main lines in use</NAME>
+				<TEXT>1.928 million (2008)</TEXT>
+				<RANK>57</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Telephones - mobile cellular</NAME>
+				<TEXT>5.287 million (2008)</TEXT>
+				<RANK>85</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Telephone system</NAME>
+				<SUBPROP>
+					<NAME>general assessment</NAME>
+					<TEXT>modern in all respects; one of the most advanced telecommunications networks in Europe</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>domestic</NAME>
+					<TEXT>Norway has a domestic satellite system; moreover, the prevalence of rural areas encourages the wide use of cellular-mobile systems instead of fixed-wire systems</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>international</NAME>
+					<TEXT>country code - 47; 2 buried coaxial cable systems; submarine cables provide links to other Nordic countries and Europe; satellite earth stations - NA Eutelsat, NA Intelsat (Atlantic Ocean), and 1 Inmarsat (Atlantic and Indian Ocean regions); note - Norway shares the Inmarsat earth station with the other Nordic countries (Denmark, Finland, Iceland, and Sweden) (1999)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Radio broadcast stations</NAME>
+				<TEXT>AM 5, FM 160, shortwave 1 (2008)</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Television broadcast stations</NAME>
+				<TEXT>69 (2008)</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Internet country code</NAME>
+				<TEXT>.no</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Internet hosts</NAME>
+				<TEXT>3.198 million (2009)</TEXT>
+				<RANK>25</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Internet users</NAME>
+				<TEXT>3.935 million (2008)</TEXT>
+				<RANK>52</RANK>
+			</PROPERTY>
+		</CATEGORY>
+		<CATEGORY>
+			<NAME>Transportation</NAME>
+			<PROPERTY>
+				<NAME>Airports</NAME>
+				<TEXT>98 (2009)</TEXT>
+				<RANK>63</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Airports - with paved runways</NAME>
+				<SUBPROP>
+					<NAME>total</NAME>
+					<TEXT>67</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>2,438 to 3,047 m</NAME>
+					<TEXT>13</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>1,524 to 2,437 m</NAME>
+					<TEXT>12</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>914 to 1,523 m</NAME>
+					<TEXT>17</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>under 914 m</NAME>
+					<TEXT>25 (2009)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Airports - with unpaved runways</NAME>
+				<SUBPROP>
+					<NAME>total</NAME>
+					<TEXT>31</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>914 to 1,523 m</NAME>
+					<TEXT>6</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>under 914 m</NAME>
+					<TEXT>25 (2009)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Heliports</NAME>
+				<TEXT>1 (2009)</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Pipelines</NAME>
+				<TEXT>condensate 31 km; gas 64 km (2008)</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Railways</NAME>
+				<SUBPROP>
+					<NAME>total</NAME>
+					<TEXT>4,114 km</TEXT>
+					<RANK>40</RANK>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>standard gauge</NAME>
+					<TEXT>4,114 km 1.435-m gauge (2,552 km electrified) (2009)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Roadways</NAME>
+				<SUBPROP>
+					<NAME>total</NAME>
+					<TEXT>92,946 km</TEXT>
+					<RANK>50</RANK>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>paved</NAME>
+					<TEXT>72,033 km (includes 664 km of expressways)</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>unpaved</NAME>
+					<TEXT>20,913 km (2007)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Waterways</NAME>
+				<TEXT>1,577 km (2008)</TEXT>
+				<RANK>53</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Merchant marine</NAME>
+				<SUBPROP>
+					<NAME>total</NAME>
+					<TEXT>688</TEXT>
+					<RANK>15</RANK>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>by type</NAME>
+					<TEXT>bulk carrier 46, cargo 141, carrier 3, chemical tanker 137, combination ore/oil 12, container 4, liquefied gas 65, passenger/cargo 117, petroleum tanker 85, refrigerated cargo 14, roll on/roll off 13, specialized tanker 1, vehicle carrier 50</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>foreign-owned</NAME>
+					<TEXT>199 (Canada 10, Chile 2, China 36, Denmark 25, Estonia 1, Finland 1, France 3, Germany 1, Greece 3, Hong Kong 20, Iceland 3, Italy 4, Japan 29, Lithuania 1, Malaysia 1, Monaco 5, Poland 3, Saudi Arabia 3, Singapore 1, Sweden 34, UK 5, US 8)</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>registered in other countries</NAME>
+					<TEXT>923 (Antigua and Barbuda 8, Australia 1, Bahamas 189, Barbados 38, Belize 3, Bermuda 5, Brazil 5, Canada 3, Cayman Islands 1, China 1, Comoros 1, Cook Islands 5, Cyprus 18, Denmark 3, Dominica 1, Estonia 2, Faroe Islands 4, Finland 3, France 5, Gibraltar 33, Hong Kong 40, Indonesia 1, Isle of Man 20, Italy 2, South Korea 2, Liberia 40, Libya 1, Malta 93, Marshall Islands 66, Netherlands 12, Netherlands Antilles 3, Panama 89, Philippines 10, Russia 2, Saint Vincent and the Grenadines 13, Singapore 143, Spain 5, Sweden 7, Tuvalu 1, UK 31, US 9, unknown 4) (2008)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Ports and terminals</NAME>
+				<TEXT>Bergen, Borg Havn, Haugesund, Maaloy, Mongstad, Narvik, Oslo, Sture</TEXT>
+			</PROPERTY>
+		</CATEGORY>
+		<CATEGORY>
+			<NAME>Military</NAME>
+			<PROPERTY>
+				<NAME>Military branches</NAME>
+				<TEXT>Norwegian Army (Haeren), Royal Norwegian Navy (Kongelige Norske Sjoeforsvaret, RNoN; includes Coastal Rangers and Coast Guard (Kystvakt)), Royal Norwegian Air Force (Kongelige Norske Luftforsvaret, RNoAF), Home Guard (Heimevernet, HV) (2007)</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Military service age and obligation</NAME>
+				<TEXT>18-44 years of age for male compulsory military service; 16 years of age in wartime; 17 years of age for male volunteers; 18 years of age for women; 12-month service obligation, in practice shortened to 8 to 9 months; although all males between ages of 18 and 44 are liable for service, in practice they are seldom called to duty after age 30; reserve obligation to age 35-60; 16 years of age for volunteers to the Home Guard, who serve 6-month duty tours (2009)</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Manpower available for military service</NAME>
+				<SUBPROP>
+					<NAME>males age 16-49</NAME>
+					<TEXT>1,078,181</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>females age 16-49</NAME>
+					<TEXT>1,046,550 (2008 est.)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Manpower fit for military service</NAME>
+				<SUBPROP>
+					<NAME>males age 16-49</NAME>
+					<TEXT>888,219</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>females age 16-49</NAME>
+					<TEXT>863,255 (2009 est.)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Manpower reaching militarily significant age annually</NAME>
+				<SUBPROP>
+					<NAME>male</NAME>
+					<TEXT>31,980</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>female</NAME>
+					<TEXT>30,543 (2009 est.)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Military expenditures</NAME>
+				<TEXT>1.9% of GDP (2005 est.)</TEXT>
+				<RANK>86</RANK>
+			</PROPERTY>
+		</CATEGORY>
+		<CATEGORY>
+			<NAME>Transnational Issues</NAME>
+			<PROPERTY>
+				<NAME>Disputes - international</NAME>
+				<TEXT>Norway asserts a territorial claim in Antarctica (Queen Maud Land and its continental shelf); despite dialogue, Russia and Norway continue to dispute their maritime limits in the Barents Sea and Russia&apos;s fishing rights beyond Svalbard&apos;s territorial limits within the Svalbard Treaty zone</TEXT>
+			</PROPERTY>
+		</CATEGORY>
+	</COUNTRY>
+	<COUNTRY>
+		<NAME>Barbados</NAME>
+		<CATEGORY>
+			<NAME>Introduction</NAME>
+			<PROPERTY>
+				<NAME>Background</NAME>
+				<TEXT>The island was uninhabited when first settled by the British in 1627. Slaves worked the sugar plantations established on the island until 1834 when slavery was abolished. The economy remained heavily dependent on sugar, rum, and molasses production through most of the 20th century. The gradual introduction of social and political reforms in the 1940s and 1950s led to complete independence from the UK in 1966. In the 1990s, tourism and manufacturing surpassed the sugar industry in economic importance.</TEXT>
+			</PROPERTY>
+		</CATEGORY>
+		<CATEGORY>
+			<NAME>Geography</NAME>
+			<PROPERTY>
+				<NAME>Location</NAME>
+				<TEXT>Caribbean, island in the North Atlantic Ocean, northeast of Venezuela</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Geographic coordinates</NAME>
+				<TEXT>13 10 N, 59 32 W</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Map references</NAME>
+				<TEXT>Central America and the Caribbean</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Area</NAME>
+				<SUBPROP>
+					<NAME>total</NAME>
+					<TEXT>430 sq km</TEXT>
+					<RANK>200</RANK>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>land</NAME>
+					<TEXT>430 sq km</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>water</NAME>
+					<TEXT>0 sq km</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Area - comparative</NAME>
+				<TEXT>2.5 times the size of Washington, DC</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Land boundaries</NAME>
+				<TEXT>0 km</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Coastline</NAME>
+				<TEXT>97 km</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Maritime claims</NAME>
+				<SUBPROP>
+					<NAME>territorial sea</NAME>
+					<TEXT>12 nm</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>exclusive economic zone</NAME>
+					<TEXT>200 nm</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Climate</NAME>
+				<TEXT>tropical; rainy season (June to October)</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Terrain</NAME>
+				<TEXT>relatively flat; rises gently to central highland region</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Elevation extremes</NAME>
+				<SUBPROP>
+					<NAME>lowest point</NAME>
+					<TEXT>Atlantic Ocean 0 m</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>highest point</NAME>
+					<TEXT>Mount Hillaby 336 m</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Natural resources</NAME>
+				<TEXT>petroleum, fish, natural gas</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Land use</NAME>
+				<SUBPROP>
+					<NAME>arable land</NAME>
+					<TEXT>37.21%</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>permanent crops</NAME>
+					<TEXT>2.33%</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>other</NAME>
+					<TEXT>60.46% (2005)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Irrigated land</NAME>
+				<TEXT>50 sq km (2003)</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Total renewable water resources</NAME>
+				<TEXT>0.1 cu km (2003)</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Freshwater withdrawal (domestic/industrial/agricultural)</NAME>
+				<SUBPROP>
+					<NAME>total</NAME>
+					<TEXT>0.09  cu km/yr (33%/44%/22%)</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>per capita</NAME>
+					<TEXT>333  cu m/yr (2000)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Natural hazards</NAME>
+				<TEXT>infrequent hurricanes; periodic landslides</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Environment - current issues</NAME>
+				<TEXT>pollution of coastal waters from waste disposal by ships; soil erosion; illegal solid waste disposal threatens contamination of aquifers</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Environment - international agreements</NAME>
+				<SUBPROP>
+					<NAME>party to</NAME>
+					<TEXT>Biodiversity, Climate Change, Climate Change-Kyoto Protocol, Desertification, Endangered Species, Hazardous Wastes, Law of the Sea, Marine Dumping, Ozone Layer Protection, Ship Pollution, Wetlands</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>signed, but not ratified</NAME>
+					<TEXT>none of the selected agreements</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Geography - note</NAME>
+				<TEXT>easternmost Caribbean island</TEXT>
+			</PROPERTY>
+		</CATEGORY>
+		<CATEGORY>
+			<NAME>People</NAME>
+			<PROPERTY>
+				<NAME>Population</NAME>
+				<TEXT>284,589 (July 2009 est.)</TEXT>
+				<RANK>180</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Age structure</NAME>
+				<SUBPROP>
+					<NAME>0-14 years</NAME>
+					<TEXT>19.2% (male 27,383/female 27,352)</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>15-64 years</NAME>
+					<TEXT>71.3% (male 99,829/female 103,049)</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>65 years and over</NAME>
+					<TEXT>9.5% (male 10,464/female 16,512) (2009 est.)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Median age</NAME>
+				<SUBPROP>
+					<NAME>total</NAME>
+					<TEXT>35.8 years</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>male</NAME>
+					<TEXT>34.7 years</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>female</NAME>
+					<TEXT>36.9 years (2009 est.)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Population growth rate</NAME>
+				<TEXT>0.383% (2009 est.)</TEXT>
+				<RANK>168</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Birth rate</NAME>
+				<TEXT>12.55 births/1,000 population (2009 est.)</TEXT>
+				<RANK>163</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Death rate</NAME>
+				<TEXT>8.41 deaths/1,000 population (July 2009 est.)</TEXT>
+				<RANK>98</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Net migration rate</NAME>
+				<TEXT>-0.31 migrant(s)/1,000 population (2009 est.)</TEXT>
+				<RANK>101</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Urbanization</NAME>
+				<SUBPROP>
+					<NAME>urban population</NAME>
+					<TEXT>40% of total population (2008)</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>rate of urbanization</NAME>
+					<TEXT>1.5% annual rate of change (2005-10 est.)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Sex ratio</NAME>
+				<SUBPROP>
+					<NAME>at birth</NAME>
+					<TEXT>1.01 male(s)/female</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>under 15 years</NAME>
+					<TEXT>1 male(s)/female</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>15-64 years</NAME>
+					<TEXT>0.97 male(s)/female</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>65 years and over</NAME>
+					<TEXT>0.63 male(s)/female</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>total population</NAME>
+					<TEXT>0.94 male(s)/female (2009 est.)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Infant mortality rate</NAME>
+				<SUBPROP>
+					<NAME>total</NAME>
+					<TEXT>12.29 deaths/1,000 live births</TEXT>
+					<RANK>143</RANK>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>male</NAME>
+					<TEXT>13.89 deaths/1,000 live births</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>female</NAME>
+					<TEXT>10.67 deaths/1,000 live births (2009 est.)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Life expectancy at birth</NAME>
+				<SUBPROP>
+					<NAME>total population</NAME>
+					<TEXT>73.94 years</TEXT>
+					<RANK>95</RANK>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>male</NAME>
+					<TEXT>71.65 years</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>female</NAME>
+					<TEXT>76.26 years (2009 est.)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Total fertility rate</NAME>
+				<TEXT>1.68 children born/woman (2009 est.)</TEXT>
+				<RANK>172</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>HIV/AIDS - adult prevalence rate</NAME>
+				<TEXT>1.2% (2007 est.)</TEXT>
+				<RANK>49</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>HIV/AIDS - people living with HIV/AIDS</NAME>
+				<TEXT>2,200 (2007 est.)</TEXT>
+				<RANK>137</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>HIV/AIDS - deaths</NAME>
+				<TEXT>fewer than 100 (2007 est.)</TEXT>
+				<RANK>152</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Nationality</NAME>
+				<SUBPROP>
+					<NAME>noun</NAME>
+					<TEXT>Barbadian(s) or Bajan (colloquial)</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>adjective</NAME>
+					<TEXT>Barbadian or Bajan (colloquial)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Ethnic groups</NAME>
+				<TEXT>black 90%, white 4%, Asian and mixed 6%</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Religions</NAME>
+				<TEXT>Protestant 63.4% (Anglican 28.3%, Pentecostal 18.7%, Methodist 5.1%, other 11.3%), Roman Catholic 4.2%, other Christian 7%, other 4.8%, none or unspecified 20.6% (2008 est.)</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Languages</NAME>
+				<TEXT>English</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Literacy</NAME>
+				<SUBPROP>
+					<NAME>definition</NAME>
+					<TEXT>age 15 and over has ever attended school</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>total population</NAME>
+					<TEXT>99.7%</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>male</NAME>
+					<TEXT>99.7%</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>female</NAME>
+					<TEXT>99.7% (2002 est.)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>School life expectancy (primary to tertiary education)</NAME>
+				<SUBPROP>
+					<NAME>total</NAME>
+					<TEXT>13 years</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>male</NAME>
+					<TEXT>13 years</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>female</NAME>
+					<TEXT>14 years (2001)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Education expenditures</NAME>
+				<TEXT>6.9% of GDP (2005)</TEXT>
+				<RANK>24</RANK>
+			</PROPERTY>
+		</CATEGORY>
+		<CATEGORY>
+			<NAME>Government</NAME>
+			<PROPERTY>
+				<NAME>Country name</NAME>
+				<SUBPROP>
+					<NAME>conventional long form</NAME>
+					<TEXT>none</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>conventional short form</NAME>
+					<TEXT>Barbados</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Government type</NAME>
+				<TEXT>parliamentary democracy and a Commonwealth realm</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Capital</NAME>
+				<SUBPROP>
+					<NAME>name</NAME>
+					<TEXT>Bridgetown</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>geographic coordinates</NAME>
+					<TEXT>13 06 N, 59 37 W</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>time difference</NAME>
+					<TEXT>UTC-4 (1 hour ahead of Washington, DC during Standard Time)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Administrative divisions</NAME>
+				<TEXT>11 parishes and 1 city*; Bridgetown*, Christ Church, Saint Andrew, Saint George, Saint James, Saint John, Saint Joseph, Saint Lucy, Saint Michael, Saint Peter, Saint Philip, Saint Thomas</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Independence</NAME>
+				<TEXT>30 November 1966 (from the UK)</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>National holiday</NAME>
+				<TEXT>Independence Day, 30 November (1966)</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Constitution</NAME>
+				<TEXT>30 November 1966</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Legal system</NAME>
+				<TEXT>English common law; no judicial review of legislative acts; accepts compulsory ICJ jurisdiction with reservations</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Suffrage</NAME>
+				<TEXT>18 years of age; universal</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Executive branch</NAME>
+				<SUBPROP>
+					<NAME>chief of state</NAME>
+					<TEXT>Queen ELIZABETH II (since 6 February 1952); represented by Governor General Sir Clifford Straughn HUSBANDS (since 1 June 1996)</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>head of government</NAME>
+					<TEXT>Prime Minister David THOMPSON (since 16 January 2008)</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>cabinet</NAME>
+					<TEXT>Cabinet appointed by the governor general on the advice of the prime minister</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>elections</NAME>
+					<TEXT>the monarch is hereditary; governor general appointed by the monarch; following legislative elections, the leader of the majority party or the leader of the majority coalition is usually appointed prime minister by the governor general; the prime minister recommends the deputy prime minister</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Legislative branch</NAME>
+				<TEXT>bicameral Parliament consists of the Senate (21 seats; members appointed by the governor general - 12 on the advice of the Prime Minister, 2 on the advice of the opposition leader, and 7 at his discretion) and the House of Assembly (30 seats; members are elected by direct popular vote to serve five-year terms)</TEXT>
+				<SUBPROP>
+					<NAME>elections</NAME>
+					<TEXT>House of Assembly - last held 15 January 2008 (next to be called in 2013)</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>election results</NAME>
+					<TEXT>House of Assembly - percent of vote by party - DLP 52.5%, BLP 47.3%; seats by party - DLP 20, BLP 10</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Judicial branch</NAME>
+				<TEXT>Supreme Court of Judicature consists of a High Court and a Court of Appeal (judges are appointed by the Service Commissions for the Judicial and Legal Services); Caribbean Court of Justice or CCJ is the highest court of appeal; based in Port of Spain, Trinidad and Tobago</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Political parties and leaders</NAME>
+				<TEXT>Barbados Labor Party or BLP [Mia MOTTLEY]; Democratic Labor Party or DLP [David THOMPSON]; People&apos;s Empowerment Party or PEP [David COMISSIONG]</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Political pressure groups and leaders</NAME>
+				<TEXT>Barbados Secondary Teachers&apos; Union or BSTU [Patrick FROST]; Barbados Union of Teachers or BUT [Herbert GITTENS]; Congress of Trade Unions and Staff Associations of Barbados or CTUSAB, (includes the BWU, NUPW, BUT, and BSTU) [Leroy TROTMAN]; Barbados Workers Union or BWU [Leroy TROTMAN]; Clement Payne Labor Union [David COMISSIONG]; National Union of Public Workers [Joseph GODDARD]</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>International organization participation</NAME>
+				<TEXT>ACP, C, Caricom, CDB, FAO, G-77, IADB, IBRD, ICAO, ICCt, ICRM, IDA, IFAD, IFC, IFRCS, ILO, IMF, IMO, Interpol, IOC, ISO, ITSO, ITU, ITUC, LAES, MIGA, NAM, OAS, OPANAL, OPCW, UN, UNCTAD, UNESCO, UNIDO, UPU, WCO, WFTU, WHO, WIPO, WMO, WTO</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Diplomatic representation in the US</NAME>
+				<SUBPROP>
+					<NAME>chief of mission</NAME>
+					<TEXT>Ambassador John BEALE</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>chancery</NAME>
+					<TEXT>2144 Wyoming Avenue NW, Washington, DC 20008</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>telephone</NAME>
+					<TEXT>[1] (202) 939-9200</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>FAX</NAME>
+					<TEXT>[1] (202) 332-7467</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>consulate(s) general</NAME>
+					<TEXT>Miami, New York</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>consulate(s)</NAME>
+					<TEXT>Los Angeles</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Diplomatic representation from the US</NAME>
+				<SUBPROP>
+					<NAME>chief of mission</NAME>
+					<TEXT>Ambassador Mary M. OURISMAN</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>embassy</NAME>
+					<TEXT>U.S. Embassy, Wildey Business Park, Wildey, St. Michael BB 14006</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>mailing address</NAME>
+					<TEXT>P. O. Box 302, Bridgetown BB 11000; CMR 1014, APO AA 34055</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>telephone</NAME>
+					<TEXT>[1] (246) 227-4399</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>FAX</NAME>
+					<TEXT>[1] (246) 431-0179</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Flag description</NAME>
+				<TEXT>three equal vertical bands of blue (hoist side), gold, and blue with the head of a black trident centered on the gold band; the band colors represent the blue of the sea and sky and the gold of the beaches; the trident head represents independence and a break with the past (the colonial coat of arms contained a complete trident)</TEXT>
+			</PROPERTY>
+		</CATEGORY>
+		<CATEGORY>
+			<NAME>Economy</NAME>
+			<PROPERTY>
+				<NAME>Economy - overview</NAME>
+				<TEXT>Historically, the Barbadian economy was dependent on sugarcane cultivation and related activities. However, in recent years the economy has diversified into light industry and tourism with about three-quarters of GDP and 80% of exports being attributed to services. Growth has rebounded since 2003, bolstered by increases in construction projects and tourism revenues, reflecting its success in the higher-end segment, but the sector will likely face declining revenues with the global economic downturn. The country enjoys one of the highest per capita incomes in the region. Offshore finance and information services are important foreign exchange earners and thrive from having the same time zone as eastern US financial centers and a relatively highly educated workforce. The government continues its efforts to reduce unemployment, to encourage direct foreign investment, and to privatize remaining state-owned enterprises. The public debt-to-GDP ratio of about 80% will likely widen as the THOMPSON administration engages in a more expansionary fiscal policy.</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>GDP (purchasing power parity)</NAME>
+				<NOTE>data are in 2008 US dollars</NOTE>
+				<TEXT>$5.367 billion (2008 est.)</TEXT>
+				<RANK>157</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>GDP (official exchange rate)</NAME>
+				<TEXT>$3.67 billion (2008 est.)</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>GDP - real growth rate</NAME>
+				<TEXT>0.7% (2008 est.)</TEXT>
+				<RANK>187</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>GDP - per capita (PPP)</NAME>
+				<NOTE>data are in 2008 US dollars</NOTE>
+				<TEXT>$18,900 (2008 est.)</TEXT>
+				<RANK>66</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>GDP - composition by sector</NAME>
+				<SUBPROP>
+					<NAME>agriculture</NAME>
+					<TEXT>6%</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>industry</NAME>
+					<TEXT>16%</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>services</NAME>
+					<TEXT>78% (2000 est.)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Labor force</NAME>
+				<TEXT>175,000 (2007 est.)</TEXT>
+				<RANK>169</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Labor force - by occupation</NAME>
+				<SUBPROP>
+					<NAME>agriculture</NAME>
+					<TEXT>10%</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>industry</NAME>
+					<TEXT>15%</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>services</NAME>
+					<TEXT>75% (1996 est.)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Unemployment rate</NAME>
+				<TEXT>10.7% (2003 est.)</TEXT>
+				<RANK>126</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Population below poverty line</NAME>
+				<TEXT>NA%</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Household income or consumption by percentage share</NAME>
+				<SUBPROP>
+					<NAME>lowest 10%</NAME>
+					<TEXT>NA%</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>highest 10%</NAME>
+					<TEXT>NA%</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Budget</NAME>
+				<SUBPROP>
+					<NAME>revenues</NAME>
+					<TEXT>$847 million (including grants)</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>expenditures</NAME>
+					<TEXT>$886 million (2000 est.)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Inflation rate (consumer prices)</NAME>
+				<TEXT>5.5% (2007 est.)</TEXT>
+				<RANK>93</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Central bank discount rate</NAME>
+				<TEXT>10% (31 December 2008)</TEXT>
+				<RANK>24</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Commercial bank prime lending rate</NAME>
+				<TEXT>10.03% (31 December 2008)</TEXT>
+				<RANK>77</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Stock of money</NAME>
+				<TEXT>$1.637 billion (31 December 2008)</TEXT>
+				<RANK>75</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Stock of quasi money</NAME>
+				<TEXT>$3.701 billion (31 December 2008)</TEXT>
+				<RANK>77</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Stock of domestic credit</NAME>
+				<TEXT>$4.554 billion (31 December 2008)</TEXT>
+				<RANK>82</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Market value of publicly traded shares</NAME>
+				<TEXT>$NA (31 December 2008)</TEXT>
+				<RANK>85</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Agriculture - products</NAME>
+				<TEXT>sugarcane, vegetables, cotton</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Industries</NAME>
+				<TEXT>tourism, sugar, light manufacturing, component assembly for export</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Industrial production growth rate</NAME>
+				<TEXT>-3.2% (2000 est.)</TEXT>
+				<RANK>162</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Electricity - production</NAME>
+				<TEXT>1.003 billion kWh (2007 est.)</TEXT>
+				<RANK>146</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Electricity - consumption</NAME>
+				<TEXT>939.9 million kWh (2007 est.)</TEXT>
+				<RANK>147</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Electricity - exports</NAME>
+				<TEXT>0 kWh (2008 est.)</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Electricity - imports</NAME>
+				<TEXT>0 kWh (2008 est.)</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Oil - production</NAME>
+				<TEXT>1,100 bbl/day (2008 est.)</TEXT>
+				<RANK>104</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Oil - consumption</NAME>
+				<TEXT>9,000 bbl/day (2008 est.)</TEXT>
+				<RANK>149</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Oil - exports</NAME>
+				<TEXT>1,750 bbl/day (2007 est.)</TEXT>
+				<RANK>117</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Oil - imports</NAME>
+				<TEXT>10,390 bbl/day (2007 est.)</TEXT>
+				<RANK>139</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Oil - proved reserves</NAME>
+				<TEXT>2.17 million bbl (1 January 2009 est.)</TEXT>
+				<RANK>94</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Natural gas - production</NAME>
+				<TEXT>29.17 million cu m (2008 est.)</TEXT>
+				<RANK>87</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Natural gas - consumption</NAME>
+				<TEXT>29.17 million cu m (2008 est.)</TEXT>
+				<RANK>110</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Natural gas - exports</NAME>
+				<TEXT>0 cu m (2008)</TEXT>
+				<RANK>201</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Natural gas - imports</NAME>
+				<TEXT>0 cu m (2008 est.)</TEXT>
+				<RANK>200</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Natural gas - proved reserves</NAME>
+				<TEXT>141.6 million cu m (1 January 2009 est.)</TEXT>
+				<RANK>101</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Current account balance</NAME>
+				<TEXT>-$254 million (2007 est.)</TEXT>
+				<RANK>94</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Exports</NAME>
+				<TEXT>$385 million (2006)</TEXT>
+				<RANK>168</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Exports - commodities</NAME>
+				<TEXT>manufactures, sugar and molasses, rum, other foods and beverages, chemicals, electrical components</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Exports - partners</NAME>
+				<TEXT>Trinidad and Tobago 15.6%, Jamaica 13.9%, Brazil 9.9%, US 8.7%, UK 7.8%, Saint Lucia 7.3%, Saint Vincent and the Grenadines 4.5% (2008)</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Imports</NAME>
+				<TEXT>$1.586 billion (2006)</TEXT>
+				<RANK>158</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Imports - commodities</NAME>
+				<TEXT>consumer goods, machinery, foodstuffs, construction materials, chemicals, fuel, electrical components</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Imports - partners</NAME>
+				<TEXT>US 27.1%, Trinidad and Tobago 25.6%, Russia 7.1%, Colombia 6.4%, Germany 4.1% (2008)</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Reserves of foreign exchange and gold</NAME>
+				<TEXT>$620 million (2007)</TEXT>
+				<RANK>135</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Debt - external</NAME>
+				<TEXT>$668 million (2003)</TEXT>
+				<RANK>159</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Exchange rates</NAME>
+				<TEXT>Barbadian dollars (BBD) per US dollar - NA (2007), 2 (2006), 2 (2005), 2 (2004), 2 (2003)</TEXT>
+			</PROPERTY>
+		</CATEGORY>
+		<CATEGORY>
+			<NAME>Communications</NAME>
+			<PROPERTY>
+				<NAME>Telephones - main lines in use</NAME>
+				<TEXT>150,000 (2008)</TEXT>
+				<RANK>132</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Telephones - mobile cellular</NAME>
+				<TEXT>406,000 (2008)</TEXT>
+				<RANK>160</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Telephone system</NAME>
+				<SUBPROP>
+					<NAME>general assessment</NAME>
+					<TEXT>fixed-line teledensity of roughly 50 per 100 persons; mobile-cellular telephone density approaching 150 per 100 persons</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>domestic</NAME>
+					<TEXT>island-wide automatic telephone system</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>international</NAME>
+					<TEXT>country code - 1-246; landing point for the East Caribbean Fiber System (ECFS) submarine cable with links to 13 other islands in the eastern Caribbean extending from the British Virgin Islands to Trinidad; satellite earth stations - 1 (Intelsat -Atlantic Ocean); tropospheric scatter to Trinidad and Saint Lucia (2008)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Radio broadcast stations</NAME>
+				<TEXT>AM 2, FM 6, shortwave 0 (2004)</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Television broadcast stations</NAME>
+				<TEXT>1 (plus 2 cable channels) (2004)</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Internet country code</NAME>
+				<TEXT>.bb</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Internet hosts</NAME>
+				<TEXT>235 (2009)</TEXT>
+				<RANK>185</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Internet users</NAME>
+				<TEXT>188,000 (2008)</TEXT>
+				<RANK>139</RANK>
+			</PROPERTY>
+		</CATEGORY>
+		<CATEGORY>
+			<NAME>Transportation</NAME>
+			<PROPERTY>
+				<NAME>Airports</NAME>
+				<TEXT>1 (2009)</TEXT>
+				<RANK>212</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Airports - with paved runways</NAME>
+				<SUBPROP>
+					<NAME>total</NAME>
+					<TEXT>1</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>over 3,047 m</NAME>
+					<TEXT>1 (2009)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Roadways</NAME>
+				<SUBPROP>
+					<NAME>total</NAME>
+					<TEXT>1,600 km</TEXT>
+					<RANK>176</RANK>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>paved</NAME>
+					<TEXT>1,600 km (2004)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Merchant marine</NAME>
+				<SUBPROP>
+					<NAME>total</NAME>
+					<TEXT>85</TEXT>
+					<RANK>53</RANK>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>by type</NAME>
+					<TEXT>bulk carrier 15, cargo 50, chemical tanker 7, passenger 1, passenger/cargo 1, petroleum tanker 3, refrigerated cargo 6, roll on/roll off 2</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>foreign-owned</NAME>
+					<TEXT>80 (Canada 9, Greece 12, India 1, Iran 2, Lebanon 1, Norway 38, Sweden 7, Syria 1, UK 9)</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>registered in other countries</NAME>
+					<TEXT>1 (Saint Vincent and the Grenadines 1) (2008)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Ports and terminals</NAME>
+				<TEXT>Bridgetown</TEXT>
+			</PROPERTY>
+		</CATEGORY>
+		<CATEGORY>
+			<NAME>Military</NAME>
+			<PROPERTY>
+				<NAME>Military branches</NAME>
+				<TEXT>Royal Barbados Defense Force: Troops Command, Barbados Coast Guard (2009)</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Military service age and obligation</NAME>
+				<TEXT>18 years of age for voluntary military service (younger requires parental consent); no conscription (2008)</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Manpower available for military service</NAME>
+				<SUBPROP>
+					<NAME>males age 16-49</NAME>
+					<TEXT>75,265</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>females age 16-49</NAME>
+					<TEXT>75,389 (2008 est.)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Manpower fit for military service</NAME>
+				<SUBPROP>
+					<NAME>males age 16-49</NAME>
+					<TEXT>58,596</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>females age 16-49</NAME>
+					<TEXT>58,866 (2009 est.)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Manpower reaching militarily significant age annually</NAME>
+				<SUBPROP>
+					<NAME>male</NAME>
+					<TEXT>2,015</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>female</NAME>
+					<TEXT>2,007 (2009 est.)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Military expenditures</NAME>
+				<TEXT>0.5% of GDP (2006 est.)</TEXT>
+				<RANK>159</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Military - note</NAME>
+				<TEXT>the Royal Barbados Defense Force includes a land-based Troop Command and a small Coast Guard; the primary role of the land element is to defend the island against external aggression; the Command consists of a single, part-time battalion with a small regular cadre that is deployed throughout the island; it increasingly supports the police in patrolling the coastline to prevent smuggling and other illicit activities (2007)</TEXT>
+			</PROPERTY>
+		</CATEGORY>
+		<CATEGORY>
+			<NAME>Transnational Issues</NAME>
+			<PROPERTY>
+				<NAME>Disputes - international</NAME>
+				<TEXT>Barbados and Trinidad and Tobago abide by the April 2006 Permanent Court of Arbitration decision delimiting a maritime boundary and limiting catches of flying fish in Trinidad and Tobago&apos;s exclusive economic zone; joins other Caribbean states to counter Venezuela&apos;s claim that Aves Island sustains human habitation, a criterion under the UN Convention on the Law of the Sea (UNCLOS), which permits Venezuela to extend its EEZ/continental shelf over a large portion of the eastern Caribbean Sea</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Illicit drugs</NAME>
+				<TEXT>one of many Caribbean transshipment points for narcotics bound for Europe and the US; offshore financial center</TEXT>
+			</PROPERTY>
+		</CATEGORY>
+	</COUNTRY>
+	<COUNTRY>
+		<NAME>Atlantic Ocean</NAME>
+		<CATEGORY>
+			<NAME>Introduction</NAME>
+			<PROPERTY>
+				<NAME>Background</NAME>
+				<TEXT>The Atlantic Ocean is the second largest of the world&apos;s five oceans (after the Pacific Ocean, but larger than the Indian Ocean, Southern Ocean, and Arctic Ocean). The Kiel Canal (Germany), Oresund (Denmark-Sweden), Bosporus (Turkey), Strait of Gibraltar (Morocco-Spain), and the Saint Lawrence Seaway (Canada-US) are important strategic access waterways. The decision by the International Hydrographic Organization in the spring of 2000 to delimit a fifth world ocean, the Southern Ocean, removed the portion of the Atlantic Ocean south of 60 degrees south latitude.</TEXT>
+			</PROPERTY>
+		</CATEGORY>
+		<CATEGORY>
+			<NAME>Geography</NAME>
+			<PROPERTY>
+				<NAME>Location</NAME>
+				<TEXT>body of water between Africa, Europe, the Southern Ocean, and the Western Hemisphere</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Geographic coordinates</NAME>
+				<TEXT>0 00 N, 25 00 W</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Map references</NAME>
+				<TEXT>Political Map of the World</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Area</NAME>
+				<NOTE>includes Baltic Sea, Black Sea, Caribbean Sea, Davis Strait, Denmark Strait, part of the Drake Passage, Gulf of Mexico, Labrador Sea, Mediterranean Sea, North Sea, Norwegian Sea, almost all of the Scotia Sea, and other tributary water bodies</NOTE>
+				<SUBPROP>
+					<NAME>total</NAME>
+					<TEXT>76.762 million sq km</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Area - comparative</NAME>
+				<TEXT>slightly less than 6.5 times the size of the US</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Coastline</NAME>
+				<TEXT>111,866 km</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Climate</NAME>
+				<TEXT>tropical cyclones (hurricanes) develop off the coast of Africa near Cape Verde and move westward into the Caribbean Sea; hurricanes can occur from May to December but are most frequent from August to November</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Terrain</NAME>
+				<TEXT>surface usually covered with sea ice in Labrador Sea, Denmark Strait, and coastal portions of the Baltic Sea from October to June; clockwise warm-water gyre (broad, circular system of currents) in the northern Atlantic, counterclockwise warm-water gyre in the southern Atlantic; the ocean floor is dominated by the Mid-Atlantic Ridge, a rugged north-south centerline for the entire Atlantic basin</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Elevation extremes</NAME>
+				<SUBPROP>
+					<NAME>lowest point</NAME>
+					<TEXT>Milwaukee Deep in the Puerto Rico Trench -8,605 m</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>highest point</NAME>
+					<TEXT>sea level 0 m</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Natural resources</NAME>
+				<TEXT>oil and gas fields, fish, marine mammals (seals and whales), sand and gravel aggregates, placer deposits, polymetallic nodules, precious stones</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Natural hazards</NAME>
+				<TEXT>icebergs common in Davis Strait, Denmark Strait, and the northwestern Atlantic Ocean from February to August and have been spotted as far south as Bermuda and the Madeira Islands; ships subject to superstructure icing in extreme northern Atlantic from October to May; persistent fog can be a maritime hazard from May to September; hurricanes (May to December)</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Environment - current issues</NAME>
+				<TEXT>endangered marine species include the manatee, seals, sea lions, turtles, and whales; drift net fishing is hastening the decline of fish stocks and contributing to international disputes; municipal sludge pollution off eastern US, southern Brazil, and eastern Argentina; oil pollution in Caribbean Sea, Gulf of Mexico, Lake Maracaibo, Mediterranean Sea, and North Sea; industrial waste and municipal sewage pollution in Baltic Sea, North Sea, and Mediterranean Sea</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Geography - note</NAME>
+				<TEXT>major chokepoints include the Dardanelles, Strait of Gibraltar, access to the Panama and Suez Canals; strategic straits include the Strait of Dover, Straits of Florida, Mona Passage, The Sound (Oresund), and Windward Passage; the Equator divides the Atlantic Ocean into the North Atlantic Ocean and South Atlantic Ocean</TEXT>
+			</PROPERTY>
+		</CATEGORY>
+		<CATEGORY>
+			<NAME>Economy</NAME>
+			<PROPERTY>
+				<NAME>Economy - overview</NAME>
+				<TEXT>The Atlantic Ocean provides some of the world&apos;s most heavily trafficked sea routes, between and within the Eastern and Western Hemispheres. Other economic activity includes the exploitation of natural resources, e.g., fishing, dredging of aragonite sands (The Bahamas), and production of crude oil and natural gas (Caribbean Sea, Gulf of Mexico, and North Sea).</TEXT>
+			</PROPERTY>
+		</CATEGORY>
+		<CATEGORY>
+			<NAME>Transportation</NAME>
+			<PROPERTY>
+				<NAME>Ports and terminals</NAME>
+				<TEXT>Alexandria (Egypt), Algiers (Algeria), Antwerp (Belgium), Barcelona (Spain), Buenos Aires (Argentina), Casablanca (Morocco), Colon (Panama), Copenhagen (Denmark), Dakar (Senegal), Gdansk (Poland), Hamburg (Germany), Helsinki (Finland), Las Palmas (Canary Islands, Spain), Le Havre (France), Lisbon (Portugal), London (UK), Marseille (France), Montevideo (Uruguay), Montreal (Canada), Naples (Italy), New Orleans (US), New York (US), Oran (Algeria), Oslo (Norway), Peiraiefs or Piraeus (Greece), Rio de Janeiro (Brazil), Rotterdam (Netherlands), Saint Petersburg (Russia), Stockholm (Sweden)</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Transportation - note</NAME>
+				<TEXT>Kiel Canal and Saint Lawrence Seaway are two important waterways; significant domestic commercial and recreational use of Intracoastal Waterway on central and south Atlantic seaboard and Gulf of Mexico coast of US; the International Maritime Bureau reports the territorial waters of littoral states and offshore Atlantic waters as high risk for piracy and armed robbery against ships, particularly in the Gulf of Guinea off West Africa, the east coast of Brazil, and the Caribbean Sea; numerous commercial vessels have been attacked and hijacked both at anchor and while underway; hijacked vessels are often disguised and cargoes stolen; crews have been robbed and stores or cargoes stolen</TEXT>
+			</PROPERTY>
+		</CATEGORY>
+		<CATEGORY>
+			<NAME>Transnational Issues</NAME>
+			<PROPERTY>
+				<NAME>Disputes - international</NAME>
+				<TEXT>some maritime disputes (see littoral states)</TEXT>
+			</PROPERTY>
+		</CATEGORY>
+	</COUNTRY>
+	<COUNTRY>
+		<NAME>Eritrea</NAME>
+		<CATEGORY>
+			<NAME>Introduction</NAME>
+			<PROPERTY>
+				<NAME>Background</NAME>
+				<TEXT>Eritrea was awarded to Ethiopia in 1952 as part of a federation. Ethiopia&apos;s annexation of Eritrea as a province 10 years later sparked a 30-year struggle for independence that ended in 1991 with Eritrean rebels defeating governmental forces; independence was overwhelmingly approved in a 1993 referendum. A two-and-a-half-year border war with Ethiopia that erupted in 1998 ended under UN auspices in December 2000. Eritrea hosted a UN peacekeeping operation that monitored a 25 km-wide Temporary Security Zone (TSZ) on the border with Ethiopia. Eritrea&apos;s denial of fuel to the mission caused the UN to withdraw the mission and terminate its mandate 31 July 2008. An international commission, organized to resolve the border dispute, posted its findings in 2002. However, both parties have been unable to reach agreement on implementing the decision. On 30 November 2007, the Eritrea-Ethiopia Boundary Commission remotely demarcated the border by coordinates and dissolved itself, leaving Ethiopia still occupying several tracts of disputed territory, including the town of Badme. Eritrea accepted the EEBC&apos;s &quot;virtual demarcation&quot; decision and called on Ethiopia to remove its troops from the TSZ which it states is Eritrean territory. Ethiopia has not accepted the virtual demarcation decision.</TEXT>
+			</PROPERTY>
+		</CATEGORY>
+		<CATEGORY>
+			<NAME>Geography</NAME>
+			<PROPERTY>
+				<NAME>Location</NAME>
+				<TEXT>Eastern Africa, bordering the Red Sea, between Djibouti and Sudan</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Geographic coordinates</NAME>
+				<TEXT>15 00 N, 39 00 E</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Map references</NAME>
+				<TEXT>Africa</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Area</NAME>
+				<SUBPROP>
+					<NAME>total</NAME>
+					<TEXT>117,600 sq km</TEXT>
+					<RANK>100</RANK>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>land</NAME>
+					<TEXT>101,000 sq km</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>water</NAME>
+					<TEXT>16,600 sq km</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Area - comparative</NAME>
+				<TEXT>slightly larger than Pennsylvania</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Land boundaries</NAME>
+				<SUBPROP>
+					<NAME>total</NAME>
+					<TEXT>1,626 km</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>border countries</NAME>
+					<TEXT>Djibouti 109 km, Ethiopia 912 km, Sudan 605 km</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Coastline</NAME>
+				<TEXT>2,234 km (mainland on Red Sea 1,151 km, islands in Red Sea 1,083 km)</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Maritime claims</NAME>
+				<SUBPROP>
+					<NAME>territorial sea</NAME>
+					<TEXT>12 nm</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Climate</NAME>
+				<TEXT>hot, dry desert strip along Red Sea coast; cooler and wetter in the central highlands (up to 61 cm of rainfall annually, heaviest June to September); semiarid in western hills and lowlands</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Terrain</NAME>
+				<TEXT>dominated by extension of Ethiopian north-south trending highlands, descending on the east to a coastal desert plain, on the northwest to hilly terrain and on the southwest to flat-to-rolling plains</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Elevation extremes</NAME>
+				<SUBPROP>
+					<NAME>lowest point</NAME>
+					<TEXT>near Kulul within the Danakil Depression -75 m</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>highest point</NAME>
+					<TEXT>Soira 3,018 m</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Natural resources</NAME>
+				<TEXT>gold, potash, zinc, copper, salt, possibly oil and natural gas, fish</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Land use</NAME>
+				<SUBPROP>
+					<NAME>arable land</NAME>
+					<TEXT>4.78%</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>permanent crops</NAME>
+					<TEXT>0.03%</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>other</NAME>
+					<TEXT>95.19% (2005)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Irrigated land</NAME>
+				<TEXT>210 sq km (2003)</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Total renewable water resources</NAME>
+				<TEXT>6.3 cu km (2001)</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Freshwater withdrawal (domestic/industrial/agricultural)</NAME>
+				<SUBPROP>
+					<NAME>total</NAME>
+					<TEXT>0.3  cu km/yr (3%/0%/97%)</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>per capita</NAME>
+					<TEXT>68  cu m/yr (2000)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Natural hazards</NAME>
+				<TEXT>frequent droughts; locust swarms</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Environment - current issues</NAME>
+				<TEXT>deforestation; desertification; soil erosion; overgrazing; loss of infrastructure from civil warfare</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Environment - international agreements</NAME>
+				<SUBPROP>
+					<NAME>party to</NAME>
+					<TEXT>Biodiversity, Climate Change, Climate Change-Kyoto Protocol, Desertification, Endangered Species, Hazardous Wastes, Ozone Layer Protection</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>signed, but not ratified</NAME>
+					<TEXT>none of the selected agreements</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Geography - note</NAME>
+				<TEXT>strategic geopolitical position along world&apos;s busiest shipping lanes; Eritrea retained the entire coastline of Ethiopia along the Red Sea upon de jure independence from Ethiopia on 24 May 1993</TEXT>
+			</PROPERTY>
+		</CATEGORY>
+		<CATEGORY>
+			<NAME>People</NAME>
+			<PROPERTY>
+				<NAME>Population</NAME>
+				<TEXT>5,647,168 (July 2009 est.)</TEXT>
+				<RANK>109</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Age structure</NAME>
+				<SUBPROP>
+					<NAME>0-14 years</NAME>
+					<TEXT>42.8% (male 1,212,848/female 1,202,240)</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>15-64 years</NAME>
+					<TEXT>53.7% (male 1,483,169/female 1,547,078)</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>65 years and over</NAME>
+					<TEXT>3.6% (male 92,009/female 109,824) (2009 est.)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Median age</NAME>
+				<SUBPROP>
+					<NAME>total</NAME>
+					<TEXT>18.4 years</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>male</NAME>
+					<TEXT>18 years</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>female</NAME>
+					<TEXT>18.8 years (2009 est.)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Population growth rate</NAME>
+				<TEXT>2.577% (2009 est.)</TEXT>
+				<RANK>29</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Birth rate</NAME>
+				<TEXT>34.2 births/1,000 population (2009 est.)</TEXT>
+				<RANK>39</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Death rate</NAME>
+				<TEXT>8.43 deaths/1,000 population (July 2009 est.)</TEXT>
+				<RANK>97</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Net migration rate</NAME>
+				<TEXT>NA</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Urbanization</NAME>
+				<SUBPROP>
+					<NAME>urban population</NAME>
+					<TEXT>21% of total population (2008)</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>rate of urbanization</NAME>
+					<TEXT>5.4% annual rate of change (2005-10 est.)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Sex ratio</NAME>
+				<SUBPROP>
+					<NAME>at birth</NAME>
+					<TEXT>1.03 male(s)/female</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>under 15 years</NAME>
+					<TEXT>1.01 male(s)/female</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>15-64 years</NAME>
+					<TEXT>0.96 male(s)/female</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>65 years and over</NAME>
+					<TEXT>0.84 male(s)/female</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>total population</NAME>
+					<TEXT>0.98 male(s)/female (2009 est.)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Infant mortality rate</NAME>
+				<SUBPROP>
+					<NAME>total</NAME>
+					<TEXT>43.33 deaths/1,000 live births</TEXT>
+					<RANK>62</RANK>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>male</NAME>
+					<TEXT>48.97 deaths/1,000 live births</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>female</NAME>
+					<TEXT>37.51 deaths/1,000 live births (2009 est.)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Life expectancy at birth</NAME>
+				<SUBPROP>
+					<NAME>total population</NAME>
+					<TEXT>61.78 years</TEXT>
+					<RANK>179</RANK>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>male</NAME>
+					<TEXT>59.71 years</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>female</NAME>
+					<TEXT>63.9 years (2009 est.)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Total fertility rate</NAME>
+				<TEXT>4.72 children born/woman (2009 est.)</TEXT>
+				<RANK>35</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>HIV/AIDS - adult prevalence rate</NAME>
+				<TEXT>1.3% (2007 est.)</TEXT>
+				<RANK>48</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>HIV/AIDS - people living with HIV/AIDS</NAME>
+				<TEXT>38,000 (2007 est.)</TEXT>
+				<RANK>66</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>HIV/AIDS - deaths</NAME>
+				<TEXT>2,600 (2007 est.)</TEXT>
+				<RANK>56</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Major infectious diseases</NAME>
+				<SUBPROP>
+					<NAME>degree of risk</NAME>
+					<TEXT>high</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>food or waterborne diseases</NAME>
+					<TEXT>bacterial diarrhea, hepatitis A, and typhoid fever</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>vectorborne disease</NAME>
+					<TEXT>malaria (2009)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Nationality</NAME>
+				<SUBPROP>
+					<NAME>noun</NAME>
+					<TEXT>Eritrean(s)</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>adjective</NAME>
+					<TEXT>Eritrean</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Ethnic groups</NAME>
+				<TEXT>Tigrinya 50%, Tigre and Kunama 40%, Afar 4%, Saho (Red Sea coast dwellers) 3%, other 3%</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Religions</NAME>
+				<TEXT>Muslim, Coptic Christian, Roman Catholic, Protestant</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Languages</NAME>
+				<TEXT>Afar, Arabic, Tigre and Kunama, Tigrinya, other Cushitic languages</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Literacy</NAME>
+				<SUBPROP>
+					<NAME>definition</NAME>
+					<TEXT>age 15 and over can read and write</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>total population</NAME>
+					<TEXT>58.6%</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>male</NAME>
+					<TEXT>69.9%</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>female</NAME>
+					<TEXT>47.6% (2003 est.)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>School life expectancy (primary to tertiary education)</NAME>
+				<SUBPROP>
+					<NAME>total</NAME>
+					<TEXT>5 years</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>male</NAME>
+					<TEXT>6 years</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>female</NAME>
+					<TEXT>4 years (2004)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Education expenditures</NAME>
+				<TEXT>2.4% of GDP (2006)</TEXT>
+				<RANK>161</RANK>
+			</PROPERTY>
+		</CATEGORY>
+		<CATEGORY>
+			<NAME>Government</NAME>
+			<PROPERTY>
+				<NAME>Country name</NAME>
+				<SUBPROP>
+					<NAME>conventional long form</NAME>
+					<TEXT>State of Eritrea</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>conventional short form</NAME>
+					<TEXT>Eritrea</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>local long form</NAME>
+					<TEXT>Hagere Ertra</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>local short form</NAME>
+					<TEXT>Ertra</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>former</NAME>
+					<TEXT>Eritrea Autonomous Region in Ethiopia</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Government type</NAME>
+				<NOTE>following a successful referendum on independence for the Autonomous Region of Eritrea on 23-25 April 1993, a National Assembly, composed entirely of the People&apos;s Front for Democracy and Justice or PFDJ, was established as a transitional legislature; a Constitutional Commission was also established to draft a constitution; ISAIAS Afworki was elected president by the transitional legislature; the constitution, ratified in May 1997, did not enter into effect, pending parliamentary and presidential elections; parliamentary elections were scheduled in December 2001, but were postponed indefinitely; currently the sole legal party is the People&apos;s Front for Democracy and Justice (PFDJ)</NOTE>
+				<TEXT>transitional government</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Capital</NAME>
+				<SUBPROP>
+					<NAME>name</NAME>
+					<TEXT>Asmara (Asmera)</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>geographic coordinates</NAME>
+					<TEXT>15 20 N, 38 56 E</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>time difference</NAME>
+					<TEXT>UTC+3 (8 hours ahead of Washington, DC during Standard Time)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Administrative divisions</NAME>
+				<TEXT>6 regions (zobatat, singular - zoba); Anseba, Debub (Southern), Debubawi K&apos;eyih Bahri (Southern Red Sea), Gash Barka, Ma&apos;akel (Central), Semenawi Keyih Bahri (Northern Red Sea)</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Independence</NAME>
+				<TEXT>24 May 1993 (from Ethiopia)</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>National holiday</NAME>
+				<TEXT>Independence Day, 24 May (1993)</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Constitution</NAME>
+				<TEXT>adopted on 23 May 1997, but has not yet been fully implemented</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Legal system</NAME>
+				<TEXT>primary basis is the Ethiopian legal code of 1957 with revisions; new civil, commercial, and penal codes have not yet been promulgated; government also issues unilateral proclamations setting laws and policies; also relies on customary and post-independence-enacted laws and, for civil cases involving Muslims, Islamic law; does not accept compulsory ICJ jurisdiction</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Suffrage</NAME>
+				<TEXT>18 years of age; universal</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Executive branch</NAME>
+				<SUBPROP>
+					<NAME>chief of state</NAME>
+					<TEXT>President ISAIAS Afworki (since 8 June 1993); note - the president is both the chief of state and head of government and is head of the State Council and National Assembly</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>head of government</NAME>
+					<TEXT>President ISAIAS Afworki (since 8 June 1993)</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>cabinet</NAME>
+					<TEXT>State Council is the collective executive authority; members appointed by the president</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>elections</NAME>
+					<TEXT>president elected by the National Assembly for a five-year term (eligible for a second term); the most recent and only election held 8 June 1993 (next election date uncertain as the National Assembly did not hold a presidential election in December 2001 as anticipated)</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>election results</NAME>
+					<TEXT>ISAIAS Afworki elected president; percent of National Assembly vote - ISAIAS Afworki 95%, other 5%</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Legislative branch</NAME>
+				<TEXT>unicameral National Assembly (150 seats; members elected by direct popular vote to serve five-year terms)</TEXT>
+				<SUBPROP>
+					<NAME>elections</NAME>
+					<TEXT>in May 1997, following the adoption of the new constitution, 75 members of the PFDJ Central Committee (the old Central Committee of the EPLF), 60 members of the 527-member Constituent Assembly, which had been established in 1997 to discuss and ratify the new constitution, and 15 representatives of Eritreans living abroad were formed into a Transitional National Assembly to serve as the country&apos;s legislative body until countrywide elections to a National Assembly were held; although only 75 of 150 members of the Transitional National Assembly were elected, the constitution stipulates that once past the transition stage, all members of the National Assembly will be elected by secret ballot of all eligible voters; National Assembly elections scheduled for December 2001 were postponed indefinitely</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Judicial branch</NAME>
+				<TEXT>High Court - regional, subregional, and village courts; also have military and special courts</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Political parties and leaders</NAME>
+				<TEXT>People&apos;s Front for Democracy and Justice or PFDJ [ISAIAS Afworki] (the only party recognized by the government); note - a National Assembly committee drafted a law on political parties in January 2001, but the full National Assembly has yet to debate or vote on it</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Political pressure groups and leaders</NAME>
+				<TEXT>Eritrean Democratic Party (EDP) [HAGOS, Mesfin]; Eritrean Islamic Jihad or EIJ (includes Eritrean Islamic Jihad Movement or EIJM also known as the Abu Sihel Movement); Eritrean Islamic Salvation or EIS (also known as the Arafa Movement); Eritrean Liberation Front or ELF [ABDULLAH Muhammed]; Eritrean National Alliance or ENA (a coalition including EIJ, EIS, ELF, and a number of ELF factions) [HERUY Tedla Biru]; Eritrean Public Forum or EPF [ARADOM Iyob]</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>International organization participation</NAME>
+				<TEXT>ACP, AfDB, AU, COMESA, FAO, G-77, IAEA, IBRD, ICAO, ICCt (signatory), IDA, IFAD, IFC, IFRCS (observer), ILO, IMF, IMO, Interpol, IOC, ISO (subscriber), ITU, ITUC, LAS (observer), MIGA, NAM, OPCW, PCA, UN, UNCTAD, UNESCO, UNIDO, UNWTO, UPU, WCO, WFTU, WHO, WIPO, WMO</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Diplomatic representation in the US</NAME>
+				<SUBPROP>
+					<NAME>chief of mission</NAME>
+					<TEXT>Ambassador GHIRMAI Ghebremariam</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>chancery</NAME>
+					<TEXT>1708 New Hampshire Avenue NW, Washington, DC 20009</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>telephone</NAME>
+					<TEXT>[1] (202) 319-1991</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>FAX</NAME>
+					<TEXT>[1] (202) 319-1304</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>consulate(s) general</NAME>
+					<TEXT>Oakland (California)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Diplomatic representation from the US</NAME>
+				<SUBPROP>
+					<NAME>chief of mission</NAME>
+					<TEXT>Ambassador Ronald MCMULLEN</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>embassy</NAME>
+					<TEXT>179 Ala Street, Asmara</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>mailing address</NAME>
+					<TEXT>P. O. Box 211, Asmara</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>telephone</NAME>
+					<TEXT>[291] (1) 120004</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>FAX</NAME>
+					<TEXT>[291] (1) 127584</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Flag description</NAME>
+				<TEXT>red isosceles triangle (based on the hoist side) dividing the flag into two right triangles; the upper triangle is green, the lower one is blue; a gold wreath encircling a gold olive branch is centered on the hoist side of the red triangle</TEXT>
+			</PROPERTY>
+		</CATEGORY>
+		<CATEGORY>
+			<NAME>Economy</NAME>
+			<PROPERTY>
+				<NAME>Economy - overview</NAME>
+				<TEXT>Since independence from Ethiopia in 1993, Eritrea has faced the economic problems of a small, desperately poor country, accentuated by the recent implementation of restrictive economic policies. Eritrea has a command economy under the control of the sole political party, the People&apos;s Front for Democracy and Justice (PFDJ). Like the economies of many African nations, the economy is largely based on subsistence agriculture, with 80% of the population involved in farming and herding. The Ethiopian-Eritrea war in 1998-2000 severely hurt Eritrea&apos;s economy. GDP growth fell to zero in 1999 and to -12.1% in 2000. The May 2000 Ethiopian offensive into northern Eritrea caused some $600 million in property damage and loss, including losses of $225 million in livestock and 55,000 homes. The attack prevented planting of crops in Eritrea&apos;s most productive region, causing food production to drop by 62%. Despite the fighting, Eritrea developed its transportation infrastructure, asphalting new roads, improving its ports, and repairing war-damaged roads and bridges. Since the war&apos;s conclusion, the government has maintained a firm grip on the economy, expanding the use of the military and party-owned businesses to complete Eritrea&apos;s development agenda. The government strictly controls the use of foreign currency by limiting access and availability. Few private enterprises remain in Eritrea. Eritrea&apos;s economy depends heavily on taxes paid by members of the diaspora. Erratic rainfall and the delayed demobilization of agriculturalists from the military continue to interfere with agricultural production, and Eritrea&apos;s recent harvests have been unable to meet the food needs of the country. The Government continues to place its hope for additional revenue on the development of several international mining projects. Despite difficulties for international companies in working with the Eritrean Government, a Canadian mining company signed a contract with the Government in 2007 and plans to begin mineral extraction in 2010. Eritrea also opened a free trade zone at the port of Massawa in 2008. Eritrea&apos;s economic future depends upon its ability to master social problems such as illiteracy, unemployment, and low skills, and more importantly, on the government&apos;s willingness to support a true market economy.</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>GDP (purchasing power parity)</NAME>
+				<NOTE>data are in 2008 US dollars</NOTE>
+				<TEXT>$3.954 billion (2008 est.)</TEXT>
+				<RANK>166</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>GDP (official exchange rate)</NAME>
+				<TEXT>$1.479 billion (2008 est.)</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>GDP - real growth rate</NAME>
+				<TEXT>2% (2008 est.)</TEXT>
+				<RANK>164</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>GDP - per capita (PPP)</NAME>
+				<NOTE>data are in 2008 US dollars</NOTE>
+				<TEXT>$700 (2008 est.)</TEXT>
+				<RANK>223</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>GDP - composition by sector</NAME>
+				<SUBPROP>
+					<NAME>agriculture</NAME>
+					<TEXT>17.4%</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>industry</NAME>
+					<TEXT>23.2%</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>services</NAME>
+					<TEXT>59.4% (2008 est.)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Labor force</NAME>
+				<TEXT>NA</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Labor force - by occupation</NAME>
+				<SUBPROP>
+					<NAME>agriculture</NAME>
+					<TEXT>80%</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>industry and services</NAME>
+					<TEXT>20% (2004 est.)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Unemployment rate</NAME>
+				<TEXT>NA%</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Population below poverty line</NAME>
+				<TEXT>50% (2004 est.)</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Household income or consumption by percentage share</NAME>
+				<SUBPROP>
+					<NAME>lowest 10%</NAME>
+					<TEXT>NA%</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>highest 10%</NAME>
+					<TEXT>NA%</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Investment (gross fixed)</NAME>
+				<TEXT>20.2% of GDP (2008 est.)</TEXT>
+				<RANK>105</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Budget</NAME>
+				<SUBPROP>
+					<NAME>revenues</NAME>
+					<TEXT>$234.6 million</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>expenditures</NAME>
+					<TEXT>$523.3 million (2008 est.)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Inflation rate (consumer prices)</NAME>
+				<TEXT>18% (2008 est.)</TEXT>
+				<RANK>200</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Stock of money</NAME>
+				<TEXT>$896.2 million (31 December 2008)</TEXT>
+				<RANK>89</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Stock of quasi money</NAME>
+				<TEXT>$1.053 billion (31 December 2008)</TEXT>
+				<RANK>94</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Stock of domestic credit</NAME>
+				<TEXT>$1.851 billion (31 December 2008)</TEXT>
+				<RANK>94</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Agriculture - products</NAME>
+				<TEXT>sorghum, lentils, vegetables, corn, cotton, tobacco, sisal; livestock, goats; fish</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Industries</NAME>
+				<TEXT>food processing, beverages, clothing and textiles, light manufacturing, salt, cement</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Industrial production growth rate</NAME>
+				<TEXT>2% (2008 est.)</TEXT>
+				<RANK>103</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Electricity - production</NAME>
+				<TEXT>271 million kWh (2007 est.)</TEXT>
+				<RANK>170</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Electricity - consumption</NAME>
+				<TEXT>228 million kWh (2007 est.)</TEXT>
+				<RANK>175</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Electricity - exports</NAME>
+				<TEXT>0 kWh (2008 est.)</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Electricity - imports</NAME>
+				<TEXT>0 kWh (2008 est.)</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Oil - production</NAME>
+				<TEXT>0 bbl/day (2008 est.)</TEXT>
+				<RANK>179</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Oil - consumption</NAME>
+				<TEXT>5,000 bbl/day (2008 est.)</TEXT>
+				<RANK>168</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Oil - exports</NAME>
+				<TEXT>0 bbl/day (2007 est.)</TEXT>
+				<RANK>189</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Oil - imports</NAME>
+				<TEXT>4,790 bbl/day (2007 est.)</TEXT>
+				<RANK>158</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Oil - proved reserves</NAME>
+				<TEXT>0 bbl (1 January 2009 est.)</TEXT>
+				<RANK>173</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Natural gas - production</NAME>
+				<TEXT>0 cu m (2008 est.)</TEXT>
+				<RANK>186</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Natural gas - consumption</NAME>
+				<TEXT>0 cu m (2008 est.)</TEXT>
+				<RANK>189</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Natural gas - exports</NAME>
+				<TEXT>0 cu m (2008)</TEXT>
+				<RANK>62</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Natural gas - imports</NAME>
+				<TEXT>0 cu m (2008 est.)</TEXT>
+				<RANK>85</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Natural gas - proved reserves</NAME>
+				<TEXT>0 cu m (1 January 2009 est.)</TEXT>
+				<RANK>184</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Current account balance</NAME>
+				<TEXT>-$229 million (2008 est.)</TEXT>
+				<RANK>92</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Exports</NAME>
+				<TEXT>$13 million (2008 est.)</TEXT>
+				<RANK>209</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Exports - commodities</NAME>
+				<TEXT>livestock, sorghum, textiles, food, small manufactures</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Exports - partners</NAME>
+				<TEXT>Itlay 25.3%, Sudan 17.2%, China 15.8%, India 8.8%, France 6.7%, Saudi Arabia 6.5%, Russia 4.1% (2008)</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Imports</NAME>
+				<TEXT>$601 million (2008 est.)</TEXT>
+				<RANK>183</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Imports - commodities</NAME>
+				<TEXT>machinery, petroleum products, food, manufactured goods</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Imports - partners</NAME>
+				<TEXT>India 28.5%, Saudi Arabia 17.8%, Italy 10.9%, China 8.5%, US 4.4%, Germany 4% (2008)</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Reserves of foreign exchange and gold</NAME>
+				<TEXT>$24 million (31 December 2008 est.)</TEXT>
+				<RANK>155</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Debt - external</NAME>
+				<TEXT>$311 million (2000 est.)</TEXT>
+				<RANK>175</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Exchange rates</NAME>
+				<NOTE>the official exchange rate is 15 nakfa to the dollar</NOTE>
+				<TEXT>nakfa (ERN) per US dollar - 15.38 (2008 est.), 15.5 (2007), 15.4 (2006), 14.5 (2005), 13.788 (2004)</TEXT>
+			</PROPERTY>
+		</CATEGORY>
+		<CATEGORY>
+			<NAME>Communications</NAME>
+			<PROPERTY>
+				<NAME>Telephones - main lines in use</NAME>
+				<TEXT>40,400 (2008)</TEXT>
+				<RANK>169</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Telephones - mobile cellular</NAME>
+				<TEXT>108,600 (2008)</TEXT>
+				<RANK>181</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Telephone system</NAME>
+				<SUBPROP>
+					<NAME>general assessment</NAME>
+					<TEXT>inadequate; combined fixed-line and mobile cellular subscribership is only about 3 per 100 persons (2008)</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>domestic</NAME>
+					<TEXT>inadequate; most telephones are in Asmara; government is seeking international tenders to improve the system (2002)</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>international</NAME>
+					<TEXT>country code - 291; note - international connections exist</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Radio broadcast stations</NAME>
+				<TEXT>AM 2, FM NA, shortwave 2 (2000)</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Television broadcast stations</NAME>
+				<TEXT>2 (2006)</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Internet country code</NAME>
+				<TEXT>.er</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Internet hosts</NAME>
+				<TEXT>1,307 (2009)</TEXT>
+				<RANK>156</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Internet users</NAME>
+				<TEXT>200,000 (2008)</TEXT>
+				<RANK>135</RANK>
+			</PROPERTY>
+		</CATEGORY>
+		<CATEGORY>
+			<NAME>Transportation</NAME>
+			<PROPERTY>
+				<NAME>Airports</NAME>
+				<TEXT>14 (2009)</TEXT>
+				<RANK>147</RANK>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Airports - with paved runways</NAME>
+				<SUBPROP>
+					<NAME>total</NAME>
+					<TEXT>4</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>over 3,047 m</NAME>
+					<TEXT>2</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>2,438 to 3,047 m</NAME>
+					<TEXT>2 (2009)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Airports - with unpaved runways</NAME>
+				<SUBPROP>
+					<NAME>total</NAME>
+					<TEXT>10</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>over 3,047 m</NAME>
+					<TEXT>1</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>2,438 to 3,047 m</NAME>
+					<TEXT>1</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>1,524 to 2,437 m</NAME>
+					<TEXT>3</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>914 to 1,523 m</NAME>
+					<TEXT>3</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>under 914 m</NAME>
+					<TEXT>2 (2009)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Heliports</NAME>
+				<TEXT>1 (2009)</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Railways</NAME>
+				<SUBPROP>
+					<NAME>total</NAME>
+					<TEXT>306 km</TEXT>
+					<RANK>121</RANK>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>narrow gauge</NAME>
+					<TEXT>306 km 0.950-m gauge (2008)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Roadways</NAME>
+				<SUBPROP>
+					<NAME>total</NAME>
+					<TEXT>4,010 km</TEXT>
+					<RANK>157</RANK>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>paved</NAME>
+					<TEXT>874 km</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>unpaved</NAME>
+					<TEXT>3,136 km (2000)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Merchant marine</NAME>
+				<SUBPROP>
+					<NAME>total</NAME>
+					<TEXT>5</TEXT>
+					<RANK>131</RANK>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>by type</NAME>
+					<TEXT>cargo 2, liquefied gas 1, petroleum tanker 1, roll on/roll off 1 (2008)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Ports and terminals</NAME>
+				<TEXT>Assab, Massawa</TEXT>
+			</PROPERTY>
+		</CATEGORY>
+		<CATEGORY>
+			<NAME>Military</NAME>
+			<PROPERTY>
+				<NAME>Military branches</NAME>
+				<TEXT>Eritrean Armed Forces: Ground Forces, Navy, Air Force (2008)</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Military service age and obligation</NAME>
+				<TEXT>18-40 years of age for male and female voluntary and compulsory military service; 16-month conscript service obligation (2006)</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Manpower available for military service</NAME>
+				<SUBPROP>
+					<NAME>males age 16-49</NAME>
+					<TEXT>1,108,836</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>females age 16-49</NAME>
+					<TEXT>1,096,120 (2008 est.)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Manpower fit for military service</NAME>
+				<SUBPROP>
+					<NAME>males age 16-49</NAME>
+					<TEXT>834,018</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>females age 16-49</NAME>
+					<TEXT>887,495 (2009 est.)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Manpower reaching militarily significant age annually</NAME>
+				<SUBPROP>
+					<NAME>male</NAME>
+					<TEXT>62,265</TEXT>
+				</SUBPROP>
+				<SUBPROP>
+					<NAME>female</NAME>
+					<TEXT>62,328 (2009 est.)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Military expenditures</NAME>
+				<TEXT>6.3% of GDP (2006 est.)</TEXT>
+				<RANK>9</RANK>
+			</PROPERTY>
+		</CATEGORY>
+		<CATEGORY>
+			<NAME>Transnational Issues</NAME>
+			<PROPERTY>
+				<NAME>Disputes - international</NAME>
+				<TEXT>Eritrea and Ethiopia agreed to abide by 2002 Ethiopia-Eritrea Boundary Commission&apos;s (EEBC) delimitation decision but, neither party responded to the revised line detailed in the November 2006 EEBC Demarcation Statement; UN Peacekeeping Mission to Ethiopia and Eritrea (UNMEE), which has monitored the 25-km-wide Temporary Security Zone in Eritrea since 2000, is extended for six months in 2007 despite Eritrean restrictions on its operations and reduced force of 17,000; Sudan accuses Eritrea of supporting eastern Sudanese rebel groups</TEXT>
+			</PROPERTY>
+			<PROPERTY>
+				<NAME>Refugees and internally displaced persons</NAME>
+				<SUBPROP>
+					<NAME>IDPs</NAME>
+					<TEXT>32,000 (border war with Ethiopia from 1998-2000; most IDPs are near the central border region) (2007)</TEXT>
+				</SUBPROP>
+			</PROPERTY>
+		</CATEGORY>
+	</COUNTRY>
+</CIAWFB>	

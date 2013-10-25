@@ -1,0 +1,88 @@
+-- Function: checkad(character varying, character varying)
+
+-- DROP FUNCTION checkad(character varying, character varying);
+
+CREATE OR REPLACE FUNCTION checkad(nodeanc character varying, node character varying)
+  RETURNS boolean AS
+$BODY$
+  nodeAncSplit = []
+  nodeSplit = []
+  nodeAncSplit = nodeanc.rsplit('.')
+  nodeSplit = node.rsplit ('.')
+  quotient = 0.0
+  if len (nodeAncSplit)<= len(nodeSplit):
+      quotient = int(nodeAncSplit[0])/int(nodeSplit[0])
+      component = 0
+      while (component<len(nodeAncSplit)):
+          if (int (nodeAncSplit[component])+0.0)/int(nodeSplit[component])!=quotient:
+              return False
+          component = component +1
+      return True
+  return False
+$BODY$
+  LANGUAGE plpythonu VOLATILE
+  COST 100;
+ALTER FUNCTION checkad(character varying, character varying)
+  OWNER TO postgres;
+
+%%%%%%%%%%%%%%checkpc%%%%%%%%%%%%%%
+
+-- Function: checkpc(character varying, character varying)
+
+-- DROP FUNCTION checkpc(character varying, character varying);
+
+CREATE OR REPLACE FUNCTION checkpc(nodepar character varying, node character varying)
+  RETURNS boolean AS
+$BODY$
+  nodeAncSplit = []
+  nodeSplit = []
+  nodeAncSplit = nodepar.rsplit('.')
+  nodeSplit = node.rsplit ('.')
+  quotient = 0.0
+  if len (nodeAncSplit)== len(nodeSplit)-1:
+      quotient = int(nodeAncSplit[0])/int(nodeSplit[0])
+      component = 0
+      while (component<len(nodeAncSplit)):
+          if (int (nodeAncSplit[component])+0.0)/int(nodeSplit[component])!=quotient:
+              return False
+          component = component +1
+      return True
+  return False
+$BODY$
+  LANGUAGE plpythonu VOLATILE
+  COST 100;
+ALTER FUNCTION checkpc(character varying, character varying)
+  OWNER TO postgres;
+
+
+%%%%%%%%%%%%checksibling%%%%%%%%%%%%%%%%
+
+-- Function: checksibling(character varying, character varying)
+
+-- DROP FUNCTION checksibling(character varying, character varying);
+
+CREATE OR REPLACE FUNCTION checksibling(sibling character varying, node character varying)
+  RETURNS boolean AS
+$BODY$
+  nodeAncSplit = []
+  nodeSplit = []
+  nodeAncSplit = sibling.rsplit('.')
+  nodeSplit = node.rsplit ('.')
+  quotient = 0.0
+  if len (nodeAncSplit)== len(nodeSplit):
+      if nodeAncSplit [len (nodeAncSplit)-1]==nodeSplit[len (nodeAncSplit)-1]:
+          return False
+      quotient = int(nodeAncSplit[0])/int(nodeSplit[0])
+      component = 0
+      while (component<len(nodeAncSplit)-1):
+          if (int (nodeAncSplit[component])+0.0)/int(nodeSplit[component])!=quotient:
+              return False
+          component = component +1
+      return True
+  return False
+$BODY$
+  LANGUAGE plpythonu VOLATILE
+  COST 100;
+ALTER FUNCTION checksibling(character varying, character varying)
+  OWNER TO postgres;
+

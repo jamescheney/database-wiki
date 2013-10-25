@@ -1,0 +1,74 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head>
+<title>
+@title
+</title>
+<link rel="stylesheet" type="text/css" href="/html/style/server.css"/>
+<link rel="icon" type="image/gif" href="/pictures/favicon.gif">
+<script type="text/javascript" src="/js/dialog.js"></script>
+</head>
+<body>
+	<table align="center" class="main">
+	<tr><td class="logo"></td></tr>
+
+	if @menu {
+		<tr><td class="menu">	
+
+			@menu
+
+		</td></tr>
+	}
+	
+	<tr><td class="login">
+	
+		@login
+	
+	</td></tr>
+	
+	<tr><td>
+	  <table><tr><td class="sidebar" valign="top">
+        <a class="database" href="/">Databases</a>
+        
+        if @content {
+        
+     		@content
+     		
+    	}
+    	
+	    </td>
+	    <td class="panel" valign="top">
+	    <h4>Welcome</h4>
+	    <p>
+	    This is a Database Wiki: a system for creating and sharing structured data, using a familiar wiki interface.
+	    Click on any of the database names to the left to browse data.
+	    </p>
+	    
+	    <p>The menus along the top of the page allow:
+	    <ul>
+	      <li> editing (creating new records, changing existing records, or deleting)</li>
+	      <li> viewing (changing to another database or returning to this server home page)  </li>
+	      <li> editing the layout, style sheet or template for a page</li>
+	    </ul>
+	      </p>
+	      
+	    <p>
+	    All editing actions are recorded, and all prior versions of the data are available.  
+	    The time-machine links along the top of the page provide access to previous versions and allow comparing versions.  
+	    Also, click on "comments" or "history" on a data page to see existing comments on a data object, add your own comments, or see the history of operations applied to the object or its subobjects.
+	    The presence of comments on parts of data is also highlighted by a "word balloon" (<img src="/pictures/annotation_small.gif" />)
+	    </p>
+	    
+	    <p>
+	    Editing and viewing some pages or data requires logging in.  
+	    This demonstration system doesn't yet have the capability to add new users on-the-fly.  
+	    For this demonstration, anyone is welcome to log in as user "guest", with password "guest_password".
+	    </p>
+	    
+	    <p> Please feel free to join the <a href="http://lists.inf.ed.ac.uk/mailman/listinfo/db-wiki">Database Wiki project mailing list</a>.</p>
+	    </td></tr>
+	  </table>
+	<tr><td class="footer">(c) 2010 - The University of Edinburgh - Database Group</td></tr>
+	</table>
+</body>
+</html>
