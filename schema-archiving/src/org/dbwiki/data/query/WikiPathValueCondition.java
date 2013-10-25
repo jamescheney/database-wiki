@@ -1,0 +1,91 @@
+/* 
+    BEGIN LICENSE BLOCK
+    Copyright 2010-2011, Heiko Mueller, Sam Lindley, James Cheney and
+    University of Edinburgh
+
+    This file is part of Database Wiki.
+
+    Database Wiki is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Database Wiki is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Database Wiki.  If not, see <http://www.gnu.org/licenses/>.
+    END LICENSE BLOCK
+*/
+package org.dbwiki.data.query;
+
+import org.dbwiki.data.schema.AttributeEntity;
+
+/** A wiki path value condition
+ * Contains an attribute entity reference and a string value.
+ * @author jcheney
+ *
+ */
+public class WikiPathValueCondition extends WikiPathCondition {
+	/*
+	 * Private Variables
+	 */
+	
+	private AttributeEntity _entity;
+	private String _value;
+	
+	
+	/*
+	 * Constructors
+	 */
+	
+	public WikiPathValueCondition(AttributeEntity entity, String value) {
+		_entity = entity;
+		_value = this.unmask(value.substring(1, value.length() - 1));
+	}
+	
+	
+	/*
+	 * Public Methods
+	 */
+	
+	public AttributeEntity entity() {
+		return _entity;
+	}
+	
+	public boolean isIndexCondition() {
+		return false;
+	}
+
+	public String value() {
+		return _value;
+	}
+	
+	
+	/*
+	 * Private Variables
+	 */
+	
+	private String unmask(String value) {
+		StringBuffer buf = new StringBuffer();
+		
+		boolean masked = false;
+		for (int iChar = 0; iChar < value.length(); iChar++) {
+			char c = value.charAt(iChar);
+			if (c == '\\') {
+				if (masked) {
+					buf.append(c);
+					masked = false;
+				} else {
+					masked = true;
+				}
+			} else {
+				buf.append(c);
+				masked = false;
+			}
+		}
+		return buf.toString();
+	}
+}
