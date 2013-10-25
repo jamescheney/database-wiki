@@ -1,0 +1,143 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head>
+<title>
+@title(Database Wiki)
+</title>
+@css
+<link rel="icon" type="image/gif" href="/pictures/favicon.gif">
+<script type="text/javascript" src="http://jqueryjs.googlecode.com/files/jquery-1.3.2.min.js"></script>
+<script type="text/javascript" src="/js/jit.js"></script>
+<script type="text/javascript" src="/js/example1.js"></script>
+<script type="text/javascript" src="/js/dialog.js"></script>
+<script type="text/javascript" src="/js/jgcharts.js"></script>
+<script type="text/javascript" src="/js/jquery-ui-1.8.14.custom.min.js"></script>
+
+<link rel="stylesheet" type="text/css" href="/html/style/jquery-ui-1.8.14.custom.css"/>
+<link rel="stylesheet" type="text/css" href="/html/style/base.css"/>
+<link rel="stylesheet" type="text/css" href="/html/style/Spacetree.css"/>
+
+</head>
+<body>
+	<table align="center" class="main">
+	<tr><td class="main_logo">
+	
+			@search
+	
+	</td></tr>
+	<tr><td class="main_frame">
+		if @timemachine {
+		<table class="timemachine">
+			<tr>
+				<td class="timemachine_logo"></td>
+				<td class="timemachine_label">
+					Displayed<br/>Version(s)
+				</td>
+				<td class="timemachine_display">
+
+					@timemachine
+
+				</td>
+			</tr>
+		</table>
+		}
+		
+		if @menu {
+		<table class="menu">
+			<tr>
+				<td class="menu_line">
+					
+					@menu
+					
+				</td>
+			</tr>
+		</table>
+		}
+		
+		@login
+
+		@database_home_link
+
+		@object_path_link
+
+		if @annotation {
+		<table class="toggle_menu">
+			<tr>
+				<td class="toggle_menu">
+					<a class="toggle_menu" href="#" onclick="dspToggleAnnotation(); return false;">Comments&nbsp;&nbsp;<img border=0 src="/pictures/annotation_small.gif"></a>
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					<a class="toggle_menu" href="#" onclick="dspToggleProvenance(); return false;">History&nbsp;&nbsp;<img border=0 src="/pictures/provenance_small.gif"></a>
+				</td>
+			</tr>
+		</table>
+		}
+		
+		<table class="frame">
+			if @annotation {
+			<tr>
+				<td class="frame_body">
+					<div id="annotation_body" style="display:none">
+						<table class="listing">
+							<tr>
+								<td class="listing_headline">Comments</td>
+							</tr>
+							<tr><td class="listing_body">
+
+								@annotation
+
+							</td></tr>
+						</table>
+					</div>
+				</td>
+			</tr>
+			}
+			if @provenance {
+			<tr>
+				<td class="frame_body">
+					<div id="provenance_body" style="display:none">
+						<table class="listing">
+							<tr>
+								<td class="listing_headline">History</td>
+							</tr>
+							<tr><td class="listing_body">
+
+								@provenance
+
+							</td></tr>
+						</table>
+					</div>
+				</td>
+			</tr>
+			}
+			if @content {
+				<tr>
+					<td class="frame_body">
+						<table class="listing">
+							<tr><td class="listing_body">
+
+							@content
+
+							</td></tr>
+						</table>
+					</td>
+				</tr>
+			}
+			if @page {
+				<tr>
+					<td class="wiki_frame">
+						<table class="listing">
+							<tr><td class="wiki_body">
+
+							@page
+
+							</td></tr>
+						</table>
+					</td>
+				</tr>
+			}
+		</table>
+	</td></tr>
+	<tr><td class="main_footer">(c) 2010 - The University of Edinburgh - Database Group</td></tr>
+	</table>
+</body>
+</html>

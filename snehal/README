@@ -1,0 +1,157 @@
+Database Wiki
+=============
+
+A wiki lets users collaborate on Web content easily through a Web
+browser, and wikis also make it easier to understand the process by
+which some data was created by recording detailed history records. A
+Database Wiki is a wiki for structured data, providing both
+database-like capabilities to structure and query data and wiki-like
+capabilities for collaboration and transparency.
+
+Entry points
+============
+
+The entry points are defined as main methods of classes in
+org.dbwiki.main:
+
+  CreateServer
+  DatabaseImport
+  DatabasePackageExport
+  DatabasePackageImport
+  DropDatabaseWiki
+  DropServer
+  ImportPresentationFiles
+  StartServer
+  
+For convenience, various wrapper scripts are included in the root
+directory for invoking the various entry points with appropriate
+classpaths using configuration files in
+./resources/configuration/. Those ending with a .sh suffix are
+suitable for UNIX platforms (including Linux and Mac OS X).  Those
+ending with a .cmd suffix are suitable for Windows.
+
+Initialising a server
+---------------------
+
+Java class:
+
+  CreateServer <config-file> <user-listing>
+
+Scripts:
+
+  create-server.sh
+  create-server.cmd
+
+This creates the following tables in the relational database:
+
+  _database
+  _presentation
+  _user
+  
+The first argument is a server configuration file. The second argument
+is a user configuration file.
+
+Example files are currently in:
+
+  ./resources/configuration/server/config.sample
+  ./resources/configuration/server/users.sample
+
+We recommend copying these into 
+
+  ./resources/configuration/server/config
+  ./resources/configuration/server/users
+
+and editing according to your local configuration, then the script can
+be used.
+
+Starting a server
+-----------------
+
+Java class:
+
+  StartServer <config-file>
+
+Scripts:
+
+  start-server.sh
+  start-server.cmd
+  
+You should now be able to access your Database Wiki server through
+your web browser by going to:
+
+  http://localhost:8080/
+
+Importing XML data into a new database wiki
+-------------------------------------------
+
+Java class:
+
+  DatabaseImport <config-file> <name> <title> <path> <xml-file> <user>
+
+Scripts:
+
+  database-import.sh  <name> <title> <path> <xml-file> <user>
+  database-import.cmd <name> <title> <path> <xml-file> <user>
+
+The <name> is a short name for the database.
+
+The <title> is a descriptive name for the database.
+
+The <path> is the path from the root to the data entries
+(e.g. if the XML file is of the form
+  <things><item>...</item>...<item>...</item></things>
+then a suitable path would be '/things').
+
+The <user> is the name of the user to use to record the import.
+
+Importing presentation data
+---------------------------
+
+Java class:
+
+  ImportPresentationFiles <config-file> <db-name> <path> <user>
+
+Script:
+
+  import-presentation-files.sh  <db-name> <path> <user>
+  import-presentation-files.cmd <db-name> <path> <user>
+
+The <path> is the file path to the presentation files. The files should be named:
+
+  <path> + <db-name> + ".css"
+  <path> + <db-name> + ".layout"
+  <path> + <db-name> + ".template"
+
+Dropping a database wiki
+------------------------
+
+Java class:
+
+ DropDatabaseWiki <config-file>
+
+Scripts:
+
+  drop-database.sh
+  drop-database.cmd
+  
+You will be asked which database wiki you wish to drop. All data
+associated with that database wiki will be deleted.
+
+Dropping a server
+-----------------
+
+Java class:
+
+  DropWikiServer <config-file>
+  
+Scripts:
+
+  drop-wiki-server.sh
+  drop-wiki-server.cmd
+
+You will be asked whether you also wish to drop all the database wikis.
+All of the tables created by CreateServer will be deleted. If you
+answer yes to the question, then the all the database wiki data will
+also be deleted.
+
+TODO: describe DatabasePackageExport and DatabasePackageImport
