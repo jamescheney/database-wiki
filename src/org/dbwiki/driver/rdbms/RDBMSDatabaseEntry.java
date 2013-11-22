@@ -59,6 +59,7 @@ public class RDBMSDatabaseEntry implements DatabaseEntry {
 	 */
 	
 
+	@Override
 	public int compareTo(DatabaseEntry entry) {
 		int comp = this.label().compareTo(entry.label());
 		if (comp != 0) {
@@ -69,10 +70,12 @@ public class RDBMSDatabaseEntry implements DatabaseEntry {
 	}
 
 
+	@Override
 	public NodeIdentifier identifier() {
 		return _identifier;
 	}
 
+	@Override
 	public String label() {
 		return _label;
 	}
@@ -81,6 +84,7 @@ public class RDBMSDatabaseEntry implements DatabaseEntry {
 		return (_label = value);
 	}
 	
+	@Override
 	public int lastChange() {
 		return _lastChange;
 	}
@@ -89,6 +93,7 @@ public class RDBMSDatabaseEntry implements DatabaseEntry {
 		return (_lastChange = value);
 	}
 
+	@Override
 	public TimeSequence timestamp() {
 		return _timestamp;
 	}

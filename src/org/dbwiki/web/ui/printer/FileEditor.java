@@ -63,6 +63,7 @@ public class FileEditor implements HtmlContentPrinter {
 	 * Public Methods
 	 */
 
+	@Override
 	public void print(HtmlLinePrinter printer) throws WikiException {
 		int fileType = -1;
 		if (_request.parameters().hasParameter(RequestParameter.ParameterTemplate)) {

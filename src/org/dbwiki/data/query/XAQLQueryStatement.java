@@ -85,6 +85,7 @@ public class XAQLQueryStatement extends QueryStatement {
 	 * 
 	 * @throws org.dbwiki.exception.WikiException
 	 */
+	@Override
 	public QueryResultSet execute() throws WikiException {
 
 		QueryResultSet result = null;

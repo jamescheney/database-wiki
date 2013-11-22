@@ -52,6 +52,7 @@ public class RequestParameterVersionTimestamp extends RequestParameterVersion {
 	/** Filter those data nodes that match the given timestamp
 	 * 
 	 */
+	@Override
 	public boolean matches(DatabaseNode node) throws org.dbwiki.exception.WikiException {
 		return _timestamp.overlap(node.getTimestamp());
 	}
@@ -59,6 +60,7 @@ public class RequestParameterVersionTimestamp extends RequestParameterVersion {
 	/** Filter those data nodes that match the given timestamp
 	 * 
 	 */
+	@Override
 	public boolean matches(SchemaNode schemaNode) throws org.dbwiki.exception.WikiException {
 		return _timestamp.overlap(schemaNode.getTimestamp());
 	}
@@ -72,22 +74,27 @@ public class RequestParameterVersionTimestamp extends RequestParameterVersion {
 	 *  node a parameter to this function in order for it to work properly. 
 	 * 
 	 */
+	@Override
 	public String value() {
 		return RequestParameterVersion.VersionCurrent;
 	}
 
+	@Override
 	public boolean versionAll() {
 		return false;
 	}
 
+	@Override
 	public boolean versionChangesSince() {
 		return false;
 	}
 
+	@Override
 	public boolean versionCurrent() {
 		return _timestamp.isCurrent();
 	}
 
+	@Override
 	public boolean versionSingle() {
 		return false;
 	}

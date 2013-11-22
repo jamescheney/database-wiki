@@ -56,6 +56,7 @@ public class HasChangesCondition extends ProvenancePathCondition {
 	 * Public Methods
 	 */
 	
+	@Override
 	public void eval(DatabaseElementNode node, EvaluationResult result) {
 		
 		if (node.hasTimestamp()) {
@@ -65,6 +66,7 @@ public class HasChangesCondition extends ProvenancePathCondition {
 		}
 	}
 	
+	@Override
 	public void evalTimestamp(DatabaseElementNode node, TimestampEvaluationResult evalResult) {
 
 	}

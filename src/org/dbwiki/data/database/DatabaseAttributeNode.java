@@ -68,10 +68,12 @@ public abstract class DatabaseAttributeNode extends DatabaseElementNode {
 		return _value;
 	}
 	
+	@Override
 	public String toString() {
 		return (label() + "/" + _value.getCurrent().toString());
 	}
 	
+	@Override
 	public DatabaseNode find(ResourceIdentifier identifier) {
 		for (int iValue = 0; iValue < _value.size(); iValue++) {
 			DatabaseTextNode text = _value.get(iValue);
@@ -81,5 +83,4 @@ public abstract class DatabaseAttributeNode extends DatabaseElementNode {
 		}
 		return null;
 	}
-	
 }

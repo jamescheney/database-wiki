@@ -66,6 +66,7 @@ public class RDBMSDatabaseTextNode extends DatabaseTextNode {
 	 * Public Methods
 	 */
 	
+	@Override
 	public NodeIdentifier identifier() {
 		return _identifier;
 	}

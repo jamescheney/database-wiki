@@ -46,14 +46,17 @@ public class PasteTextNode extends PasteNode {
 		return _value;
 	}
 	
+	@Override
 	public boolean isElement() {
 		return false;
 	}
 
+	@Override
 	public boolean isAttribute() {
 		return false;
 	}
 	
+	@Override
 	public boolean isGroup() {
 		return false;
 	}
@@ -62,6 +65,7 @@ public class PasteTextNode extends PasteNode {
 		_value = value;
 	}
 	
+	@Override
 	public String toString() {
 		return _value;
 	}

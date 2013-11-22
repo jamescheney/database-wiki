@@ -60,6 +60,7 @@ public class ObjectAnnotationPrinter implements HtmlContentPrinter {
 	 * Public Methods
 	 */
 	
+	@Override
 	public void print(HtmlLinePrinter body) throws org.dbwiki.exception.WikiException {
 		AnnotationList annotations = _request.node().annotation();
 		

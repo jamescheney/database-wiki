@@ -76,6 +76,7 @@ public class SimpleWiki implements Wiki {
 	/** Get the content listing of the wiki
 	 * 
 	 */
+	@Override
 	public synchronized DatabaseContent content() throws org.dbwiki.exception.WikiException {
 		try {
 			VectorDatabaseListing content = new VectorDatabaseListing();
@@ -105,6 +106,7 @@ public class SimpleWiki implements Wiki {
 	 * @param identifier
 	 * @throws org.dbwiki.exception.WikiException
 	 */
+	@Override
 	public synchronized void delete(PageIdentifier identifier) throws org.dbwiki.exception.WikiException {
 		try {
 			Connection con = _connector.getConnection();
@@ -126,6 +128,7 @@ public class SimpleWiki implements Wiki {
 	 * @return
 	 * @throws org.dbwiki.exception.WikiException
 	 */
+	@Override
 	public synchronized DatabaseWikiPage get(ResourceIdentifier identifier) throws org.dbwiki.exception.WikiException {
 		DatabaseWikiPage page = null;
 		
@@ -197,6 +200,7 @@ public class SimpleWiki implements Wiki {
 	/**
 	 * List all the versions of a wiki page
 	 */
+	@Override
 	public synchronized List<DatabaseWikiPage> versions(ResourceIdentifier identifier) throws org.dbwiki.exception.WikiException {
 		List<DatabaseWikiPage> versions = new ArrayList<DatabaseWikiPage>();
 		
@@ -245,6 +249,7 @@ public class SimpleWiki implements Wiki {
 	 * @param user
 	 * @throws org.dbwiki.exception.WikiException
 	 */
+	@Override
 	public synchronized void insert(DatabaseWikiPage page, User user) throws org.dbwiki.exception.WikiException {
 		if ((page.getName() != null) && (page.getContent() != null)) {
 			if ((!page.getName().trim().equals("")) && (!page.getContent().trim().equals(""))) {
@@ -288,6 +293,7 @@ public class SimpleWiki implements Wiki {
 	 * @param user
 	 * @throws org.dbwiki.exception.WikiException
 	 */
+	@Override
 	public synchronized void update(PageIdentifier identifier, DatabaseWikiPage page, User user) throws org.dbwiki.exception.WikiException {
 		if ((page.getName() != null) && (page.getContent() != null)) {
 			if ((!page.getName().trim().equals("")) && (!page.getContent().trim().equals(""))) {

@@ -53,10 +53,12 @@ public class CopyPasteInputHandler implements InputHandler {
 	 * Public Methods
 	 */
 
+	@Override
 	public void exception(Exception excpt) {
 		_exception = excpt;
 	}
 
+	@Override
 	public Exception getException() {
 		return _exception;
 	}
@@ -65,26 +67,31 @@ public class CopyPasteInputHandler implements InputHandler {
 		return _root;
 	}
 
+	@Override
 	public boolean hasException() {
 		return (_exception != null);
 	}
 
+	@Override
 	public void startDocument() throws org.dbwiki.exception.WikiException {
 		_databaseInfo = null;
 		_readStack = new Stack<PasteNode>();
 		_root = null;
 	}
 	
+	@Override
 	public void endDocument() throws org.dbwiki.exception.WikiException {
 		if (!_readStack.isEmpty()) {
 			throw new WikiFatalException("Invalid document format");
 		}
 	}
 
+	@Override
 	public void startElement(String label) throws org.dbwiki.exception.WikiException {
 		throw new WikiFatalException("Invalid method call: " + this.getClass().getName() + ".startElement(" + label + ")");
 	}
 
+	@Override
 	public void startElement(String label, Attribute[] attrs) throws org.dbwiki.exception.WikiException {
 		if ((label.equals(CopyPasteConstants.ElementLabelDatabase)) && (attrs.length == 2) && (_databaseInfo == null)) {
 			String name = this.getAttribute(attrs, CopyPasteConstants.AttributeLabelDatabaseName).value();
@@ -124,6 +131,7 @@ public class CopyPasteInputHandler implements InputHandler {
 		}
 	}
 
+	@Override
 	public void endElement(String label) throws org.dbwiki.exception.WikiException {
 		if (label.equals(CopyPasteConstants.ElementLabelNode)) {
 			_readStack.pop();
@@ -131,6 +139,7 @@ public class CopyPasteInputHandler implements InputHandler {
 	}
 
 	
+	@Override
 	public void text(char[] value) throws org.dbwiki.exception.WikiException {
 		String text = new String(value);
 		if (!text.trim().equals("")) {

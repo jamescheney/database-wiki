@@ -48,10 +48,12 @@ public class VectorDatabaseListing implements DatabaseContent {
 		_entries.add(entry);
 	}
 	
+	@Override
 	public DatabaseEntry get(int index) {
 		return _entries.get(index);
 	}
 
+	@Override
 	public DatabaseEntry get(String key) {
 		for (DatabaseEntry entry : _entries) {
 			if (entry.label().equals(key)) {
@@ -61,6 +63,7 @@ public class VectorDatabaseListing implements DatabaseContent {
 		return null;
 	}
 
+	@Override
 	public int size() {
 		return _entries.size();
 	}

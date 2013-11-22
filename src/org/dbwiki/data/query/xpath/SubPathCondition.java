@@ -53,6 +53,7 @@ public class SubPathCondition extends XPathCondition {
 	 * Public Methods
 	 */
 	
+	@Override
 	public boolean isIndexCondition() {
 		
 		return false;
@@ -62,11 +63,13 @@ public class SubPathCondition extends XPathCondition {
 		_condition.listConditions(listing);
 	}
 	
+	@Override
 	public boolean matches(DatabaseElementNode node) {
 		
 		return _condition.eval(node);
 	}
 	
+	@Override
 	public String toString() {
 		
 		return _condition.toString();

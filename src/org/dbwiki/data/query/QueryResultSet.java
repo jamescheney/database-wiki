@@ -111,6 +111,7 @@ public class QueryResultSet implements QueryNodeHandler {
 	 * to the result set.
 	 * 
 	 */
+	@Override
 	public void handle(DatabaseElementNode node) {
 		this.add(node);
 	}
@@ -173,6 +174,7 @@ public class QueryResultSet implements QueryNodeHandler {
 		}
 	}
 
+	@Override
 	public String toString() {
 		int n = _nodes.size();
 		

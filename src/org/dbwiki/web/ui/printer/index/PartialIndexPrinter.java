@@ -66,6 +66,7 @@ public class PartialIndexPrinter extends IndexContentPrinter {
 	 * Public Methods
 	 */
 	
+	@Override
 	public void listContent(DatabaseIdentifier databaseIdentifier, ContentIterator iterator, WikiRequest<?> request, HtmlLinePrinter body) throws org.dbwiki.exception.WikiException {
 		int maxOutputCount = _entriesPerPage;
 		int outputCount = 0;

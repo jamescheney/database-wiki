@@ -46,10 +46,12 @@ public class StringLabelPrinter implements ElementLabelPrinter {
 	 * Public Methods
 	 */
 	
+	@Override
 	public String getDefinition() {
 		return _label;
 	}
 	
+	@Override
 	public String getLabel(DatabaseElementNode node, RequestParameterVersion __version) {
 		return _label;
 	}

@@ -38,23 +38,28 @@ public class RequestParameterVersionSingle extends RequestParameterVersionNumber
 	 * Public Methods
 	 */
 	
+	@Override
 	public boolean matches(DatabaseNode node) {
 		return node.getTimestamp().contains(versionNumber());
 	}
 
+	@Override
 	public boolean matches(SchemaNode schema) {
 		return schema.getTimestamp().contains(versionNumber());
 	}
 
 	
+	@Override
 	public String value() {
 		return Integer.toString(this.versionNumber());
 	}
 
+	@Override
 	public boolean versionChangesSince() {
 		return false;
 	}
 
+	@Override
 	public boolean versionSingle() {
 		return true;
 	}

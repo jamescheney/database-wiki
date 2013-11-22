@@ -52,6 +52,7 @@ public class PasteGroupNode extends PasteElementNode {
 		return _children;
 	}
 
+	@Override
 	public boolean isAttribute() {
 		return false;
 	}

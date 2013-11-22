@@ -58,11 +58,13 @@ public class WasModifiedCondition extends ProvenancePathCondition {
 	 * Public Methods
 	 */
 	
+	@Override
 	public void eval(DatabaseElementNode node, EvaluationResult result) {
 
 		result.evaluationResult(this.wasModified(node));
 	}
 	
+	@Override
 	public void evalTimestamp(DatabaseElementNode node, TimestampEvaluationResult evalResult) {
 
 	}

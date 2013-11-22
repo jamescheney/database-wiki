@@ -73,6 +73,7 @@ public class WikiSchemaRequest<T> extends WikiRequest <T>{
 		return (_requestType == requestTypePOST);
 	}
 	
+	@Override
 	public boolean isRootRequest() {
 		return _isRootRequest;
 	}

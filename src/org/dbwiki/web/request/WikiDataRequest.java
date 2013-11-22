@@ -101,6 +101,7 @@ public class WikiDataRequest<T> extends WikiRequest<T> {
 		return (_requestType == requestTypePOST);
 	}
 	
+	@Override
 	public boolean isRootRequest() {
 		return _isRootRequest;
 	}
@@ -113,14 +114,17 @@ public class WikiDataRequest<T> extends WikiRequest<T> {
     	return _node;
 	}
 	
+	@Override
 	public String toString() {
 		return getRequestURI().toString();
 	}
 	
+	@Override
 	public VersionIndex versionIndex() {
 		return this.wiki().database().versionIndex();
 	}
 
+	@Override
 	public WRI wri() {
 		return _wri;
 	}

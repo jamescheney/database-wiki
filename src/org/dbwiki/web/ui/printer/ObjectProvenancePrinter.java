@@ -31,6 +31,7 @@ import org.dbwiki.data.provenance.ProvenanceCopy;
 import org.dbwiki.data.provenance.ProvenanceImport;
 
 import org.dbwiki.data.time.Version;
+import org.dbwiki.data.time.VersionIndex;
 
 import org.dbwiki.user.User;
 import org.dbwiki.web.html.HtmlLinePrinter;
@@ -73,6 +74,7 @@ public class ObjectProvenancePrinter implements HtmlContentPrinter {
 	 * Public Methods
 	 */
 	
+	@Override
 	public void print(HtmlLinePrinter body) throws org.dbwiki.exception.WikiException {
 		body.openTABLE(CSS.CSSProvenanceListing);								
 		body.openTR();
@@ -90,7 +92,9 @@ public class ObjectProvenancePrinter implements HtmlContentPrinter {
 		body.closeTH();
 		body.closeTR();
 
-		Vector<Version> versionVec =  _request.versionIndex().getNodeChanges(_request.node());
+		VersionIndex v1 = _request.versionIndex();
+		DatabaseNode dbn = _request.node();
+		Vector<Version> versionVec =  v1.getNodeChanges(dbn);
 		for (int iVersion = 0; iVersion < versionVec.size(); iVersion++) {
 			Version version = versionVec.get(iVersion);
 			String css = CSS.CSSProvenanceNeutral;

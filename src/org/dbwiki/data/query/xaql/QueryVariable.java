@@ -79,6 +79,7 @@ public class QueryVariable {
 		return _targetPath;
 	}
 	
+	@Override
 	public String toString() {
 		
 		return "$" + _name + _targetPath.toString();

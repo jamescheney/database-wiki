@@ -42,6 +42,7 @@ public class WikiDataException extends WikiException {
 	public static final int InvalidPasteTarget = 4500;
 	public static final int UnknownSchemaNode  = 4750;
 	public static final int UnknownResource    = 5000;
+	public static final int InvalidSynchronizeNode = 5500;
 
 	
 	/*
@@ -66,6 +67,7 @@ public class WikiDataException extends WikiException {
 	 * Public Methods
 	 */
 	
+	@Override
 	public String errorCodeMessage() {
 		switch(_errorCode) {
 		case DuplicateNodeID:
@@ -97,6 +99,7 @@ public class WikiDataException extends WikiException {
 		}
 	}
 
+	@Override
 	public String exceptionPrefix() {
 		return "[DATA]";
 	}

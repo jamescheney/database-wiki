@@ -33,13 +33,16 @@ public class StandardOutServerLog extends ServerLog {
 	 * Public Methods
 	 */
 	
+	@Override
 	public void closeLog() throws IOException {
 		System.out.flush();
 	}
 
+	@Override
 	public void openLog() throws IOException {
 	}
 
+	@Override
 	public synchronized void writeln(String line) throws IOException {
 		System.out.println(line);
 	}

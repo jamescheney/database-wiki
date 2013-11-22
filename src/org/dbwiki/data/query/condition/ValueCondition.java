@@ -64,6 +64,7 @@ public class ValueCondition extends PathCondition {
 	 * Public Methods
 	 */
 	
+	@Override
 	public void eval(DatabaseElementNode node, EvaluationResult result) {
 
 		DatabaseAttributeNode attribute = (DatabaseAttributeNode)node;
@@ -86,6 +87,7 @@ public class ValueCondition extends PathCondition {
 		}
 	}
 	
+	@Override
 	public void evalTimestamp(DatabaseElementNode node, TimestampEvaluationResult evalResult) {
 		
 		DatabaseAttributeNode attribute = (DatabaseAttributeNode)node;
@@ -118,6 +120,7 @@ public class ValueCondition extends PathCondition {
 		}
 	}
 	
+	@Override
 	public void listConditions(AttributeConditionListing listing) {
 		super.listConditions(listing);
 		listing.add(_operator.getQueryCondition((AttributeSchemaNode)this.targetPath().lastElement().entity(), this.isNegated()));

@@ -41,10 +41,12 @@ public class CopyPasteNodeWriter extends NodeWriter {
 	 * Public Methods
 	 */
 	
+	@Override
 	public void writeInit() throws java.io.IOException {
 		this.writeln("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 	}
 
+	@Override
 	public void startDatabase(Database database, int version) throws org.dbwiki.exception.WikiException {
 		try {
 			this.writeln("<" + CopyPasteConstants.ElementLabelDatabase 
@@ -59,6 +61,7 @@ public class CopyPasteNodeWriter extends NodeWriter {
 	
 	
 	
+	@Override
 	public void endDatabase(Database database) throws org.dbwiki.exception.WikiException {
 		try {
 			this.writeln("</" + CopyPasteConstants.ElementLabelDatabase + ">");
@@ -67,6 +70,7 @@ public class CopyPasteNodeWriter extends NodeWriter {
 		}
 	}
 	
+	@Override
 	public void startGroupNode(DatabaseGroupNode node) throws org.dbwiki.exception.WikiException {
 		try {
 			this.writeln(this.openGroupNode(node));
@@ -76,6 +80,7 @@ public class CopyPasteNodeWriter extends NodeWriter {
 	}
 	
 
+	@Override
 	public void endGroupNode(DatabaseGroupNode node, boolean isLast) throws org.dbwiki.exception.WikiException {
 		try {
 			this.writeln(this.closeNode());
@@ -84,6 +89,7 @@ public class CopyPasteNodeWriter extends NodeWriter {
 		}
 	}
 
+	@Override
 	public void writeAttributeNode(DatabaseAttributeNode node, DatabaseTextNode value, boolean isLast) throws org.dbwiki.exception.WikiException {
 		try {
 			this.writeln(this.openAttributeNode(node));
@@ -94,6 +100,7 @@ public class CopyPasteNodeWriter extends NodeWriter {
 		}
 	}
 
+	@Override
 	public void writeTextNode(DatabaseTextNode node) throws org.dbwiki.exception.WikiException {
 		try {
 			this.write(this.openTextNode(node));

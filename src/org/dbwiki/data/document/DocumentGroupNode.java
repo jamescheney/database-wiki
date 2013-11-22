@@ -68,6 +68,7 @@ public class DocumentGroupNode extends DocumentNode {
 		return elementList;
 	}
 
+	@Override
 	public boolean isAttribute() {
 		return false;
 	}
@@ -81,7 +82,8 @@ public class DocumentGroupNode extends DocumentNode {
 
     }
 
-    public int doNumbering(int startingFrom) {
+    @Override
+	public int doNumbering(int startingFrom) {
         _pre = startingFrom;
         int next = _pre+1;
         for(int i = 0; i < children().size(); i++) {

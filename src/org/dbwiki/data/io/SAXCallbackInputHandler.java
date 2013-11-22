@@ -68,7 +68,8 @@ public class SAXCallbackInputHandler extends DefaultHandler {
 	 * Public Methods
 	 */
 	
-    public void endDocument() throws SAXException {
+    @Override
+	public void endDocument() throws SAXException {
     	try {
 	    	this.checkPendingTextNode();
 	    	_nodeHandler.endDocument();
@@ -77,7 +78,8 @@ public class SAXCallbackInputHandler extends DefaultHandler {
     	}
     }
 
-    public void endElement(String namespaceURI, String simpleName, String qualifiedName) throws SAXException {
+    @Override
+	public void endElement(String namespaceURI, String simpleName, String qualifiedName) throws SAXException {
 		String elementName = null;
         if (simpleName.equals("")) {
         	elementName = qualifiedName;
@@ -97,7 +99,8 @@ public class SAXCallbackInputHandler extends DefaultHandler {
     	
     }
 
-    public void error(SAXParseException excpt) throws SAXException {
+    @Override
+	public void error(SAXParseException excpt) throws SAXException {
     	throw excpt;
     }
 
@@ -105,11 +108,13 @@ public class SAXCallbackInputHandler extends DefaultHandler {
     	_nodeHandler.exception(excpt);
     }
     
-    public void fatalError(SAXParseException excpt) throws SAXException {
+    @Override
+	public void fatalError(SAXParseException excpt) throws SAXException {
     	throw excpt;
     }
 
-    public void startDocument() throws SAXException {
+    @Override
+	public void startDocument() throws SAXException {
     	try {
     		_nodeHandler.startDocument(); 
     	} catch (org.dbwiki.exception.WikiException wikiExcption) {
@@ -117,7 +122,8 @@ public class SAXCallbackInputHandler extends DefaultHandler {
     	}
     }
 
-    public void startElement(String namespaceURI, String localName, String qualifiedName, Attributes attrs) throws SAXException {
+    @Override
+	public void startElement(String namespaceURI, String localName, String qualifiedName, Attributes attrs) throws SAXException {
 		String elementName = null;
         if (localName.equals("")) {
         	elementName = qualifiedName;
@@ -148,7 +154,8 @@ public class SAXCallbackInputHandler extends DefaultHandler {
     	}
     }
 
-    public void characters(char buf[], int offset, int len) throws SAXException {
+    @Override
+	public void characters(char buf[], int offset, int len) throws SAXException {
 		if (_buffer == null) {
 			_buffer = new char[len];
 			for (int iChar = 0; iChar < len; iChar++) {
@@ -166,7 +173,8 @@ public class SAXCallbackInputHandler extends DefaultHandler {
 		}
     }
     
-    public void warning(SAXParseException excpt) throws SAXException {
+    @Override
+	public void warning(SAXParseException excpt) throws SAXException {
     	throw excpt;
     }
 

@@ -30,6 +30,7 @@ import org.dbwiki.web.request.parameter.RequestParameter;
 import org.dbwiki.web.request.parameter.RequestParameterList;
 
 import org.dbwiki.web.server.WikiServer;
+import org.dbwiki.web.server.WikiServerConstants;
 
 import com.sun.net.httpserver.Authenticator;
 import com.sun.net.httpserver.Headers;
@@ -88,6 +89,7 @@ public class WikiAuthenticator extends Authenticator {
 		return path .indexOf('.') != -1;
 	}
 	
+	@Override
 	public synchronized Result authenticate(HttpExchange exchange) {
 
 		
@@ -106,7 +108,7 @@ public class WikiAuthenticator extends Authenticator {
 		if (auth == null) {
 			if ((_mode == AuthenticateAlways)
 					|| ((_mode == AuthenticateWriteOnly) && (isProtectedRequest))
-					|| (exchange.getRequestURI().getPath().equals(WikiServer.SpecialFolderLogin))) {
+					|| (exchange.getRequestURI().getPath().equals(WikiServerConstants.SpecialFolderLogin))) {
 				Headers map = exchange.getResponseHeaders();
 				map.set("WWW-Authenticate", "Basic realm=" + "\"" + _realm + "\"");
 				return new Authenticator.Retry(401);
@@ -125,7 +127,7 @@ public class WikiAuthenticator extends Authenticator {
 			String pass = userpass.substring(colon + 1);
 			if ((_mode == AuthenticateAlways) 
 					|| ((_mode == AuthenticateWriteOnly) && (isProtectedRequest))
-					|| (exchange.getRequestURI().getPath().equals(WikiServer.SpecialFolderLogin))) {
+					|| (exchange.getRequestURI().getPath().equals(WikiServerConstants.SpecialFolderLogin))) {
 				if (checkCredentials(uname, pass)) {
 					return new Authenticator.Success(new HttpPrincipal(uname, _realm));
 				} else {

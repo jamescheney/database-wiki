@@ -58,6 +58,7 @@ public class DataMenuPrinter extends MenuPrinter {
 	private static final String menuLabelPasteLocal    = "Copy buffer ...";
 	private static final String menuLabelExportXML     = "Export as XML...";
 	private static final String menuLabelExportJSON     = "Export as JSON...";
+	private static final String menuLabelSynchronize     = "Synchronize with...";
 	
 	
 	/*
@@ -83,6 +84,7 @@ public class DataMenuPrinter extends MenuPrinter {
 	/*
 	 * Public Methods
 	 */
+	@Override
 	public void printEditMenu(HtmlLinePrinter printer) throws org.dbwiki.exception.WikiException {
 		printer.add("\t<a class=\"" + CSS.CSSMenu + "\" id=\"" + TabEdit + "\" onMouseOut=\"HideItem('" + MenuEdit + "');\" onMouseOver=\"ShowItem('" + MenuEdit + "');\">Edit</a>");
 
@@ -168,6 +170,7 @@ public class DataMenuPrinter extends MenuPrinter {
 		}
 		
 		this.printPasteSubMenu(printer);
+		this.printSynchronizeSubMenu(printer);
 		
 		printer.add("\t\t\t\t</ul>");
 		printer.add("\t\t\t</div>");
@@ -210,6 +213,7 @@ public class DataMenuPrinter extends MenuPrinter {
 
 		
 		printer.add("\t\t\t\t\t<li><a href=\"#\" onclick=\"loadPopup();return false\">" + menuLabelDelete + "</a></li>");
+		this.printSynchronizeSubMenu(printer);
 
 		printer.add("\t\t\t\t</ul>");
 		printer.add("\t\t\t</div>");
@@ -222,5 +226,10 @@ public class DataMenuPrinter extends MenuPrinter {
 			printer.add("\t\t\t\t\t<li><a href=\"" + _request.wri().getURL() + "?" + RequestParameter.ParameterPaste + "\" class=\"" + CSS.CSSMenuSubSub + "\">" + menuLabelPasteLocal + "</a></li>");
 		}
 		printer.add("\t\t\t\t\t<li><a href=\"" + _request.wri().getURL() + "?" + RequestParameter.ParameterPasteForm + "\" class=\"" + CSS.CSSMenuSubSub + "\">" + menuLabelPasteExternal + "</a></li>");
+	}
+	
+	private void printSynchronizeSubMenu(HtmlLinePrinter printer) {
+		printer.add("\t\t\t\t\t<li><span class=\"" + CSS.CSSMenuSubBox + "\">" + menuLabelSynchronize + "</span></li>");
+		printer.add("\t\t\t\t\t<li><a href=\"" + _request.wri().getURL() + "?" + RequestParameter.ParameterSynchronizeForm + "\" class=\"" + CSS.CSSMenuSubSub + "\">" + menuLabelPasteExternal + "</a></li>");
 	}
 }

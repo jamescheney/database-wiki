@@ -45,6 +45,7 @@ public class AbsoluteTargetPathGenerator implements TargetPathGenerator {
 	 * Public Methods
 	 */
 	
+	@Override
 	public XPath getTargetPath(SchemaNode rootEntity, VersionIndex versionIndex, Iterator<XAQLToken> pathTokens) throws org.dbwiki.exception.WikiException {
 
 		XAQLToken token = pathTokens.next();
@@ -83,7 +84,7 @@ public class AbsoluteTargetPathGenerator implements TargetPathGenerator {
 		}
 		
 		if (pathTokens.hasNext()) {
-			return new XPath(pathElement, new RelativeTargetPathGenerator().getTargetPath((GroupSchemaNode)rootEntity, versionIndex, pathTokens));
+			return new XPath(pathElement, new RelativeTargetPathGenerator().getTargetPath(rootEntity, versionIndex, pathTokens));
 		} else {
 			return new XPath(pathElement);
 		}

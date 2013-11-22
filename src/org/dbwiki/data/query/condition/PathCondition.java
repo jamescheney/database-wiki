@@ -62,6 +62,7 @@ public abstract class PathCondition implements Condition, ConditionEvaluator {
 	 * Public Methods
 	 */
 	
+	@Override
 	public boolean eval(DatabaseElementNode node) {
 
 		EvaluationResult result = new EvaluationResult();
@@ -83,6 +84,7 @@ public abstract class PathCondition implements Condition, ConditionEvaluator {
 		}
 	}
 	
+	@Override
 	public TimeSequence evalTimestamp(DatabaseElementNode node) {
 
 		TimestampEvaluationResult result = new TimestampEvaluationResult();
@@ -97,6 +99,7 @@ public abstract class PathCondition implements Condition, ConditionEvaluator {
 		return _negated;
 	}
 	
+	@Override
 	public void listConditions(AttributeConditionListing listing) {
 		_targetPath.listConditions(listing);
 	}
@@ -106,6 +109,7 @@ public abstract class PathCondition implements Condition, ConditionEvaluator {
 		return _targetPath;
 	}
 	
+	@Override
 	public String toString() {
 		
 		String text = "[";

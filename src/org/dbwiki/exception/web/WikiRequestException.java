@@ -64,6 +64,7 @@ public class WikiRequestException extends WikiException {
 	 * Public Methods
 	 */
 	
+	@Override
 	public String errorCodeMessage() {
 		switch (_errorCode) {
 		case DuplicateParameter:
@@ -91,6 +92,7 @@ public class WikiRequestException extends WikiException {
 		}
 	}
 
+	@Override
 	public String exceptionPrefix() {
 		return "[HTTP REQUEST]";
 	}

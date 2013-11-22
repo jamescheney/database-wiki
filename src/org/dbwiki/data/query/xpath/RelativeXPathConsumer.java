@@ -43,7 +43,7 @@ public class RelativeXPathConsumer {
 					if (targetPath.size() == 1) {
 						consumer.handle(childNode);
 					} else {
-						new RelativeXPathConsumer().consume((DatabaseElementNode)childNode, targetPath.subpath(1), consumer);
+						new RelativeXPathConsumer().consume(childNode, targetPath.subpath(1), consumer);
 					}
 				}
 			}

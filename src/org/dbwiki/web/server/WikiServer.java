@@ -391,6 +391,7 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 	 * wikis are handled by DatabaseWiki.handle())
 	 * The HttpExchange is side-effected and the response part is eventually sent back to the client.
 	 */
+	@Override
 	public void handle(HttpExchange exchange) throws java.io.IOException {
 		
 		try {

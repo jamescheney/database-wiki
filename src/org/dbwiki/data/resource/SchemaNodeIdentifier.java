@@ -68,14 +68,17 @@ public class SchemaNodeIdentifier implements ResourceIdentifier {
 	 * Public Methods
 	 */
 	
+	@Override
 	public int compareTo(ResourceIdentifier identifier) {
 		return (nodeID() - ((SchemaNodeIdentifier)identifier).nodeID());
 	}
 
+	@Override
 	public boolean equals(ResourceIdentifier identifier) {
 		return (nodeID() == ((SchemaNodeIdentifier)identifier).nodeID());
 	}
 
+	@Override
 	public boolean isRootIdentifier() {
 		return (_nodeID == -1);
 	}
@@ -84,10 +87,12 @@ public class SchemaNodeIdentifier implements ResourceIdentifier {
 		return _nodeID;
 	}
 	
+	@Override
 	public String toParameterString() {
 		return String.valueOf(_nodeID);
 	}
 	
+	@Override
 	public String toURLString() {
 		if (_nodeID == -1) {
 			return "/" + DatabaseWiki.SchemaRequestPrefix + "/";

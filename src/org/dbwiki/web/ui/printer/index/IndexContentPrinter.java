@@ -75,6 +75,7 @@ public abstract class IndexContentPrinter implements HtmlContentPrinter {
 	 * Public Methods
 	 */
 	
+	@Override
 	public void print(HtmlLinePrinter body) throws org.dbwiki.exception.WikiException {
 		ContentIterator iterator = null;
 		

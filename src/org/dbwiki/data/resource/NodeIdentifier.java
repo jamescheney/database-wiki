@@ -75,14 +75,17 @@ public class NodeIdentifier implements ResourceIdentifier {
 	 * Public Methods
 	 */
 	
+	@Override
 	public int compareTo(ResourceIdentifier identifier) {
 		return (nodeID() - ((NodeIdentifier)identifier).nodeID());
 	}
 	
+	@Override
 	public boolean equals(ResourceIdentifier identifier) {
 		return (nodeID() == ((NodeIdentifier)identifier).nodeID());
 	}
 
+	@Override
 	public boolean isRootIdentifier() {
 		return (_nodeID == -1);
 	}
@@ -91,10 +94,12 @@ public class NodeIdentifier implements ResourceIdentifier {
 		return _nodeID;
 	}
 	
+	@Override
 	public String toParameterString() {
 		return String.valueOf(_nodeID);
 	}
 	
+	@Override
 	public String toURLString() {
 		if (_nodeID == -1) {
 			return "/";

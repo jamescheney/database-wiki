@@ -25,6 +25,8 @@ import org.dbwiki.data.annotation.AnnotationList;
 
 import org.dbwiki.data.database.DatabaseAttributeNode;
 import org.dbwiki.data.database.DatabaseGroupNode;
+import org.dbwiki.data.document.DocumentAttributeNode;
+import org.dbwiki.data.document.DocumentNode;
 
 import org.dbwiki.data.resource.NodeIdentifier;
 
@@ -78,11 +80,23 @@ public class RDBMSDatabaseAttributeNode extends DatabaseAttributeNode {
 	 * Public Methods
 	 */
 	
+	@Override
 	public void add(String value, TimeSequence timestamp, int pre, int post) {
 		this.value().add(new RDBMSDatabaseTextNode(DatabaseConstants.RelDataColIDValUnknown, this, timestamp, value, pre, post));
 	}
 	
+	@Override
 	public NodeIdentifier identifier() {
 		return _identifier;
+	}
+	
+	@Override
+	public String toString(){
+		return "";
+	}
+	
+	public DocumentNode toDocumentNode(){
+		DocumentAttributeNode node = new DocumentAttributeNode((AttributeSchemaNode)this.schema(), this.value().getMostRecent().getValue());
+		return node;
 	}
 }

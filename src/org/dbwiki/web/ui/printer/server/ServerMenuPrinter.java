@@ -57,6 +57,7 @@ public class ServerMenuPrinter implements HtmlContentPrinter {
 	 * Public Methods
 	 */
 	
+	@Override
 	public void print(HtmlLinePrinter body) throws org.dbwiki.exception.WikiException {
 		body.add("\t\t<div class=\"" + CSS.CSSMenu + "\">");
 

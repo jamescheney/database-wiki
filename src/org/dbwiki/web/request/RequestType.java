@@ -63,6 +63,12 @@ public class RequestType {
 	private static final byte requestTypeReset = 13;
 	//?search=...
 	private static final byte requestTypeSearch = 14;
+	//?synchronize_form
+	private static final byte requestTypeSynchronizeForm = 24;
+	//?synchronize
+	private static final byte requestTypeSynchronize = 25;
+	//?synxml
+	private static final byte requestTypeSynchronizeExport = 26;
 	//?settings
 	private static final byte requestTypeSettings = 15;
 	//?style_sheet resource=...
@@ -156,7 +162,16 @@ public class RequestType {
 			} else if (parameters.hasParameter(RequestParameter.ParameterSearch)) {
 				//?search=...
 				_type = requestTypeSearch;
-			} else if (parameters.hasParameter(RequestParameter.ParameterSettings)) {
+			} else if (parameters.hasParameter(RequestParameter.ParameterSynchronizeExport)) {
+				//?synxml
+				_type = requestTypeSynchronizeExport;
+			} else if (parameters.hasParameter(RequestParameter.ParameterSynchronizeForm)) {
+				//?synchronize_form
+				_type = requestTypeSynchronizeForm;
+			}else if (parameters.hasParameter(RequestParameter.ParameterSynchronize)) {
+				//?synchronize
+				_type = requestTypeSynchronize;
+			}else if (parameters.hasParameter(RequestParameter.ParameterSettings)) {
 				//?settings
 				_type = requestTypeSettings;
 			} else if (parameters.hasParameter(RequestParameter.ParameterPreviousVersion)) {
@@ -202,7 +217,7 @@ public class RequestType {
 			} else if ((parameters.hasParameter(RequestParameter.ParameterPaste)) && (parameters.hasParameter(RequestParameter.ParameterURL))) {
 				//?paste
 				_type = requestTypePaste;
-			} else if ((parameters.hasParameter(RequestParameter.ParameterStyleSheet)) && (parameters.hasParameter(RequestParameter.ParameterResource))) {
+			}else if ((parameters.hasParameter(RequestParameter.ParameterStyleSheet)) && (parameters.hasParameter(RequestParameter.ParameterResource))) {
 				//?style_sheet resource=...
 				_type = requestTypeStyleSheet;
 			} else if ((parameters.hasParameter(RequestParameter.ParameterURLDecoding)) && (parameters.hasParameter(RequestParameter.ParameterResource))) {
@@ -236,6 +251,15 @@ public class RequestType {
 					// silently ignore wiki exceptions
 					// FIXME #requestparsing: is this really the behaviour we want?
 				}
+			}
+		}
+		else if(parameters.size() == 8){
+			if ((parameters.hasParameter(RequestParameter.ParameterSynchronize)) && (parameters.hasParameter(RequestParameter.ParameterURL))
+					&& (parameters.hasParameter(RequestParameter.parameterRemoteAdded))&& (parameters.hasParameter(RequestParameter.parameterRemoteChanged))
+					&& (parameters.hasParameter(RequestParameter.parameterRemoteDeleted))&& (parameters.hasParameter(RequestParameter.parameterchangedChanged))
+					&& (parameters.hasParameter(RequestParameter.parameterdeletedChanged))&& (parameters.hasParameter(RequestParameter.parameterchangedDeleted))) {
+				//?paste
+				_type = requestTypeSynchronize;
 			}
 		}
 	}
@@ -313,6 +337,18 @@ public class RequestType {
 		return (_type == requestTypeSearch);
 	}
 	
+	public boolean isSynchronizeExport() {
+		return (_type == requestTypeSynchronizeExport);
+	}
+	
+	public boolean isSynchronizeForm() {
+		return (_type == requestTypeSynchronizeForm);
+	}
+	
+	public boolean isSynchronize() {
+		return (_type == requestTypeSynchronize);
+	}
+	
 	public boolean isSettings() {
 		return (_type == requestTypeSettings);
 	}
@@ -345,6 +381,7 @@ public class RequestType {
 		return (_type == requestTypeURLDecoding);
 	}
 	
+	@Override
 	public String toString() {
 		return String.valueOf(_type);
 	}

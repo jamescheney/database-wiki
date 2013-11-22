@@ -56,22 +56,27 @@ public class WikiPageDescription implements DatabaseEntry {
 	 * Public Methods
 	 */
 	
+	@Override
 	public int compareTo(DatabaseEntry entry) {
 		return this.label().compareTo(entry.label());
 	}
 
+	@Override
 	public ResourceIdentifier identifier() {
 		return _identifier;
 	}
 
+	@Override
 	public String label() {
 		return _title;
 	}
 
+	@Override
 	public int lastChange() {
 		return -1;
 	}
 
+	@Override
 	public TimeSequence timestamp() {
 		return new TimeSequence(1);
 	}

@@ -58,6 +58,7 @@ public class SingleVariableQueryNodeHandler extends QueryRootNodeHandler {
 	 * Public Methods
 	 */
 	
+	@Override
 	public void handle(DatabaseElementNode node) {
 
 		this.handle(new QueryNodeSet(_variable.name(), node));

@@ -22,6 +22,7 @@
 package org.dbwiki.data.database;
 
 import org.dbwiki.data.annotation.AnnotationList;
+import org.dbwiki.data.document.DocumentNode;
 
 import org.dbwiki.data.resource.NodeIdentifier;
 import org.dbwiki.data.schema.SchemaNode;
@@ -65,6 +66,7 @@ public abstract class DatabaseElementNode extends DatabaseNode {
 		return _schema.isAttribute();
 	}
 
+	@Override
 	public boolean isElement() {
 		return true;
 	}
@@ -77,10 +79,12 @@ public abstract class DatabaseElementNode extends DatabaseNode {
 		return _label;
 	}
 	
+	@Override
 	public abstract NodeIdentifier identifier();
 	
 	public void setLabel(String label) {
 		_label = label;
 	}
 
+	public abstract DocumentNode toDocumentNode();
 }

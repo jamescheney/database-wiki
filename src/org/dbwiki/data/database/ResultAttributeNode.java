@@ -1,6 +1,7 @@
 package org.dbwiki.data.database;
 
 import org.dbwiki.data.annotation.AnnotationList;
+import org.dbwiki.data.document.DocumentNode;
 import org.dbwiki.data.resource.NodeIdentifier;
 import org.dbwiki.data.schema.AttributeSchemaNode;
 import org.dbwiki.data.time.TimeSequence;
@@ -19,8 +20,15 @@ public class ResultAttributeNode extends DatabaseAttributeNode {
 	}
 
 	
+	@Override
 	public NodeIdentifier identifier() {
 		return new NodeIdentifier();
+	}
+
+	@Override
+	public DocumentNode toDocumentNode() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

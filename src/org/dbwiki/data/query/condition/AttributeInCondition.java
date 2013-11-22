@@ -55,6 +55,7 @@ public class AttributeInCondition extends AttributeCondition {
 	 * Public Methods
 	 */
 	
+	@Override
 	public void listValues(Vector<String> parameters) {
 		
 		for (int iValue = 0; iValue < _values.size(); iValue++) {
@@ -62,6 +63,7 @@ public class AttributeInCondition extends AttributeCondition {
 		}
 	}
 
+	@Override
 	public String sqlPreparedStatement() {
 	
 		String parameters = "(?";

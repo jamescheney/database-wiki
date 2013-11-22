@@ -63,6 +63,7 @@ public class CoincidesExpression implements WhereExpression {
 		_conditions.add(condition);
 	}
 	
+	@Override
 	public boolean eval(QueryNodeSet nodeSet) {
 		
 		TimestampEvaluationResult evalResult = this.getEvalResult(nodeSet);
@@ -95,6 +96,7 @@ public class CoincidesExpression implements WhereExpression {
 		}
 	}
 	
+	@Override
 	public void listConditions(AttributeConditionListing listing) {
 		for (WhereCondition condition : _conditions) {
 			condition.listConditions(listing);

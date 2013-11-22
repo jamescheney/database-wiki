@@ -54,14 +54,17 @@ public class FileServerLog extends ServerLog {
 	 * Public Methods
 	 */
 
+	@Override
 	public void closeLog() throws IOException {
 		_out.close();
 	}
 
+	@Override
 	public void openLog() throws IOException {
 		_out = new BufferedWriter(new FileWriter(_logFile));
 	}
 
+	@Override
 	public synchronized void writeln(String line) throws IOException {
 		_out.write(line);
 		_out.newLine();

@@ -56,6 +56,7 @@ public class WikiLayoutException extends WikiException {
 	 * Public Methods
 	 */
 	
+	@Override
 	public String errorCodeMessage() {
 		switch (_errorCode) {
 		case InvalidFileFormat:
@@ -67,6 +68,7 @@ public class WikiLayoutException extends WikiException {
 		}
 	}
 
+	@Override
 	public String exceptionPrefix() {
 		return "[LAYOUT]";
 	}

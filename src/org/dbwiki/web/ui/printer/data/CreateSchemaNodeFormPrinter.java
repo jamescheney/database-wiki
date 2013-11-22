@@ -59,6 +59,7 @@ public class CreateSchemaNodeFormPrinter implements HtmlContentPrinter {
 	 * Public Methods
 	 */
 	
+	@Override
 	public void print(HtmlLinePrinter printer) throws org.dbwiki.exception.WikiException {
 		printer.paragraph("Create new schema element", CSS.CSSHeadline);
 

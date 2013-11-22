@@ -35,6 +35,7 @@ public class CurrentContentIterator extends ContentIterator {
 	 * Public Methods
 	 */
 	
+	@Override
 	public boolean matches(DatabaseEntry entry) {
 		return entry.timestamp().isCurrent();
 	}

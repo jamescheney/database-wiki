@@ -47,6 +47,7 @@ public class AttributeSchemaNode extends SchemaNode {
 	/*
 	 * Public Methods
 	 */
+	@Override
 	public boolean isAttribute() {
 		return true;
 	}

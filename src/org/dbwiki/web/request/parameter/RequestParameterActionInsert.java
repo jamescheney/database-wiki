@@ -27,22 +27,27 @@ public class RequestParameterActionInsert extends RequestParameterAction {
 	 * Public Methods
 	 */
 	
+	@Override
 	public boolean actionAnnotate() {
 		return false;
 	}
 
+	@Override
 	public boolean actionCancel() {
 		return false;
 	}
 	
+	@Override
 	public boolean actionSchemaNode() {
 		return false;
 	}
 	
+	@Override
 	public boolean actionInsert() {
 		return true;
 	}
 
+	@Override
 	public boolean actionUpdate() {
 		return false;
 	}

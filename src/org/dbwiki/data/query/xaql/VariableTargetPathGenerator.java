@@ -35,12 +35,13 @@ import org.dbwiki.data.time.VersionIndex;
 
 public class VariableTargetPathGenerator implements TargetPathGenerator {
 
+	@Override
 	public VariableXPath getTargetPath(SchemaNode entity, VersionIndex versionIndex, Iterator<XAQLToken> pathTokens) throws org.dbwiki.exception.WikiException {
 
 		String variableName = pathTokens.next().value();
 		
 		if (pathTokens.hasNext()) {
-			return new VariableXPath(variableName, entity, new RelativeTargetPathGenerator().getTargetPath((GroupSchemaNode)entity, versionIndex, pathTokens));
+			return new VariableXPath(variableName, entity, new RelativeTargetPathGenerator().getTargetPath(entity, versionIndex, pathTokens));
 		} else {
 			return new VariableXPath(variableName, entity);
 		}

@@ -101,6 +101,7 @@ public XPathComponent(SchemaNode entity, XPathCondition condition) {
 		}
 	}
 	
+	@Override
 	public String toString() {
 		
 		if (_condition != null) {

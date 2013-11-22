@@ -93,6 +93,7 @@ public abstract class HttpRequest<T> {
 		return _url.parameters();
 	}
 	
+	@Override
 	public String toString() {
 		return getRequestURI().toASCIIString();
 	}

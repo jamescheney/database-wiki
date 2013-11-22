@@ -71,6 +71,7 @@ public abstract class WikiException extends Exception {
 	 * Public Methods
 	 */
 	
+	@Override
 	public void printStackTrace() {
 		if (_exception != null) {
 			_exception.printStackTrace();
@@ -79,6 +80,7 @@ public abstract class WikiException extends Exception {
 		}
 	}
 	
+	@Override
 	public String toString() {
 		if (_exception == null) {
 			String errorCodeMsg = this.exceptionPrefix() + " " + this.errorCodeMessage();

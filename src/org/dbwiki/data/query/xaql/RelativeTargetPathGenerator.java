@@ -45,6 +45,7 @@ public class RelativeTargetPathGenerator implements TargetPathGenerator {
 	 * Public Methods
 	 */
 	
+	@Override
 	public XPath getTargetPath(SchemaNode parentEntity, VersionIndex versionIndex, Iterator<XAQLToken> pathTokens) throws org.dbwiki.exception.WikiException {
 
 		XAQLToken token = pathTokens.next();

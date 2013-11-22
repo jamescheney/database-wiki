@@ -23,7 +23,10 @@ package org.dbwiki.driver.rdbms;
 
 import org.dbwiki.data.annotation.AnnotationList;
 
+import org.dbwiki.data.database.DatabaseElementNode;
 import org.dbwiki.data.database.DatabaseGroupNode;
+import org.dbwiki.data.document.DocumentGroupNode;
+import org.dbwiki.data.document.DocumentNode;
 
 import org.dbwiki.data.resource.NodeIdentifier;
 
@@ -72,7 +75,16 @@ public class RDBMSDatabaseGroupNode extends DatabaseGroupNode {
 	 * Public Methods
 	 */
 	
+	@Override
 	public NodeIdentifier identifier() {
 		return _identifier;
+	}
+	
+	public DocumentNode toDocumentNode(){
+		DocumentGroupNode node = new DocumentGroupNode((GroupSchemaNode)this.schema());
+		for(int i = 0; i < this.children().size(); i++){
+			node.children().add(((DatabaseElementNode)this.children().get(i)).toDocumentNode());
+		}
+		return node;
 	}
 }

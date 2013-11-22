@@ -71,6 +71,7 @@ public class WikiQueryException extends WikiException {
 	 * Public Methods
 	 */
 	
+	@Override
 	public String errorCodeMessage() {
 		switch(_errorCode) {
 		case DuplicateVariableDefinition:
@@ -100,6 +101,7 @@ public class WikiQueryException extends WikiException {
 		}
 	}
 
+	@Override
 	public String exceptionPrefix() {
 		return "[QUERY]";
 	}

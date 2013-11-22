@@ -55,11 +55,13 @@ public class AttributeValueCondition extends AttributeCondition {
 	 * Public Methods 
 	 */
 	
+	@Override
 	public void listValues(Vector<String> parameters) {
 		
 		parameters.add(_value);
 	}
 	
+	@Override
 	public String sqlPreparedStatement() {
 		
 		if (this.isNegated()) {

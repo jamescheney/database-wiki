@@ -177,10 +177,12 @@ public class RDBMSDatabaseListing implements DatabaseContent {
 		_isSorted = false;
 	}
 	
+	@Override
 	public RDBMSDatabaseEntry get(int index) {
 		return _entryList.get(index);
 	}
 	
+	@Override
 	public RDBMSDatabaseEntry get(String key) {
 		if (_isSorted) {
 			int low = 0;
@@ -213,6 +215,7 @@ public class RDBMSDatabaseListing implements DatabaseContent {
 		return _entryIndex.get(new Integer(identifier.nodeID()));
 	}
 	
+	@Override
 	public int size() {
 		return _entryList.size();
 	}

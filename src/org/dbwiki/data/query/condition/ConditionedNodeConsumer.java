@@ -58,6 +58,7 @@ public class ConditionedNodeConsumer implements QueryNodeHandler {
 	 * Public Methods
 	 */
 	
+	@Override
 	public void handle(DatabaseElementNode node) {
 
 		if (_condition.eval(node)) {

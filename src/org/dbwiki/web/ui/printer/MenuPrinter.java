@@ -75,6 +75,7 @@ public abstract class MenuPrinter implements HtmlContentPrinter {
 	 * Public Methods
 	 */
 	
+	@Override
 	public void print(HtmlLinePrinter printer) throws org.dbwiki.exception.WikiException {
 		printer.add("<div class=\"" + CSS.CSSMenu + "\">");
 

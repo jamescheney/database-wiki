@@ -65,6 +65,7 @@ public class WikiSchemaException extends WikiException {
 	 * Public Methods
 	 */
 	
+	@Override
 	public String errorCodeMessage() {
 		switch(_errorCode) {
 		case DuplicateSchemaNode:
@@ -82,6 +83,7 @@ public class WikiSchemaException extends WikiException {
 		}
 	}
 
+	@Override
 	public String exceptionPrefix() {
 		return "[SCHEMA]";
 	}

@@ -52,6 +52,7 @@ public class ServerResponseHandler extends HtmlContentGenerator {
 	 * Public Methods
 	 */
 	
+	@Override
 	public void print(String key, Vector<String> args, HtmlPage page, String indention) throws org.dbwiki.exception.WikiException {
 		if (key.equals(ContentTitle)) {
 			if (args != null) {

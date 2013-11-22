@@ -44,6 +44,7 @@ public class VersionContentIterator extends ContentIterator {
 	 * Public Methods
 	 */
 	
+	@Override
 	public boolean matches(DatabaseEntry entry) {
 		return entry.timestamp().contains(_time);
 	}

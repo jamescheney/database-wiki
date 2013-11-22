@@ -126,6 +126,7 @@ public abstract class DatabaseGroupNode extends DatabaseElementNode {
 		}
 	}
 	
+	@Override
 	public String toString() {
 		int n = _children.size();
 		if (n == 0) {
@@ -145,6 +146,7 @@ public abstract class DatabaseGroupNode extends DatabaseElementNode {
 		}
 	}
 
+	@Override
 	public DatabaseNode find(ResourceIdentifier identifier) {
 
 		for (int iChild = 0; iChild < children().size(); iChild++) {
@@ -157,6 +159,16 @@ public abstract class DatabaseGroupNode extends DatabaseElementNode {
 				if (node != null) {
 					return node;
 				}
+			}
+		}
+		return null;
+	}
+	
+	public DatabaseElementNode findChild(ResourceIdentifier identifier){
+		for (int iChild = 0; iChild < children().size(); iChild++) {
+			DatabaseElementNode child = children().get(iChild);
+			if (child.identifier().equals(identifier)) {
+				return child;
 			}
 		}
 		return null;

@@ -98,10 +98,12 @@ public class WikiPageRequest<T> extends WikiRequest<T>  {
 		return this.wiki().wiki().versions(_wri.resourceIdentifier());
 	}
 	
+	@Override
 	public VersionIndex versionIndex() {
 		return null;
 	}
 
+	@Override
 	public WRI wri() {
 		return _wri;
 	}

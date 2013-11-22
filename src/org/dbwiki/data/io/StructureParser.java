@@ -141,6 +141,7 @@ public class StructureParser implements InputHandler {
 	 * Public Methods
 	 */
 	
+	@Override
 	public void startDocument() {
 		_exception = null;
 		
@@ -148,9 +149,11 @@ public class StructureParser implements InputHandler {
 		_elementStack = new Stack<ElementNode>();
 	}
 	
+	@Override
 	public void endDocument() {
 	}
 
+	@Override
 	public void startElement(String label) {
 		if (_root == null) {
 			_root = new ElementNode(label);
@@ -172,6 +175,7 @@ public class StructureParser implements InputHandler {
 		}
 	}
 	
+	@Override
 	public void startElement(String label, Attribute[] attrs) throws org.dbwiki.exception.WikiException {
 		this.startElement(label);
 		for (int iAttribute = 0; iAttribute < attrs.length; iAttribute++) {
@@ -183,21 +187,26 @@ public class StructureParser implements InputHandler {
 	}
 
 
+	@Override
 	public void endElement(String label) {
 		_elementStack.pop();
 	}
 	
+	@Override
 	public void text(char[] value) {
 	}
 	
+	@Override
 	public void exception(Exception excpt) {
 		_exception = excpt;
 	}
 	
+	@Override
 	public boolean hasException() {
 		return (_exception != null);
 	}
 	
+	@Override
 	public Exception getException() {
 		return _exception;
 	}

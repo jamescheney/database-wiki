@@ -22,9 +22,11 @@
 package org.dbwiki.data.database;
 
 import org.dbwiki.data.annotation.AnnotationList;
+import org.dbwiki.data.document.DocumentNode;
 import org.dbwiki.data.resource.ResourceIdentifier;
 import org.dbwiki.data.time.TimeSequence;
 import org.dbwiki.data.time.TimestampedObject;
+import org.dbwiki.driver.rdbms.DatabaseConstants;
 
 
 /** DatabaseNode root class.
@@ -97,11 +99,18 @@ public abstract class DatabaseNode extends TimestampedObject {
 		return _post;
 	}
 
+	public int getparent() {
+		if(_parent != null){
+			return _parent.identifier().nodeID();
+		}
+		else{
+			return DatabaseConstants.RelDataColParentValUnknown;
+		}
+	}
+
 	/*
 	 * Finding nodes
 	 * 
 	 */
 	public abstract DatabaseNode find(ResourceIdentifier identifier) ;
-	
-	
 }

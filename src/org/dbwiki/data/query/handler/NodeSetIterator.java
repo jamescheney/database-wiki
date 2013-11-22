@@ -90,6 +90,7 @@ public class NodeSetIterator implements QueryNodeHandler {
 		}
 	}
 	
+	@Override
 	public void handle(DatabaseElementNode node) {
 		
 		if (_variable.children().size() > 0) {

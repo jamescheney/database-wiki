@@ -86,10 +86,12 @@ public class GroupSchemaNode extends SchemaNode {
 		throw new WikiSchemaException(WikiSchemaException.UnknownSchemaNode, this.path() + "/" + path);
 	}
 	
+	@Override
 	public boolean isAttribute() {
 		return false;
 	}
 	
+	@Override
 	public String toString() {
 		StringBuffer buf = new StringBuffer();
 
@@ -114,6 +116,7 @@ public class GroupSchemaNode extends SchemaNode {
 	}
 	
 	// FIXME #schemaparsing: Evil hack to deal with irregularity of schema parser
+	@Override
 	public void printToBuf(StringBuffer buf,String indentation, String extend, String cr) {
 
 		if (children().size() >= 1) {

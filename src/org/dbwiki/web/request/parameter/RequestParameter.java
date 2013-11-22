@@ -49,6 +49,15 @@ public class RequestParameter {
 	public static final String ParameterPasteForm        = "paste_form";
 	public static final String ParameterPreviousVersion  = "previous";
 	public static final String ParameterSearch           = "search";
+	public static final String ParameterSynchronizeForm  = "synchronize_form";
+	public static final String ParameterSynchronize      = "synchronize";
+	public static final String parameterRemoteAdded		 = "remoteAdded";
+	public static final String parameterRemoteChanged	 = "remoteChanged";
+	public static final String parameterRemoteDeleted	 = "remoteDeleted";
+	public static final String parameterchangedChanged	 = "changedChanged";
+	public static final String parameterdeletedChanged	 = "deletedChanged";
+	public static final String parameterchangedDeleted	 = "changedDeleted";
+	public static final String ParameterSynchronizeExport = "synxml";
 	public static final String ParameterReset            = "reset";
 	public static final String ParameterResource         = "resource";
 	public static final String ParameterSettings         = "settings";
@@ -158,6 +167,7 @@ public class RequestParameter {
 		return _name;
 	}
 	
+	@Override
 	public String toString() {
 		if (_value != null) {
 			return _name + "=" + _value;

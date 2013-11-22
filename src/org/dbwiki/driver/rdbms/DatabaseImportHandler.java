@@ -64,6 +64,7 @@ public class DatabaseImportHandler implements ImportHandler {
 	 * Public Methods
 	 */
 	
+	@Override
 	public void endImport() throws org.dbwiki.exception.WikiException {
 		try {
 			_database.versionIndex().add(_importVersion);
@@ -73,6 +74,7 @@ public class DatabaseImportHandler implements ImportHandler {
 		}
 	}
 
+	@Override
 	public void importDocument(DocumentGroupNode document) throws org.dbwiki.exception.WikiException {
 		try {
 			_con.setAutoCommit(false);
@@ -93,6 +95,7 @@ public class DatabaseImportHandler implements ImportHandler {
 		}
 	}
 
+	@Override
 	public void startImport(User user, String sourceURL) throws org.dbwiki.exception.WikiException {
 		_importVersion = _database.versionIndex().getNextVersion(new ProvenanceImport(user, sourceURL));
 	}

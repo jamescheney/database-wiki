@@ -26,6 +26,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.StringWriter;
 
 import java.net.URL;
@@ -57,14 +58,17 @@ import org.dbwiki.data.io.ExportJSONNodeWriter;
 import org.dbwiki.data.io.ExportNodeWriter;
 import org.dbwiki.data.io.NodeWriter;
 import org.dbwiki.data.io.SAXCallbackInputHandler;
+import org.dbwiki.data.io.SynchronizeNodeWriter;
 
 import org.dbwiki.data.resource.DatabaseIdentifier;
 import org.dbwiki.data.resource.PageIdentifier;
+import org.dbwiki.data.resource.NodeIdentifier;
 
 import org.dbwiki.data.schema.AttributeSchemaNode;
 import org.dbwiki.data.schema.DatabaseSchema;
 import org.dbwiki.data.schema.SchemaNode;
 import org.dbwiki.data.schema.GroupSchemaNode;
+import org.dbwiki.data.time.Version;
 
 import org.dbwiki.data.wiki.SimpleWiki;
 import org.dbwiki.data.wiki.Wiki;
@@ -72,9 +76,11 @@ import org.dbwiki.driver.rdbms.DatabaseConnector;
 import org.dbwiki.driver.rdbms.RDBMSDatabase;
 import org.dbwiki.driver.rdbms.SQLVersionIndex;
 
+import org.dbwiki.exception.WikiException;
 import org.dbwiki.exception.WikiFatalException;
 
 import org.dbwiki.exception.web.WikiRequestException;
+import org.dbwiki.main.SynchronizeDatabaseWiki;
 
 import org.dbwiki.user.UserListing;
 
@@ -99,6 +105,7 @@ import org.dbwiki.web.request.parameter.RequestParameterVersionSingle;
 import org.dbwiki.web.security.WikiAuthenticator;
 
 import org.dbwiki.web.ui.DatabaseWikiContentGenerator;
+import org.dbwiki.web.ui.HtmlContentGenerator;
 import org.dbwiki.web.ui.HtmlTemplateDecorator;
 
 import org.dbwiki.web.ui.layout.DatabaseLayouter;
@@ -118,6 +125,7 @@ import org.dbwiki.web.ui.printer.data.DataUpdateFormPrinter;
 import org.dbwiki.web.ui.printer.data.DataNodePrinter;
 import org.dbwiki.web.ui.printer.data.InputFormPrinter;
 import org.dbwiki.web.ui.printer.data.NodePathPrinter;
+import org.dbwiki.web.ui.printer.data.SynchronizePrinter;
 
 import org.dbwiki.web.ui.printer.index.AZMultiPageIndexPrinter;
 import org.dbwiki.web.ui.printer.index.AZSinglePageIndexPrinter;
@@ -246,7 +254,8 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 	/** Comparator.  Compare database wikis by title, to sort list of wikis.
 	 * 
 	 */
- 	public int compareTo(DatabaseWiki wiki) {
+ 	@Override
+	public int compareTo(DatabaseWiki wiki) {
 	 	return this.getTitle().compareTo(wiki.getTitle());
 	}
 	
@@ -401,38 +410,47 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 	 * Wiki Page requests are handled by respondToPageRequest
 	 * Schema requests are handled by respondToSchemaRequest
 	 */
+	@Override
 	public void handle(HttpExchange exchange) throws java.io.IOException {
 		try {
-			String filename = exchange.getRequestURI().getPath();
-			int pos = filename.lastIndexOf('.');
-			if (pos != -1) {
-	    		_server.sendFile(exchange);
-			} else {
-				if (_server.serverLog() != null) {
-					_server.serverLog().logRequest(exchange.getRequestURI(),exchange.getRemoteAddress(),exchange.getResponseHeaders());
-				}
-				RequestURL<HttpExchange> url = new RequestURL<HttpExchange>(new HttpExchangeWrapper(exchange), _database.identifier().linkPrefix());
-				if (url.isDataRequest()) {
-					respondToDataRequest(new WikiDataRequest<HttpExchange>(this, url));
-				} else if (url.isPageRequest()) {
-					respondToPageRequest(new WikiPageRequest<HttpExchange>(this, url));
-				} else if (url.isSchemaRequest()) {
-					respondToSchemaRequest(new WikiSchemaRequest<HttpExchange>(this, url));
-				}
-			}
+			handleFunctionality(exchange);
 		} catch (org.dbwiki.exception.WikiException wikiException) {
-			wikiException.printStackTrace();
 			try {
-				HtmlSender.send(HtmlTemplateDecorator.decorate(_template, new DatabaseWikiContentGenerator(this, wikiException)),exchange);
-			} catch (org.dbwiki.exception.WikiException exception) {
-				HtmlSender.send(new FatalExceptionPage(exception),exchange);
+				_database.ensureLatest();
+				handleFunctionality(exchange);
+			} catch (WikiException e) {
+				wikiException.printStackTrace();
+				try {
+					HtmlSender.send(HtmlTemplateDecorator.decorate(_template, new DatabaseWikiContentGenerator(this, wikiException)),exchange);
+				} catch (org.dbwiki.exception.WikiException exception) {
+					HtmlSender.send(new FatalExceptionPage(exception),exchange);
+				}
 			}
 		} catch (Exception exception) {
 			exception.printStackTrace();
 			HtmlSender.send(new FatalExceptionPage(exception),exchange);
 		}
 	}
-
+	
+	private void handleFunctionality(HttpExchange exchange) throws IOException, WikiException {
+		String filename = exchange.getRequestURI().getPath();
+		int pos = filename.lastIndexOf('.');
+		if (pos != -1) {
+    		_server.sendFile(exchange);
+		} else {
+			if (_server.serverLog() != null) {
+				_server.serverLog().logRequest(exchange.getRequestURI(),exchange.getRemoteAddress(),exchange.getResponseHeaders());
+			}
+			RequestURL<HttpExchange> url = new RequestURL<HttpExchange>(new HttpExchangeWrapper(exchange), _database.identifier().linkPrefix());
+			if (url.isDataRequest()) {
+				respondToDataRequest(new WikiDataRequest<HttpExchange>(this, url));
+			} else if (url.isPageRequest()) {
+				respondToPageRequest(new WikiPageRequest<HttpExchange>(this, url));
+			} else if (url.isSchemaRequest()) {
+				respondToSchemaRequest(new WikiSchemaRequest<HttpExchange>(this, url));
+			}
+		}
+	}
 	
 	/*
 	 * Private Methods
@@ -534,7 +552,39 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 		}
 	}
 	
-	
+	/** Handle a paste action
+	 * 
+	 * @param request
+	 * @param url
+	 * @throws org.dbwiki.exception.WikiException
+	 */
+	private void synchronizeURL(WikiDataRequest<?>  request) throws org.dbwiki.exception.WikiException {
+		String url = null;
+		url = request.parameters().get(RequestParameter.ParameterURL).value();
+		boolean remoteAdded = Boolean.parseBoolean(request.parameters().get(RequestParameter.parameterRemoteAdded).value());
+		boolean remoteChanged = Boolean.parseBoolean(request.parameters().get(RequestParameter.parameterRemoteChanged).value());
+		boolean remoteDeleted = Boolean.parseBoolean(request.parameters().get(RequestParameter.parameterRemoteDeleted).value());
+		boolean changedChanged = Boolean.parseBoolean(request.parameters().get(RequestParameter.parameterchangedChanged).value());
+		boolean deletedChanged = Boolean.parseBoolean(request.parameters().get(RequestParameter.parameterdeletedChanged).value());
+		boolean changedDeleted = Boolean.parseBoolean(request.parameters().get(RequestParameter.parameterchangedDeleted).value());
+		boolean isRootRequest = false;
+		int localID = ((NodeIdentifier)request.wri().resourceIdentifier()).nodeID();
+		String database = request.wri().databaseIdentifier().databaseHomepage();
+		String sourceURL = url;
+		if(sourceURL.endsWith(DatabaseIdentifier.PathSeparator)){
+			sourceURL = sourceURL.substring(0, sourceURL.length() - 1) + database + DatabaseIdentifier.PathSeparator;
+		}
+		else{
+			sourceURL = url + database + DatabaseIdentifier.PathSeparator;
+		}
+		if(request.isRootRequest()){
+			isRootRequest = true;
+		}
+		
+		SynchronizeDatabaseWiki synchronize = new SynchronizeDatabaseWiki(this, request.user());
+		synchronize.setSynchronizeParameters(remoteAdded, remoteDeleted, remoteChanged, changedChanged, deletedChanged, changedDeleted);
+		synchronize.responseToSynchronizeRequest(sourceURL, localID, isRootRequest);
+	}
 	
 	/** Reset the configuration.  
 	 * The value is the parameter value of a ?reset=value request. The format
@@ -747,33 +797,43 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 			this.respondToExportJSONRequest(request, new ExportJSONNodeWriter());
 			return;
 		}
+		else if (request.type().isSynchronizeExport()) {
+			this.respondToExportXMLRequest(request, new SynchronizeNodeWriter());
+			return;
+		}
+		else if(request.type().isSynchronize())  {
+			
+			this.synchronizeURL(request);
+			isGetRequest = !request.isRootRequest();
+			isIndexRequest = ! isGetRequest;
+		}
 		
 		// If the request is not redirected (in case of INSERT or DELETE) then assemble appropriate
 		// HtmlContentGenerator.
 		if (page == null) {
 			DatabaseWikiContentGenerator contentGenerator = new DatabaseWikiContentGenerator(this, request);
 			if ((isGetRequest) || (request.type().isCopy())) {// This is the default case where no action has been performed and no special content is requested
-				contentGenerator.put(DatabaseWikiContentGenerator.ContentTimemachine, new TimemachinePrinter(request));
-				contentGenerator.put(DatabaseWikiContentGenerator.ContentMenu, new DataMenuPrinter(request, _layouter));
-				contentGenerator.put(DatabaseWikiContentGenerator.ContentObjectLink, new NodePathPrinter(request, _layouter));
-				contentGenerator.put(DatabaseWikiContentGenerator.ContentAnnotation, new ObjectAnnotationPrinter(request));
+				contentGenerator.put(HtmlContentGenerator.ContentTimemachine, new TimemachinePrinter(request));
+				contentGenerator.put(HtmlContentGenerator.ContentMenu, new DataMenuPrinter(request, _layouter));
+				contentGenerator.put(HtmlContentGenerator.ContentObjectLink, new NodePathPrinter(request, _layouter));
+				contentGenerator.put(HtmlContentGenerator.ContentAnnotation, new ObjectAnnotationPrinter(request));
 				//contentGenerator.put(DatabaseWikiContentGenerator.ContentProvenance, new VersionIndexPrinter(request));
-				contentGenerator.put(DatabaseWikiContentGenerator.ContentProvenance, new ObjectProvenancePrinter(request, _layouter));
-				contentGenerator.put(DatabaseWikiContentGenerator.ContentContent, new DataNodePrinter(request, _layouter));
+				contentGenerator.put(HtmlContentGenerator.ContentProvenance, new ObjectProvenancePrinter(request, _layouter));
+				contentGenerator.put(HtmlContentGenerator.ContentContent, new DataNodePrinter(request, _layouter));
 			} else if (isIndexRequest) { // The case for the root of the DatabaseWiki
-				contentGenerator.put(DatabaseWikiContentGenerator.ContentTimemachine, new TimemachinePrinter(request));
-				contentGenerator.put(DatabaseWikiContentGenerator.ContentMenu, new DataMenuPrinter(request, _layouter));
+				contentGenerator.put(HtmlContentGenerator.ContentTimemachine, new TimemachinePrinter(request));
+				contentGenerator.put(HtmlContentGenerator.ContentMenu, new DataMenuPrinter(request, _layouter));
 				// TODO: This could be simplified by storing the mapping in a Map<String,IndexContentPrinter>
 				if (IndexAZMultiPage.equals(_layouter.indexType())) {
-					contentGenerator.put(DatabaseWikiContentGenerator.ContentContent, new AZMultiPageIndexPrinter(request, database().content()));
+					contentGenerator.put(HtmlContentGenerator.ContentContent, new AZMultiPageIndexPrinter(request, database().content()));
 				} else if (IndexAZSinglePage.equals(_layouter.indexType())) {
-					contentGenerator.put(DatabaseWikiContentGenerator.ContentContent, new AZSinglePageIndexPrinter(request, database().content()));
+					contentGenerator.put(HtmlContentGenerator.ContentContent, new AZSinglePageIndexPrinter(request, database().content()));
 				} else if (IndexMultiColumn.equals(_layouter.indexType())) {
-					contentGenerator.put(DatabaseWikiContentGenerator.ContentContent, new MultiColumnIndexPrinter(request, database().content()));
+					contentGenerator.put(HtmlContentGenerator.ContentContent, new MultiColumnIndexPrinter(request, database().content()));
 				} else if (IndexPartialList.equals(_layouter.indexType())) {
-					contentGenerator.put(DatabaseWikiContentGenerator.ContentContent, new PartialIndexPrinter(request, database().content()));
+					contentGenerator.put(HtmlContentGenerator.ContentContent, new PartialIndexPrinter(request, database().content()));
 				} else {
-					contentGenerator.put(DatabaseWikiContentGenerator.ContentContent, new FullIndexPrinter(request, database().content()));
+					contentGenerator.put(HtmlContentGenerator.ContentContent, new FullIndexPrinter(request, database().content()));
 				}
 			} else if (request.type().isSearch()) { // The case for a search request
 				DatabaseContent content = null;
@@ -783,33 +843,35 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 				} else {
 					content = database().content();
 				}
-				contentGenerator.put(DatabaseWikiContentGenerator.ContentTimemachine, new TimemachinePrinter(request));
-				contentGenerator.put(DatabaseWikiContentGenerator.ContentMenu, new DataMenuPrinter(request, _layouter));
-				contentGenerator.put(DatabaseWikiContentGenerator.ContentContent, new SearchResultPrinter(request, content));
+				contentGenerator.put(HtmlContentGenerator.ContentTimemachine, new TimemachinePrinter(request));
+				contentGenerator.put(HtmlContentGenerator.ContentMenu, new DataMenuPrinter(request, _layouter));
+				contentGenerator.put(HtmlContentGenerator.ContentContent, new SearchResultPrinter(request, content));
 			} else if ((request.type().isCreate()) || (request.type().isEdit())) { // The case for a create or edit request
-				contentGenerator.put(DatabaseWikiContentGenerator.ContentObjectLink, new NodePathPrinter(request, _layouter));
-				contentGenerator.put(DatabaseWikiContentGenerator.ContentContent, new DataUpdateFormPrinter(request, _layouter));
+				contentGenerator.put(HtmlContentGenerator.ContentObjectLink, new NodePathPrinter(request, _layouter));
+				contentGenerator.put(HtmlContentGenerator.ContentContent, new DataUpdateFormPrinter(request, _layouter));
 			} else if (request.type().isCreateSchemaNode()) { // Creating a new schema node.
-				contentGenerator.put(DatabaseWikiContentGenerator.ContentObjectLink, new NodePathPrinter(request, _layouter));
-				contentGenerator.put(DatabaseWikiContentGenerator.ContentContent, new CreateSchemaNodeFormPrinter(request));
+				contentGenerator.put(HtmlContentGenerator.ContentObjectLink, new NodePathPrinter(request, _layouter));
+				contentGenerator.put(HtmlContentGenerator.ContentContent, new CreateSchemaNodeFormPrinter(request));
 			} else if ((request.type().isTimemachineChanges()) || ((request.type().isTimemachinePrevious()))) {
 				if (request.node() != null) { // Showing version index
-					contentGenerator.put(DatabaseWikiContentGenerator.ContentObjectLink, new NodePathPrinter(request, _layouter));
+					contentGenerator.put(HtmlContentGenerator.ContentObjectLink, new NodePathPrinter(request, _layouter));
 				}
-				contentGenerator.put(DatabaseWikiContentGenerator.ContentTimemachine, new TimemachinePrinter(request));
-				contentGenerator.put(DatabaseWikiContentGenerator.ContentContent, new VersionIndexPrinter(request));
+				contentGenerator.put(HtmlContentGenerator.ContentTimemachine, new TimemachinePrinter(request));
+				contentGenerator.put(HtmlContentGenerator.ContentContent, new VersionIndexPrinter(request));
 			} else if (request.type().isLayout()) { // Editing the layout
-				contentGenerator.put(DatabaseWikiContentGenerator.ContentContent, new LayoutEditor(request));
+				contentGenerator.put(HtmlContentGenerator.ContentContent, new LayoutEditor(request));
 			} else if (request.type().isPasteForm()) { // Pasting XML data from a URL
-				contentGenerator.put(DatabaseWikiContentGenerator.ContentContent, new InputFormPrinter(request, "Copy & Paste", "Insert source URL", RequestParameter.ParameterPaste, RequestParameter.ParameterURL));
+				contentGenerator.put(HtmlContentGenerator.ContentContent, new InputFormPrinter(request, "Copy & Paste", "Insert source URL", RequestParameter.ParameterPaste, RequestParameter.ParameterURL));
 			} else if (request.type().isStyleSheet()) { // Editing the stylesheet
-				contentGenerator.put(DatabaseWikiContentGenerator.ContentContent, new FileEditor(request, "Edit style sheet"));
+				contentGenerator.put(HtmlContentGenerator.ContentContent, new FileEditor(request, "Edit style sheet"));
 			} else if (request.type().isTemplate()) { // Editing the template
-				contentGenerator.put(DatabaseWikiContentGenerator.ContentContent, new FileEditor(request, "Edit template"));
+				contentGenerator.put(HtmlContentGenerator.ContentContent, new FileEditor(request, "Edit template"));
 			} else if (request.type().isURLDecoding()) { // Editing the URL decoding rules
-				contentGenerator.put(DatabaseWikiContentGenerator.ContentContent, new FileEditor(request, "Edit URL decoding rules"));
+				contentGenerator.put(HtmlContentGenerator.ContentContent, new FileEditor(request, "Edit URL decoding rules"));
 			} else if (request.type().isSettings()) { // The list of prior combinations of config files, can be used to revert.
-				contentGenerator.put(DatabaseWikiContentGenerator.ContentContent, new SettingsListingPrinter(request));
+				contentGenerator.put(HtmlContentGenerator.ContentContent, new SettingsListingPrinter(request));
+			}else if (request.type().isSynchronizeForm()) { // Synchronize with a remote wiki.
+				contentGenerator.put(HtmlContentGenerator.ContentContent, new SynchronizePrinter(request, "Synchronize with remote Database Wiki", "Insert source URL (Example: http://127.0.0.1:8080)", RequestParameter.ParameterSynchronize, RequestParameter.ParameterURL));
 			} else {
 				throw new WikiRequestException(WikiRequestException.InvalidRequest, request.exchange().getRequestURI().toASCIIString());
 			}
@@ -857,36 +919,36 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 		DatabaseWikiContentGenerator contentGenerator = new DatabaseWikiContentGenerator(this, request);
 		
 		if (isGetRequest) {
-			contentGenerator.put(DatabaseWikiContentGenerator.ContentMenu, new PageMenuPrinter(request));
-			contentGenerator.put(DatabaseWikiContentGenerator.ContentContent, new PageContentPrinter(request, _layouter));
+			contentGenerator.put(HtmlContentGenerator.ContentMenu, new PageMenuPrinter(request));
+			contentGenerator.put(HtmlContentGenerator.ContentContent, new PageContentPrinter(request, _layouter));
 		} else if ((isIndexRequest) || (request.type().isDelete()) || (action.actionInsert())) {
-			contentGenerator.put(DatabaseWikiContentGenerator.ContentMenu, new PageMenuPrinter(request));
+			contentGenerator.put(HtmlContentGenerator.ContentMenu, new PageMenuPrinter(request));
 			if (IndexAZMultiPage.equals(_layouter.indexType())) {
-				contentGenerator.put(DatabaseWikiContentGenerator.ContentContent, new AZMultiPageIndexPrinter(request, wiki().content()));
+				contentGenerator.put(HtmlContentGenerator.ContentContent, new AZMultiPageIndexPrinter(request, wiki().content()));
 			} else if (IndexAZSinglePage.equals(_layouter.indexType())) {
-				contentGenerator.put(DatabaseWikiContentGenerator.ContentContent, new AZSinglePageIndexPrinter(request, wiki().content()));
+				contentGenerator.put(HtmlContentGenerator.ContentContent, new AZSinglePageIndexPrinter(request, wiki().content()));
 			} else if (IndexMultiColumn.equals(_layouter.indexType())) {
-				contentGenerator.put(DatabaseWikiContentGenerator.ContentContent, new MultiColumnIndexPrinter(request, wiki().content()));
+				contentGenerator.put(HtmlContentGenerator.ContentContent, new MultiColumnIndexPrinter(request, wiki().content()));
 			} else if (IndexPartialList.equals(_layouter.indexType())) {
-				contentGenerator.put(DatabaseWikiContentGenerator.ContentContent, new PartialIndexPrinter(request, wiki().content()));
+				contentGenerator.put(HtmlContentGenerator.ContentContent, new PartialIndexPrinter(request, wiki().content()));
 			} else {
-				contentGenerator.put(DatabaseWikiContentGenerator.ContentContent, new FullIndexPrinter(request, wiki().content()));
+				contentGenerator.put(HtmlContentGenerator.ContentContent, new FullIndexPrinter(request, wiki().content()));
 			}
 		} else if ((request.type().isCreate()) || (request.type().isEdit())) {
-			contentGenerator.put(DatabaseWikiContentGenerator.ContentContent, new PageUpdateFormPrinter(request));
+			contentGenerator.put(HtmlContentGenerator.ContentContent, new PageUpdateFormPrinter(request));
 		} else if (request.type().isLayout()) {
-			contentGenerator.put(DatabaseWikiContentGenerator.ContentContent, new LayoutEditor(request));
+			contentGenerator.put(HtmlContentGenerator.ContentContent, new LayoutEditor(request));
 		} else if (request.type().isStyleSheet()) {
-			contentGenerator.put(DatabaseWikiContentGenerator.ContentContent, new FileEditor(request, "Edit style sheet"));
+			contentGenerator.put(HtmlContentGenerator.ContentContent, new FileEditor(request, "Edit style sheet"));
 		} else if (request.type().isTemplate()) {
-			contentGenerator.put(DatabaseWikiContentGenerator.ContentContent, new FileEditor(request, "Edit template"));
+			contentGenerator.put(HtmlContentGenerator.ContentContent, new FileEditor(request, "Edit template"));
 		} else if (request.type().isURLDecoding()) {
-			contentGenerator.put(DatabaseWikiContentGenerator.ContentContent, new FileEditor(request, "Edit URL decoding rules"));
+			contentGenerator.put(HtmlContentGenerator.ContentContent, new FileEditor(request, "Edit URL decoding rules"));
 		} else if (request.type().isSettings()) {
-			contentGenerator.put(DatabaseWikiContentGenerator.ContentContent, new SettingsListingPrinter(request));
+			contentGenerator.put(HtmlContentGenerator.ContentContent, new SettingsListingPrinter(request));
 		} else if (request.type().isPageHistory()) {
-			contentGenerator.put(DatabaseWikiContentGenerator.ContentMenu, new PageMenuPrinter(request));
-			contentGenerator.put(DatabaseWikiContentGenerator.ContentContent, new PageHistoryPrinter(request));
+			contentGenerator.put(HtmlContentGenerator.ContentMenu, new PageMenuPrinter(request));
+			contentGenerator.put(HtmlContentGenerator.ContentContent, new PageHistoryPrinter(request));
 		} else {
 			throw new WikiRequestException(WikiRequestException.InvalidRequest, request.exchange().getRequestURI().toASCIIString());
 		}
@@ -963,17 +1025,17 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 		DatabaseWikiContentGenerator contentGenerator = new DatabaseWikiContentGenerator(this, request);
 		
 		if (isGetRequest) {
-			contentGenerator.put(DatabaseWikiContentGenerator.ContentTimemachine, new TimemachinePrinter(request));
-			contentGenerator.put(DatabaseWikiContentGenerator.ContentMenu, new SchemaMenuPrinter(request));
-			contentGenerator.put(DatabaseWikiContentGenerator.ContentObjectLink, new SchemaPathPrinter(request));
-			contentGenerator.put(DatabaseWikiContentGenerator.ContentContent, new SchemaNodePrinter(request, _layouter));
+			contentGenerator.put(HtmlContentGenerator.ContentTimemachine, new TimemachinePrinter(request));
+			contentGenerator.put(HtmlContentGenerator.ContentMenu, new SchemaMenuPrinter(request));
+			contentGenerator.put(HtmlContentGenerator.ContentObjectLink, new SchemaPathPrinter(request));
+			contentGenerator.put(HtmlContentGenerator.ContentContent, new SchemaNodePrinter(request, _layouter));
 		} else if ((isIndexRequest) || (request.type().isDelete())) { // || (action.actionInsert())) {
-			contentGenerator.put(DatabaseWikiContentGenerator.ContentTimemachine, new TimemachinePrinter(request));
-			contentGenerator.put(DatabaseWikiContentGenerator.ContentMenu, new SchemaMenuPrinter(request));
-			contentGenerator.put(DatabaseWikiContentGenerator.ContentContent, new SchemaNodePrinter(request, _layouter));
+			contentGenerator.put(HtmlContentGenerator.ContentTimemachine, new TimemachinePrinter(request));
+			contentGenerator.put(HtmlContentGenerator.ContentMenu, new SchemaMenuPrinter(request));
+			contentGenerator.put(HtmlContentGenerator.ContentContent, new SchemaNodePrinter(request, _layouter));
 		} else if (request.type().isCreateSchemaNode() && request.schema().isGroup()) {
 			// FIXME #schemaversioning: only display the option to create a new schema node if we're viewing a group?
-			contentGenerator.put(DatabaseWikiContentGenerator.ContentContent, new CreateSchemaNodeFormPrinter(request));
+			contentGenerator.put(HtmlContentGenerator.ContentContent, new CreateSchemaNodeFormPrinter(request));
 		}
 
 

@@ -58,6 +58,7 @@ public class TimemachinePrinter implements HtmlContentPrinter {
 	 * Public Methods
 	 */
 	
+	@Override
 	public void print(HtmlLinePrinter body) throws org.dbwiki.exception.WikiException {
 		String currentVersion = "<a CLASS=\"" + CSS.CSSTimemachineTab + "\" HREF=\"" + _request.wri().getURL() + "?" + RequestParameter.ParameterVersion + "=" + RequestParameterVersion.VersionCurrent + "\">Current version</a>";
 		String fullHistory = "<a CLASS=\"" + CSS.CSSTimemachineTab + "\" HREF=\"" + _request.wri().getURL()  + "?" + RequestParameter.ParameterVersion + "=" + RequestParameterVersion.VersionAll + "\">Full history</a>";

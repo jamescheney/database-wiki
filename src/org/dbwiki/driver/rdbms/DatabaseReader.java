@@ -211,7 +211,7 @@ public class DatabaseReader implements DatabaseConstants {
 					}
 				}
 			}
-			System.out.println(i);
+			System.out.println("DatabaseReader >>>> Node: " + i);
 		//	System.out.println(rs.getInt(ViewDataColNodeID));
 			rs.close();
 			stmt.close();
@@ -223,6 +223,7 @@ public class DatabaseReader implements DatabaseConstants {
 		}  
 		return nodeIndex.get(new Integer(identifier.nodeID()));
 	}
+	
 		
 	public static DatabaseNode getold(Connection con, RDBMSDatabase database, NodeIdentifier identifier) throws org.dbwiki.exception.WikiException {
 			Hashtable<Integer, DatabaseNode> nodeIndex = new Hashtable<Integer, DatabaseNode>();

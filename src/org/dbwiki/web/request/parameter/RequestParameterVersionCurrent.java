@@ -29,30 +29,37 @@ public class RequestParameterVersionCurrent extends RequestParameterVersion {
 	 * Public Methods
 	 */
 	
+	@Override
 	public boolean matches(DatabaseNode node) {
 		return node.getTimestamp().isCurrent();
 	}
 	
+	@Override
 	public boolean matches(SchemaNode schema) {
 		return schema.getTimestamp().isCurrent();
 	}
 		
+	@Override
 	public String value() {
 		return RequestParameterVersion.VersionCurrent;
 	}
 
+	@Override
 	public boolean versionAll() {
 		return false;
 	}
 
+	@Override
 	public boolean versionChangesSince() {
 		return false;
 	}
 
+	@Override
 	public boolean versionCurrent() {
 		return true;
 	}
 
+	@Override
 	public boolean versionSingle() {
 		return false;
 	}

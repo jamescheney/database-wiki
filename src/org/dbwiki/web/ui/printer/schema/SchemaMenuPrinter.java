@@ -60,6 +60,7 @@ public class SchemaMenuPrinter extends MenuPrinter {
 	 * Public Methods
 	 */
 	
+	@Override
 	public void printEditMenu(HtmlLinePrinter printer) throws org.dbwiki.exception.WikiException {
 		printer.add("\t<a class=\"" + CSS.CSSMenu + "\" id=\"" + TabEdit + "\" onMouseOut=\"HideItem('" + MenuEdit + "');\" onMouseOver=\"ShowItem('" + MenuEdit + "');\">Edit</a>");
 

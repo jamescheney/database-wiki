@@ -40,10 +40,12 @@ public class AttributeIndexCondition extends AttributeCondition {
 		_index = index;
 	}
 	
+	@Override
 	public void listValues(Vector<String> parameters) {
 		parameters.add(String.valueOf(_index));
 	}
 
+	@Override
 	public String sqlPreparedStatement() {
 		return "?";
 	}

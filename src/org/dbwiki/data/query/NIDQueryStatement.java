@@ -60,6 +60,7 @@ public class NIDQueryStatement extends QueryStatement {
 	 * Public Methods
 	 */
 	
+	@Override
 	public QueryResultSet execute() throws org.dbwiki.exception.WikiException {
 		return new QueryResultSet(_database.get(new NodeIdentifier(_nodeID)));
 	}

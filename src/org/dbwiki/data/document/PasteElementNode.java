@@ -50,6 +50,7 @@ public abstract class PasteElementNode extends PasteNode {
 	 * Abstract Methods
 	 */
 	
+	@Override
 	public abstract boolean isAttribute();
 
 	
@@ -57,10 +58,12 @@ public abstract class PasteElementNode extends PasteNode {
 	 * Public Methods
 	 */
 	
+	@Override
 	public boolean isElement() {
 		return true;
 	}
 	
+	@Override
 	public boolean isGroup() {
 		return !this.isAttribute();
 	}
@@ -69,6 +72,7 @@ public abstract class PasteElementNode extends PasteNode {
 		return _label;
 	}
 	
+	@Override
 	public String toString() {
 		return _label;
 	}

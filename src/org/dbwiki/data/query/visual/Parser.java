@@ -100,7 +100,8 @@ public class Parser extends BaseParser<Node> {
     }
     
     public Factory<ParseRunner<Node>> parseRunnerFactory = new Factory<ParseRunner<Node>>() {
-        public ParseRunner<Node> create() {
+        @Override
+		public ParseRunner<Node> create() {
             return new ReportingParseRunner<Node>(Query());
         }
     };

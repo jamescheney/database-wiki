@@ -53,21 +53,25 @@ public class MATCHESString extends ValueOp {
 	 * Public Methods
 	 */
 	
+	@Override
 	public AttributeCondition getQueryCondition(AttributeSchemaNode entity, boolean isNegated) {
 		
 		return null;
 	}
 
+	@Override
 	public boolean eval(String value) {
 
         return _pattern.matcher(value).find();
 	}
 	
+	@Override
 	public String toString() {
 		
 		return "MATCHES '" + _pattern.toString() + "'";
 	}
 	
+	@Override
 	public String value() {
 		
 		return null;

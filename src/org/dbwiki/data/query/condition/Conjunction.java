@@ -59,6 +59,7 @@ public class Conjunction implements Condition {
 		_conditions.add(condition);
 	}
 	
+	@Override
 	public boolean eval(DatabaseElementNode node) {
 
 		for (Condition condition : _conditions) {
@@ -69,6 +70,7 @@ public class Conjunction implements Condition {
 		return true;
 	}
 	
+	@Override
 	public TimeSequence evalTimestamp(DatabaseElementNode node) {
 
 		TimeSequence timestamp = null;
@@ -88,6 +90,7 @@ public class Conjunction implements Condition {
 		return timestamp;
 	}
 	
+	@Override
 	public void listConditions(AttributeConditionListing listing) {
 		for (Condition condition : _conditions) {
 			condition.listConditions(listing);

@@ -59,6 +59,7 @@ public class PageMenuPrinter extends MenuPrinter {
 		_request = request;
 	}
 	
+	@Override
 	protected void printViewMenu(HtmlLinePrinter printer) {
 		String name = null;
 		try {
@@ -101,6 +102,7 @@ public class PageMenuPrinter extends MenuPrinter {
 	 * Public Methods
 	 */
 	
+	@Override
 	public void printEditMenu(HtmlLinePrinter printer) throws org.dbwiki.exception.WikiException {
 		printer.add("\t<a class=\"" + CSS.CSSMenu + "\" id=\"" + TabEdit + "\" onMouseOut=\"HideItem('" + MenuEdit + "');\" onMouseOver=\"ShowItem('" + MenuEdit + "');\">Edit</a>");
 

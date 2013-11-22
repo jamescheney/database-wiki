@@ -39,10 +39,12 @@ public class SQLServerDatabaseConnector extends DatabaseConnector {
 	 * Protected Methods
 	 */
 	
+	@Override
 	protected String autoIncrementColumn(String name) {
 		return name + " int IDENTITY(1,1)";
 	}
 
+	@Override
 	protected void createSchemaIndexView(Connection con, String name) throws java.sql.SQLException {
 		Statement stmt = con.createStatement();
 		

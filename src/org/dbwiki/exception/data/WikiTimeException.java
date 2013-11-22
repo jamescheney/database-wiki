@@ -57,6 +57,7 @@ public class WikiTimeException extends WikiException {
 	 * Public Methods
 	 */
 	
+	@Override
 	public String errorCodeMessage() {
 		switch (_errorCode) {
 		case DuplicateVersion:
@@ -70,6 +71,7 @@ public class WikiTimeException extends WikiException {
 		}
 	}
 
+	@Override
 	public String exceptionPrefix() {
 		return "[TIME]";
 	}

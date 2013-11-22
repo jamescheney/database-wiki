@@ -44,6 +44,7 @@ public class ChangesSinceContentIterator extends ContentIterator {
 	 * Public Methods
 	 */
 	
+	@Override
 	public boolean matches(DatabaseEntry entry) {
 		return (entry.lastChange() > _time);
 	}

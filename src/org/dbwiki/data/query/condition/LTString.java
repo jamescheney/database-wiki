@@ -51,21 +51,25 @@ public class LTString extends ValueOp {
 	 * Public Methods
 	 */
 	
+	@Override
 	public AttributeCondition getQueryCondition(AttributeSchemaNode entity, boolean isNegated) {
 		
 		return new AttributeValueCondition(entity, AttributeCondition.LT, _value, isNegated);
 	}
 
+	@Override
 	public boolean eval(String value) {
 
 		return (_value.compareTo(value) > 0);
 	}
 	
+	@Override
 	public String toString() {
 		
 		return "< '" + _value + "'";
 	}
 	
+	@Override
 	public String value() {
 		
 		return _value;

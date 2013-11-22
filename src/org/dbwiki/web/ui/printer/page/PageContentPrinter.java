@@ -69,6 +69,7 @@ public class PageContentPrinter extends DataNodePrinter {
 	 * Public Methods
 	 */
 	
+	@Override
 	public void print(HtmlLinePrinter body) throws org.dbwiki.exception.WikiException {
 		DatabaseWikiPage page = _request.page();
 		body.paragraph(page.getName(), CSS.CSSHeadline);

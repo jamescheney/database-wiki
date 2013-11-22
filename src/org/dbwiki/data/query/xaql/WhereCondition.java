@@ -56,6 +56,7 @@ public class WhereCondition implements WhereExpression {
 	 * Public Methods
 	 */
 	
+	@Override
 	public boolean eval(QueryNodeSet nodeSet) {
 		
 		return _condition.eval(nodeSet.get(_variableName));
@@ -66,6 +67,7 @@ public class WhereCondition implements WhereExpression {
 		return _condition.evalTimestamp(nodeSet.get(_variableName));
 	}
 	
+	@Override
 	public void listConditions(AttributeConditionListing listing) {
 		
 		_condition.listConditions(listing);

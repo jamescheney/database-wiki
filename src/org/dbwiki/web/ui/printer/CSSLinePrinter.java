@@ -47,9 +47,9 @@ public class CSSLinePrinter implements HtmlContentPrinter {
 	
 	public CSSLinePrinter(int wikiID, int fileVersion) {
 		if (fileVersion == WikiServerConstants.RelConfigFileColFileVersionValUnknown) {
-			_cssLink = WikiServer.SpecialFileDatabaseWikiDefaultCSS;
+			_cssLink = WikiServerConstants.SpecialFileDatabaseWikiDefaultCSS;
 		} else {
-			_cssLink = WikiServer.SpecialFolderDatabaseWikiStyle + "/" + wikiID + "_" + fileVersion + ".css";
+			_cssLink = WikiServerConstants.SpecialFolderDatabaseWikiStyle + "/" + wikiID + "_" + fileVersion + ".css";
 		}
 	}
 	
@@ -58,6 +58,7 @@ public class CSSLinePrinter implements HtmlContentPrinter {
 	 * Public Methods
 	 */
 	
+	@Override
 	public void print(HtmlLinePrinter printer) throws WikiException {
 		printer.add("<link rel=\"stylesheet\" type=\"text/css\" href=\"" + _cssLink + "\"/>");
 	}

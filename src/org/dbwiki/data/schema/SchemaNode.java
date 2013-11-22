@@ -83,6 +83,7 @@ public abstract class SchemaNode extends TimestampedObject {
 	/*
 	 * Public Methods
 	 */
+	@Override
 	public SchemaNodeIdentifier identifier() {
 		return new SchemaNodeIdentifier(_id);
 	}
@@ -116,6 +117,7 @@ public abstract class SchemaNode extends TimestampedObject {
 		}
 	}
 	
+	@Override
 	public String toString() {
 		return label();
 	}

@@ -34,10 +34,11 @@ public class StartServer {
 	/*
 	 * Private Constants
 	 */
+	private static WikiServer server;
 	
 	private static final String commandLine = "StartServer <config-file>";
 	
-	
+	private static String configFileName;
 	/*
 	 * Public Methods
 	 */
@@ -47,9 +48,21 @@ public class StartServer {
 			System.out.println("Usage: " + commandLine);
 			System.exit(0);
 		}
+		configFileName = args[0];
 		
 		try {
-			new WikiServer(org.dbwiki.lib.IO.loadProperties(new File(args[0]))).start();
+			server = new WikiServer(org.dbwiki.lib.IO.loadProperties(new File(configFileName)));
+			server.start();
+		} catch (Exception exception) {
+			exception.printStackTrace();
+			System.exit(0);
+		}
+	}
+	
+	public static void restartServer() {
+		try {
+			server = new WikiServer(org.dbwiki.lib.IO.loadProperties(new File(configFileName)));
+			server.start();
 		} catch (Exception exception) {
 			exception.printStackTrace();
 			System.exit(0);

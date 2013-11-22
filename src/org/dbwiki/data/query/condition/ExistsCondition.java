@@ -45,11 +45,13 @@ public class ExistsCondition extends PathCondition {
 	 * Public Methods
 	 */
 	
+	@Override
 	public void eval(DatabaseElementNode node, EvaluationResult result) {
 		
 		result.evaluationResult(true);
 	}
 	
+	@Override
 	public void evalTimestamp(DatabaseElementNode node, TimestampEvaluationResult evalResult) {
 
 		evalResult.union(node.getTimestamp());

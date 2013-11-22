@@ -44,10 +44,12 @@ public abstract class RequestParameterVersionNumber extends RequestParameterVers
 	 * Public Methods
 	 */
 	
+	@Override
 	public boolean versionAll() {
 		return false;
 	}
 
+	@Override
 	public boolean versionCurrent() {
 		return false;
 	}

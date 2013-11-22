@@ -39,6 +39,7 @@ public class ProvenanceActivate extends Provenance {
 	 * Public Methods
 	 */
 
+	@Override
 	public String name() {
 		return "ACTIVATE";
 	}

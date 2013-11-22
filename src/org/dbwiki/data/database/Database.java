@@ -41,6 +41,7 @@ import org.dbwiki.data.query.condition.AttributeConditionListing;
 
 import org.dbwiki.data.resource.DatabaseIdentifier;
 import org.dbwiki.data.resource.ResourceIdentifier;
+import org.dbwiki.exception.WikiException;
 
 import org.dbwiki.user.User;
 import org.dbwiki.user.UserListing;
@@ -116,7 +117,6 @@ public interface Database {
 	
 	/* Import/export */
 	public void export(ResourceIdentifier identifier, int version, NodeWriter out) throws org.dbwiki.exception.WikiException;
-
 	
 	/* Schema operations */
 	public DatabaseSchema schema();
@@ -126,4 +126,5 @@ public interface Database {
 	public void deleteSchemaNode(ResourceIdentifier identifier, User user) throws org.dbwiki.exception.WikiException;
 	public void insertSchemaNode(GroupSchemaNode parent, String name, byte type, User user) throws org.dbwiki.exception.WikiException;
 
+	public void ensureLatest() throws WikiException;
 }

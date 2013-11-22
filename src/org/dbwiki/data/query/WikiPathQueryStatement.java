@@ -81,6 +81,7 @@ public class WikiPathQueryStatement extends QueryStatement {
 	 * Public Methods
 	 */
 	
+	@Override
 	public QueryResultSet execute() throws org.dbwiki.exception.WikiException {
 
 

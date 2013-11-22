@@ -29,30 +29,37 @@ public class RequestParameterVersionAll extends RequestParameterVersion {
 	 * Public Methods
 	 */
 	
+	@Override
 	public boolean matches(DatabaseNode node) {
 		return true;
 	}
 	
+	@Override
 	public boolean matches(SchemaNode node) {
 		return true;
 	}
 
+	@Override
 	public String value() {
 		return RequestParameterVersion.VersionAll;
 	}
 
+	@Override
 	public boolean versionAll() {
 		return true;
 	}
 	
+	@Override
 	public boolean versionChangesSince() {
 		return false;
 	}
 
+	@Override
 	public boolean versionCurrent() {
 		return false;
 	}
 
+	@Override
 	public boolean versionSingle() {
 		return false;
 	}

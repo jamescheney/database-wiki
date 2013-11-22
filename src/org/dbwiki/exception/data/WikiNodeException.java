@@ -61,6 +61,7 @@ public class WikiNodeException extends WikiException {
 	 * Public Methods
 	 */
 	
+	@Override
 	public String errorCodeMessage() {
 		switch(_errorCode) {
 		case InvalidIdentifierFormat:
@@ -70,6 +71,7 @@ public class WikiNodeException extends WikiException {
 		}
 	}
 
+	@Override
 	public String exceptionPrefix() {
 		return "[NODE]";
 	}

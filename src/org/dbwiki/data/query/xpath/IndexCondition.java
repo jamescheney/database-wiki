@@ -52,11 +52,13 @@ public class IndexCondition extends XPathCondition {
 	 * Public Methods
 	 */
 	
+	@Override
 	public boolean isIndexCondition() {
 
 		return true;
 	}
 
+	@Override
 	public boolean matches(DatabaseElementNode node) {
 
 		int nodeIndex = 1;
@@ -84,6 +86,7 @@ public class IndexCondition extends XPathCondition {
 		return (nodeIndex == _index);
 	}
 	
+	@Override
 	public String toString() {
 		
 		return ":" + _index;

@@ -67,12 +67,14 @@ public class DocumentInputHandler implements InputHandler {
 	/*
 	 * Public Methods
 	 */
+	@Override
 	public void endDocument() throws org.dbwiki.exception.WikiException {
 		if (_exception != null) {
 			throw new WikiFatalException(_exception);
 		}
 	}
 
+	@Override
 	public void endElement(String label) throws org.dbwiki.exception.WikiException {
 		if (_exception != null) {
 			throw new WikiFatalException(_exception);
@@ -94,22 +96,27 @@ public class DocumentInputHandler implements InputHandler {
 		_readPath = _readPath.substring(0, _readPath.lastIndexOf("/"));
 	}
 
+	@Override
 	public void exception(Exception excpt) {
 		_exception = excpt;
 	}
 
+	@Override
 	public Exception getException() {
 		return _exception;
 	}
 	
+	@Override
 	public boolean hasException() {
 		return (_exception != null);
 	}
 	
+	@Override
 	public void startDocument() throws org.dbwiki.exception.WikiException {
 		_readPath = "";
 	}
 
+	@Override
 	public void startElement(String label) throws org.dbwiki.exception.WikiException {
 		if (_exception != null) {
 			throw new WikiFatalException(_exception);
@@ -126,6 +133,7 @@ public class DocumentInputHandler implements InputHandler {
 		}
 	}
 
+	@Override
 	public void startElement(String label, Attribute[] attrs) throws org.dbwiki.exception.WikiException {
 		this.startElement(label);
 		for (int iAttribute = 0; iAttribute < attrs.length; iAttribute++) {
@@ -136,6 +144,7 @@ public class DocumentInputHandler implements InputHandler {
 		}
 	}
 
+	@Override
 	public void text(char[] value) throws org.dbwiki.exception.WikiException {
 		if (_exception != null) {
 			throw new WikiFatalException(_exception);

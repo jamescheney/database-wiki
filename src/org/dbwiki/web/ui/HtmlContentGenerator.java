@@ -32,6 +32,7 @@ import org.dbwiki.web.html.HtmlPage;
 import org.dbwiki.web.request.HttpRequest;
 import org.dbwiki.web.request.parameter.RequestParameter;
 import org.dbwiki.web.server.WikiServer;
+import org.dbwiki.web.server.WikiServerConstants;
 
 import org.dbwiki.web.ui.printer.HtmlContentPrinter;
 
@@ -127,7 +128,7 @@ public abstract class HtmlContentGenerator {
 				if (_request.user() != null) {
 					page.add(indention + "<p CLASS=\"" + CSS.CSSLogin + "\">You are currently logged in as <span CLASS=\"" + CSS.CSSLogin + "\">" + _request.user().fullName() + "</span></p>");
 				} else {
-					String loginRedirectLink = WikiServer.SpecialFolderLogin + "?" + RequestParameter.ParameterResource + "=" + URLEncoder.encode(_request.getRequestURI().toASCIIString(), "UTF-8");
+					String loginRedirectLink = WikiServerConstants.SpecialFolderLogin + "?" + RequestParameter.ParameterResource + "=" + URLEncoder.encode(_request.getRequestURI().toASCIIString(), "UTF-8");
 					page.add(indention + "<p CLASS=\"" + CSS.CSSLogin + "\"><a CLASS=\"" + CSS.CSSLogin + "\" HREF=\"" + loginRedirectLink + "\">Login</a></p>");
 				}
 			} catch (java.io.UnsupportedEncodingException uee) {

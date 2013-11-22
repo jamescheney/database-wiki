@@ -84,10 +84,12 @@ import org.dbwiki.data.time.TimestampedObject;
 import org.dbwiki.data.time.Version;
 import org.dbwiki.data.time.VersionIndex;
 
+import org.dbwiki.exception.WikiException;
 import org.dbwiki.exception.WikiFatalException;
 import org.dbwiki.exception.data.WikiDataException;
 import org.dbwiki.exception.data.WikiSchemaException;
 import org.dbwiki.exception.web.WikiRequestException;
+import org.dbwiki.main.StartServer;
 
 import org.dbwiki.user.User;
 import org.dbwiki.user.UserListing;
@@ -137,6 +139,21 @@ public class RDBMSDatabase implements Database, DatabaseConstants {
 		}
 	}
 	
+	public void ensureLatest() throws WikiException {
+		SQLVersionIndex newIndex;
+		try {
+			Connection con = _connector.getConnection();
+			newIndex = new SQLVersionIndex(con, _wiki.name(), _wiki.users(), false);
+			con.close();
+		} catch (java.sql.SQLException sqlException) {
+			throw new WikiFatalException(sqlException);
+		}
+		for (int v = _versionIndex.size(); v< newIndex.size(); v++) {
+			_versionIndex.add(newIndex.get(v));
+			System.out.println("Added " + v);
+		}
+	}
+	
 	// HACK: the last two arguments supply existing session
 	// information for initialising the database
 	public RDBMSDatabase(DatabaseWiki wiki, DatabaseConnector connector,
@@ -160,11 +177,11 @@ public class RDBMSDatabase implements Database, DatabaseConstants {
 	 * Public Methods
 	 */
 	
+	@Override
 	public synchronized void activate(ResourceIdentifier identifier, User user) throws org.dbwiki.exception.WikiException {
 		Connection con = _connector.getConnection();
 
 		DatabaseNode node = DatabaseReader.get(con, this, (NodeIdentifier)identifier);
-
 		Version version = _versionIndex.getNextVersion(new ProvenanceActivate(user, identifier));
 
 		try {
@@ -185,6 +202,7 @@ public class RDBMSDatabase implements Database, DatabaseConstants {
 		}
 	}
 
+	@Override
 	public synchronized void annotate(ResourceIdentifier identifier, Annotation annotation) throws org.dbwiki.exception.WikiException {
 		Connection con = _connector.getConnection();
 		new DatabaseWriter(con, this).insertAnnotation((NodeIdentifier)identifier, annotation);
@@ -195,11 +213,13 @@ public class RDBMSDatabase implements Database, DatabaseConstants {
 		}
 	}
 	
+	@Override
 	public RDBMSDatabaseListing content() throws org.dbwiki.exception.WikiException {
 		//return DatabaseContentReader.get(_connector.getConnection(), this);
 		return new RDBMSDatabaseListing(_connector.getConnection(), this);
 	}
 
+	@Override
 	public synchronized void delete(ResourceIdentifier identifier, User user) throws org.dbwiki.exception.WikiException {
 		Connection con = _connector.getConnection();
 
@@ -224,6 +244,7 @@ public class RDBMSDatabase implements Database, DatabaseConstants {
 		}
 	}
 	
+	@Override
 	public synchronized void deleteSchemaNode(ResourceIdentifier identifier, User user) throws org.dbwiki.exception.WikiException {
 		Connection con = _connector.getConnection();
 
@@ -241,7 +262,6 @@ public class RDBMSDatabase implements Database, DatabaseConstants {
 				for(NodeIdentifier nid : deletedNodes) {
 					deleteNode(con, DatabaseReader.get(con, this, nid), version);
 				}
-				
 				// delete the schema node from the schema
 				deletetSchemaNode(con, schemaNode, version);
 				_versionIndex.add(version);
@@ -258,6 +278,7 @@ public class RDBMSDatabase implements Database, DatabaseConstants {
 		}
 	}
 	
+	@Override
 	public void export(ResourceIdentifier identifier, int version, NodeWriter out) throws org.dbwiki.exception.WikiException {
 		out.startDatabase(this, version);
 		if (identifier.isRootIdentifier()) {
@@ -274,7 +295,9 @@ public class RDBMSDatabase implements Database, DatabaseConstants {
 	}
 
 
+	@Override
 	public DatabaseNode get(ResourceIdentifier identifier) throws org.dbwiki.exception.WikiException {
+		//checkVersionIndex();
 		Connection con = _connector.getConnection();
 		DatabaseNode node = DatabaseReader.get(con, this, (NodeIdentifier)identifier);
 		try {
@@ -285,6 +308,7 @@ public class RDBMSDatabase implements Database, DatabaseConstants {
 		return node;
 	}
 	
+	@Override
 	public SchemaNode getSchemaNode(ResourceIdentifier identifier) throws org.dbwiki.exception.WikiException {
 		// the entire schema history is kept in memory
 		return _schema.get(((SchemaNodeIdentifier)identifier).nodeID());
@@ -294,6 +318,7 @@ public class RDBMSDatabase implements Database, DatabaseConstants {
 		return _wiki.layouter().displaySchemaNode(schema());
 	}
 	
+	@Override
 	public ResourceIdentifier getIdentifierForParameterString(String parameterValue) throws org.dbwiki.exception.WikiException {
 		try {
 			return new NodeIdentifier(Integer.parseInt(parameterValue));
@@ -302,6 +327,7 @@ public class RDBMSDatabase implements Database, DatabaseConstants {
 		}
 	}
 
+	@Override
 	public DatabaseContent getMatchingEntries(AttributeConditionListing listing) throws org.dbwiki.exception.WikiException {
 		
 		Vector<String> sqlStatements = new Vector<String>();
@@ -350,18 +376,22 @@ public class RDBMSDatabase implements Database, DatabaseConstants {
 		return result;
 	}
 	
+	@Override
 	public ResourceIdentifier getNodeIdentifierForURL(RequestURL<?> url) throws org.dbwiki.exception.WikiException {
 		return new NodeIdentifier(url);
 	}
 
+	@Override
 	public ResourceIdentifier getSchemaNodeIdentifierForURL(RequestURL<?> url) throws org.dbwiki.exception.WikiException {
 		return new SchemaNodeIdentifier(url);
 	}
 	
+	@Override
 	public DatabaseIdentifier identifier() {
 		return _identifier;
 	}
 
+	@Override
 	public synchronized ResourceIdentifier insertNode(ResourceIdentifier identifier, DocumentNode node, User user) throws org.dbwiki.exception.WikiException {
 		ResourceIdentifier nodeIdentifier = null;
 
@@ -391,6 +421,7 @@ public class RDBMSDatabase implements Database, DatabaseConstants {
 		return nodeIdentifier;
 	}
 	
+	@Override
 	public synchronized void insertSchemaNode(GroupSchemaNode parent, String name, byte type, User user) throws org.dbwiki.exception.WikiException {
 		if (!DatabaseSchema.isValidName(name)) {
 			throw new WikiSchemaException(WikiSchemaException.SyntaxError, "Invalid element name " + name);
@@ -424,10 +455,12 @@ public class RDBMSDatabase implements Database, DatabaseConstants {
 		_schema.add(schema);
 	}
 
+	@Override
 	public String name() {
 		return _wiki.name();
 	}
 
+	@Override
 	public synchronized void paste(ResourceIdentifier target, PasteNode pasteNode, String sourceURL, User user) throws org.dbwiki.exception.WikiException {
 		DatabaseElementNode targetElement = null;
 		
@@ -510,16 +543,19 @@ public class RDBMSDatabase implements Database, DatabaseConstants {
 	}
 
 	/** Evaluates a wiki query with respect to the database */
+	@Override
 	public QueryResultSet query(String query) throws org.dbwiki.exception.WikiException {
 
 		return QueryStatement.createStatement(this,query).execute();
 
 	}
 
+	@Override
 	public DatabaseSchema schema() {
 		return _schema;
 	}
 
+	@Override
 	public DatabaseContent search(String query) throws org.dbwiki.exception.WikiException {
 		DatabaseQuery keywords = new DatabaseQuery(query);
 		
@@ -550,14 +586,17 @@ public class RDBMSDatabase implements Database, DatabaseConstants {
 		return result;
 	}
 
+	@Override
 	public synchronized void update(ResourceIdentifier identifier, Update update, User user) throws org.dbwiki.exception.WikiException {
 		updateNodeWrapped(get(identifier), update, _versionIndex.getNextVersion(new ProvenanceUpdate(user, identifier)));
 	}
 
+	@Override
 	public UserListing users() {
 		return _wiki.users();
 	}
 
+	@Override
 	public VersionIndex versionIndex() {
 		return _versionIndex;
 	}
@@ -781,6 +820,7 @@ public class RDBMSDatabase implements Database, DatabaseConstants {
 		try {
 			Connection con = _connector.getConnection();
 			con.setAutoCommit(false);
+			boolean tryAgain = false;
 			try {
 				if (updateNodeTimestamps(con, node, update, version)) {
 					new DatabaseWriter(con, this).updateNode(node);
@@ -790,11 +830,38 @@ public class RDBMSDatabase implements Database, DatabaseConstants {
 			} catch (org.dbwiki.exception.WikiException wikiException) {
 				con.rollback();
 				con.close();
-				throw wikiException;
+				System.out.println("Restart here (2)");
+				StartServer.restartServer();
+				con = _connector.getConnection();
+				con.setAutoCommit(false);
+				try {
+					_versionIndex = new SQLVersionIndex(con, _wiki.name(), _wiki.users(), false);
+					_schema = new SQLDatabaseSchema(con, _versionIndex, _wiki.name());
+					//con.close();
+				} catch (java.sql.SQLException sqlException) {
+					throw new WikiFatalException(sqlException);
+				}
+				tryAgain = true;
+			}
+			if (tryAgain) {
+				try {
+					if (updateNodeTimestamps(con, node, update, version)) {
+						new DatabaseWriter(con, this).updateNode(node);
+						_versionIndex.add(version);
+						_versionIndex.store(con);
+					}
+				} catch (org.dbwiki.exception.WikiException wikiException) {
+					con.rollback();
+					con.close();
+					System.out.println("Restart here (3)");
+					StartServer.restartServer();
+					throw wikiException;
+				}
 			}
 			con.commit();
 			con.close();
 		} catch (java.sql.SQLException sqlException) {
+			System.out.println("Restart here");
 			throw new WikiFatalException(sqlException);
 		}
 	}

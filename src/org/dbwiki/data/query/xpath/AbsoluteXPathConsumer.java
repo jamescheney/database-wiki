@@ -40,7 +40,7 @@ public class AbsoluteXPathConsumer {
 			if (targetPath.size() > 1) {
 				DatabaseGroupNode group = (DatabaseGroupNode)node;
 				for (int iChild = 0; iChild < group.children().size(); iChild++) {
-					new AbsoluteXPathConsumer().consume((DatabaseElementNode)group.children().get(iChild), targetPath.subpath(1), consumer);
+					new AbsoluteXPathConsumer().consume(group.children().get(iChild), targetPath.subpath(1), consumer);
 				}
 			} else {
 				consumer.handle(node);

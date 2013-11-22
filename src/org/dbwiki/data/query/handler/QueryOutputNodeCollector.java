@@ -68,6 +68,7 @@ public class QueryOutputNodeCollector implements QueryNodeHandler {
 	/*
 	 * Public Methods
 	 */
+	@Override
 	public void handle(DatabaseElementNode node) {
 		DatabaseElementNode outputNode = null;
 				

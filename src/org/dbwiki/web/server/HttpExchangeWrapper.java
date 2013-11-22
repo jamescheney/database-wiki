@@ -26,10 +26,12 @@ public class HttpExchangeWrapper  implements Exchange<HttpExchange> {
 		_exchange = exchange;
 	}
 
+	@Override
 	public URI getRequestURI() {
 		return _exchange.getRequestURI();
 	}
 
+	@Override
 	public String getUsername() {
 		if(_exchange.getPrincipal() != null) {
 			return _exchange.getPrincipal().getUsername();
@@ -37,6 +39,7 @@ public class HttpExchangeWrapper  implements Exchange<HttpExchange> {
 		return null;
 	}
 
+	@Override
 	public String getCookie() {
 		if (_exchange.getRequestHeaders().getFirst("Cookie") != null) {
 			return _exchange.getRequestHeaders().getFirst("Cookie");
@@ -44,23 +47,28 @@ public class HttpExchangeWrapper  implements Exchange<HttpExchange> {
 		return null;
 	}
 
+	@Override
 	public boolean isGet() {
 		return _exchange.getRequestMethod().equalsIgnoreCase("GET");
 	}
 
+	@Override
 	public boolean isPost() {
 		return _exchange.getRequestMethod().equalsIgnoreCase("POST");
 	}
 
+	@Override
 	public InputStream getRequestBody() {
 		return _exchange.getRequestBody();
 	}
 
 		
+	@Override
 	public  void send(HtmlPage page) throws java.io.IOException {
 		send(page, HttpURLConnection.HTTP_OK);
 	}
 	
+	@Override
 	public void send(HtmlPage page, int responseCode) throws java.io.IOException {
     	Headers responseHeaders = _exchange.getResponseHeaders();
     	responseHeaders.set("Content-Type", "text/html");

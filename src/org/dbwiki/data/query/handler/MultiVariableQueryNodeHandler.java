@@ -62,6 +62,7 @@ public class MultiVariableQueryNodeHandler extends QueryRootNodeHandler {
 	 * Public Methods
 	 */
 	
+	@Override
 	public void handle(DatabaseElementNode node) {
 
 		NodeSetIterator iterator = new NodeSetIterator(_rootVariable);

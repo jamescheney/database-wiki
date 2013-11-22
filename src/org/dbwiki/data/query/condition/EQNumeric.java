@@ -51,11 +51,13 @@ public class EQNumeric extends ValueOp {
 	 * Public Methods
 	 */
 
+	@Override
 	public AttributeCondition getQueryCondition(AttributeSchemaNode entity, boolean isNegated) {
 		
 		return null;
 	}
 
+	@Override
 	public boolean eval(String value) {
 
 		try {
@@ -65,11 +67,13 @@ public class EQNumeric extends ValueOp {
 		}
 	}
 
+	@Override
 	public String toString() {
 		
 		return "= " + _value;
 	}
 	
+	@Override
 	public String value() {
 		
 		return String.valueOf(_value);

@@ -35,6 +35,7 @@ public class FullContentIterator extends ContentIterator {
 	 * Public Methods
 	 */
 	
+	@Override
 	public boolean matches(DatabaseEntry entry) {
 		return true;
 	}

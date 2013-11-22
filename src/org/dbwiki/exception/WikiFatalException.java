@@ -69,6 +69,7 @@ public class WikiFatalException extends WikiException {
 	 * Public Methods
 	 */
 	
+	@Override
 	public String errorCodeMessage() {
 		switch(_errorCode) {
 		case InvalidFileFormat:
@@ -80,6 +81,7 @@ public class WikiFatalException extends WikiException {
 		}
 	}
 
+	@Override
 	public String exceptionPrefix() {
 		return "[FATAL]";
 	}

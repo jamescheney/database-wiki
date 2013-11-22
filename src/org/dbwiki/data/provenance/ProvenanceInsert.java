@@ -39,6 +39,7 @@ public class ProvenanceInsert extends Provenance {
 	 * Public Methods
 	 */
 
+	@Override
 	public String name() {
 		return "INSERT";
 	}

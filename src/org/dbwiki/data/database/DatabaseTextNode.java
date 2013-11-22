@@ -58,6 +58,7 @@ public abstract class DatabaseTextNode extends DatabaseNode {
 		return this.value();
 	}
 	
+	@Override
 	public boolean isElement() {
 		return false;
 	}
@@ -74,10 +75,12 @@ public abstract class DatabaseTextNode extends DatabaseNode {
 		return _value;
 	}
 	
+	@Override
 	public String toString() {
 		return value();
 	}
 	
+	@Override
 	public DatabaseNode find(ResourceIdentifier identifier) {
 		return null;
 	}

@@ -53,6 +53,7 @@ public class INOp extends ValueOp {
 	 * Public Methods
 	 */
 	
+	@Override
 	public AttributeCondition getQueryCondition(AttributeSchemaNode entity, boolean isNegated) {
 		
 		Vector<String> values = new Vector<String>();
@@ -70,6 +71,7 @@ public class INOp extends ValueOp {
 		_operators.add(op);
 	}
 	
+	@Override
 	public boolean eval(String value) {
 
 		for (ValueOp op : _operators) {
@@ -80,6 +82,7 @@ public class INOp extends ValueOp {
 		return false;
 	}
 	
+	@Override
 	public String value() {
 		
 		return null;

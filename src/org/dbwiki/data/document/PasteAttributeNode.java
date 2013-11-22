@@ -46,6 +46,7 @@ public class PasteAttributeNode extends PasteElementNode {
 		return _value;
 	}
 	
+	@Override
 	public boolean isAttribute() {
 		return true;
 	}

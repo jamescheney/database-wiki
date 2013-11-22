@@ -40,11 +40,13 @@ public class PSQLDatabaseConnector extends DatabaseConnector {
 	 * Protected Methods
 	 */
 	
+	@Override
 	protected String autoIncrementColumn(String name) {
 		// jcheney: this should just be SERIAL
 		return name + " SERIAL";
 	}
 
+	@Override
 	protected void createSchemaIndexView(Connection con, String name) throws java.sql.SQLException {
 		Statement stmt = con.createStatement();
 		

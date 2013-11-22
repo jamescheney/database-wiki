@@ -45,6 +45,7 @@ public class RequestParameterVersionChanges extends RequestParameterVersionNumbe
 	/**
 	 * Return true if any descendant of node has changed
 	 */
+	@Override
 	public boolean matches(DatabaseNode node) throws org.dbwiki.exception.WikiException {
 		if (node.getTimestamp().changedSince(versionNumber())) {
 			return true;
@@ -76,6 +77,7 @@ public class RequestParameterVersionChanges extends RequestParameterVersionNumbe
 	/**
 	 * Return true if any descendant of schema has changed.
 	 */
+	@Override
 	public boolean matches(SchemaNode schema) throws org.dbwiki.exception.WikiException {
 		if (schema.getTimestamp().changedSince(versionNumber())) {
 			return true;
@@ -96,14 +98,17 @@ public class RequestParameterVersionChanges extends RequestParameterVersionNumbe
 		}
 	}
 
+	@Override
 	public String value() {
 		return RequestParameterVersion.VersionChanges + versionNumber();
 	}
 
+	@Override
 	public boolean versionChangesSince() {
 		return true;
 	}
 
+	@Override
 	public boolean versionSingle() {
 		return false;
 	}

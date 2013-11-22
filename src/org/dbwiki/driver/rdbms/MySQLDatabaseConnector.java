@@ -47,10 +47,12 @@ public class MySQLDatabaseConnector extends DatabaseConnector {
 	 * Protected Methods
 	 */
 	
+	@Override
 	protected String autoIncrementColumn(String name) {
 		return name + " int NOT NULL AUTO_INCREMENT";
 	}
 	
+	@Override
 	protected void createSchemaIndexView(Connection con, String name) throws java.sql.SQLException {
 		Statement stmt = con.createStatement();
 		

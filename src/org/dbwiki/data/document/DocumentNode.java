@@ -60,6 +60,7 @@ public abstract class DocumentNode implements Comparable<DocumentNode> {
 	public abstract int doNumbering(int startingFrom);
 
 	   
+	@Override
 	public int compareTo(DocumentNode element) {
 		if (this.schema().id() < element.schema().id()) {
 			return -1;

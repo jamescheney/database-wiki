@@ -57,21 +57,25 @@ public class LIKEString extends ValueOp {
 	 * Public Methods
 	 */
 	
+	@Override
 	public AttributeCondition getQueryCondition(AttributeSchemaNode entity, boolean isNegated) {
 		
 		return new AttributeValueCondition(entity, AttributeCondition.LIKE, _value, isNegated);
 	}
 
+	@Override
 	public boolean eval(String value) {
 
 		return value.toLowerCase().matches(_expression);
 	}
 	
+	@Override
 	public String toString() {
 		
 		return "LIKE '" + _value + "'";
 	}
 	
+	@Override
 	public String value() {
 		
 		return _value;

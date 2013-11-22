@@ -61,14 +61,17 @@ public class PageIdentifier implements ResourceIdentifier {
 	/*
 	 * Public Methods
 	 */
+	@Override
 	public int compareTo(ResourceIdentifier identifier) {
 		return this.toURLString().compareTo(((PageIdentifier)identifier).toURLString());
 	}
 	
+	@Override
 	public boolean equals(ResourceIdentifier identifier) {
 		return this.toURLString().equals(((PageIdentifier)identifier).toURLString());
 	}
 
+	@Override
 	public boolean isRootIdentifier() {
 		return (_title.length() == 0 && _timestamp == -1);
 	}
@@ -77,6 +80,7 @@ public class PageIdentifier implements ResourceIdentifier {
 		return _timestamp;
 	}
 	
+	@Override
 	public String toParameterString() {
 		return _title;
 	}
@@ -89,6 +93,7 @@ public class PageIdentifier implements ResourceIdentifier {
 		}
 	}
 	
+	@Override
 	public String toURLString() {
 		return "/" + _title;
 	}

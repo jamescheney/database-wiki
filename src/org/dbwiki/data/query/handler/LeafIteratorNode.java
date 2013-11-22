@@ -45,10 +45,12 @@ public class LeafIteratorNode extends IteratorNode {
 	 * Public Methods
 	 */
 
+	@Override
 	public void addCurrentChildren(QueryNodeSet nodeSet) {
 
 	}
 
+	@Override
 	public boolean advance() {
 
 		return false;

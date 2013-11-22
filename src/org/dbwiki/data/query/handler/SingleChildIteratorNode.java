@@ -48,11 +48,13 @@ public class SingleChildIteratorNode extends IteratorNode {
 		_iterator = iterator;
 	}
 	
+	@Override
 	public void addCurrentChildren(QueryNodeSet nodeSet) {
 
 		_iterator.addCurrentNode(nodeSet);
 	}
 
+	@Override
 	public boolean advance() {
 
 		return _iterator.advance();

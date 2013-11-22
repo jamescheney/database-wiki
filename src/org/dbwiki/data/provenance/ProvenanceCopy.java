@@ -48,6 +48,7 @@ public class ProvenanceCopy extends Provenance {
 	 * Public Methods
 	 */
 
+	@Override
 	public String name() {
 		return "COPY";
 	}

@@ -71,7 +71,8 @@ public class Parser extends BaseParser<Node> implements SimpleNodeTypes, Extensi
 
     private final int options;
     public Factory<ParseRunner<Node>> parseRunnerFactory = new Factory<ParseRunner<Node>>() {
-        public ParseRunner<Node> create() {
+        @Override
+		public ParseRunner<Node> create() {
             return new ReportingParseRunner<Node>(Doc());
         }
     };

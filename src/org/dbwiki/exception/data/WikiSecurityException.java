@@ -64,6 +64,7 @@ public class WikiSecurityException extends WikiException {
 	 * Public Methods
 	 */
 	
+	@Override
 	public String errorCodeMessage() {
 		switch(_errorCode) {
 		case AuthenticationFailure:
@@ -73,6 +74,7 @@ public class WikiSecurityException extends WikiException {
 		}
 	}
 
+	@Override
 	public String exceptionPrefix() {
 		return "[SECURITY]";
 	}

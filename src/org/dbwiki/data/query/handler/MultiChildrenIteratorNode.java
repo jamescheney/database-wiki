@@ -60,6 +60,7 @@ public class MultiChildrenIteratorNode extends IteratorNode {
 	 * Public Methods
 	 */
 	
+	@Override
 	public void addCurrentChildren(QueryNodeSet nodeSet) {
 
 		for (NodeSetIterator iterator : _iterators) {
@@ -67,6 +68,7 @@ public class MultiChildrenIteratorNode extends IteratorNode {
 		}
 	}
 
+	@Override
 	public boolean advance() {
 
 		for (NodeSetIterator iterator: _iterators) {

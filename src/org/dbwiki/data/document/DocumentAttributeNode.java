@@ -62,10 +62,12 @@ public class DocumentAttributeNode extends DocumentNode {
 		return (_value != null);
 	}
 	
+	@Override
 	public boolean isAttribute() {
 		return true;
 	}
 
+	@Override
 	public boolean isGroup() {
 		return false;
 	}
@@ -78,6 +80,7 @@ public class DocumentAttributeNode extends DocumentNode {
 		return _value;
 	}
 	
+	@Override
 	public int doNumbering(int startingFrom) {
         _pre = startingFrom;
         _post = _pre+1;

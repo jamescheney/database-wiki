@@ -93,6 +93,7 @@ public class DatabaseWikiContentGenerator extends HtmlContentGenerator {
 	 * Public Methods
 	 */
 	
+	@Override
 	public boolean contains(String key) {
 		if (key.equals(ContentDatabaseLink)) {
 				return true;
@@ -110,6 +111,7 @@ public class DatabaseWikiContentGenerator extends HtmlContentGenerator {
 	 *  Overrides the Search key to add the search textbox, using the "search" parameter to fill in a value from the URL if any.
 	 *  Overrides Title to use title, with first argument as optional prefix.
 	 */
+	@Override
 	public void print(String key, Vector<String> args, HtmlPage page, String indention) throws org.dbwiki.exception.WikiException {
 		if (key.equals(ContentDatabaseLink)) {
 			String title = null;

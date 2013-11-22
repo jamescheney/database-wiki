@@ -66,6 +66,7 @@ public class InputFormPrinter implements HtmlContentPrinter {
 	 * Public Methods
 	 */
 	
+	@Override
 	public void print(HtmlLinePrinter body) throws org.dbwiki.exception.WikiException {
 		body.paragraph(_title, CSS.CSSHeadline);
 		

@@ -51,21 +51,25 @@ public class EQString extends ValueOp {
 	 * Public Methods
 	 */
 
+	@Override
 	public AttributeCondition getQueryCondition(AttributeSchemaNode entity, boolean isNegated) {
 		
 		return new AttributeValueCondition(entity, AttributeCondition.EQ, _value, isNegated);
 	}
 
+	@Override
 	public boolean eval(String value) {
 
 		return _value.equals(value);
 	}
 
+	@Override
 	public String toString() {
 		
 		return "= '" + _value + "'";
 	}
 	
+	@Override
 	public String value() {
 		
 		return _value;
