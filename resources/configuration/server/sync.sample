@@ -1,0 +1,10 @@
+remoteURL=http://localhost:8081/
+database=ORG
+remoteEntry=5A
+localEntry=2E
+remoteAdded=true
+remoteChanged=true
+remoteDeleted=true
+deletedChanged=true
+changedDeleted=true
+changedChanged=true
