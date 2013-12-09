@@ -386,6 +386,9 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 		}
 	}
 	
+	public String getSocketAddress() {
+		return _webServer.getAddress().getHostString() + ":" + _webServer.getAddress().getPort();
+	}
 	/** Implements HttpHandler.handle() which is called by the Web Server
 	 * for every browser request (Note that requests for the individual
 	 * wikis are handled by DatabaseWiki.handle())
@@ -546,7 +549,7 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 			context = _webServer.createContext("/" + wiki.name(), wiki);
 			context.setAuthenticator(wiki.authenticator());
 		}
-				
+
 		System.out.println("START SERVER ON ADDRESS " + _webServer.getAddress() + " AT " + new java.util.Date().toString());
 
 		_webServer.start();

@@ -69,6 +69,8 @@ public class RequestType {
 	private static final byte requestTypeSynchronize = 25;
 	//?synxml
 	private static final byte requestTypeSynchronizeExport = 26;
+	//?pushtoremote
+	private static final byte requestTypePushToRemote = 27;
 	//?settings
 	private static final byte requestTypeSettings = 15;
 	//?style_sheet resource=...
@@ -168,10 +170,13 @@ public class RequestType {
 			} else if (parameters.hasParameter(RequestParameter.ParameterSynchronizeForm)) {
 				//?synchronize_form
 				_type = requestTypeSynchronizeForm;
-			}else if (parameters.hasParameter(RequestParameter.ParameterSynchronize)) {
+			} else if (parameters.hasParameter(RequestParameter.ParameterSynchronize)) {
 				//?synchronize
 				_type = requestTypeSynchronize;
-			}else if (parameters.hasParameter(RequestParameter.ParameterSettings)) {
+			} else if (parameters.hasParameter(RequestParameter.ParameterPushToRemote)) {
+				//?pushtoremote
+				_type = requestTypePushToRemote;
+			} else if (parameters.hasParameter(RequestParameter.ParameterSettings)) {
 				//?settings
 				_type = requestTypeSettings;
 			} else if (parameters.hasParameter(RequestParameter.ParameterPreviousVersion)) {
@@ -261,6 +266,15 @@ public class RequestType {
 				//?paste
 				_type = requestTypeSynchronize;
 			}
+		} else if(parameters.size() == 9) {
+			if ((parameters.hasParameter(RequestParameter.ParameterLocalPort)) && (parameters.hasParameter(RequestParameter.ParameterSynchronize))
+					&& (parameters.hasParameter(RequestParameter.ParameterRemoteAddr))
+					&& (parameters.hasParameter(RequestParameter.parameterRemoteAdded))&& (parameters.hasParameter(RequestParameter.parameterRemoteChanged))
+					&& (parameters.hasParameter(RequestParameter.parameterRemoteDeleted))&& (parameters.hasParameter(RequestParameter.parameterchangedChanged))
+					&& (parameters.hasParameter(RequestParameter.parameterdeletedChanged))&& (parameters.hasParameter(RequestParameter.parameterchangedDeleted))) {
+				//?paste
+				_type = requestTypeSynchronize;
+			}
 		}
 	}
 	
@@ -343,6 +357,10 @@ public class RequestType {
 	
 	public boolean isSynchronizeForm() {
 		return (_type == requestTypeSynchronizeForm);
+	}
+
+	public boolean isPushToRemote() {
+		return (_type == requestTypePushToRemote);
 	}
 	
 	public boolean isSynchronize() {

@@ -28,29 +28,24 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringWriter;
-
 import java.net.URL;
-
 import java.sql.Connection;
 import java.text.SimpleDateFormat;
-
 import java.util.Date;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
 
 import org.dbwiki.data.annotation.Annotation;
-
 import org.dbwiki.data.database.Database;
 import org.dbwiki.data.database.DatabaseElementNode;
 import org.dbwiki.data.database.DatabaseTextNode;
 import org.dbwiki.data.database.NodeUpdate;
 import org.dbwiki.data.database.Update;
-
 import org.dbwiki.data.document.DocumentAttributeNode;
 import org.dbwiki.data.document.DocumentGroupNode;
 import org.dbwiki.data.document.DocumentNode;
-
 import org.dbwiki.data.index.DatabaseContent;
 import org.dbwiki.data.io.CopyPasteInputHandler;
 import org.dbwiki.data.io.CopyPasteNodeWriter;
@@ -59,35 +54,26 @@ import org.dbwiki.data.io.ExportNodeWriter;
 import org.dbwiki.data.io.NodeWriter;
 import org.dbwiki.data.io.SAXCallbackInputHandler;
 import org.dbwiki.data.io.SynchronizeNodeWriter;
-
 import org.dbwiki.data.resource.DatabaseIdentifier;
-import org.dbwiki.data.resource.PageIdentifier;
 import org.dbwiki.data.resource.NodeIdentifier;
-
+import org.dbwiki.data.resource.PageIdentifier;
 import org.dbwiki.data.schema.AttributeSchemaNode;
 import org.dbwiki.data.schema.DatabaseSchema;
-import org.dbwiki.data.schema.SchemaNode;
 import org.dbwiki.data.schema.GroupSchemaNode;
-import org.dbwiki.data.time.Version;
-
+import org.dbwiki.data.schema.SchemaNode;
 import org.dbwiki.data.wiki.SimpleWiki;
 import org.dbwiki.data.wiki.Wiki;
 import org.dbwiki.driver.rdbms.DatabaseConnector;
 import org.dbwiki.driver.rdbms.RDBMSDatabase;
 import org.dbwiki.driver.rdbms.SQLVersionIndex;
-
 import org.dbwiki.exception.WikiException;
 import org.dbwiki.exception.WikiFatalException;
-
 import org.dbwiki.exception.web.WikiRequestException;
 import org.dbwiki.main.SynchronizeDatabaseWiki;
-
 import org.dbwiki.user.UserListing;
-
 import org.dbwiki.web.html.FatalExceptionPage;
 import org.dbwiki.web.html.HtmlPage;
 import org.dbwiki.web.html.RedirectPage;
-
 import org.dbwiki.web.request.HttpRequest;
 import org.dbwiki.web.request.RequestURL;
 import org.dbwiki.web.request.URLDecodingRules;
@@ -95,21 +81,16 @@ import org.dbwiki.web.request.WikiDataRequest;
 import org.dbwiki.web.request.WikiPageRequest;
 import org.dbwiki.web.request.WikiRequest;
 import org.dbwiki.web.request.WikiSchemaRequest;
-
 import org.dbwiki.web.request.parameter.RequestParameter;
 import org.dbwiki.web.request.parameter.RequestParameterAction;
 import org.dbwiki.web.request.parameter.RequestParameterActionCancel;
 import org.dbwiki.web.request.parameter.RequestParameterVersion;
 import org.dbwiki.web.request.parameter.RequestParameterVersionSingle;
-
 import org.dbwiki.web.security.WikiAuthenticator;
-
 import org.dbwiki.web.ui.DatabaseWikiContentGenerator;
 import org.dbwiki.web.ui.HtmlContentGenerator;
 import org.dbwiki.web.ui.HtmlTemplateDecorator;
-
 import org.dbwiki.web.ui.layout.DatabaseLayouter;
-
 import org.dbwiki.web.ui.printer.CSSLinePrinter;
 import org.dbwiki.web.ui.printer.FileEditor;
 import org.dbwiki.web.ui.printer.LayoutEditor;
@@ -118,31 +99,29 @@ import org.dbwiki.web.ui.printer.ObjectProvenancePrinter;
 import org.dbwiki.web.ui.printer.SettingsListingPrinter;
 import org.dbwiki.web.ui.printer.TimemachinePrinter;
 import org.dbwiki.web.ui.printer.VersionIndexPrinter;
-
 import org.dbwiki.web.ui.printer.data.CreateSchemaNodeFormPrinter;
 import org.dbwiki.web.ui.printer.data.DataMenuPrinter;
-import org.dbwiki.web.ui.printer.data.DataUpdateFormPrinter;
 import org.dbwiki.web.ui.printer.data.DataNodePrinter;
+import org.dbwiki.web.ui.printer.data.DataUpdateFormPrinter;
 import org.dbwiki.web.ui.printer.data.InputFormPrinter;
 import org.dbwiki.web.ui.printer.data.NodePathPrinter;
+import org.dbwiki.web.ui.printer.data.PushToRemotePrinter;
 import org.dbwiki.web.ui.printer.data.SynchronizePrinter;
-
 import org.dbwiki.web.ui.printer.index.AZMultiPageIndexPrinter;
 import org.dbwiki.web.ui.printer.index.AZSinglePageIndexPrinter;
 import org.dbwiki.web.ui.printer.index.FullIndexPrinter;
 import org.dbwiki.web.ui.printer.index.MultiColumnIndexPrinter;
 import org.dbwiki.web.ui.printer.index.PartialIndexPrinter;
 import org.dbwiki.web.ui.printer.index.SearchResultPrinter;
-
 import org.dbwiki.web.ui.printer.page.PageContentPrinter;
 import org.dbwiki.web.ui.printer.page.PageHistoryPrinter;
 import org.dbwiki.web.ui.printer.page.PageMenuPrinter;
 import org.dbwiki.web.ui.printer.page.PageUpdateFormPrinter;
-
-import org.dbwiki.web.ui.printer.schema.SchemaNodePrinter;
 import org.dbwiki.web.ui.printer.schema.SchemaMenuPrinter;
+import org.dbwiki.web.ui.printer.schema.SchemaNodePrinter;
 import org.dbwiki.web.ui.printer.schema.SchemaPathPrinter;
 
+import com.sun.corba.se.impl.encoding.OSFCodeSetRegistry.Entry;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -443,6 +422,16 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 			}
 			RequestURL<HttpExchange> url = new RequestURL<HttpExchange>(new HttpExchangeWrapper(exchange), _database.identifier().linkPrefix());
 			if (url.isDataRequest()) {
+				String s = ""; 
+				for (java.util.Map.Entry<String, List<String>> entry : exchange.getResponseHeaders().entrySet()) {
+					s = s + entry.getKey();
+					for (String a : entry.getValue()) {
+						s = s + "\t" + a;
+					}
+					s = s + "\n";
+				}
+				System.out.println("Remote address: " + exchange.getRemoteAddress().getHostString() +":" + exchange.getRemoteAddress().getPort() + "\n" + s);
+//				System.out.println("Remote address: " + exchange.getHttpContext());
 				respondToDataRequest(new WikiDataRequest<HttpExchange>(this, url));
 			} else if (url.isPageRequest()) {
 				respondToPageRequest(new WikiPageRequest<HttpExchange>(this, url));
@@ -560,7 +549,14 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 	 */
 	private void synchronizeURL(WikiDataRequest<?>  request) throws org.dbwiki.exception.WikiException {
 		String url = null;
-		url = request.parameters().get(RequestParameter.ParameterURL).value();
+		if (request.parameters().hasParameter(RequestParameter.ParameterURL)) {
+			url = request.parameters().get(RequestParameter.ParameterURL).value();
+		} else if (request.parameters().hasParameter(RequestParameter.ParameterLocalPort)) {
+			HttpExchange exchange = (HttpExchange) request.exchange();
+			// Assuming protocol is always http
+			url = "http://" + exchange.getRemoteAddress().getHostString() + ":" + request.parameters().get("localport").value();
+		}
+		System.out.println("Cat: url = " + url);
 		boolean remoteAdded = Boolean.parseBoolean(request.parameters().get(RequestParameter.parameterRemoteAdded).value());
 		boolean remoteChanged = Boolean.parseBoolean(request.parameters().get(RequestParameter.parameterRemoteChanged).value());
 		boolean remoteDeleted = Boolean.parseBoolean(request.parameters().get(RequestParameter.parameterRemoteDeleted).value());
@@ -693,7 +689,7 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 	 */
 	private void respondToDataRequest(WikiDataRequest<HttpExchange> request) throws java.io.IOException, org.dbwiki.exception.WikiException {
 		HtmlPage page = null;
-		
+
 		// The following test is just an additional security check in case someone
 		// managed to get past the WikiAuthenticator.
 		if ((request.user() == null) && (_authenticator.getAuthenticationMode() != WikiAuthenticator.AuthenticateNever)) {
@@ -802,10 +798,10 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 			return;
 		}
 		else if(request.type().isSynchronize())  {
-			
+			System.out.println("Cat: isSynchronize from: " + request.wri().getURL());
 			this.synchronizeURL(request);
 			isGetRequest = !request.isRootRequest();
-			isIndexRequest = ! isGetRequest;
+			isIndexRequest = !isGetRequest;
 		}
 		
 		// If the request is not redirected (in case of INSERT or DELETE) then assemble appropriate
@@ -872,6 +868,11 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 				contentGenerator.put(HtmlContentGenerator.ContentContent, new SettingsListingPrinter(request));
 			}else if (request.type().isSynchronizeForm()) { // Synchronize with a remote wiki.
 				contentGenerator.put(HtmlContentGenerator.ContentContent, new SynchronizePrinter(request, "Synchronize with remote Database Wiki", "Insert source URL (Example: http://127.0.0.1:8080)", RequestParameter.ParameterSynchronize, RequestParameter.ParameterURL));
+			} else if (request.type().isPushToRemote()) {
+				String port = _server.getSocketAddress();
+				port = port.substring(port.lastIndexOf(':') + 1);
+				System.out.println("Cat: local port: " + port);
+				contentGenerator.put(HtmlContentGenerator.ContentContent, new PushToRemotePrinter(request, "Push changes to remote", "Insert remote URL (Example: http://127.0.0.1:8080)", RequestParameter.ParameterSynchronize, RequestParameter.ParameterURL, port));
 			} else {
 				throw new WikiRequestException(WikiRequestException.InvalidRequest, request.exchange().getRequestURI().toASCIIString());
 			}

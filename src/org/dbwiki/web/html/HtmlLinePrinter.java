@@ -101,6 +101,10 @@ public class HtmlLinePrinter  {
 		this.add(_indentation + indentExtension + "<input type=\"" + type + "\" name=\"" + name + "\" src=\"" + src + "\"/>");
 	}
 
+	public void addBUTTONwithOnClick(String type, String name, String src, String onclick) {
+		this.add(_indentation + indentExtension + "<input type=\"" + type + "\" name=\"" + name + "\" src=\"" + src + "\" onclick=\"" + onclick + "\"/>");
+	}
+	
 	@Deprecated
 	public void addBUTTON(String type, String name, String value, String src) {
 		this.add(_indentation + indentExtension + "<input type=\"" + type + "\" name=\"" + name + "\" value=\"" + value + "\" src=\"" + src + "\"/>");

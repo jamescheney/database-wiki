@@ -51,6 +51,9 @@ public class RequestParameter {
 	public static final String ParameterSearch           = "search";
 	public static final String ParameterSynchronizeForm  = "synchronize_form";
 	public static final String ParameterSynchronize      = "synchronize";
+	public static final String ParameterPushToRemote	 = "pushtoremote";
+	public static final String ParameterLocalPort		 = "localport";
+	public static final String ParameterRemoteAddr		 = "remoteaddr";
 	public static final String parameterRemoteAdded		 = "remoteAdded";
 	public static final String parameterRemoteChanged	 = "remoteChanged";
 	public static final String parameterRemoteDeleted	 = "remoteDeleted";

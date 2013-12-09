@@ -1,7 +1,7 @@
-remoteURL=http://localhost:8081/
-database=ORG
-remoteEntry=5A
-localEntry=2E
+remoteURL=http://192.168.6.141:8080/
+database=CIAWFB
+remoteEntry=4073F
+localEntry=4073F
 remoteAdded=true
 remoteChanged=true
 remoteDeleted=true
