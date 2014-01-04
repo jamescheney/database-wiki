@@ -22,7 +22,6 @@
 package org.dbwiki.data.database;
 
 import org.dbwiki.data.annotation.AnnotationList;
-import org.dbwiki.data.document.DocumentNode;
 import org.dbwiki.data.resource.ResourceIdentifier;
 import org.dbwiki.data.time.TimeSequence;
 import org.dbwiki.data.time.TimestampedObject;

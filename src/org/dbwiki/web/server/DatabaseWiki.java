@@ -121,7 +121,6 @@ import org.dbwiki.web.ui.printer.schema.SchemaMenuPrinter;
 import org.dbwiki.web.ui.printer.schema.SchemaNodePrinter;
 import org.dbwiki.web.ui.printer.schema.SchemaPathPrinter;
 
-import com.sun.corba.se.impl.encoding.OSFCodeSetRegistry.Entry;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -556,7 +555,7 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 			// Assuming protocol is always http
 			url = "http://" + exchange.getRemoteAddress().getHostString() + ":" + request.parameters().get("localport").value();
 		}
-		System.out.println("Cat: url = " + url);
+		System.out.println("Cat: synchronizing with  url = " + url);
 		boolean remoteAdded = Boolean.parseBoolean(request.parameters().get(RequestParameter.parameterRemoteAdded).value());
 		boolean remoteChanged = Boolean.parseBoolean(request.parameters().get(RequestParameter.parameterRemoteChanged).value());
 		boolean remoteDeleted = Boolean.parseBoolean(request.parameters().get(RequestParameter.parameterRemoteDeleted).value());
@@ -798,7 +797,6 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 			return;
 		}
 		else if(request.type().isSynchronize())  {
-			System.out.println("Cat: isSynchronize from: " + request.wri().getURL());
 			this.synchronizeURL(request);
 			isGetRequest = !request.isRootRequest();
 			isIndexRequest = !isGetRequest;

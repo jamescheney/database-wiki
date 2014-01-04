@@ -57,7 +57,6 @@ public class WikiDataRequest<T> extends WikiRequest<T> {
 	
 	public WikiDataRequest(DatabaseWiki wiki, RequestURL<T> url) throws org.dbwiki.exception.WikiException {
 		super(wiki, url);
-		System.out.println("Request being created " + wiki.server().getSocketAddress());
 		_isRootRequest = url.isRoot();
 		
 		ResourceIdentifier nodeIdentifier = null;

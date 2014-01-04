@@ -87,4 +87,32 @@ public abstract class DatabaseElementNode extends DatabaseNode {
 	}
 
 	public abstract DocumentNode toDocumentNode();
+
+	public boolean isSimilarTo(DatabaseElementNode other) {
+		if (!other.label().equals(_label)
+				|| !other.schema().similar(_schema)) {
+			return false;
+		}
+		if (isAttribute()) {
+			if (!other.isAttribute()) {
+				return false;
+			}
+			DatabaseAttributeNode thisAttribute = (DatabaseAttributeNode) this;
+			DatabaseAttributeNode otherAttribute = (DatabaseAttributeNode) other;
+			System.out.println("Attribute value: " + thisAttribute.value().getCurrent().getValue());
+			return thisAttribute.value().getCurrent().getValue().equals(otherAttribute.value().getCurrent().value());
+		}
+		if (isGroup()) {
+			if(!other.isGroup()) {
+				return false;
+			}
+			DatabaseGroupNode thisGroup = (DatabaseGroupNode) this;
+			DatabaseGroupNode otherGroup = (DatabaseGroupNode) other;
+			return thisGroup.similar(otherGroup);
+		}
+		System.out.println("Comparing: \nLabel: " + label() + " " + other.label()
+				+ "\nSchema: " + schema().toString() + " " + other.schema().toString()
+				+ "\nAnnotations: " + annotation() + " " + other.annotation());
+		return other.label().equals(_label) && other.schema().similar(_schema);
+	}
 }

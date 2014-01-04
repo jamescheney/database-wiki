@@ -74,4 +74,17 @@ public class Annotation {
 	public User user() {
 		return _user;
 	}
+
+	public boolean sameText(Object object) {
+		if (!(object instanceof Annotation)) {
+	        return false;
+		}
+		Annotation other = (Annotation) object;
+		return (this._text.equals(other.text()));
+	}
+
+	@Override
+	public String toString() {
+		return _text;
+	}
 }

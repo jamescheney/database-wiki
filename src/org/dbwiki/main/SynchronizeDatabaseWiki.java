@@ -3,19 +3,13 @@ package org.dbwiki.main;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 
@@ -28,7 +22,6 @@ import org.dbwiki.data.io.SAXCallbackInputHandler;
 import org.dbwiki.data.io.SynchronizationInputHandler;
 import org.dbwiki.data.resource.DatabaseIdentifier;
 import org.dbwiki.data.resource.NodeIdentifier;
-import org.dbwiki.data.resource.ResourceIdentifier;
 import org.dbwiki.driver.rdbms.RDBMSDatabase;
 import org.dbwiki.driver.rdbms.RDBMSDatabaseAttributeNode;
 import org.dbwiki.driver.rdbms.RDBMSDatabaseGroupNode;
@@ -269,7 +262,7 @@ public class SynchronizeDatabaseWiki {
 			}
 		}
 	}
-	
+
 	//compare two attribute nodes
 	private void compareAttributeNodes(RDBMSDatabaseAttributeNode localAttributeNode, RDBMSDatabaseAttributeNode remoteAttributeNode) throws WikiException{
 		RDBMSDatabaseTextNode lt = (RDBMSDatabaseTextNode)localAttributeNode.value().getMostRecent();
@@ -323,20 +316,18 @@ public class SynchronizeDatabaseWiki {
 			this.responseToSynchronizeRequest(url, localID, isRootRequest);
 			
 		} catch (WikiException e) {
-			// TODO Auto-generated catch block
 			throw new WikiFatalException(e);
 		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
 			throw new WikiFatalException(e);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			throw new WikiFatalException(e);
 		} 
 	}
 	
 	//the interface that responses to the synchronization request from the web page
 	public void responseToSynchronizeRequest(String url, int localID, boolean isRootRequest) throws WikiException{
-			try {
+		System.out.println("responseToSyncRequest...");
+		try {
 			//read the id maps from the alignment log file
 			File alignFile = new File("align_log");
 			if(alignFile.exists()){
@@ -436,7 +427,6 @@ public class SynchronizeDatabaseWiki {
 				}
 			}
 			
-			
 			// reconcile the differences and conflicts
 			this.handleDifferences();
 			this.handleConflicts();
@@ -456,7 +446,7 @@ public class SynchronizeDatabaseWiki {
 				matchLog.writeln(entry.getKey() + "," + entry.getValue());
 			}
 			matchLog.closeLog();
-			
+			System.out.println("done something");
 		} catch (WikiException e) {
 			// TODO Auto-generated catch block
 			throw new WikiFatalException(e);
@@ -470,7 +460,6 @@ public class SynchronizeDatabaseWiki {
 			// TODO Auto-generated catch block
 			throw new WikiFatalException(e);
 		}
-		
 	}
 	
 	//handle the conflicts in the synchronization results
@@ -513,10 +502,46 @@ public class SynchronizeDatabaseWiki {
 	
 	//handle the differences in the synchronization results
 	private void handleDifferences() throws WikiException{
+		System.out.println("Number of remote added nodes: " + remoteAddedNodes.size());
+		System.out.println("Number of local added nodes: " + localAddedNodes.size());
 		if(!remoteAddedNodes.isEmpty() && remoteAdded){
 			for(ConflictPair pair: remoteAddedNodes){
+				System.out.println("RemoteAdded node: " + pair.getExistNode().toString());
+				System.out.println("parent: label: " + pair.getExistNode().parent().label()
+						+ "; identifier: " + pair.getExistNode().parent().identifier().nodeID());
+				System.out.println("annotations: " + pair.existNode.annotation().toString());
+				boolean skip = false;
 				int insertNodeID;
-				if(pair.getExistNode().isElement()){
+				for(ConflictPair localPair: localAddedNodes) {
+					DatabaseNode local = localPair.getExistNode();
+					DatabaseNode remote = pair.getExistNode();
+					if (local.isElement() == remote.isElement()
+//							&& idMap.containsKey(local.getparent()) 
+//							&& idMap.get(local.getparent()) == remote.getparent()
+							) {
+						DatabaseElementNode localElement = (DatabaseElementNode) local;
+						DatabaseElementNode remoteElement = (DatabaseElementNode) remote;
+						if (localElement.isSimilarTo(remoteElement)
+								&& local.annotation().sameTexts(remote.annotation())) {
+							skip = true;
+							this.map(local, remote);
+						} 
+					}else if (local.isText() == remote.isText()
+//							&& idMap.containsKey(local.getparent()) 
+//							&& idMap.get(local.getparent()) == remote.getparent()
+							&& local.annotation().sameTexts(remote.annotation())
+							) {
+						DatabaseTextNode localText = (DatabaseTextNode) local;
+						DatabaseTextNode remoteText = (DatabaseTextNode) remote;
+						if (localText.getValue().equals(remoteText.getValue())) {
+							skip = true;
+						}
+					}
+				}
+				if (skip) {
+					System.out.println("Not adding node " + pair.getExistNode().identifier().toString());
+				}
+				if(!skip && pair.getExistNode().isElement()){
 					if(isRootRequest){
 						if(pair.getNodeID() == -1){
 							insertNodeID = ((NodeIdentifier)wiki.database().insertNode(new NodeIdentifier(), ((DatabaseElementNode)pair.getExistNode()).toDocumentNode(), user)).nodeID();

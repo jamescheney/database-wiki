@@ -173,5 +173,18 @@ public abstract class DatabaseGroupNode extends DatabaseElementNode {
 		}
 		return null;
 	}
+
+	public boolean similar(DatabaseGroupNode other) {
+		if (_children.size() != other.children().size()) {
+			return false;
+		}
+		for (int i = 0; i < children().size(); i++) {
+			System.out.println("Children: " + children().get(i).label() + " " + other.children().get(i));
+			if (!children().get(i).isSimilarTo(other.children().get(i))) {
+				return false;
+			}
+		}
+		return true;
+	}
 }
 	

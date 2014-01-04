@@ -69,4 +69,29 @@ public class AnnotationList {
 	public int size() {
 		return _annotations.size();
 	}
+
+	public boolean sameTexts(Object object) {
+		if (!(object instanceof AnnotationList)) {
+			return false;
+		}
+		AnnotationList other = (AnnotationList) object;
+		if (this.size() != other.size()) {
+			return false;
+		}
+		for (int i = 0; i < size(); i++) {
+			if (!get(i).sameText(other.get(i))) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		String result = "";
+		for (Annotation a : _annotations) {
+			result += " " + a;
+		}
+		return result;
+	}
 }

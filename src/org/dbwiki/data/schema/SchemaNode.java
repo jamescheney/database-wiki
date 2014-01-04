@@ -147,6 +147,12 @@ public abstract class SchemaNode extends TimestampedObject {
 		return root;
 	}
 
-
+	public boolean similar(Object object) {
+		if (!(object instanceof SchemaNode)) {
+			return false;
+		}
+		SchemaNode other = (SchemaNode) object;
+		return _label.equals(other.label());
+	}
 }
 
