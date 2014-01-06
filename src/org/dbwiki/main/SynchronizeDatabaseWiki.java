@@ -535,6 +535,7 @@ public class SynchronizeDatabaseWiki {
 						DatabaseTextNode remoteText = (DatabaseTextNode) remote;
 						if (localText.getValue().equals(remoteText.getValue())) {
 							skip = true;
+							this.map(local, remote);
 						}
 					}
 				}
