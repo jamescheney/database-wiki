@@ -21,6 +21,7 @@
 */
 package org.dbwiki.web.ui.printer.data;
 
+import org.dbwiki.data.database.DatabaseAttributeNode;
 import org.dbwiki.data.database.DatabaseElementNode;
 import org.dbwiki.data.database.DatabaseNode;
 
@@ -70,7 +71,7 @@ public class NodePathPrinter implements HtmlContentPrinter {
 		RequestParameterVersion versionParameter = RequestParameter.versionParameter(_request.parameters().get(RequestParameter.ParameterVersion));
 
 		String line = null;
-		
+		System.out.println("Parents: ");
 		DatabaseNode node = _request.node();
 		while (node != null) {
 			if (node.isElement()) {
@@ -80,8 +81,12 @@ public class NodePathPrinter implements HtmlContentPrinter {
 					target = target + "?" + versionParameter.toURLString();
 				}
 				String link = _layouter.get(element.schema()).getShortLabel(element, versionParameter);
+				if (link.equals("")) {
+					link = "Parent of";
+				}
 				link = "<a CLASS=\"" + CSS.CSSObjectPath + "\" HREF=\"" + target + "\">" + link + "</a>";
 				if (line != null) {
+					System.out.println(link + " >> -" + _layouter.get(element.schema()).getShortLabel(element, versionParameter) + "-");
 					line = link + " &gt; " + line;
 				} else {
 					line = link;

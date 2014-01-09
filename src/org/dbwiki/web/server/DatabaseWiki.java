@@ -429,8 +429,6 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 					}
 					s = s + "\n";
 				}
-				System.out.println("Remote address: " + exchange.getRemoteAddress().getHostString() +":" + exchange.getRemoteAddress().getPort() + "\n" + s);
-//				System.out.println("Remote address: " + exchange.getHttpContext());
 				respondToDataRequest(new WikiDataRequest<HttpExchange>(this, url));
 			} else if (url.isPageRequest()) {
 				respondToPageRequest(new WikiPageRequest<HttpExchange>(this, url));
