@@ -57,6 +57,9 @@ public class DatabaseNodeValue {
 		return _values.get(index);
 	}
 
+	/**
+	 * Returns null if attribute is deleted.
+	 */
 	public DatabaseTextNode getCurrent() {
 		for (int iValue = 0; iValue < _values.size(); iValue++) {
 			DatabaseTextNode text = _values.get(iValue);
