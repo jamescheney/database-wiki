@@ -99,8 +99,13 @@ public abstract class DatabaseElementNode extends DatabaseNode {
 			}
 			DatabaseAttributeNode thisAttribute = (DatabaseAttributeNode) this;
 			DatabaseAttributeNode otherAttribute = (DatabaseAttributeNode) other;
-			System.out.println("Attribute value: " + thisAttribute.value().getCurrent().getValue());
-			return thisAttribute.value().getCurrent().getValue().equals(otherAttribute.value().getCurrent().value());
+			try {
+				System.out.println("Attribute value: " + thisAttribute.value().getCurrent().getValue());
+				return thisAttribute.value().getCurrent().getValue().equals(otherAttribute.value().getCurrent().value());
+			} catch (NullPointerException e ){
+				System.out.println("Exception caught: " + e);
+				return false;
+			}
 		}
 		if (isGroup()) {
 			if(!other.isGroup()) {

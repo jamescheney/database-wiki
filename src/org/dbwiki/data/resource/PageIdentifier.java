@@ -61,6 +61,9 @@ public class PageIdentifier implements ResourceIdentifier {
 	/*
 	 * Public Methods
 	 */
+	/**
+	 * Returns 0 if parameter is equal. 
+	 */
 	@Override
 	public int compareTo(ResourceIdentifier identifier) {
 		return this.toURLString().compareTo(((PageIdentifier)identifier).toURLString());
@@ -96,5 +99,15 @@ public class PageIdentifier implements ResourceIdentifier {
 	@Override
 	public String toURLString() {
 		return "/" + _title;
+	}
+	
+	@Override
+	public boolean equals(Object object) {
+		if (object == null
+				|| !(object instanceof PageIdentifier)) {
+			return false;
+		}
+		PageIdentifier other = (PageIdentifier) object;
+		return 0 == this.compareTo(other);
 	}
 }

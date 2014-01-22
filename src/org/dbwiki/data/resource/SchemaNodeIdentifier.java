@@ -68,6 +68,9 @@ public class SchemaNodeIdentifier implements ResourceIdentifier {
 	 * Public Methods
 	 */
 	
+	/**
+	 * Returns 0 if parameter is equal.
+	 */
 	@Override
 	public int compareTo(ResourceIdentifier identifier) {
 		return (nodeID() - ((SchemaNodeIdentifier)identifier).nodeID());
@@ -99,5 +102,15 @@ public class SchemaNodeIdentifier implements ResourceIdentifier {
 		} else {
 			return "/" + DatabaseWiki.SchemaRequestPrefix + "/" + Integer.toHexString(_nodeID).toUpperCase();
 		}
+	}
+
+	@Override
+	public boolean equals(Object object) {
+		if (object == null
+				|| !(object instanceof SchemaNodeIdentifier)) {
+			return false;
+		}
+		SchemaNodeIdentifier other = (SchemaNodeIdentifier) object;
+		return 0 == this.compareTo(other);
 	}
 }

@@ -75,6 +75,9 @@ public class NodeIdentifier implements ResourceIdentifier {
 	 * Public Methods
 	 */
 	
+	/**
+	 * Returns 0 if other ResourceIdentifier is the same.
+	 */
 	@Override
 	public int compareTo(ResourceIdentifier identifier) {
 		return (nodeID() - ((NodeIdentifier)identifier).nodeID());
@@ -106,5 +109,15 @@ public class NodeIdentifier implements ResourceIdentifier {
 		} else {
 			return "/" + Integer.toHexString(_nodeID).toUpperCase();
 		}
+	}
+
+	@Override
+	public boolean equals(Object object) {
+		if (object == null
+				|| !(object instanceof NodeIdentifier)) {
+			return false;
+		}
+		NodeIdentifier other = (NodeIdentifier) object;
+		return 0 == this.compareTo(other);
 	}
 }

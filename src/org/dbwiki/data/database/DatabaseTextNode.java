@@ -45,7 +45,6 @@ public abstract class DatabaseTextNode extends DatabaseNode {
 	
 	public DatabaseTextNode(DatabaseAttributeNode parent, TimeSequence timestamp, String value, AnnotationList annotation, int pre, int post) {
 		super(parent, timestamp, annotation, pre, post);
-
 		_value = value;
 	}
 	
@@ -60,6 +59,11 @@ public abstract class DatabaseTextNode extends DatabaseNode {
 	
 	@Override
 	public boolean isElement() {
+		return false;
+	}
+
+	@Override
+	public boolean isAttribute() {
 		return false;
 	}
 	

@@ -22,6 +22,7 @@ import org.dbwiki.data.io.SAXCallbackInputHandler;
 import org.dbwiki.data.io.SynchronizationInputHandler;
 import org.dbwiki.data.resource.DatabaseIdentifier;
 import org.dbwiki.data.resource.NodeIdentifier;
+import org.dbwiki.driver.rdbms.DatabaseConstants;
 import org.dbwiki.driver.rdbms.RDBMSDatabase;
 import org.dbwiki.driver.rdbms.RDBMSDatabaseAttributeNode;
 import org.dbwiki.driver.rdbms.RDBMSDatabaseGroupNode;
@@ -363,6 +364,7 @@ public class SynchronizeDatabaseWiki {
 			if(!syncFile.exists()){
 				syncFile.createNewFile();
 			}
+			System.out.println(syncFile.getAbsolutePath());
 			
 			Properties pros = org.dbwiki.lib.IO.loadProperties(syncFile);
 			String lv = pros.getProperty("LOCALVERSION");
@@ -386,6 +388,10 @@ public class SynchronizeDatabaseWiki {
 			else{
 				remotePreviousVersionNumber = 2;
 			}
+			System.out.println("rv:" + rv);
+			System.out.println("lv:" + lv);
+			System.out.println("remotePrevVerNr:" + remotePreviousVersionNumber);
+			System.out.println("localPrevVerNr:" + localPreviousVersionNumber);
 			//compare entries from two DBWiki instances that is to be synchronized
 			if(!isRootRequest){
 				sourceURL = sourceURL + "?" + RequestParameter.ParameterSynchronizeExport;
@@ -507,38 +513,42 @@ public class SynchronizeDatabaseWiki {
 		if(!remoteAddedNodes.isEmpty() && remoteAdded){
 			for(ConflictPair pair: remoteAddedNodes){
 				System.out.println("RemoteAdded node: " + pair.getExistNode().toString());
-				System.out.println("parent: label: " + pair.getExistNode().parent().label()
-						+ "; identifier: " + pair.getExistNode().parent().identifier().nodeID());
+				System.out.println("parent label: " + pair.getExistNode().parent().label()
+						+ "; parent identifier: " + pair.getExistNode().parent().identifier().nodeID());
 				System.out.println("annotations: " + pair.existNode.annotation().toString());
 				boolean skip = false;
 				int insertNodeID;
+				/*******/
 				for(ConflictPair localPair: localAddedNodes) {
 					DatabaseNode local = localPair.getExistNode();
 					DatabaseNode remote = pair.getExistNode();
-					if (local.isElement() == remote.isElement()
-//							&& idMap.containsKey(local.getparent()) 
-//							&& idMap.get(local.getparent()) == remote.getparent()
-							) {
-						DatabaseElementNode localElement = (DatabaseElementNode) local;
-						DatabaseElementNode remoteElement = (DatabaseElementNode) remote;
-						if (localElement.isSimilarTo(remoteElement)
-								&& local.annotation().sameTexts(remote.annotation())) {
-							skip = true;
-							this.map(local, remote);
-						} 
-					}else if (local.isText() == remote.isText()
-//							&& idMap.containsKey(local.getparent()) 
-//							&& idMap.get(local.getparent()) == remote.getparent()
-							&& local.annotation().sameTexts(remote.annotation())
-							) {
-						DatabaseTextNode localText = (DatabaseTextNode) local;
-						DatabaseTextNode remoteText = (DatabaseTextNode) remote;
-						if (localText.getValue().equals(remoteText.getValue())) {
-							skip = true;
-							this.map(local, remote);
+					if (sameParent(local, remote)
+							&& local.annotation().sameTexts(remote.annotation())) {
+						if (local.isElement() == remote.isElement()
+								) {
+							DatabaseElementNode localElement = (DatabaseElementNode) local;
+							DatabaseElementNode remoteElement = (DatabaseElementNode) remote;
+							if (localElement.isSimilarTo(remoteElement)) {
+								skip = true;
+								if(!local.identifier().equals(remote.identifier())) {
+									this.map(local, remote);
+								}
+							} 
+						}else if (local.isText() && remote.isText()) {
+							// Can be attribute node
+							
+							DatabaseTextNode localText = (DatabaseTextNode) local;
+							DatabaseTextNode remoteText = (DatabaseTextNode) remote;
+							if (localText.getValue().equals(remoteText.getValue())) {
+								skip = true;
+								if(!local.identifier().equals(remote.identifier())) {
+									this.map(local, remote);
+								}
+							}
 						}
 					}
 				}
+				/*********/
 				if (skip) {
 					System.out.println("Not adding node " + pair.getExistNode().identifier().toString());
 				}
@@ -556,6 +566,7 @@ public class SynchronizeDatabaseWiki {
 					}
 					DatabaseNode insertedNode = wiki.database().get(new NodeIdentifier(insertNodeID));
 					this.map(insertedNode, pair.getExistNode());
+					System.out.println("Just added node " + insertNodeID);
 				}
 				
 			}
@@ -729,5 +740,14 @@ public class SynchronizeDatabaseWiki {
 		else {
 			System.out.println(commandLine);
 		}
+	}
+	
+	private boolean sameParent(DatabaseNode local, DatabaseNode remote) {
+		if (!(local.getparent() == DatabaseConstants.RelDataColParentValUnknown)
+				&& !(remote.getparent() == DatabaseConstants.RelDataColParentValUnknown)
+				&& idMap.containsKey(local.getparent())) {
+			return idMap.get(local.getparent()) == remote.getparent();
+		}
+		return local.getparent() == remote.getparent();
 	}
 }

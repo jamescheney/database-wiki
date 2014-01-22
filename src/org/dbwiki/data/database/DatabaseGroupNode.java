@@ -180,7 +180,7 @@ public abstract class DatabaseGroupNode extends DatabaseElementNode {
 		}
 		for (int i = 0; i < children().size(); i++) {
 			System.out.println("Children: " + children().get(i).label() + " " + other.children().get(i));
-			if (!children().get(i).isSimilarTo(other.children().get(i))) {
+			if (!this.children().get(i).isSimilarTo(other.children().get(i))) {
 				return false;
 			}
 		}
