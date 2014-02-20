@@ -541,11 +541,13 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 	/** Handle a paste action
 	 * 
 	 * @param request
+	 * @param port 
 	 * @param url
 	 * @throws org.dbwiki.exception.WikiException
 	 */
-	private void synchronizeURL(WikiDataRequest<?>  request) throws org.dbwiki.exception.WikiException {
+	private void synchronizeURL(WikiDataRequest<?>  request, String parameter) throws org.dbwiki.exception.WikiException {
 		String url = null;
+		// Get source url
 		if (request.parameters().hasParameter(RequestParameter.ParameterURL)) {
 			url = request.parameters().get(RequestParameter.ParameterURL).value();
 		} else if (request.parameters().hasParameter(RequestParameter.ParameterLocalPort)) {
@@ -573,10 +575,11 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 		if(request.isRootRequest()){
 			isRootRequest = true;
 		}
-		
+		String port = _server.getSocketAddress();
+		port = port.substring(port.lastIndexOf(':') + 1);
 		SynchronizeDatabaseWiki synchronize = new SynchronizeDatabaseWiki(this, request.user());
 		synchronize.setSynchronizeParameters(remoteAdded, remoteDeleted, remoteChanged, changedChanged, deletedChanged, changedDeleted);
-		synchronize.responseToSynchronizeRequest(sourceURL, localID, isRootRequest);
+		synchronize.responseToSynchronizeRequest(sourceURL, localID, isRootRequest, parameter, port);
 	}
 	
 	/** Reset the configuration.  
@@ -605,6 +608,7 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 	 * @throws org.dbwiki.exception.WikiException
 	 */
 	private void respondToExportXMLRequest(WikiDataRequest<HttpExchange> request, NodeWriter writer) throws org.dbwiki.exception.WikiException {
+		System.out.println("Responding to request:\n" + request.copyBuffer());
 		int versionNumber = database().versionIndex().getLastVersion().number();
 		if (request.parameters().hasParameter(RequestParameter.ParameterVersion)) {
 			versionNumber = ((RequestParameterVersionSingle)RequestParameter.versionParameter(request.parameters().get(RequestParameter.ParameterVersion))).versionNumber();
@@ -784,6 +788,7 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 			this.respondToExportXMLRequest(request, new CopyPasteNodeWriter());
 			return;
 		} else if (request.type().isExportXML()) {
+			System.out.println("Sync request buffer[787]: \n"+request.copyBuffer());
 			this.respondToExportXMLRequest(request, new ExportNodeWriter());
 			return;
 		} else if (request.type().isExportJSON()) {
@@ -794,8 +799,41 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 			this.respondToExportXMLRequest(request, new SynchronizeNodeWriter());
 			return;
 		}
+		else if (request.type().isSynchronizeThenExport()) {
+			System.out.println("Sync request buffer[800]: \n" + request.copyBuffer());
+			// TODO(catalina.predoi): synchronising with other server before exporting
+			SynchronizeDatabaseWiki sync = new SynchronizeDatabaseWiki(this, request.user());
+			String url = null;
+			if (request.parameters().hasParameter(RequestParameter.ParameterURL)) {
+				url = request.parameters().get(RequestParameter.ParameterURL).value();
+			} else if (request.parameters().hasParameter(RequestParameter.ParameterLocalPort)) {
+				HttpExchange exchange = (HttpExchange) request.exchange();
+				// Assuming protocol is always http
+				url = "http://" + exchange.getRemoteAddress().getHostString() + ":" + request.parameters().get("localport").value();
+			} else {
+				url = "http://localhost:8080";
+			}
+//			sync.setSynchronizeParameters(true, true, true, true, true, true);
+//			int localID = ((NodeIdentifier)request.wri().resourceIdentifier()).nodeID();
+			String database = request.wri().databaseIdentifier().databaseHomepage();
+			String sourceURL = url;
+			if(sourceURL.endsWith(DatabaseIdentifier.PathSeparator)){
+				sourceURL = sourceURL.substring(0, sourceURL.length() - 1) + database + DatabaseIdentifier.PathSeparator;
+			}
+			else{
+				sourceURL = url + database + DatabaseIdentifier.PathSeparator;
+			}
+			
+//			File configFile = new File("resources/configuration/server/config"); // for now...
+//			File syncFile = new File("resources/configuration/server/sync"); // for now...
+//			sync.responseToSynchronizeRequest(url, localID, request.isRootRequest(), RequestParameter.ParameterSynchronizeThenExport);
+			System.out.println("synchronised with " + sourceURL + ".. allegedly.. now exporting XML");
+			/////////////////////
+			this.respondToExportXMLRequest(request, new SynchronizeNodeWriter());
+			return;
+		}
 		else if(request.type().isSynchronize())  {
-			this.synchronizeURL(request);
+			this.synchronizeURL(request, RequestParameter.ParameterSynchronizeThenExport);
 			isGetRequest = !request.isRootRequest();
 			isIndexRequest = !isGetRequest;
 		}

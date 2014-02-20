@@ -61,6 +61,7 @@ public class RequestParameter {
 	public static final String parameterdeletedChanged	 = "deletedChanged";
 	public static final String parameterchangedDeleted	 = "changedDeleted";
 	public static final String ParameterSynchronizeExport = "synxml";
+	public static final String ParameterSynchronizeThenExport = "synthenxml";
 	public static final String ParameterReset            = "reset";
 	public static final String ParameterResource         = "resource";
 	public static final String ParameterSettings         = "settings";

@@ -62,7 +62,6 @@ public abstract class DatabaseTextNode extends DatabaseNode {
 		return false;
 	}
 
-	@Override
 	public boolean isAttribute() {
 		return false;
 	}

@@ -5,8 +5,11 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -313,9 +316,7 @@ public class SynchronizeDatabaseWiki {
 			else{
 				localID = Integer.parseInt(localCollection, 16);
 			}
-			
 			this.responseToSynchronizeRequest(url, localID, isRootRequest);
-			
 		} catch (WikiException e) {
 			throw new WikiFatalException(e);
 		} catch (MalformedURLException e) {
@@ -327,6 +328,11 @@ public class SynchronizeDatabaseWiki {
 	
 	//the interface that responses to the synchronization request from the web page
 	public void responseToSynchronizeRequest(String url, int localID, boolean isRootRequest) throws WikiException{
+		responseToSynchronizeRequest(url, localID, isRootRequest, RequestParameter.ParameterSynchronizeExport, null);
+	}
+
+	//the interface that responses to the synchronization request from the web page
+	public void responseToSynchronizeRequest(String url, int localID, boolean isRootRequest, String xmlRequestType, String port) throws WikiException{
 		System.out.println("responseToSyncRequest...");
 		try {
 			//read the id maps from the alignment log file
@@ -364,37 +370,15 @@ public class SynchronizeDatabaseWiki {
 			if(!syncFile.exists()){
 				syncFile.createNewFile();
 			}
-			System.out.println(syncFile.getAbsolutePath());
 			
-			Properties pros = org.dbwiki.lib.IO.loadProperties(syncFile);
-			String lv = pros.getProperty("LOCALVERSION");
-			String rv = pros.getProperty("REMOTEVERSION");
-			
-			if(lv != null){
-				localPreviousVersionNumber = Integer.parseInt(lv);
-				if(localPreviousVersionNumber < 2){
-					localPreviousVersionNumber = 2;
-				}
-			}
-			else{
-				localPreviousVersionNumber = 2;
-			}
-			if(rv != null){
-				remotePreviousVersionNumber = Integer.parseInt(rv);
-				if(remotePreviousVersionNumber < 2){
-					remotePreviousVersionNumber = 2;
-				}
-			}
-			else{
-				remotePreviousVersionNumber = 2;
-			}
-			System.out.println("rv:" + rv);
-			System.out.println("lv:" + lv);
-			System.out.println("remotePrevVerNr:" + remotePreviousVersionNumber);
-			System.out.println("localPrevVerNr:" + localPreviousVersionNumber);
+			extractVersionNumbers(syncFile);
 			//compare entries from two DBWiki instances that is to be synchronized
 			if(!isRootRequest){
-				sourceURL = sourceURL + "?" + RequestParameter.ParameterSynchronizeExport;
+				sourceURL = sourceURL + "?" + xmlRequestType;
+				if (xmlRequestType == RequestParameter.ParameterSynchronizeThenExport) {
+					sourceURL = invertAndAddParameters(sourceURL);
+					sourceURL = addLocalPort(sourceURL, port);
+				}
 				SynchronizationInputHandler ioHandler = new SynchronizationInputHandler();
 				ioHandler.setIsRootRequest(isRootRequest);
 				new SAXCallbackInputHandler(ioHandler, false).parse(new URL(sourceURL).openStream(), false, false);
@@ -403,12 +387,11 @@ public class SynchronizeDatabaseWiki {
 				new_remoteVersion = ioHandler.getVersionNumber();
 				new_localVersion = wiki.database().versionIndex().getLastVersion().number();
 				DatabaseNode remoteNode = ioHandler.getSynchronizeDatabaseNode();
+				System.out.println("got remote node: " + remoteNode.identifier().toParameterString());
 				DatabaseNode localNode = wiki.database().get(new NodeIdentifier(localID));
 				this.compare(localNode, remoteNode);
-				
 			}
 			else{
-				
 				//List<DatabaseNode> nodeList = ioHandler.getSynchronizeDatabaseNodeList();
 				RDBMSDatabaseListing entries = ((RDBMSDatabase)wiki.database()).content();
 				for(int i = 0; i < entries.size(); i++){
@@ -422,13 +405,18 @@ public class SynchronizeDatabaseWiki {
 					else{
 						newurl = sourceURL + Integer.toHexString(entries.get(i).identifier().nodeID());
 					}
-					newurl = newurl + "?" + RequestParameter.ParameterSynchronizeExport;
+					newurl = newurl + "?" + xmlRequestType;
+					if (xmlRequestType == RequestParameter.ParameterSynchronizeThenExport) {
+						newurl = invertAndAddParameters(newurl);
+						sourceURL = addLocalPort(sourceURL, port);
+					}
 					new SAXCallbackInputHandler(ioHandler, false).parse(new URL(newurl).openStream(), false, false);
 					
 					new_remoteVersion = ioHandler.getVersionNumber();
 					new_localVersion = wiki.database().versionIndex().getLastVersion().number();
 					DatabaseNode localNode = wiki.database().get(entries.get(i).identifier());
 					DatabaseNode remoteNode = ioHandler.getSynchronizeDatabaseNode();
+					System.out.println("got remote node: " + remoteNode.identifier().toParameterString());
 					this.compare(localNode, remoteNode);
 				}
 			}
@@ -452,7 +440,6 @@ public class SynchronizeDatabaseWiki {
 				matchLog.writeln(entry.getKey() + "," + entry.getValue());
 			}
 			matchLog.closeLog();
-			System.out.println("done something");
 		} catch (WikiException e) {
 			// TODO Auto-generated catch block
 			throw new WikiFatalException(e);
@@ -467,7 +454,60 @@ public class SynchronizeDatabaseWiki {
 			throw new WikiFatalException(e);
 		}
 	}
+
+	private String addLocalPort(String sourceURL, String port) {
+		try {
+			sourceURL += "&localport=" + URLEncoder.encode(port, "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return sourceURL;
+	}
+
+	/**
+	 * @param syncFile
+	 * @throws IOException
+	 */
+	private void extractVersionNumbers(File syncFile) throws IOException {
+		Properties pros = org.dbwiki.lib.IO.loadProperties(syncFile);
+		String lv = pros.getProperty("LOCALVERSION");
+		String rv = pros.getProperty("REMOTEVERSION");
+		
+		if(lv != null){
+			localPreviousVersionNumber = Integer.parseInt(lv);
+			if(localPreviousVersionNumber < 2){
+				localPreviousVersionNumber = 2;
+			}
+		}
+		else{
+			localPreviousVersionNumber = 2;
+		}
+		if(rv != null){
+			remotePreviousVersionNumber = Integer.parseInt(rv);
+			if(remotePreviousVersionNumber < 2){
+				remotePreviousVersionNumber = 2;
+			}
+		}
+		else{
+			remotePreviousVersionNumber = 2;
+		}
+		System.out.println("rv:" + rv);
+		System.out.println("lv:" + lv);
+		System.out.println("remotePrevVerNr:" + remotePreviousVersionNumber);
+		System.out.println("localPrevVerNr:" + localPreviousVersionNumber);
+	}
 	
+	private String invertAndAddParameters(String sourceURL) {
+		sourceURL += "&" + RequestParameter.parameterRemoteAdded + "=" + !this.remoteAdded;
+		sourceURL += "&" + RequestParameter.parameterRemoteChanged + "=" + !this.remoteChanged;
+		sourceURL += "&" + RequestParameter.parameterRemoteDeleted + "=" + !this.remoteDeleted;
+		sourceURL += "&" + RequestParameter.parameterchangedChanged + "=" + !this.changedChanged;
+		sourceURL += "&" + RequestParameter.parameterchangedDeleted + "=" + !this.changedDeleted;
+		sourceURL += "&" + RequestParameter.parameterdeletedChanged + "=" + !this.deletedChanged;
+		return sourceURL;
+	}
+
 	//handle the conflicts in the synchronization results
 	private void handleConflicts() throws WikiException{
 		if(!changedChangedNodes.isEmpty() && changedChanged){
