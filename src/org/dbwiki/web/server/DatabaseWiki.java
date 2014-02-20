@@ -800,9 +800,7 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 			return;
 		}
 		else if (request.type().isSynchronizeThenExport()) {
-			System.out.println("Sync request buffer[800]: \n" + request.copyBuffer());
-			// TODO(catalina.predoi): synchronising with other server before exporting
-			SynchronizeDatabaseWiki sync = new SynchronizeDatabaseWiki(this, request.user());
+			// synchronising with other server before exporting
 			String url = null;
 			if (request.parameters().hasParameter(RequestParameter.ParameterURL)) {
 				url = request.parameters().get(RequestParameter.ParameterURL).value();
@@ -810,11 +808,7 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 				HttpExchange exchange = (HttpExchange) request.exchange();
 				// Assuming protocol is always http
 				url = "http://" + exchange.getRemoteAddress().getHostString() + ":" + request.parameters().get("localport").value();
-			} else {
-				url = "http://localhost:8080";
 			}
-//			sync.setSynchronizeParameters(true, true, true, true, true, true);
-//			int localID = ((NodeIdentifier)request.wri().resourceIdentifier()).nodeID();
 			String database = request.wri().databaseIdentifier().databaseHomepage();
 			String sourceURL = url;
 			if(sourceURL.endsWith(DatabaseIdentifier.PathSeparator)){
@@ -823,12 +817,10 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 			else{
 				sourceURL = url + database + DatabaseIdentifier.PathSeparator;
 			}
-			
-//			File configFile = new File("resources/configuration/server/config"); // for now...
-//			File syncFile = new File("resources/configuration/server/sync"); // for now...
-//			sync.responseToSynchronizeRequest(url, localID, request.isRootRequest(), RequestParameter.ParameterSynchronizeThenExport);
+			this.synchronizeURL(request, RequestParameter.ParameterSynchronizeExport);
+			isGetRequest = !request.isRootRequest();
+			isIndexRequest = !isGetRequest;
 			System.out.println("synchronised with " + sourceURL + ".. allegedly.. now exporting XML");
-			/////////////////////
 			this.respondToExportXMLRequest(request, new SynchronizeNodeWriter());
 			return;
 		}
