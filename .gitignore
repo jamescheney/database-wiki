@@ -1,2 +1,4 @@
 /dblp.dtd
 bin/*
+align_log
+synchronize_log
