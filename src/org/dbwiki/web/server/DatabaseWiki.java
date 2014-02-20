@@ -601,17 +601,21 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 		_server.resetWikiConfiguration(this, setting.getLayoutVersion(), setting.getTemplateVersion(), setting.getStyleSheetVersion(), setting.getURLDecodingRulesVersion());
 	}
 	
+	private void respondToExportXMLRequest(WikiDataRequest<HttpExchange> request, NodeWriter writer) throws org.dbwiki.exception.WikiException {
+		respondToExportXMLRequest(request, writer, null);
+	}
 	/** Handles data export requests (generating XML)
 	 * 
 	 * @param request
 	 * @param writer
 	 * @throws org.dbwiki.exception.WikiException
 	 */
-	private void respondToExportXMLRequest(WikiDataRequest<HttpExchange> request, NodeWriter writer) throws org.dbwiki.exception.WikiException {
-		System.out.println("Responding to request:\n" + request.copyBuffer());
+	private void respondToExportXMLRequest(WikiDataRequest<HttpExchange> request, NodeWriter writer, Integer version) throws org.dbwiki.exception.WikiException {
 		int versionNumber = database().versionIndex().getLastVersion().number();
 		if (request.parameters().hasParameter(RequestParameter.ParameterVersion)) {
 			versionNumber = ((RequestParameterVersionSingle)RequestParameter.versionParameter(request.parameters().get(RequestParameter.ParameterVersion))).versionNumber();
+		} else if( version != null) {
+			versionNumber = version;
 		}
 		
 		try {
@@ -788,7 +792,6 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 			this.respondToExportXMLRequest(request, new CopyPasteNodeWriter());
 			return;
 		} else if (request.type().isExportXML()) {
-			System.out.println("Sync request buffer[787]: \n"+request.copyBuffer());
 			this.respondToExportXMLRequest(request, new ExportNodeWriter());
 			return;
 		} else if (request.type().isExportJSON()) {
@@ -817,11 +820,17 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 			else{
 				sourceURL = url + database + DatabaseIdentifier.PathSeparator;
 			}
+			int versionB4Sync = this.database().versionIndex().getLastVersion().number();
 			this.synchronizeURL(request, RequestParameter.ParameterSynchronizeExport);
 			isGetRequest = !request.isRootRequest();
 			isIndexRequest = !isGetRequest;
-			System.out.println("synchronised with " + sourceURL + ".. allegedly.. now exporting XML");
-			this.respondToExportXMLRequest(request, new SynchronizeNodeWriter());
+			System.out.println("synchronised version " + versionB4Sync + " with " + sourceURL
+					+ ".. allegedly.. (now at version " + this.database().versionIndex().getLastVersion().number() + ")... now exporting XML");
+			if (versionB4Sync != this.database().versionIndex().getLastVersion().number()) {
+				this.respondToExportXMLRequest(request, new SynchronizeNodeWriter(), versionB4Sync);
+			} else {
+				this.respondToExportXMLRequest(request, new SynchronizeNodeWriter());
+			}
 			return;
 		}
 		else if(request.type().isSynchronize())  {
@@ -897,7 +906,6 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 			} else if (request.type().isPushToRemote()) {
 				String port = _server.getSocketAddress();
 				port = port.substring(port.lastIndexOf(':') + 1);
-				System.out.println("Cat: local port: " + port);
 				contentGenerator.put(HtmlContentGenerator.ContentContent, new PushToRemotePrinter(request, "Push changes to remote", "Insert remote URL (Example: http://127.0.0.1:8080)", RequestParameter.ParameterSynchronize, RequestParameter.ParameterURL, port));
 			} else {
 				throw new WikiRequestException(WikiRequestException.InvalidRequest, request.exchange().getRequestURI().toASCIIString());
