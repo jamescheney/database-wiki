@@ -332,7 +332,6 @@ public class SynchronizeDatabaseWiki {
 
 	//the interface that responses to the synchronization request from the web page
 	public void responseToSynchronizeRequest(String url, int localID, boolean isRootRequest, String xmlRequestType, String port) throws WikiException{
-		System.out.println("responseToSyncRequest...");
 		try {
 			//read the id maps from the alignment log file
 			File alignFile = new File("align_log");
@@ -382,7 +381,6 @@ public class SynchronizeDatabaseWiki {
 				new_remoteVersion = ioHandler.getVersionNumber();
 				new_localVersion = wiki.database().versionIndex().getLastVersion().number();
 				DatabaseNode remoteNode = ioHandler.getSynchronizeDatabaseNode();
-				System.out.println("got remote node: " + remoteNode.identifier().toParameterString());
 				DatabaseNode localNode = wiki.database().get(new NodeIdentifier(localID));
 				this.compare(localNode, remoteNode);
 			}
@@ -407,7 +405,6 @@ public class SynchronizeDatabaseWiki {
 					new_localVersion = wiki.database().versionIndex().getLastVersion().number();
 					DatabaseNode localNode = wiki.database().get(entries.get(i).identifier());
 					DatabaseNode remoteNode = ioHandler.getSynchronizeDatabaseNode();
-					System.out.println("got remote node: " + remoteNode.identifier().toParameterString());
 					this.compare(localNode, remoteNode);
 				}
 			}
@@ -491,8 +488,10 @@ public class SynchronizeDatabaseWiki {
 	
 	private String invertAndAddParameters(String sourceURL, String xmlRequestType, String port) {
 		sourceURL = sourceURL + "?" + xmlRequestType;
-		sourceURL = addLocalPortParameter(sourceURL, port);
+		System.out.print(sourceURL + "->");
 		switch (xmlRequestType) {
+		case RequestParameter.ParameterSynchronizeExport:
+			return sourceURL;
 		case RequestParameter.ParameterSynchronizeThenExport:
 			sourceURL += "&" + RequestParameter.parameterRemoteAdded + "=" + !this.remoteAdded;
 			sourceURL += "&" + RequestParameter.parameterRemoteChanged + "=" + !this.remoteChanged;
@@ -507,6 +506,8 @@ public class SynchronizeDatabaseWiki {
 		sourceURL += "&" + RequestParameter.parameterchangedChanged + "=" + !this.changedChanged;
 		sourceURL += "&" + RequestParameter.parameterchangedDeleted + "=" + !this.changedDeleted;
 		sourceURL += "&" + RequestParameter.parameterdeletedChanged + "=" + !this.deletedChanged;
+		sourceURL = addLocalPortParameter(sourceURL, port);
+		System.out.println(sourceURL);
 		return sourceURL;		
 	}
 

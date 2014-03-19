@@ -1,12 +1,9 @@
 package org.dbwiki.web.ui.printer.data;
 
-import org.dbwiki.main.SynchronizeDatabaseWiki;
 import org.dbwiki.web.html.HtmlLinePrinter;
 import org.dbwiki.web.request.WikiDataRequest;
-import org.dbwiki.web.request.parameter.RequestParameter;
 import org.dbwiki.web.request.parameter.RequestParameterAction;
 import org.dbwiki.web.ui.CSS;
-import org.dbwiki.web.ui.layout.DatabaseLayouter;
 import org.dbwiki.web.ui.printer.HtmlContentPrinter;
 
 public class SynchronizePrinter implements HtmlContentPrinter {

@@ -710,6 +710,7 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 	 * @throws org.dbwiki.exception.WikiException
 	 */
 	private void respondToDataRequest(WikiDataRequest<HttpExchange> request) throws java.io.IOException, org.dbwiki.exception.WikiException {
+		System.out.println("Received request: "  + request.toString());
 		HtmlPage page = null;
 
 		// The following test is just an additional security check in case someone
@@ -856,6 +857,11 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 			isIndexRequest = !isGetRequest;
 		}
 		else if(request.type().isSynchronize1())  {
+			this.synchronizeURL(request, RequestParameter.ParameterSynchronizeThenExport1);
+			isGetRequest = !request.isRootRequest();
+			isIndexRequest = !isGetRequest;
+		}
+		else if(request.type().isSynchronize2())  {
 			this.synchronizeURL(request, RequestParameter.ParameterSynchronizeThenExport1);
 			isGetRequest = !request.isRootRequest();
 			isIndexRequest = !isGetRequest;

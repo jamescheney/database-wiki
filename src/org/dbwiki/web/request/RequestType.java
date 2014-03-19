@@ -68,11 +68,13 @@ public class RequestType {
 	//?synchronize_form1
 	private static final byte requestTypeSynchronizeFormApproach1 = 29;
 	//?synchronize_form1
-	private static final byte requestTypeSynchronizeFormApproach2 = 31;
+	private static final byte requestTypeSynchronizeFormApproach2 = 30;
 	//?synchronize
 	private static final byte requestTypeSynchronize = 25;
-	//?synchronize
-	private static final byte requestTypeSynchronize1 = 30;
+	//?synchronize1
+	private static final byte requestTypeSynchronize1 = 31;
+	//?synchronize2
+	private static final byte requestTypeSynchronize2 = 32;
 	//?synxml
 	private static final byte requestTypeSynchronizeExport = 26;
 	//?pushtoremote
@@ -80,9 +82,9 @@ public class RequestType {
 	//?synthenxml
 	private static final byte requestTypeSynchronizeThenExport = 28;
 	//?synthenxml
-	private static final byte requestTypeSynchronizeThenExport1 = 31;
+	private static final byte requestTypeSynchronizeThenExport1 = 33;
 	//?synthenxml
-	private static final byte requestTypeSynchronizeThenExport2 = 32;
+	private static final byte requestTypeSynchronizeThenExport2 = 34;
 	//?settings
 	private static final byte requestTypeSettings = 15;
 	//?style_sheet resource=...
@@ -301,6 +303,24 @@ public class RequestType {
 				_type = requestTypeSynchronizeThenExport1;
 			}
 		}
+		else if(parameters.size() == 10){
+			if ((parameters.hasParameter(RequestParameter.ParameterSynchronize2)) && (parameters.hasParameter(RequestParameter.ParameterURL))
+					&&  (parameters.hasParameter(RequestParameter.parameterAddedAdded)) &&  (parameters.hasParameter(RequestParameter.parameterchangedChanged))
+					&& (parameters.hasParameter(RequestParameter.parameterdeletedChanged)) && (parameters.hasParameter(RequestParameter.parameterchangedDeleted))
+					&& (parameters.hasParameter(RequestParameter.ParameterLocalPort)) && (parameters.hasParameter(RequestParameter.parameterLocalAdded))
+					&& (parameters.hasParameter(RequestParameter.parameterLocalChanged)) && (parameters.hasParameter(RequestParameter.parameterLocalDeleted))) {
+				//?paste
+				_type = requestTypeSynchronize2;
+			}
+			if ((parameters.hasParameter(RequestParameter.ParameterSynchronizeThenExport2)) && (parameters.hasParameter(RequestParameter.ParameterURL))
+					&&  (parameters.hasParameter(RequestParameter.parameterAddedAdded)) &&  (parameters.hasParameter(RequestParameter.parameterchangedChanged))
+					&& (parameters.hasParameter(RequestParameter.parameterdeletedChanged)) && (parameters.hasParameter(RequestParameter.parameterchangedDeleted))
+					&& (parameters.hasParameter(RequestParameter.ParameterLocalPort)) && (parameters.hasParameter(RequestParameter.parameterLocalAdded))
+					&& (parameters.hasParameter(RequestParameter.parameterLocalChanged)) && (parameters.hasParameter(RequestParameter.parameterLocalDeleted))) {
+				//?paste
+				_type = requestTypeSynchronizeThenExport2;
+			}
+		}
 		else if(parameters.size() == 8){
 			if ((parameters.hasParameter(RequestParameter.ParameterSynchronize)) && (parameters.hasParameter(RequestParameter.ParameterURL))
 					&& (parameters.hasParameter(RequestParameter.parameterRemoteAdded))&& (parameters.hasParameter(RequestParameter.parameterRemoteChanged))
@@ -471,6 +491,10 @@ public class RequestType {
 
 	public boolean isSynchronize1() {
 		return (_type == requestTypeSynchronize1);
+	}
+
+	public boolean isSynchronize2() {
+		return (_type == requestTypeSynchronize2);
 	}
 	
 	@Override

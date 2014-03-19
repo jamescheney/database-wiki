@@ -60,11 +60,78 @@ public class SynchronizePrinterApproach2 implements HtmlContentPrinter {
 		
 		body.openTR();
 		body.openTD(CSS.CSSInputForm);
+		body.text("<textarea name=\"localport\" style=\"display:none;\">" + _localPort + "</textarea>");
+		body.closeTD();
+		body.closeTR();
+		
+		body.openTR();
+		body.openTD(CSS.CSSInputForm);
+		body.openPARAGRAPH(CSS.CSSInputForm);
+		body.text("If there are entries added remotely, would you like to add them locally?");
+		body.closePARAGRAPH();
+		body.addRADIOBUTTON("Yes", "remoteAdded", "true", true);
+		body.addRADIOBUTTON("No", "remoteAdded", "false", false);
+		body.closeTD();
+		body.closeTR();
+		
+		body.openTR();
+		body.openTD(CSS.CSSInputForm);
+		body.openPARAGRAPH(CSS.CSSInputForm);
+		body.text("If there are entries changed remotely, would you like to pull remote copy?");
+		body.closePARAGRAPH();
+		body.addRADIOBUTTON("Yes", "remoteChanged", "true", true);
+		body.addRADIOBUTTON("No", "remoteChanged", "false", false);
+		body.closeTD();
+		body.closeTR();
+		
+		body.openTR();
+		body.openTD(CSS.CSSInputForm);
+		body.openPARAGRAPH(CSS.CSSInputForm);
+		body.text("If there are entries deleted remotely, would you like to delete locally?");
+		body.closePARAGRAPH();
+		body.addRADIOBUTTON("Yes", "remoteDeleted", "true", true);
+		body.addRADIOBUTTON("No", "remoteDeleted", "false", false);
+		body.closeTD();
+		body.closeTR();
+		
+		body.openTR();
+		body.openTD(CSS.CSSInputForm);
+		body.openPARAGRAPH(CSS.CSSInputForm);
+		body.text("If there are entries added locally, would you like to add them remotely?");
+		body.closePARAGRAPH();
+		body.addRADIOBUTTON("Yes", "localAdded", "true", true);
+		body.addRADIOBUTTON("No", "localAdded", "false", false);
+		body.closeTD();
+		body.closeTR();
+		
+		body.openTR();
+		body.openTD(CSS.CSSInputForm);
+		body.openPARAGRAPH(CSS.CSSInputForm);
+		body.text("If there are entries changed locally, would you like to push local copy?");
+		body.closePARAGRAPH();
+		body.addRADIOBUTTON("Yes", "localChanged", "true", true);
+		body.addRADIOBUTTON("No", "localChanged", "false", false);
+		body.closeTD();
+		body.closeTR();
+		
+		body.openTR();
+		body.openTD(CSS.CSSInputForm);
+		body.openPARAGRAPH(CSS.CSSInputForm);
+		body.text("If there are entries deleted locally, would you like to delete remotely?");
+		body.closePARAGRAPH();
+		body.addRADIOBUTTON("Yes", "localDeleted", "true", true);
+		body.addRADIOBUTTON("No", "localDeleted", "false", false);
+		body.closeTD();
+		body.closeTR();
+		
+
+		body.openTR();
+		body.openTD(CSS.CSSInputForm);
 		body.openPARAGRAPH(CSS.CSSInputForm);
 		body.text("If there are entries changed both locally and remotely, would you like to pull remote copy?");
 		body.closePARAGRAPH();
 		body.addRADIOBUTTON("Yes", "changedChanged", "true", true);
-		body.addRADIOBUTTON("No (pushes local copy)", "changedChanged", "false", false);
+		body.addRADIOBUTTON("No", "changedChanged", "false", false);
 		body.closeTD();
 		body.closeTR();
 		
@@ -74,7 +141,7 @@ public class SynchronizePrinterApproach2 implements HtmlContentPrinter {
 		body.text("If there are entries deletedly locally but changed remotely, would you like to pull remote copy?");
 		body.closePARAGRAPH();
 		body.addRADIOBUTTON("Yes", "deletedChanged", "true", true);
-		body.addRADIOBUTTON("No (deletes them remotely)", "deletedChanged", "false", false);
+		body.addRADIOBUTTON("No", "deletedChanged", "false", false);
 		body.closeTD();
 		body.closeTR();
 		
@@ -84,22 +151,10 @@ public class SynchronizePrinterApproach2 implements HtmlContentPrinter {
 		body.text("If there are entries changed locally but deleted remotely, would you like to delete the entry locally?");
 		body.closePARAGRAPH();
 		body.addRADIOBUTTON("Yes", "changedDeleted", "true", true);
-		body.addRADIOBUTTON("No (re-activates and changes them remotely)", "changedDeleted", "false", false);
+		body.addRADIOBUTTON("No", "changedDeleted", "false", false);
 		body.closeTD();
 		body.closeTR();
-
-		body.openTR();
-		body.openTD(CSS.CSSInputForm);
-		body.openPARAGRAPH(CSS.CSSInputForm);
-		body.text("If there are entries added locally, and idetical entries are added remotely, would you like to merge them?");
-		body.closePARAGRAPH();
-		body.addRADIOBUTTON("Yes", "addedAdded", "true", true);
-		body.addRADIOBUTTON("No ", "addedAdded", "false", false);
 		
-		body.text("<textarea name=\"localport\" style=\"display:none;\">" + _localPort + "</textarea>");
-		body.closeTD();
-		body.closeTR();
-
 		body.closeTABLE();
 		body.closeCENTER();
 		

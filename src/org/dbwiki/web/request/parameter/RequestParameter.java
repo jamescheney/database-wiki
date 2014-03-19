@@ -57,6 +57,9 @@ public class RequestParameter {
 	public static final String parameterRemoteAdded		 = "remoteAdded";
 	public static final String parameterRemoteChanged	 = "remoteChanged";
 	public static final String parameterRemoteDeleted	 = "remoteDeleted";
+	public static final String parameterLocalAdded		 = "localAdded";
+	public static final String parameterLocalChanged	 = "localChanged";
+	public static final String parameterLocalDeleted	 = "localDeleted";
 	public static final String parameterchangedChanged	 = "changedChanged";
 	public static final String parameterdeletedChanged	 = "deletedChanged";
 	public static final String parameterchangedDeleted	 = "changedDeleted";
