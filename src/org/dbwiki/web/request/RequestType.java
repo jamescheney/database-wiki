@@ -296,43 +296,6 @@ public class RequestType {
 				_type = requestTypeSynchronize1;
 			}
 		}
-		else if(parameters.size() == 9){
-			if ((parameters.hasParameter(RequestParameter.ParameterSynchronizeThenExport1)) && (parameters.hasParameter(RequestParameter.parameterRemoteAdded))
-					&& (parameters.hasParameter(RequestParameter.parameterRemoteChanged)) && (parameters.hasParameter(RequestParameter.parameterRemoteDeleted))
-					&&  (parameters.hasParameter(RequestParameter.parameterAddedAdded)) &&  (parameters.hasParameter(RequestParameter.parameterchangedChanged))
-					&& (parameters.hasParameter(RequestParameter.parameterdeletedChanged)) && (parameters.hasParameter(RequestParameter.parameterchangedDeleted))
-					&& (parameters.hasParameter(RequestParameter.ParameterLocalPort))) {
-				//?paste
-				System.out.println("Yup, request is synthenxml1");
-				_type = requestTypeSynchronizeThenExport1;
-			}
-			if ((parameters.hasParameter(RequestParameter.ParameterLocalPort)) && (parameters.hasParameter(RequestParameter.ParameterSynchronize))
-					&& (parameters.hasParameter(RequestParameter.ParameterRemoteAddr))
-					&& (parameters.hasParameter(RequestParameter.parameterRemoteAdded))&& (parameters.hasParameter(RequestParameter.parameterRemoteChanged))
-					&& (parameters.hasParameter(RequestParameter.parameterRemoteDeleted))&& (parameters.hasParameter(RequestParameter.parameterchangedChanged))
-					&& (parameters.hasParameter(RequestParameter.parameterdeletedChanged))&& (parameters.hasParameter(RequestParameter.parameterchangedDeleted))) {
-				//?paste
-				_type = requestTypeSynchronize;
-			}
-		}
-		else if(parameters.size() == 10){
-			if ((parameters.hasParameter(RequestParameter.ParameterSynchronize2)) && (parameters.hasParameter(RequestParameter.ParameterURL))
-					&&  (parameters.hasParameter(RequestParameter.parameterAddedAdded)) &&  (parameters.hasParameter(RequestParameter.parameterchangedChanged))
-					&& (parameters.hasParameter(RequestParameter.parameterdeletedChanged)) && (parameters.hasParameter(RequestParameter.parameterchangedDeleted))
-					&& (parameters.hasParameter(RequestParameter.ParameterLocalPort)) && (parameters.hasParameter(RequestParameter.parameterLocalAdded))
-					&& (parameters.hasParameter(RequestParameter.parameterLocalChanged)) && (parameters.hasParameter(RequestParameter.parameterLocalDeleted))) {
-				//?paste
-				_type = requestTypeSynchronize2;
-			}
-			if ((parameters.hasParameter(RequestParameter.ParameterSynchronizeThenExport2)) && (parameters.hasParameter(RequestParameter.ParameterURL))
-					&&  (parameters.hasParameter(RequestParameter.parameterAddedAdded)) &&  (parameters.hasParameter(RequestParameter.parameterchangedChanged))
-					&& (parameters.hasParameter(RequestParameter.parameterdeletedChanged)) && (parameters.hasParameter(RequestParameter.parameterchangedDeleted))
-					&& (parameters.hasParameter(RequestParameter.ParameterLocalPort)) && (parameters.hasParameter(RequestParameter.parameterLocalAdded))
-					&& (parameters.hasParameter(RequestParameter.parameterLocalChanged)) && (parameters.hasParameter(RequestParameter.parameterLocalDeleted))) {
-				//?paste
-				_type = requestTypeSynchronizeThenExport2;
-			}
-		}
 		else if(parameters.size() == 8){
 			if ((parameters.hasParameter(RequestParameter.ParameterSynchronize)) && (parameters.hasParameter(RequestParameter.ParameterURL))
 					&& (parameters.hasParameter(RequestParameter.parameterRemoteAdded))&& (parameters.hasParameter(RequestParameter.parameterRemoteChanged))
@@ -347,6 +310,46 @@ public class RequestType {
 					&& (parameters.hasParameter(RequestParameter.parameterdeletedChanged))&& (parameters.hasParameter(RequestParameter.parameterchangedDeleted))) {
 				//?paste
 				_type = requestTypeSynchronizeThenExport;
+			}
+		}
+		else if(parameters.size() == 9){
+			if ((parameters.hasParameter(RequestParameter.ParameterSynchronizeThenExport1)) && (parameters.hasParameter(RequestParameter.parameterRemoteAdded))
+					&& (parameters.hasParameter(RequestParameter.parameterRemoteChanged)) && (parameters.hasParameter(RequestParameter.parameterRemoteDeleted))
+					&&  (parameters.hasParameter(RequestParameter.parameterAddedAdded)) &&  (parameters.hasParameter(RequestParameter.parameterchangedChanged))
+					&& (parameters.hasParameter(RequestParameter.parameterdeletedChanged)) && (parameters.hasParameter(RequestParameter.parameterchangedDeleted))
+					&& (parameters.hasParameter(RequestParameter.ParameterLocalPort))) {
+				//?paste
+				_type = requestTypeSynchronizeThenExport1;
+			}
+			if ((parameters.hasParameter(RequestParameter.ParameterLocalPort)) && (parameters.hasParameter(RequestParameter.ParameterSynchronize))
+					&& (parameters.hasParameter(RequestParameter.ParameterRemoteAddr))
+					&& (parameters.hasParameter(RequestParameter.parameterRemoteAdded))&& (parameters.hasParameter(RequestParameter.parameterRemoteChanged))
+					&& (parameters.hasParameter(RequestParameter.parameterRemoteDeleted))&& (parameters.hasParameter(RequestParameter.parameterchangedChanged))
+					&& (parameters.hasParameter(RequestParameter.parameterdeletedChanged))&& (parameters.hasParameter(RequestParameter.parameterchangedDeleted))) {
+				//?paste
+				_type = requestTypeSynchronize;
+			}
+			if ((parameters.hasParameter(RequestParameter.ParameterSynchronizeThenExport2))
+					&&  (parameters.hasParameter(RequestParameter.parameterAddedAdded)) && (parameters.hasParameter(RequestParameter.ParameterLocalPort))
+					&& (parameters.hasParameter(RequestParameter.parameterchangedChanged)) && (parameters.hasParameter(RequestParameter.parameterchangedDeleted))
+					&& (parameters.hasParameter(RequestParameter.parameterdeletedChanged)) && (parameters.hasParameter(RequestParameter.parameterRemoteAdded))
+					&& (parameters.hasParameter(RequestParameter.parameterRemoteChanged)) && (parameters.hasParameter(RequestParameter.parameterRemoteDeleted))) {
+				//?paste
+				System.out.println("Yup, request is synthenxml2");
+				_type = requestTypeSynchronizeThenExport2;
+			}
+		}
+		else if(parameters.size() == 13){
+			if ((parameters.hasParameter(RequestParameter.ParameterSynchronize2)) && (parameters.hasParameter(RequestParameter.ParameterURL))
+					&&  (parameters.hasParameter(RequestParameter.parameterAddedAdded)) && (parameters.hasParameter(RequestParameter.ParameterLocalPort))
+					&& (parameters.hasParameter(RequestParameter.parameterchangedChanged)) && (parameters.hasParameter(RequestParameter.parameterchangedDeleted))
+					&& (parameters.hasParameter(RequestParameter.parameterdeletedChanged)) && (parameters.hasParameter(RequestParameter.parameterLocalAdded))
+					&& (parameters.hasParameter(RequestParameter.parameterLocalChanged)) && (parameters.hasParameter(RequestParameter.parameterLocalDeleted))
+					&& (parameters.hasParameter(RequestParameter.parameterRemoteAdded)) && (parameters.hasParameter(RequestParameter.parameterRemoteChanged))
+					&& (parameters.hasParameter(RequestParameter.parameterRemoteDeleted))) {
+				//?paste
+				System.out.println("Yup, request is syn2");
+				_type = requestTypeSynchronize2;
 			}
 		}
 	}

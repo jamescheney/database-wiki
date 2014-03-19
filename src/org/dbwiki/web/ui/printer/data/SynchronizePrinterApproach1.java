@@ -91,11 +91,15 @@ public class SynchronizePrinterApproach1 implements HtmlContentPrinter {
 		body.openTR();
 		body.openTD(CSS.CSSInputForm);
 		body.openPARAGRAPH(CSS.CSSInputForm);
-		body.text("If there are entries added locally, and idetical entries are added remotely, would you like to merge them?");
+		body.text("If there are entries added locally, and identical entries are added remotely, would you like to merge them?");
 		body.closePARAGRAPH();
 		body.addRADIOBUTTON("Yes", "addedAdded", "true", true);
 		body.addRADIOBUTTON("No ", "addedAdded", "false", false);
+		body.closeTD();
+		body.closeTR();
 		
+		body.openTR();
+		body.openTD(CSS.CSSInputForm);
 		body.text("<textarea name=\"localport\" style=\"display:none;\">" + _localPort + "</textarea>");
 		body.closeTD();
 		body.closeTR();

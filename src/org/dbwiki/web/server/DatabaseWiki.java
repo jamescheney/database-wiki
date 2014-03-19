@@ -857,7 +857,7 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 			}
 			return;
 		}
-		else if (request.type().isSynchronizeThenExport1()) {
+		else if (request.type().isSynchronizeThenExport1() || request.type().isSynchronizeThenExport2()) {
 			String url = null;
 			if (request.parameters().hasParameter(RequestParameter.ParameterURL)) {
 				url = request.parameters().get(RequestParameter.ParameterURL).value();
@@ -898,7 +898,7 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 			isIndexRequest = !isGetRequest;
 		}
 		else if(request.type().isSynchronize2())  {
-			this.synchronizeURL(request, RequestParameter.ParameterSynchronizeThenExport1);
+			this.synchronizeURL(request, RequestParameter.ParameterSynchronizeThenExport2);
 			isGetRequest = !request.isRootRequest();
 			isIndexRequest = !isGetRequest;
 		}

@@ -52,6 +52,9 @@ public class SynchronizeDatabaseWiki {
 	private boolean remoteAdded;
 	private boolean remoteDeleted;
 	private boolean remoteChanged;
+	private boolean localAdded;
+	private boolean localDeleted;
+	private boolean localChanged;
 	private boolean changedChanged;
 	private boolean deletedChanged;
 	private boolean changedDeleted;
@@ -88,6 +91,9 @@ public class SynchronizeDatabaseWiki {
 	public static String SyncInfoChangedDeleted = "changedDeleted";
 	public static String SyncInfoChangedChanged = "changedChanged";
 	public static String SyncInfoAddedAdded = "addedAdded";
+	public static String SyncInfoLocalAdded = "localAdded";
+	public static String SyncInfoLocalChanged = "localChanged";
+	public static String SyncInfoLocalDeleted = "localDeleted";
 	
 	//get the id of the remote node that is mapped to the local node with id localID
 	private int getRemoteMapID(int localID){
@@ -307,6 +313,9 @@ public class SynchronizeDatabaseWiki {
 			this.changedDeleted = Boolean.parseBoolean(syncProperties.getProperty(this.SyncInfoChangedDeleted));
 			this.changedChanged = Boolean.parseBoolean(syncProperties.getProperty(this.SyncInfoChangedChanged));
 			this.addedAdded = Boolean.parseBoolean(syncProperties.getProperty(this.SyncInfoAddedAdded, "false"));
+			this.localAdded = Boolean.parseBoolean(syncProperties.getProperty(this.SyncInfoLocalAdded, "false"));
+			this.localChanged = Boolean.parseBoolean(syncProperties.getProperty(this.SyncInfoLocalChanged, "false"));
+			this.localDeleted = Boolean.parseBoolean(syncProperties.getProperty(this.SyncInfoLocalDeleted, "false"));
 
 		
 			String url = remoteURL + database + DatabaseIdentifier.PathSeparator;
@@ -505,6 +514,12 @@ public class SynchronizeDatabaseWiki {
 			sourceURL += "&" + RequestParameter.parameterRemoteAdded + "=" + true;
 			sourceURL += "&" + RequestParameter.parameterRemoteChanged + "=" + true;
 			sourceURL += "&" + RequestParameter.parameterRemoteDeleted + "=" + true;
+			sourceURL += "&" + RequestParameter.parameterAddedAdded + "=" + this.addedAdded;
+			break;
+		case RequestParameter.ParameterSynchronizeThenExport2:
+			sourceURL += "&" + RequestParameter.parameterRemoteAdded + "=" + this.localAdded;
+			sourceURL += "&" + RequestParameter.parameterRemoteChanged + "=" + this.localChanged;
+			sourceURL += "&" + RequestParameter.parameterRemoteDeleted + "=" + this.localDeleted;
 			sourceURL += "&" + RequestParameter.parameterAddedAdded + "=" + this.addedAdded;
 			break;
 		}
@@ -758,6 +773,13 @@ public class SynchronizeDatabaseWiki {
 	
 	public void setSynchronizeParameters(boolean remoteAdded, boolean remoteDeleted, boolean remoteChanged,
 			boolean changedChanged, boolean deletedChanged, boolean changedDeleted, boolean addedAdded){
+		setSynchronizeParameters(remoteAdded, remoteDeleted, remoteChanged, changedChanged, deletedChanged,
+				changedDeleted, addedAdded, false, false, false);
+	}
+	
+	public void setSynchronizeParameters(boolean remoteAdded, boolean remoteDeleted, boolean remoteChanged,
+			boolean changedChanged, boolean deletedChanged, boolean changedDeleted, boolean addedAdded,
+			boolean localAdded, boolean localChanged, boolean localDeleted){
 		this.remoteAdded = remoteAdded;
 		this.remoteDeleted = remoteDeleted;
 		this.remoteChanged = remoteChanged;
@@ -765,6 +787,9 @@ public class SynchronizeDatabaseWiki {
 		this.deletedChanged = deletedChanged;
 		this.changedDeleted = changedDeleted;
 		this.addedAdded = addedAdded;
+		this.localChanged = localChanged;
+		this.localAdded = localAdded;
+		this.localDeleted = localDeleted;
 	}
 	
 	public static void main(String args[]) throws org.dbwiki.exception.WikiException{

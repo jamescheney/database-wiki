@@ -128,30 +128,43 @@ public class SynchronizePrinterApproach2 implements HtmlContentPrinter {
 		body.openTR();
 		body.openTD(CSS.CSSInputForm);
 		body.openPARAGRAPH(CSS.CSSInputForm);
-		body.text("If there are entries changed both locally and remotely, would you like to pull remote copy?");
+		body.text("If there are entries changed both locally and remotely, would you like to resolve the conflict? How?");
 		body.closePARAGRAPH();
-		body.addRADIOBUTTON("Yes", "changedChanged", "true", true);
-		body.addRADIOBUTTON("No", "changedChanged", "false", false);
+		body.addRADIOBUTTON("No", "changedChanged", "false", true);
+		body.addRADIOBUTTON("Yes, pull changes to local server", "changedChanged", "here", false);
+		body.addRADIOBUTTON("Yes, push changes to remote server", "changedChanged", "there", false);
 		body.closeTD();
 		body.closeTR();
 		
 		body.openTR();
 		body.openTD(CSS.CSSInputForm);
 		body.openPARAGRAPH(CSS.CSSInputForm);
-		body.text("If there are entries deletedly locally but changed remotely, would you like to pull remote copy?");
+		body.text("If there are entries deletedly locally but changed remotely, would you like to resolve the conflict? How?");
 		body.closePARAGRAPH();
-		body.addRADIOBUTTON("Yes", "deletedChanged", "true", true);
-		body.addRADIOBUTTON("No", "deletedChanged", "false", false);
+		body.addRADIOBUTTON("No", "deletedChanged", "false", true);
+		body.addRADIOBUTTON("Yes, pull changes to local server", "deletedChanged", "here", false);
+		body.addRADIOBUTTON("Yes, push changes to remote server", "deletedChanged", "there", false);
 		body.closeTD();
 		body.closeTR();
 		
 		body.openTR();
 		body.openTD(CSS.CSSInputForm);
 		body.openPARAGRAPH(CSS.CSSInputForm);
-		body.text("If there are entries changed locally but deleted remotely, would you like to delete the entry locally?");
+		body.text("If there are entries changed locally but deleted remotely, would you like to resolve the conflict? How?");
 		body.closePARAGRAPH();
-		body.addRADIOBUTTON("Yes", "changedDeleted", "true", true);
-		body.addRADIOBUTTON("No", "changedDeleted", "false", false);
+		body.addRADIOBUTTON("No", "changedDeleted", "false", true);
+		body.addRADIOBUTTON("Yes, pull changes to local server", "changedDeleted", "here", false);
+		body.addRADIOBUTTON("Yes, push changes to remote server", "changedDeleted", "there", false);
+		body.closeTD();
+		body.closeTR();
+		
+		body.openTR();
+		body.openTD(CSS.CSSInputForm);
+		body.openPARAGRAPH(CSS.CSSInputForm);
+		body.text("If there are entries added locally, and identical entries are added remotely, would you like to merge them?");
+		body.closePARAGRAPH();
+		body.addRADIOBUTTON("Yes", "addedAdded", "true", true);
+		body.addRADIOBUTTON("No ", "addedAdded", "false", false);
 		body.closeTD();
 		body.closeTR();
 		
