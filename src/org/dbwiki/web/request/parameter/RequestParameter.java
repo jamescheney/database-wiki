@@ -78,6 +78,7 @@ public class RequestParameter {
 	public static final String ActionValuePageValue       = "page_value";
 
 	public static final String TextFieldIndicator       = "txt_";
+	public static final String ParameterSynchronizeFormApproach1 = "synchronize_form1";
 	
 	
 	/*

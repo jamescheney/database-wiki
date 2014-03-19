@@ -65,6 +65,8 @@ public class RequestType {
 	private static final byte requestTypeSearch = 14;
 	//?synchronize_form
 	private static final byte requestTypeSynchronizeForm = 24;
+	//?synchronize_form
+	private static final byte requestTypeSynchronizeFormApproach1 = 29;
 	//?synchronize
 	private static final byte requestTypeSynchronize = 25;
 	//?synxml
@@ -175,6 +177,9 @@ public class RequestType {
 			} else if (parameters.hasParameter(RequestParameter.ParameterSynchronizeForm)) {
 				//?synchronize_form
 				_type = requestTypeSynchronizeForm;
+			} else if (parameters.hasParameter(RequestParameter.ParameterSynchronizeFormApproach1)) {
+				//?synchronize_form
+				_type = requestTypeSynchronizeFormApproach1;
 			} else if (parameters.hasParameter(RequestParameter.ParameterSynchronize)) {
 				//?synchronize
 				_type = requestTypeSynchronize;
@@ -373,6 +378,10 @@ public class RequestType {
 	
 	public boolean isSynchronizeForm() {
 		return (_type == requestTypeSynchronizeForm);
+	}
+	
+	public boolean isSynchronizeForm1() {
+		return (_type == requestTypeSynchronizeFormApproach1);
 	}
 
 	public boolean isPushToRemote() {

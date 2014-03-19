@@ -2,3 +2,5 @@
 bin/*
 align_log
 synchronize_log
+create-server8081.sh
+resources/configuration/server/config8081

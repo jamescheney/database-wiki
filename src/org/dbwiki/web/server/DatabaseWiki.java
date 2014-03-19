@@ -107,6 +107,7 @@ import org.dbwiki.web.ui.printer.data.InputFormPrinter;
 import org.dbwiki.web.ui.printer.data.NodePathPrinter;
 import org.dbwiki.web.ui.printer.data.PushToRemotePrinter;
 import org.dbwiki.web.ui.printer.data.SynchronizePrinter;
+import org.dbwiki.web.ui.printer.data.SynchronizePrinterApproach1;
 import org.dbwiki.web.ui.printer.index.AZMultiPageIndexPrinter;
 import org.dbwiki.web.ui.printer.index.AZSinglePageIndexPrinter;
 import org.dbwiki.web.ui.printer.index.FullIndexPrinter;
@@ -553,7 +554,7 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 		} else if (request.parameters().hasParameter(RequestParameter.ParameterLocalPort)) {
 			HttpExchange exchange = (HttpExchange) request.exchange();
 			// Assuming protocol is always http
-			url = "http://" + exchange.getRemoteAddress().getHostString() + ":" + request.parameters().get("localport").value();
+			url = "http://" + exchange.getRemoteAddress().getHostName() + ":" + request.parameters().get("localport").value();
 		}
 		System.out.println("Cat: synchronizing with  url = " + url);
 		boolean remoteAdded = Boolean.parseBoolean(request.parameters().get(RequestParameter.parameterRemoteAdded).value());
@@ -810,7 +811,7 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 			} else if (request.parameters().hasParameter(RequestParameter.ParameterLocalPort)) {
 				HttpExchange exchange = (HttpExchange) request.exchange();
 				// Assuming protocol is always http
-				url = "http://" + exchange.getRemoteAddress().getHostString() + ":" + request.parameters().get("localport").value();
+				url = "http://" + exchange.getRemoteAddress().getHostName() + ":" + request.parameters().get("localport").value();
 			}
 			String database = request.wri().databaseIdentifier().databaseHomepage();
 			String sourceURL = url;
@@ -901,8 +902,10 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 				contentGenerator.put(HtmlContentGenerator.ContentContent, new FileEditor(request, "Edit URL decoding rules"));
 			} else if (request.type().isSettings()) { // The list of prior combinations of config files, can be used to revert.
 				contentGenerator.put(HtmlContentGenerator.ContentContent, new SettingsListingPrinter(request));
-			}else if (request.type().isSynchronizeForm()) { // Synchronize with a remote wiki.
+			} else if (request.type().isSynchronizeForm()) { // Synchronize with a remote wiki.
 				contentGenerator.put(HtmlContentGenerator.ContentContent, new SynchronizePrinter(request, "Synchronize with remote Database Wiki", "Insert source URL (Example: http://127.0.0.1:8080)", RequestParameter.ParameterSynchronize, RequestParameter.ParameterURL));
+			} else if (request.type().isSynchronizeForm1()) { // Synchronize with a remote wiki.
+				contentGenerator.put(HtmlContentGenerator.ContentContent, new SynchronizePrinterApproach1(request, "Synchronize with remote Database Wiki", "Insert source URL (Example: http://127.0.0.1:8080)", RequestParameter.ParameterSynchronize, RequestParameter.ParameterURL));
 			} else if (request.type().isPushToRemote()) {
 				String port = _server.getSocketAddress();
 				port = port.substring(port.lastIndexOf(':') + 1);
