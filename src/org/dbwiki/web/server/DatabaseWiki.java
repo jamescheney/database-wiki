@@ -564,6 +564,7 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 		boolean changedChanged = getParameter(RequestParameter.parameterchangedChanged, request);
 		boolean deletedChanged = getParameter(RequestParameter.parameterdeletedChanged, request);
 		boolean changedDeleted = getParameter(RequestParameter.parameterchangedDeleted, request);
+		boolean addedAdded = getParameter(RequestParameter.parameterAddedAdded, request);
 		boolean isRootRequest = false;
 		int localID = ((NodeIdentifier)request.wri().resourceIdentifier()).nodeID();
 		String database = request.wri().databaseIdentifier().databaseHomepage();
@@ -580,7 +581,7 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 		String port = _server.getSocketAddress();
 		port = port.substring(port.lastIndexOf(':') + 1);
 		SynchronizeDatabaseWiki synchronize = new SynchronizeDatabaseWiki(this, request.user());
-		synchronize.setSynchronizeParameters(remoteAdded, remoteDeleted, remoteChanged, changedChanged, deletedChanged, changedDeleted);
+		synchronize.setSynchronizeParameters(remoteAdded, remoteDeleted, remoteChanged, changedChanged, deletedChanged, changedDeleted, addedAdded);
 		synchronize.responseToSynchronizeRequest(sourceURL, localID, isRootRequest, parameter, port);
 	}
 	
@@ -591,6 +592,11 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 					|| parameter == RequestParameter.parameterRemoteChanged
 					|| parameter == RequestParameter.parameterRemoteDeleted) {
 				return true;
+			}
+		}
+		if (request.type().isSynchronize()) {
+			if (parameter == RequestParameter.parameterAddedAdded) {
+				return false;
 			}
 		}
 		if (request.parameters().hasParameter(parameter)) {
@@ -822,6 +828,36 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 		}
 		else if (request.type().isSynchronizeThenExport()) {
 			// synchronising with other server before exporting
+			String url = null;
+			if (request.parameters().hasParameter(RequestParameter.ParameterURL)) {
+				url = request.parameters().get(RequestParameter.ParameterURL).value();
+			} else if (request.parameters().hasParameter(RequestParameter.ParameterLocalPort)) {
+				HttpExchange exchange = (HttpExchange) request.exchange();
+				// Assuming protocol is always http
+				url = "http://" + exchange.getRemoteAddress().getHostName() + ":" + request.parameters().get("localport").value();
+			}
+			String database = request.wri().databaseIdentifier().databaseHomepage();
+			String sourceURL = url;
+			if(sourceURL.endsWith(DatabaseIdentifier.PathSeparator)){
+				sourceURL = sourceURL.substring(0, sourceURL.length() - 1) + database + DatabaseIdentifier.PathSeparator;
+			}
+			else{
+				sourceURL = url + database + DatabaseIdentifier.PathSeparator;
+			}
+			int versionB4Sync = this.database().versionIndex().getLastVersion().number();
+			this.synchronizeURL(request, RequestParameter.ParameterSynchronizeExport);
+			isGetRequest = !request.isRootRequest();
+			isIndexRequest = !isGetRequest;
+			System.out.println("synchronised version " + versionB4Sync + " with " + sourceURL
+					+ ".. allegedly.. (now at version " + this.database().versionIndex().getLastVersion().number() + ")... now exporting XML");
+			if (versionB4Sync != this.database().versionIndex().getLastVersion().number()) {
+				this.respondToExportXMLRequest(request, new SynchronizeNodeWriter(), versionB4Sync);
+			} else {
+				this.respondToExportXMLRequest(request, new SynchronizeNodeWriter());
+			}
+			return;
+		}
+		else if (request.type().isSynchronizeThenExport1()) {
 			String url = null;
 			if (request.parameters().hasParameter(RequestParameter.ParameterURL)) {
 				url = request.parameters().get(RequestParameter.ParameterURL).value();

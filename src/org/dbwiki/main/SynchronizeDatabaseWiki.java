@@ -55,6 +55,7 @@ public class SynchronizeDatabaseWiki {
 	private boolean changedChanged;
 	private boolean deletedChanged;
 	private boolean changedDeleted;
+	private boolean addedAdded;
 	private HashMap<Integer, Integer> idMap = new HashMap<Integer, Integer>();
 	
 	//data structures storing the differences and conflicts after synchronization
@@ -86,6 +87,7 @@ public class SynchronizeDatabaseWiki {
 	public static String SyncInfoDeletedChanged = "deletedChanged";
 	public static String SyncInfoChangedDeleted = "changedDeleted";
 	public static String SyncInfoChangedChanged = "changedChanged";
+	public static String SyncInfoAddedAdded = "addedAdded";
 	
 	//get the id of the remote node that is mapped to the local node with id localID
 	private int getRemoteMapID(int localID){
@@ -304,6 +306,8 @@ public class SynchronizeDatabaseWiki {
 			this.deletedChanged = Boolean.parseBoolean(syncProperties.getProperty(this.SyncInfoDeletedChanged));
 			this.changedDeleted = Boolean.parseBoolean(syncProperties.getProperty(this.SyncInfoChangedDeleted));
 			this.changedChanged = Boolean.parseBoolean(syncProperties.getProperty(this.SyncInfoChangedChanged));
+			this.addedAdded = Boolean.parseBoolean(syncProperties.getProperty(this.SyncInfoAddedAdded, "false"));
+
 		
 			String url = remoteURL + database + DatabaseIdentifier.PathSeparator;
 			server = new WikiServer(properties);
@@ -501,6 +505,7 @@ public class SynchronizeDatabaseWiki {
 			sourceURL += "&" + RequestParameter.parameterRemoteAdded + "=" + true;
 			sourceURL += "&" + RequestParameter.parameterRemoteChanged + "=" + true;
 			sourceURL += "&" + RequestParameter.parameterRemoteDeleted + "=" + true;
+			sourceURL += "&" + RequestParameter.parameterAddedAdded + "=" + this.addedAdded;
 			break;
 		}
 		sourceURL += "&" + RequestParameter.parameterchangedChanged + "=" + !this.changedChanged;
@@ -555,10 +560,6 @@ public class SynchronizeDatabaseWiki {
 		System.out.println("Number of local added nodes: " + localAddedNodes.size());
 		if(!remoteAddedNodes.isEmpty() && remoteAdded){
 			for(ConflictPair pair: remoteAddedNodes){
-				System.out.println("RemoteAdded node: " + pair.getExistNode().toString());
-				System.out.println("parent label: " + pair.getExistNode().parent().label()
-						+ "; parent identifier: " + pair.getExistNode().parent().identifier().nodeID());
-				System.out.println("annotations: " + pair.existNode.annotation().toString());
 				boolean skip = false;
 				int insertNodeID;
 				/*******/
@@ -756,13 +757,14 @@ public class SynchronizeDatabaseWiki {
 	}
 	
 	public void setSynchronizeParameters(boolean remoteAdded, boolean remoteDeleted, boolean remoteChanged,
-			boolean changedChanged, boolean deletedChanged, boolean changedDeleted){
+			boolean changedChanged, boolean deletedChanged, boolean changedDeleted, boolean addedAdded){
 		this.remoteAdded = remoteAdded;
 		this.remoteDeleted = remoteDeleted;
 		this.remoteChanged = remoteChanged;
 		this.changedChanged = changedChanged;
 		this.deletedChanged = deletedChanged;
 		this.changedDeleted = changedDeleted;
+		this.addedAdded = addedAdded;
 	}
 	
 	public static void main(String args[]) throws org.dbwiki.exception.WikiException{
