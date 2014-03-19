@@ -65,16 +65,24 @@ public class RequestType {
 	private static final byte requestTypeSearch = 14;
 	//?synchronize_form
 	private static final byte requestTypeSynchronizeForm = 24;
-	//?synchronize_form
+	//?synchronize_form1
 	private static final byte requestTypeSynchronizeFormApproach1 = 29;
+	//?synchronize_form1
+	private static final byte requestTypeSynchronizeFormApproach2 = 31;
 	//?synchronize
 	private static final byte requestTypeSynchronize = 25;
+	//?synchronize
+	private static final byte requestTypeSynchronize1 = 30;
 	//?synxml
 	private static final byte requestTypeSynchronizeExport = 26;
 	//?pushtoremote
 	private static final byte requestTypePushToRemote = 27;
-	//?synxml
+	//?synthenxml
 	private static final byte requestTypeSynchronizeThenExport = 28;
+	//?synthenxml
+	private static final byte requestTypeSynchronizeThenExport1 = 31;
+	//?synthenxml
+	private static final byte requestTypeSynchronizeThenExport2 = 32;
 	//?settings
 	private static final byte requestTypeSettings = 15;
 	//?style_sheet resource=...
@@ -101,7 +109,7 @@ public class RequestType {
 	 */
 	
 	private byte _type;
-	
+
 	
 	/*
 	 * Constructors
@@ -174,12 +182,21 @@ public class RequestType {
 			} else if (parameters.hasParameter(RequestParameter.ParameterSynchronizeThenExport)) {
 				//?synthenxml
 				_type = requestTypeSynchronizeThenExport;
+			} else if (parameters.hasParameter(RequestParameter.ParameterSynchronizeThenExport1)) {
+				//?synthenxml
+				_type = requestTypeSynchronizeThenExport1;
+			} else if (parameters.hasParameter(RequestParameter.ParameterSynchronizeThenExport2)) {
+				//?synthenxml
+				_type = requestTypeSynchronizeThenExport2;
 			} else if (parameters.hasParameter(RequestParameter.ParameterSynchronizeForm)) {
 				//?synchronize_form
 				_type = requestTypeSynchronizeForm;
 			} else if (parameters.hasParameter(RequestParameter.ParameterSynchronizeFormApproach1)) {
-				//?synchronize_form
+				//?synchronize_form1
 				_type = requestTypeSynchronizeFormApproach1;
+			} else if (parameters.hasParameter(RequestParameter.ParameterSynchronizeFormApproach2)) {
+				//?synchronize_form1
+				_type = requestTypeSynchronizeFormApproach2;
 			} else if (parameters.hasParameter(RequestParameter.ParameterSynchronize)) {
 				//?synchronize
 				_type = requestTypeSynchronize;
@@ -266,6 +283,22 @@ public class RequestType {
 					// silently ignore wiki exceptions
 					// FIXME #requestparsing: is this really the behaviour we want?
 				}
+			}
+		}
+		else if(parameters.size() == 7){
+			if ((parameters.hasParameter(RequestParameter.ParameterSynchronize1)) && (parameters.hasParameter(RequestParameter.ParameterURL))
+					&&  (parameters.hasParameter(RequestParameter.parameterAddedAdded)) &&  (parameters.hasParameter(RequestParameter.parameterchangedChanged))
+					&& (parameters.hasParameter(RequestParameter.parameterdeletedChanged)) && (parameters.hasParameter(RequestParameter.parameterchangedDeleted))
+					&& (parameters.hasParameter(RequestParameter.ParameterLocalPort))) {
+				//?paste
+				_type = requestTypeSynchronize1;
+			}
+			if ((parameters.hasParameter(RequestParameter.ParameterSynchronizeThenExport1)) && (parameters.hasParameter(RequestParameter.ParameterURL))
+					&&  (parameters.hasParameter(RequestParameter.parameterAddedAdded)) &&  (parameters.hasParameter(RequestParameter.parameterchangedChanged))
+					&& (parameters.hasParameter(RequestParameter.parameterdeletedChanged)) && (parameters.hasParameter(RequestParameter.parameterchangedDeleted))
+					&& (parameters.hasParameter(RequestParameter.ParameterLocalPort))) {
+				//?paste
+				_type = requestTypeSynchronizeThenExport1;
 			}
 		}
 		else if(parameters.size() == 8){
@@ -376,12 +409,24 @@ public class RequestType {
 		return (_type == requestTypeSynchronizeThenExport);
 	}
 	
+	public boolean isSynchronizeThenExport1() {
+		return (_type == requestTypeSynchronizeThenExport1);
+	}
+	
+	public boolean isSynchronizeThenExport2() {
+		return (_type == requestTypeSynchronizeThenExport2);
+	}
+	
 	public boolean isSynchronizeForm() {
 		return (_type == requestTypeSynchronizeForm);
 	}
 	
 	public boolean isSynchronizeForm1() {
 		return (_type == requestTypeSynchronizeFormApproach1);
+	}
+	
+	public boolean isSynchronizeForm2() {
+		return (_type == requestTypeSynchronizeFormApproach2);
 	}
 
 	public boolean isPushToRemote() {
@@ -422,6 +467,10 @@ public class RequestType {
 	
 	public boolean isURLDecoding() {
 		return (_type == requestTypeURLDecoding);
+	}
+
+	public boolean isSynchronize1() {
+		return (_type == requestTypeSynchronize1);
 	}
 	
 	@Override

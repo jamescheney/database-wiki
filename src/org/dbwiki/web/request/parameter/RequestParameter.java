@@ -62,6 +62,8 @@ public class RequestParameter {
 	public static final String parameterchangedDeleted	 = "changedDeleted";
 	public static final String ParameterSynchronizeExport = "synxml";
 	public static final String ParameterSynchronizeThenExport = "synthenxml";
+	public static final String ParameterSynchronizeThenExport1 = "synthenxml1";
+	public static final String ParameterSynchronizeThenExport2 = "synthenxml2";
 	public static final String ParameterReset            = "reset";
 	public static final String ParameterResource         = "resource";
 	public static final String ParameterSettings         = "settings";
@@ -79,6 +81,10 @@ public class RequestParameter {
 
 	public static final String TextFieldIndicator       = "txt_";
 	public static final String ParameterSynchronizeFormApproach1 = "synchronize_form1";
+	public static final String ParameterSynchronizeFormApproach2 = "synchronize_form2";
+	public static final String parameterAddedAdded		  = "addedAdded";
+	public static final String ParameterSynchronize1 = "synchronize1";
+	public static final String ParameterSynchronize2 = "synchronize2";
 	
 	
 	/*

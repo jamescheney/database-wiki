@@ -108,6 +108,7 @@ import org.dbwiki.web.ui.printer.data.NodePathPrinter;
 import org.dbwiki.web.ui.printer.data.PushToRemotePrinter;
 import org.dbwiki.web.ui.printer.data.SynchronizePrinter;
 import org.dbwiki.web.ui.printer.data.SynchronizePrinterApproach1;
+import org.dbwiki.web.ui.printer.data.SynchronizePrinterApproach2;
 import org.dbwiki.web.ui.printer.index.AZMultiPageIndexPrinter;
 import org.dbwiki.web.ui.printer.index.AZSinglePageIndexPrinter;
 import org.dbwiki.web.ui.printer.index.FullIndexPrinter;
@@ -557,12 +558,12 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 			url = "http://" + exchange.getRemoteAddress().getHostName() + ":" + request.parameters().get("localport").value();
 		}
 		System.out.println("Cat: synchronizing with  url = " + url);
-		boolean remoteAdded = Boolean.parseBoolean(request.parameters().get(RequestParameter.parameterRemoteAdded).value());
-		boolean remoteChanged = Boolean.parseBoolean(request.parameters().get(RequestParameter.parameterRemoteChanged).value());
-		boolean remoteDeleted = Boolean.parseBoolean(request.parameters().get(RequestParameter.parameterRemoteDeleted).value());
-		boolean changedChanged = Boolean.parseBoolean(request.parameters().get(RequestParameter.parameterchangedChanged).value());
-		boolean deletedChanged = Boolean.parseBoolean(request.parameters().get(RequestParameter.parameterdeletedChanged).value());
-		boolean changedDeleted = Boolean.parseBoolean(request.parameters().get(RequestParameter.parameterchangedDeleted).value());
+		boolean remoteAdded = getParameter(RequestParameter.parameterRemoteAdded, request);
+		boolean remoteChanged = getParameter(RequestParameter.parameterRemoteChanged, request);
+		boolean remoteDeleted = getParameter(RequestParameter.parameterRemoteDeleted, request);
+		boolean changedChanged = getParameter(RequestParameter.parameterchangedChanged, request);
+		boolean deletedChanged = getParameter(RequestParameter.parameterdeletedChanged, request);
+		boolean changedDeleted = getParameter(RequestParameter.parameterchangedDeleted, request);
 		boolean isRootRequest = false;
 		int localID = ((NodeIdentifier)request.wri().resourceIdentifier()).nodeID();
 		String database = request.wri().databaseIdentifier().databaseHomepage();
@@ -583,6 +584,21 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 		synchronize.responseToSynchronizeRequest(sourceURL, localID, isRootRequest, parameter, port);
 	}
 	
+	private boolean getParameter(String parameter,
+			WikiDataRequest<?> request) {
+		if (request.type().isSynchronize1()) {
+			if (parameter == RequestParameter.parameterRemoteAdded
+					|| parameter == RequestParameter.parameterRemoteChanged
+					|| parameter == RequestParameter.parameterRemoteDeleted) {
+				return true;
+			}
+		}
+		if (request.parameters().hasParameter(parameter)) {
+			return Boolean.parseBoolean(request.parameters().get(parameter).value());
+		}
+		return false;
+	}
+
 	/** Reset the configuration.  
 	 * The value is the parameter value of a ?reset=value request. The format
 	 * currently is expected to be <int>_<int>_<int> and these <int>'s are
@@ -839,6 +855,11 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 			isGetRequest = !request.isRootRequest();
 			isIndexRequest = !isGetRequest;
 		}
+		else if(request.type().isSynchronize1())  {
+			this.synchronizeURL(request, RequestParameter.ParameterSynchronizeThenExport1);
+			isGetRequest = !request.isRootRequest();
+			isIndexRequest = !isGetRequest;
+		}
 		
 		// If the request is not redirected (in case of INSERT or DELETE) then assemble appropriate
 		// HtmlContentGenerator.
@@ -904,8 +925,16 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 				contentGenerator.put(HtmlContentGenerator.ContentContent, new SettingsListingPrinter(request));
 			} else if (request.type().isSynchronizeForm()) { // Synchronize with a remote wiki.
 				contentGenerator.put(HtmlContentGenerator.ContentContent, new SynchronizePrinter(request, "Synchronize with remote Database Wiki", "Insert source URL (Example: http://127.0.0.1:8080)", RequestParameter.ParameterSynchronize, RequestParameter.ParameterURL));
+				String port = _server.getSocketAddress();
+				port = port.substring(port.lastIndexOf(':') + 1);
 			} else if (request.type().isSynchronizeForm1()) { // Synchronize with a remote wiki.
-				contentGenerator.put(HtmlContentGenerator.ContentContent, new SynchronizePrinterApproach1(request, "Synchronize with remote Database Wiki", "Insert source URL (Example: http://127.0.0.1:8080)", RequestParameter.ParameterSynchronize, RequestParameter.ParameterURL));
+				String port = _server.getSocketAddress();
+				port = port.substring(port.lastIndexOf(':') + 1);
+				contentGenerator.put(HtmlContentGenerator.ContentContent, new SynchronizePrinterApproach1(request, "Synchronize with remote Database Wiki", "Insert source URL (Example: http://127.0.0.1:8080)", RequestParameter.ParameterSynchronize1, RequestParameter.ParameterURL, port));
+			} else if (request.type().isSynchronizeForm2()) { // Synchronize with a remote wiki.
+				String port = _server.getSocketAddress();
+				port = port.substring(port.lastIndexOf(':') + 1);
+				contentGenerator.put(HtmlContentGenerator.ContentContent, new SynchronizePrinterApproach2(request, "Synchronize with remote Database Wiki", "Insert source URL (Example: http://127.0.0.1:8080)", RequestParameter.ParameterSynchronize2, RequestParameter.ParameterURL, port));
 			} else if (request.type().isPushToRemote()) {
 				String port = _server.getSocketAddress();
 				port = port.substring(port.lastIndexOf(':') + 1);

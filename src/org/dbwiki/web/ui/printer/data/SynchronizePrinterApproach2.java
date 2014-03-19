@@ -6,7 +6,7 @@ import org.dbwiki.web.request.parameter.RequestParameterAction;
 import org.dbwiki.web.ui.CSS;
 import org.dbwiki.web.ui.printer.HtmlContentPrinter;
 
-public class SynchronizePrinterApproach1 implements HtmlContentPrinter {
+public class SynchronizePrinterApproach2 implements HtmlContentPrinter {
 	/*
 	 * Private Variables
 	 */
@@ -23,7 +23,7 @@ public class SynchronizePrinterApproach1 implements HtmlContentPrinter {
 	 * Constructors
 	 */
 	
-	public SynchronizePrinterApproach1(WikiDataRequest<?> request, String title, String command, String actionParameterName, String inputParameterName, String localPort) {
+	public SynchronizePrinterApproach2(WikiDataRequest<?> request, String title, String command, String actionParameterName, String inputParameterName, String localPort) {
 		_actionParameterName = actionParameterName;
 		_command = command;
 		_inputParameterName = inputParameterName;

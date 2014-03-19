@@ -373,11 +373,7 @@ public class SynchronizeDatabaseWiki {
 			extractVersionNumbers(syncFile);
 			//compare entries from two DBWiki instances that is to be synchronized
 			if(!isRootRequest){
-				sourceURL = sourceURL + "?" + xmlRequestType;
-				if (xmlRequestType == RequestParameter.ParameterSynchronizeThenExport) {
-					sourceURL = invertAndAddParameters(sourceURL);
-					sourceURL = addLocalPort(sourceURL, port);
-				}
+				sourceURL = invertAndAddParameters(sourceURL, xmlRequestType, port);
 				SynchronizationInputHandler ioHandler = new SynchronizationInputHandler();
 				ioHandler.setIsRootRequest(isRootRequest);
 				new SAXCallbackInputHandler(ioHandler, false).parse(new URL(sourceURL).openStream(), false, false);
@@ -404,11 +400,7 @@ public class SynchronizeDatabaseWiki {
 					else{
 						newurl = sourceURL + Integer.toHexString(entries.get(i).identifier().nodeID());
 					}
-					newurl = newurl + "?" + xmlRequestType;
-					if (xmlRequestType == RequestParameter.ParameterSynchronizeThenExport) {
-						newurl = invertAndAddParameters(newurl);
-						sourceURL = addLocalPort(sourceURL, port);
-					}
+					newurl = invertAndAddParameters(newurl, xmlRequestType, port);
 					new SAXCallbackInputHandler(ioHandler, false).parse(new URL(newurl).openStream(), false, false);
 					
 					new_remoteVersion = ioHandler.getVersionNumber();
@@ -454,7 +446,7 @@ public class SynchronizeDatabaseWiki {
 		}
 	}
 
-	private String addLocalPort(String sourceURL, String port) {
+	private String addLocalPortParameter(String sourceURL, String port) {
 		try {
 			sourceURL += "&localport=" + URLEncoder.encode(port, "UTF-8");
 		} catch (UnsupportedEncodingException e) {
@@ -497,14 +489,25 @@ public class SynchronizeDatabaseWiki {
 		System.out.println("localPrevVerNr:" + localPreviousVersionNumber);
 	}
 	
-	private String invertAndAddParameters(String sourceURL) {
-		sourceURL += "&" + RequestParameter.parameterRemoteAdded + "=" + !this.remoteAdded;
-		sourceURL += "&" + RequestParameter.parameterRemoteChanged + "=" + !this.remoteChanged;
-		sourceURL += "&" + RequestParameter.parameterRemoteDeleted + "=" + !this.remoteDeleted;
+	private String invertAndAddParameters(String sourceURL, String xmlRequestType, String port) {
+		sourceURL = sourceURL + "?" + xmlRequestType;
+		sourceURL = addLocalPortParameter(sourceURL, port);
+		switch (xmlRequestType) {
+		case RequestParameter.ParameterSynchronizeThenExport:
+			sourceURL += "&" + RequestParameter.parameterRemoteAdded + "=" + !this.remoteAdded;
+			sourceURL += "&" + RequestParameter.parameterRemoteChanged + "=" + !this.remoteChanged;
+			sourceURL += "&" + RequestParameter.parameterRemoteDeleted + "=" + !this.remoteDeleted;
+			break;
+		case RequestParameter.ParameterSynchronizeThenExport1:
+			sourceURL += "&" + RequestParameter.parameterRemoteAdded + "=" + true;
+			sourceURL += "&" + RequestParameter.parameterRemoteChanged + "=" + true;
+			sourceURL += "&" + RequestParameter.parameterRemoteDeleted + "=" + true;
+			break;
+		}
 		sourceURL += "&" + RequestParameter.parameterchangedChanged + "=" + !this.changedChanged;
 		sourceURL += "&" + RequestParameter.parameterchangedDeleted + "=" + !this.changedDeleted;
 		sourceURL += "&" + RequestParameter.parameterdeletedChanged + "=" + !this.deletedChanged;
-		return sourceURL;
+		return sourceURL;		
 	}
 
 	//handle the conflicts in the synchronization results
