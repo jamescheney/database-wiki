@@ -512,10 +512,11 @@ public class SynchronizeDatabaseWiki {
 			sourceURL += "?";
 		}
 		sourceURL += xmlRequestType;
-		sourceURL = addLocalPortParameter(sourceURL, port);
 		System.out.print(sourceURL + "->");
 		if (xmlRequestType == RequestParameter.ParameterSynchronizeExport) {
 			return sourceURL;
+		} else {
+			sourceURL = addLocalPortParameter(sourceURL, port);
 		}
 		if (xmlRequestType == RequestParameter.ParameterSynchronizeThenExport) {
 			sourceURL += "&" + RequestParameter.parameterRemoteAdded + "=" + !this.remoteAdded;
