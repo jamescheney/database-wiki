@@ -361,7 +361,7 @@ public class SynchronizeDatabaseWiki {
 			//request and parse the remote entry/entries
 			this.isRootRequest = isRootRequest;
 			
-			String sourceURL = url;
+			String sourceURL = url.substring(0, url.lastIndexOf("?"));
 			if(!isRootRequest){
 				if(idMap.containsKey(localID)){
 					sourceURL += Integer.toHexString(idMap.get(localID));
@@ -370,6 +370,7 @@ public class SynchronizeDatabaseWiki {
 					sourceURL += Integer.toHexString(localID);
 				}
 			}
+			sourceURL += url.substring(url.lastIndexOf("?"));
 			
 			//get the version information when the synchronization happens
 			int new_remoteVersion = 0;
@@ -460,7 +461,6 @@ public class SynchronizeDatabaseWiki {
 		try {
 			sourceURL += "&localport=" + URLEncoder.encode(port, "UTF-8");
 		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return sourceURL;
@@ -500,33 +500,38 @@ public class SynchronizeDatabaseWiki {
 	}
 	
 	private String invertAndAddParameters(String sourceURL, String xmlRequestType, String port) {
-		sourceURL = sourceURL + "?" + xmlRequestType;
+		if (xmlRequestType.equals(RequestParameter.ParameterSynchronizeThenExport2)) {
+			sourceURL += "&";
+		} else {
+			sourceURL += "?";
+		}
+		sourceURL += xmlRequestType;
+		sourceURL = addLocalPortParameter(sourceURL, port);
 		System.out.print(sourceURL + "->");
-		switch (xmlRequestType) {
-		case RequestParameter.ParameterSynchronizeExport:
+		if (xmlRequestType == RequestParameter.ParameterSynchronizeExport) {
 			return sourceURL;
-		case RequestParameter.ParameterSynchronizeThenExport:
+		}
+		if (xmlRequestType == RequestParameter.ParameterSynchronizeThenExport) {
 			sourceURL += "&" + RequestParameter.parameterRemoteAdded + "=" + !this.remoteAdded;
 			sourceURL += "&" + RequestParameter.parameterRemoteChanged + "=" + !this.remoteChanged;
 			sourceURL += "&" + RequestParameter.parameterRemoteDeleted + "=" + !this.remoteDeleted;
-			break;
-		case RequestParameter.ParameterSynchronizeThenExport1:
+		}
+		if (xmlRequestType == RequestParameter.ParameterSynchronizeThenExport1) {
 			sourceURL += "&" + RequestParameter.parameterRemoteAdded + "=" + true;
 			sourceURL += "&" + RequestParameter.parameterRemoteChanged + "=" + true;
 			sourceURL += "&" + RequestParameter.parameterRemoteDeleted + "=" + true;
 			sourceURL += "&" + RequestParameter.parameterAddedAdded + "=" + this.addedAdded;
-			break;
-		case RequestParameter.ParameterSynchronizeThenExport2:
+		}
+		if (xmlRequestType == RequestParameter.ParameterSynchronizeThenExport2) {
 			sourceURL += "&" + RequestParameter.parameterRemoteAdded + "=" + this.localAdded;
 			sourceURL += "&" + RequestParameter.parameterRemoteChanged + "=" + this.localChanged;
 			sourceURL += "&" + RequestParameter.parameterRemoteDeleted + "=" + this.localDeleted;
 			sourceURL += "&" + RequestParameter.parameterAddedAdded + "=" + this.addedAdded;
-			break;
+			return sourceURL;
 		}
 		sourceURL += "&" + RequestParameter.parameterchangedChanged + "=" + !this.changedChanged;
 		sourceURL += "&" + RequestParameter.parameterchangedDeleted + "=" + !this.changedDeleted;
 		sourceURL += "&" + RequestParameter.parameterdeletedChanged + "=" + !this.deletedChanged;
-		sourceURL = addLocalPortParameter(sourceURL, port);
 		System.out.println(sourceURL);
 		return sourceURL;		
 	}

@@ -581,7 +581,22 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 		String port = _server.getSocketAddress();
 		port = port.substring(port.lastIndexOf(':') + 1);
 		SynchronizeDatabaseWiki synchronize = new SynchronizeDatabaseWiki(this, request.user());
-		synchronize.setSynchronizeParameters(remoteAdded, remoteDeleted, remoteChanged, changedChanged, deletedChanged, changedDeleted, addedAdded);
+		if (request.type().isSynchronize2()) {
+			boolean localAdded = getParameter(RequestParameter.parameterLocalAdded, request);
+			boolean localChanged = getParameter(RequestParameter.parameterLocalChanged, request);
+			boolean localDeleted = getParameter(RequestParameter.parameterLocalDeleted, request);
+			synchronize.setSynchronizeParameters(remoteAdded, remoteDeleted, remoteChanged, changedChanged, deletedChanged, changedDeleted, addedAdded, localAdded, localChanged, localDeleted);
+			sourceURL += "?" + RequestParameter.parameterchangedChanged + "="
+					+ request.parameters().get(RequestParameter.parameterchangedChanged).equals("there");
+			sourceURL += "&" + RequestParameter.parameterchangedDeleted + "="
+					+ request.parameters().get(RequestParameter.parameterchangedDeleted).equals("there");
+			sourceURL += "&" + RequestParameter.parameterdeletedChanged + "="
+					+ request.parameters().get(RequestParameter.parameterdeletedChanged).equals("there");
+			System.out.println("DatabaseWiki.java:595 sourceURL: " + sourceURL);
+		} else {
+			synchronize.setSynchronizeParameters(remoteAdded, remoteDeleted, remoteChanged, changedChanged, deletedChanged, changedDeleted, addedAdded);
+		}
+		
 		synchronize.responseToSynchronizeRequest(sourceURL, localID, isRootRequest, parameter, port);
 	}
 	
@@ -597,6 +612,13 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 		if (request.type().isSynchronize()) {
 			if (parameter == RequestParameter.parameterAddedAdded) {
 				return false;
+			}
+		}
+		if (request.type().isSynchronize2()) {
+			if (parameter == RequestParameter.parameterchangedChanged
+					|| parameter == RequestParameter.parameterRemoteChanged
+					|| parameter == RequestParameter.parameterRemoteDeleted) {
+				return request.parameters().get(parameter).value() == "here";
 			}
 		}
 		if (request.parameters().hasParameter(parameter)) {
