@@ -360,8 +360,12 @@ public class SynchronizeDatabaseWiki {
 			
 			//request and parse the remote entry/entries
 			this.isRootRequest = isRootRequest;
-			
-			String sourceURL = url.substring(0, url.lastIndexOf("?"));
+			String sourceURL;
+			if (url.contains("?")) {
+				sourceURL = url.substring(0, url.lastIndexOf("?"));	
+			} else {
+				sourceURL = url;
+			}
 			if(!isRootRequest){
 				if(idMap.containsKey(localID)){
 					sourceURL += Integer.toHexString(idMap.get(localID));
@@ -370,7 +374,9 @@ public class SynchronizeDatabaseWiki {
 					sourceURL += Integer.toHexString(localID);
 				}
 			}
-			sourceURL += url.substring(url.lastIndexOf("?"));
+			if (url.contains("?")) {
+				sourceURL += url.substring(url.lastIndexOf("?"));
+			}
 			
 			//get the version information when the synchronization happens
 			int new_remoteVersion = 0;
