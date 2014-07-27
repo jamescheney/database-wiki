@@ -22,13 +22,17 @@
 package org.dbwiki.web.security;
 
 
+import java.io.IOException;
+import java.util.Vector;
+
 import org.dbwiki.exception.WikiFatalException;
 import org.dbwiki.user.User;
 import org.dbwiki.user.UserListing;
-
 import org.dbwiki.web.request.parameter.RequestParameter;
 import org.dbwiki.web.request.parameter.RequestParameterList;
-
+import org.dbwiki.web.server.Authorization;
+import org.dbwiki.web.server.HtmlSender;
+import org.dbwiki.web.server.HttpExchangeWrapper;
 import org.dbwiki.web.server.WikiServer;
 
 import com.sun.net.httpserver.Authenticator;
@@ -52,6 +56,12 @@ public class WikiAuthenticator extends Authenticator {
 	public static final int AuthenticateNever = 1;
 	public static final int AuthenticateWriteOnly = 2;
 	
+	public static final int NoAccessPermission = 0;
+	public static final int ReadOnlyPermission = 1;
+	public static final int ReadAndWritePermission = 2;
+	
+	public static final boolean HoldPermission = true;
+	
 	
 
 	
@@ -62,16 +72,22 @@ public class WikiAuthenticator extends Authenticator {
 	private int _mode;
 	private String _realm;
 	private UserListing _users;
+	private Vector<Authorization> _authorizationListing;
 	
+	private boolean isReadRequest;
+	private boolean isInsertRequest;
+	private boolean isDeleteRequest;
+	private boolean isUpdateRequest;
 	
 	/*
 	 * Constructors
 	 */
 	
-	public WikiAuthenticator(String realm, int mode, UserListing users) {
+	public WikiAuthenticator(String realm, int mode, UserListing users, Vector<Authorization> authorizationListing) {
 		_mode = mode;
 		_realm = realm;
 		_users = users;
+		_authorizationListing = authorizationListing;
 	}
 	
 	
@@ -123,18 +139,80 @@ public class WikiAuthenticator extends Authenticator {
 			int colon = userpass.indexOf(':');
 			String uname = userpass.substring(0, colon);
 			String pass = userpass.substring(colon + 1);
+			Boolean isAdmin = isAdmin(uname);
 			if ((_mode == AuthenticateAlways) 
 					|| ((_mode == AuthenticateWriteOnly) && (isProtectedRequest))
 					|| (exchange.getRequestURI().getPath().equals(WikiServer.SpecialFolderLogin))) {
 				if (checkCredentials(uname, pass)) {
+					//////////////////crystal
+					if(isAdmin){
+						return new Authenticator.Success(new HttpPrincipal(uname, _realm));
+					}else{
+						if(exchange.getRequestURI().getPath().equals(WikiServer.SpecialFolderLogin)){
+							return new Authenticator.Success(new HttpPrincipal(uname, _realm));
+						}
+						for(int i = 0;i<_authorizationListing.size();i++){
+							String user_login = _authorizationListing.get(i).user_login();
+							String database_name = "/" + _authorizationListing.get(i).database_name();
+							
+							if(user_login.equals(uname)&&database_name.equals(_realm)){
+								boolean isRead = _authorizationListing.get(i).is_read();
+								boolean isInsert = _authorizationListing.get(i).is_insert();
+								boolean isDelete = _authorizationListing.get(i).is_delete();
+								boolean isUpdate = _authorizationListing.get(i).is_update();
+								System.out.println("isRead "+isRead);
+								System.out.println("isInsert "+isInsert);
+								System.out.println("isDelete "+isDelete);
+								System.out.println("isUpdate "+isUpdate);
+								System.out.println("isReadRequest "+isReadRequest);
+								System.out.println("isInsertRequest "+isInsertRequest);
+								System.out.println("isDeleteRequest "+isDeleteRequest);
+								System.out.println("isUpdateRequest "+isUpdateRequest);
+								if(isProtectedRequest){
+									if(isInsertRequest == true && isInsert == true){
+										return new Authenticator.Success(new HttpPrincipal(uname, _realm));
+									}else if(isDeleteRequest == true && isDelete == true){
+										return new Authenticator.Success(new HttpPrincipal(uname, _realm));
+									}else if(isUpdateRequest == true && isUpdate == true){
+										return new Authenticator.Success(new HttpPrincipal(uname, _realm));
+									}else{
+										try {
+											System.out.println("error no write permission");
+											HtmlSender.send(new NoAccessPermissionPage(),exchange);
+											
+										} catch (IOException e) {
+											// TODO Auto-generated catch block
+											e.printStackTrace();
+										}
+									}
+								}else{
+									isReadRequest = true;
+									if(isReadRequest == true && isRead == true){
+										return new Authenticator.Success(new HttpPrincipal(uname, _realm));
+									}else{
+										try {
+											System.out.println("error no read permission");
+											HtmlSender.send(new NoAccessPermissionPage(), exchange);
+										} catch (IOException e) {
+											e.printStackTrace();
+										}
+									}
+								}
+							}
+						}
+					}
+					
 					return new Authenticator.Success(new HttpPrincipal(uname, _realm));
+					////////////////////////
+
 				} else {
-					Headers map = exchange.getResponseHeaders();
-					map.set("WWW-Authenticate", "Basic realm=" + "\"" + _realm	+ "\"");
-					return new Authenticator.Failure(401);
+						Headers map = exchange.getResponseHeaders();
+						map.set("WWW-Authenticate", "Basic realm=" + "\"" + _realm	+ "\"");
+						return new Authenticator.Failure(401);
 				}
 			} else {
 				return new Authenticator.Success(new HttpPrincipal(uname, _realm));
+				
 			}
 		}
 	}
@@ -172,6 +250,25 @@ public class WikiAuthenticator extends Authenticator {
 		}
 	}
 	
+	/** Checks whether a user is an administrator or not
+	 * 
+	 * @param username login name of user
+	 * @return boolean
+	 */
+	private boolean isAdmin(String username){
+		int i = 1;
+		while(_users.get(i)!=null){
+			String uname = _users.get(i).login();
+			boolean isAdmin = _users.get(i).is_admin();
+			if(uname.equals(username)&&isAdmin){
+				return true;
+			}else{
+				return false;
+			}
+		}
+		return false;
+	}
+	
 	/** Checks whether a request accesses a protected resource 
 	 * 
 	 * @param exchange HttpExchange
@@ -182,23 +279,33 @@ public class WikiAuthenticator extends Authenticator {
 			String rawQuery = exchange.getRequestURI().getRawQuery();
 			if (rawQuery != null) {
 				RequestParameterList parameters;
+				isReadRequest = true;
+				isInsertRequest = false;
+				isDeleteRequest = false;
+				isUpdateRequest = false;
 				try {
 					parameters = new RequestParameterList(rawQuery);
 				} catch (WikiFatalException e) {
 					e.printStackTrace();
-					
 					// is this really what we want to do?
 					return true;
 				} 
 				if (parameters.hasParameter(RequestParameter.ParameterActivate)) {
 					return true;
 				} else if (parameters.hasParameter(RequestParameter.ParameterCreate)) {
+					isInsertRequest = true;
+					return true;
+				}else if(parameters.hasParameter(RequestParameter.ParameterAllUsers)){
+					return true;
+				}else if(parameters.hasParameter(RequestParameter.ParameterAuthorization)){
 					return true;
 				} else if (parameters.hasParameter(RequestParameter.ParameterCreateSchemaNode)) {
 					return true;
 				} else if (parameters.hasParameter(RequestParameter.ParameterDelete)) {
+					isDeleteRequest = true;
 					return true;
 				} else if (parameters.hasParameter(RequestParameter.ParameterEdit)) {
+					isUpdateRequest = true;
 					return true;
 				} else if (parameters.hasParameter(RequestParameter.ParameterLayout)) {
 					return true;
