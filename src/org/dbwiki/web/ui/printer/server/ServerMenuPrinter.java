@@ -21,14 +21,16 @@
 */
 package org.dbwiki.web.ui.printer.server;
 
+import org.dbwiki.user.User;
 import org.dbwiki.web.html.HtmlLinePrinter;
-
+import org.dbwiki.web.request.HttpRequest;
+import org.dbwiki.web.request.WikiRequest;
 import org.dbwiki.web.request.parameter.RequestParameter;
 import org.dbwiki.web.server.DatabaseWiki;
 import org.dbwiki.web.server.WikiServer;
-
+import org.dbwiki.web.server.WikiServerConstants;
 import org.dbwiki.web.ui.CSS;
-
+import org.dbwiki.web.ui.HtmlContentGenerator;
 import org.dbwiki.web.ui.printer.HtmlContentPrinter;
 
 /** Prints the server popup menu
@@ -36,13 +38,12 @@ import org.dbwiki.web.ui.printer.HtmlContentPrinter;
  * @author jcheney
  *
  */
-public class ServerMenuPrinter implements HtmlContentPrinter {
+public class ServerMenuPrinter extends HtmlContentGenerator implements HtmlContentPrinter  {
 	/*
 	 * Private Variables
 	 */
 	
 	private WikiServer _server;
-	
 	
 	/*
 	 * Constructors
@@ -51,6 +52,7 @@ public class ServerMenuPrinter implements HtmlContentPrinter {
 	public ServerMenuPrinter(WikiServer server) {
 		_server = server;
 	}
+	
 	
 	
 	/*
@@ -67,7 +69,12 @@ public class ServerMenuPrinter implements HtmlContentPrinter {
 			this.printPopUp(RequestParameter.ParameterEdit, body);
 			body.add("\t\t\t<a class=\"" + CSS.CSSMenu + "\" id=\"t3\" onMouseOut=\"HideItem('reset_submenu');\" onMouseOver=\"ShowItem('reset_submenu');\">Reset</a>");
 			this.printPopUp(RequestParameter.ParameterReset, body);
+			//////////////crystal
+			body.add("\t\t\t<a class=\"" + CSS.CSSMenu + "\" id=\"t4\" href=\"/?" + RequestParameter.ParameterAllUsers + "\">Users</a>");
+			//body.add("\t\t\t<a class=\"" + CSS.CSSMenu + "\" id=\"t1\" href=\"/?" + RequestParameter.ParameterSecurity + "\">Security</a>");
+			////////////////////
 		}
+		
 		
 		body.add("\t\t</div>");
 		
