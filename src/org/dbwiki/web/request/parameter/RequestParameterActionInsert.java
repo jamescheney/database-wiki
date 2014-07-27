@@ -46,8 +46,24 @@ public class RequestParameterActionInsert extends RequestParameterAction {
 	public boolean actionUpdate() {
 		return false;
 	}
+	
+	public boolean actionUpdateUsers() {
+		return false;
+	}
 
 	public String toURLString() {
 		return RequestParameter.ParameterAction + "=" + RequestParameterAction.ActionInsert;
+	}
+
+	@Override
+	public boolean actionUpdateAuthorization() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean actionCancelAuthorizationUpdate() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

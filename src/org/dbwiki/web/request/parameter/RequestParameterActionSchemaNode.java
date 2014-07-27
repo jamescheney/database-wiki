@@ -45,8 +45,24 @@ public class RequestParameterActionSchemaNode extends RequestParameterAction {
 	public boolean actionUpdate() {
 		return false;
 	}
+	
+	public boolean actionUpdateUsers() {
+		return false;
+	}
 
 	public String toURLString() {
 		return RequestParameter.ParameterAction + "=" + RequestParameterAction.ActionSchemaNode;
+	}
+
+	@Override
+	public boolean actionUpdateAuthorization() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean actionCancelAuthorizationUpdate() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

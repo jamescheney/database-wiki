@@ -47,7 +47,23 @@ public class RequestParameterActionAnnotate extends RequestParameterAction {
 		return false;
 	}
 	
+	public boolean actionUpdateUsers() {
+		return false;
+	}
+	
 	public String toURLString() {
 		return RequestParameter.ParameterAction + "=" + RequestParameterAction.ActionAnnotate;
+	}
+
+	@Override
+	public boolean actionUpdateAuthorization() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean actionCancelAuthorizationUpdate() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

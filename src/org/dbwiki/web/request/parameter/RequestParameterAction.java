@@ -27,12 +27,14 @@ public abstract class RequestParameterAction {
 	 * Public Constants
 	 */
 	
-	public static final String ActionAnnotate   = "annotate";
-	public static final String ActionCancel     = "cancel";
-	public static final String ActionSchemaNode = "schema_node";
-	public static final String ActionInsert     = "insert";
-	public static final String ActionUpdate     = "update";
-	
+	public static final String ActionAnnotate    = "annotate";
+	public static final String ActionCancel      = "cancel";
+	public static final String ActionSchemaNode  = "schema_node";
+	public static final String ActionInsert      = "insert";
+	public static final String ActionUpdate      = "update";
+	public static final String ActionUpdateUsers = "update_users";
+	public static final String ActionUpdateAuthorization = "update_authorization";
+	public static final String ActionCancelAuthorizationUpdate = "cancel_authorization_update";
 	
 	/*
 	 * Abstract Methods
@@ -43,4 +45,7 @@ public abstract class RequestParameterAction {
 	public abstract boolean actionSchemaNode();
 	public abstract boolean actionInsert();
 	public abstract boolean actionUpdate();
+	public abstract boolean actionUpdateUsers();
+	public abstract boolean actionUpdateAuthorization();
+	public abstract boolean actionCancelAuthorizationUpdate();
 }
