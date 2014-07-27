@@ -49,24 +49,58 @@ public class User {
 	private int _id;
 	private String _login;
 	private String _password;
+	private boolean _is_admin;
 	
 	
 	/*
 	 * Constructors
 	 */
 	
-	public User(int id, String login, String fullName, String password) {
+	public User(int id, String login, String fullName, String password, boolean is_admin) {
 		_fullName  = fullName;
 		_id = id;
 		_login = login;
 		_password = password;
+		_is_admin = is_admin;
 	}
 	
 	
 	/*
 	 * Public Methods
 	 */
-	
+
+	public void set_fullName(String _fullName) {
+		this._fullName = _fullName;
+	}
+
+
+	public void set_id(int _id) {
+		this._id = _id;
+	}
+
+	public void set_is_admin(boolean _is_admin) {
+		this._is_admin = _is_admin;
+	}
+
+	public void set_login(String _login) {
+		this._login = _login;
+	}
+
+
+	public void set_password(String _password) {
+		this._password = _password;
+	}
+
+	public static int getUnknownuserid() {
+		return UnknownUserID;
+	}
+
+
+	public static String getUnknownusername() {
+		return UnknownUserName;
+	}
+
+
 	public String fullName() {
 		return _fullName;
 	}
@@ -81,5 +115,9 @@ public class User {
 	
 	public String password() {
 		return _password;
+	}
+	
+	public boolean is_admin() {
+		return _is_admin;
 	}
 }
