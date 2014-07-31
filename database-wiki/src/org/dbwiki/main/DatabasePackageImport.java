@@ -171,7 +171,7 @@ public class DatabasePackageImport {
 			
 			
 			Properties properties = org.dbwiki.lib.IO.loadProperties(args.configFile);
-			//TODO #server: Use non-web wiki server for this
+
 			_server = new WikiServerStandalone(properties);
 			
 			// attempt to generate a schema from the input file

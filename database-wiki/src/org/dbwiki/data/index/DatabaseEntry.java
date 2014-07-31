@@ -28,7 +28,6 @@ import org.dbwiki.data.resource.ResourceIdentifier;
 /** Interface to database entries
  * An entry has an identifier, label, last change and timestamp.
  * Implemented by WikiPageDecription and RDBMSDatabaseEntry
- * #FIXME #too_abstract Is this level of abstraction necessary?
  * @author jcheney
  *
  */

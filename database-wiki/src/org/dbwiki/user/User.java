@@ -21,6 +21,14 @@
 */
 package org.dbwiki.user;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.StringTokenizer;
+
 /** A class representing user information, with fields:
  * @param _fullName - full name of the user
  * @param _id - user id (integer)
@@ -82,4 +90,24 @@ public class User {
 	public String password() {
 		return _password;
 	}
+	
+	public static List<User> readUsers(File file) throws IOException  {
+		List<User> users = new ArrayList<User>();
+		if (file != null) {
+			BufferedReader in = new BufferedReader(new FileReader(file));
+			String line;
+			while ((line = in.readLine()) != null) {
+				if (!line.startsWith("#")) {
+					StringTokenizer tokens = new StringTokenizer(line, "\t");
+					String login = tokens.nextToken();
+					String fullName = tokens.nextToken();
+					String password = tokens.nextToken();
+					users.add(new User(-1,login, fullName, password));
+				}
+			}
+			in.close();
+		}
+		return users;
+	}
+	
 }

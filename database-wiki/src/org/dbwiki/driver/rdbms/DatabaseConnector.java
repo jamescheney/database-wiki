@@ -21,16 +21,14 @@
 */
 package org.dbwiki.driver.rdbms;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.Date;
-import java.util.StringTokenizer;
+import java.util.List;
 
 import org.dbwiki.data.provenance.ProvenanceCreate;
 import org.dbwiki.data.schema.DatabaseSchema;
@@ -113,7 +111,9 @@ public abstract class DatabaseConnector implements DatabaseConstants, WikiServer
 		createDatabase(con, dbName, null, user, null);
 	}
 	
-	public void createServer(File file) throws org.dbwiki.exception.WikiException {
+
+
+	public void createServer(List<User> users) throws org.dbwiki.exception.WikiException {
 		// Creates wiki server main tables in MySQL database:
 		//
 		// The listing of database wikis
@@ -176,8 +176,8 @@ public abstract class DatabaseConnector implements DatabaseConstants, WikiServer
 					RelUserColPassword + " varchar(80) NOT NULL, " +
 					"PRIMARY KEY (" + RelUserColID + "))");
 			
-			// TODO #users: Split this off into a separate reader for List<User>, so that this isn't dependent on File.
 			
+			/* old code for inserting users
 			if (file != null) {
 				BufferedReader in = new BufferedReader(new FileReader(file));
 				String line;
@@ -197,13 +197,23 @@ public abstract class DatabaseConnector implements DatabaseConstants, WikiServer
 					}
 				}
 				in.close();
-			}
+			}*/
 			
 			stmt.close();
+
+			for (User user : users) {
+				PreparedStatement insert = con.prepareStatement(
+						"INSERT INTO " + RelationUser + "(" +
+						RelUserColLogin + ", " +
+						RelUserColFullName + ", " +
+						RelUserColPassword + ") VALUES(?,?,?)");
+				insert.setString(1,user.login());
+				insert.setString(2,user.fullName());
+				insert.setString(3,user.password());
+				insert.execute();
+			}
 			
 			con.close();
-		} catch (java.io.IOException ioException) {
-			throw new WikiFatalException(ioException);
 		} catch (java.sql.SQLException sqlException) {
 			throw new WikiFatalException(sqlException);
 		}

@@ -22,8 +22,13 @@
 package org.dbwiki.main;
 
 import java.io.File;
+import java.util.List;
+import java.util.Properties;
 
+import org.dbwiki.driver.rdbms.DatabaseConnector;
 import org.dbwiki.driver.rdbms.DatabaseConnectorFactory;
+import org.dbwiki.user.User;
+
 
 /** Creates the top-level tables.  Needs to be run before starting the wiki.
  * 
@@ -50,7 +55,12 @@ public class CreateServer {
 		
 		// Creates the following tables: _database, _presentation, _user
 		try {
-			new DatabaseConnectorFactory().getConnector(org.dbwiki.lib.IO.loadProperties(new File(args[0]))).createServer(new File(args[1]));
+			File configFile = new File(args[0]);
+			File userFile = new File(args[1]);
+			Properties configProperties = org.dbwiki.lib.IO.loadProperties(configFile);
+			DatabaseConnector connector = new DatabaseConnectorFactory().getConnector(configProperties);
+			List<User> users = User.readUsers(userFile);
+			connector.createServer(users);
 		} catch (Exception exception) {
 			exception.printStackTrace();
 			System.exit(0);
