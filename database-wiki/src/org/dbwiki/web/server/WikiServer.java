@@ -22,12 +22,11 @@
 package org.dbwiki.web.server;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.InetSocketAddress;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -39,24 +38,18 @@ import java.sql.Statement;
 
 import java.text.SimpleDateFormat;
 
-import java.util.Collections;
 import java.util.Properties;
 import java.util.Vector;
 
-import java.util.concurrent.Executors;
 import java.util.zip.GZIPInputStream;
 
 import org.dbwiki.data.io.SAXCallbackInputHandler;
 import org.dbwiki.data.io.StructureParser;
-import org.dbwiki.data.io.XMLDocumentImportReader;
-
 import org.dbwiki.data.schema.DatabaseSchema;
 import org.dbwiki.data.schema.SchemaParser;
 
 import org.dbwiki.driver.rdbms.DatabaseConnector;
 import org.dbwiki.driver.rdbms.DatabaseConnectorFactory;
-import org.dbwiki.driver.rdbms.DatabaseImportHandler;
-import org.dbwiki.driver.rdbms.RDBMSDatabase;
 import org.dbwiki.driver.rdbms.SQLVersionIndex;
 
 import org.dbwiki.exception.WikiException;
@@ -66,25 +59,16 @@ import org.dbwiki.exception.web.WikiRequestException;
 import org.dbwiki.user.User;
 import org.dbwiki.user.UserListing;
 
-import org.dbwiki.web.html.FatalExceptionPage;
-import org.dbwiki.web.html.FileNotFoundPage;
-import org.dbwiki.web.html.RedirectPage;
-
 import org.dbwiki.web.log.FileServerLog;
 import org.dbwiki.web.log.ServerLog;
 import org.dbwiki.web.log.StandardOutServerLog;
 
-import org.dbwiki.web.request.RequestURL;
-import org.dbwiki.web.request.ServerRequest;
+import org.dbwiki.web.request.HttpRequest;
 
 import org.dbwiki.web.request.parameter.RequestParameter;
 import org.dbwiki.web.request.parameter.RequestParameterAction;
 
-import org.dbwiki.web.security.WikiAuthenticator;
-
 import org.dbwiki.web.ui.HtmlContentGenerator;
-import org.dbwiki.web.ui.HtmlTemplateDecorator;
-
 import org.dbwiki.web.ui.ServerResponseHandler;
 
 import org.dbwiki.web.ui.printer.server.DatabaseWikiFormPrinter;
@@ -92,12 +76,8 @@ import org.dbwiki.web.ui.printer.server.DatabaseWikiListingPrinter;
 import org.dbwiki.web.ui.printer.server.DatabaseWikiProperties;
 import org.dbwiki.web.ui.printer.server.ServerMenuPrinter;
 
-//import org.pegdown.ExtendedPegDownProcessor;
-//import org.pegdown.ExtendedPegDownProcessor;
 
-import com.sun.net.httpserver.HttpContext;
-import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpServer;
+
 
 /**
  * WikiServer
@@ -122,8 +102,10 @@ import com.sun.net.httpserver.HttpServer;
  *
  */
 
+// TODO: Still need to factor out the file server stuff.
+
 @SuppressWarnings("restriction")
-public class WikiServer extends FileServer implements WikiServerConstants {
+public abstract class WikiServer  implements WikiServerConstants {
 	/*
 	 * Public Constants
 	 */
@@ -142,49 +124,38 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 	 * Private Constants
 	 */
 	
-	private static final String propertyAuthenticationMode = "AUTHENTICATION";
-	private static final String propertyBacklog = "BACKLOG";
-	private static final String propertyDirectory = "DIRECTORY";
-	private static final String propertyFormTemplate = "FORM_TEMPLATE";
-	private static final String propertyHomepageTemplate = "HOMEPAGE_TEMPLATE";
-	private static final String propertyLogFile = "LOGFILE";
-	private static final String propertyPort = "PORT";
-	private static final String propertyThreadCount = "THREADCOUNT";
+	protected static final String propertyAuthenticationMode = "AUTHENTICATION";
+	protected static final String propertyBacklog = "BACKLOG";
+	protected static final String propertyDirectory = "DIRECTORY";
+	protected static final String propertyFormTemplate = "FORM_TEMPLATE";
+	protected static final String propertyHomepageTemplate = "HOMEPAGE_TEMPLATE";
+	protected static final String propertyLogFile = "LOGFILE";
+	protected static final String propertyPort = "PORT";
+	protected static final String propertyThreadCount = "THREADCOUNT";
 
-	private static final String propertyLogFileValueSTDOUT = "STDOUT";
-	private static final String propertyWikiTitle = "WIKI_TITLE";
+	protected static final String propertyLogFileValueSTDOUT = "STDOUT";
+	protected static final String propertyWikiTitle = "WIKI_TITLE";
 	
 	/*
 	 * Private Variables
 	 */
 	
-	private String _wikiTitle = "Database Wiki";
-	private int _authenticationMode;
-	private int _backlog;
-	private DatabaseConnector _connector;
-	private File _formTemplate = null;
-	private File _homepageTemplate = null;
-	private int _port;
-	private ServerLog _serverLog = null;
-	private int _threadCount;
-	private UserListing _users;
-	private HttpServer _webServer = null;
-	private Vector<DatabaseWiki> _wikiListing;
-
+	protected String _wikiTitle = "Database Wiki";
+	protected int _authenticationMode;
+	protected DatabaseConnector _connector;
+	protected File _formTemplate = null;
+	protected File _homepageTemplate = null;
+	protected ServerLog _serverLog = null;
+	protected UserListing _users;
+	protected File _directory;
+	
+	
+	
 //	private ExtendedPegDownProcessor _pegDownProcessor = null;
 
-	/*
-	 * Constructors
-	 */
-	
 	public WikiServer(Properties properties) throws org.dbwiki.exception.WikiException {
-		super(new File(properties.getProperty(propertyDirectory)));
+		_directory = new File(properties.getProperty(propertyDirectory));
 		
-		// Web Server Properties
-		_backlog = Integer.parseInt(properties.getProperty(propertyBacklog));
-		_port = Integer.parseInt(properties.getProperty(propertyPort));
-		_threadCount = Integer.parseInt(properties.getProperty(propertyThreadCount));
-
 		initServerLog(properties.getProperty(propertyLogFile));
 		
 		initFormTemplate(properties.getProperty(propertyFormTemplate));
@@ -212,11 +183,15 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 		}
 	}
 	
+	public File directory() {
+		return _directory;
+	}
+	
 	/* Private methods to initialize data structures in constructor */
 	/** Initialize the server log object
 	 * 
 	 */
-	private void initServerLog(String serverLogValue) {
+	protected void initServerLog(String serverLogValue) {
 		
 		if (serverLogValue != null) {
 			if (serverLogValue.equalsIgnoreCase(propertyLogFileValueSTDOUT)) {
@@ -231,7 +206,7 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 	 * Initialize the form template File.  
 	 * @param formTemplateValue
 	 */
-	private void initFormTemplate(String formTemplateValue) {
+	protected void initFormTemplate(String formTemplateValue) {
 		if (formTemplateValue != null) {
 			_formTemplate = null;
 			File file = new File(formTemplateValue);
@@ -246,7 +221,7 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 	/** Initialize the homepage template File.
 	 * @param homepageTemplateValue
 	 */
-	private void initHomepageTemplate(String homepageTemplateValue) {
+	protected void initHomepageTemplate(String homepageTemplateValue) {
 		if (homepageTemplateValue != null) {
 			_homepageTemplate = null;
 			File file = new File(homepageTemplateValue);
@@ -263,7 +238,7 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 	 * @param wikiTitleValue
 	 */
 	
-	private void initWikiTitle(String wikiTitleValue) {
+	protected void initWikiTitle(String wikiTitleValue) {
 		if (wikiTitleValue != null) {
 			_wikiTitle = wikiTitleValue;
 		}
@@ -272,7 +247,7 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 	/** Initialize user listing from database
 	 * 
 	 */
-	private void getUserListing(Connection connection) throws SQLException {
+	protected void getUserListing(Connection connection) throws SQLException {
 		_users = new UserListing();
 		Statement stmt = connection.createStatement();
 		ResultSet rs = stmt.executeQuery("SELECT * FROM " + RelationUser);
@@ -284,45 +259,12 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 		
 	}
 	
-	/** 
-	 * Initialize list of DatabaseWikis from database
-	 * @param con
-	 * @throws SQLException
-	 * @throws WikiException
-	 */
-	private void getWikiListing (Connection con) throws SQLException, WikiException {
-		_wikiListing = new Vector<DatabaseWiki>();
-		Statement stmt = con.createStatement();
-		ResultSet rs = stmt.executeQuery("SELECT * FROM " + RelationDatabase + " " +
-				" WHERE " + RelDatabaseColIsActive + " = " + RelDatabaseColIsActiveValTrue + " " +
-				"ORDER BY " + RelDatabaseColTitle);
-		while (rs.next()) {
-			int id = rs.getInt(RelDatabaseColID);
-			String name = rs.getString(RelDatabaseColName);
-			String title = rs.getString(RelDatabaseColTitle);
-			int layoutVersion = rs.getInt(RelDatabaseColLayout);
-			int templateVersion = rs.getInt(RelDatabaseColTemplate);
-			int styleSheetVersion = rs.getInt(RelDatabaseColCSS);
-			int urlDecodingVersion = RelConfigFileColFileVersionValUnknown;
-			if (org.dbwiki.lib.JDBC.hasColumn(rs, RelDatabaseColURLDecoding)) {
-				urlDecodingVersion = rs.getInt(RelDatabaseColURLDecoding);
-			}
-			WikiAuthenticator authenticator = new WikiAuthenticator("/" + name, rs.getInt(RelDatabaseColAuthentication), _users);
-			int autoSchemaChanges = rs.getInt(RelDatabaseColAutoSchemaChanges);
-			ConfigSetting setting = new ConfigSetting(layoutVersion, templateVersion, styleSheetVersion, urlDecodingVersion);
-			_wikiListing.add(new DatabaseWiki(id, name, title, authenticator, autoSchemaChanges, setting, _connector, this));
-		}
-		rs.close();
-		stmt.close();
-	}
+	protected abstract void getWikiListing(Connection con) throws SQLException, WikiException ;
 	/*
 	 * Public Methods
 	 */
 	
-	/** Get the DatabaseWiki with index i */
-	public DatabaseWiki get(int index) {
-		return _wikiListing.get(index);
-	}
+	public abstract DatabaseWiki get(int index);
 	
 	/** Get the DatabaseWiki with string id @name */
 	public DatabaseWiki get(String name) {
@@ -386,50 +328,7 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 		}
 	}
 	
-	/** Implements HttpHandler.handle() which is called by the Web Server
-	 * for every browser request (Note that requests for the individual
-	 * wikis are handled by DatabaseWiki.handle())
-	 * The HttpExchange is side-effected and the response part is eventually sent back to the client.
-	 */
-	public void handle(HttpExchange exchange) throws java.io.IOException {
-		
-		try {
-			String path = exchange.getRequestURI().getPath();
-			if (path.equals("/")) {
-				if (_serverLog != null) {
-					_serverLog.logRequest(exchange.getRequestURI(),exchange.getRemoteAddress(),exchange.getResponseHeaders());
-				}
-				this.respondTo(exchange);
-			} else if ((path.startsWith(SpecialFolderDatabaseWikiStyle + "/")) && (path.endsWith(".css"))) {
-	    		this.sendCSSFile(path.substring(SpecialFolderDatabaseWikiStyle.length() + 1, path.length() - 4), exchange);
-			} else if (path.equals(SpecialFolderLogin)) {
-				//FIXME: #request This is a convoluted way of parsing the request parameter!
-				HtmlSender.send(new RedirectPage(new RequestURL<HttpExchange>( new HttpExchangeWrapper(exchange),"").parameters().get(RequestParameter.ParameterResource).value()),exchange);
-	    	// The following code is necessary if using only a single HttpContext
-	    	// instead of multiple ones (i.e., one per Database Wiki).
-	    	//} else if (path.length() > 1) {
-	    	//	int pos = path.indexOf('/', 1);
-	    	//	DatabaseWiki wiki = null;
-	    	//	if (pos != -1) {
-	    	//		wiki = this.get(path.substring(1, pos));
-	    	//	} else {
-	    	//		wiki = this.get(path.substring(1));
-	    	//	}
-	    	//	if (wiki != null) {
-	    	//		wiki.handle(exchange);
-	    	//	} else {
-		    //		this.sendFile(exchange);
-	    	//	}
-			} else if (path.equals(SpecialFolderLogout)) {
-				HtmlSender.send(new RedirectPage(new RequestURL<HttpExchange>(new HttpExchangeWrapper(exchange),"").parameters().get(RequestParameter.ParameterResource).value()),exchange);
-	    	} else {
-	    		this.sendFile(exchange);
-	    	}
-		} catch (Exception exception) {
-			HtmlSender.send(new FatalExceptionPage(exception),exchange);
-		}
-	}
-	
+
 	/** The list of all previous display settings for the specified wiki
 	 * 
 	 * @param wiki - the wiki whose settings we want
@@ -520,37 +419,9 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 		return _serverLog;
 	}
 	
-	/**
-	 * 
-	 * @return The number of DatabaseWikis
-	 */
-	public int size() {
-		return _wikiListing.size();
-	}
-
-	/** Starts the web server and creates an individual handler
-	  *	 for each of the current wikis.
-	  * 
-	  * @throws java.io.IOException
-	  */
-	public void start() throws java.io.IOException {
-		_webServer = HttpServer.create(new InetSocketAddress(_port), _backlog);
-		_webServer.setExecutor(Executors.newFixedThreadPool(_threadCount));
-
-		HttpContext context = _webServer.createContext("/", this);
-		context.setAuthenticator(new WikiAuthenticator("/", _authenticationMode, _users));
-
-		for (int iWiki = 0; iWiki < _wikiListing.size(); iWiki++) {
-			DatabaseWiki wiki = _wikiListing.get(iWiki);
-			context = _webServer.createContext("/" + wiki.name(), wiki);
-			context.setAuthenticator(wiki.authenticator());
-		}
-				
-		System.out.println("START SERVER ON ADDRESS " + _webServer.getAddress() + " AT " + new java.util.Date().toString());
-
-		_webServer.start();
-	}
+	public abstract int size(); 
 	
+
 	/**  Updates a config file (css, template, or layout as specified by fileType)
 		 for the given wiki (wikiID). Returns the version number of the updated
 		 file. The method has to store the file content in RelationConfigFile and
@@ -650,10 +521,10 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 	/** Creates appropriate response handler for homepage 
 	 * 
 	 */
-	private ServerResponseHandler getHomepageResponseHandler(ServerRequest<?> request) {
+	protected ServerResponseHandler getHomepageResponseHandler(HttpRequest request) {
 		ServerResponseHandler responseHandler = new ServerResponseHandler(request, _wikiTitle);
-		responseHandler.put(HtmlContentGenerator.ContentMenu, new ServerMenuPrinter(request.server()));
-		responseHandler.put(HtmlContentGenerator.ContentContent, new DatabaseWikiListingPrinter(request.server()));
+		responseHandler.put(HtmlContentGenerator.ContentMenu, new ServerMenuPrinter(this));
+		responseHandler.put(HtmlContentGenerator.ContentContent, new DatabaseWikiListingPrinter(this));
 
 		return responseHandler;
 	}
@@ -666,7 +537,7 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 	 * @throws MalformedURLException
 	 * @throws IOException
 	 */
-	private ServerResponseHandler getInsertWikiResponseHandler(ServerRequest<?> request) throws org.dbwiki.exception.WikiException, MalformedURLException, IOException {
+	protected ServerResponseHandler getInsertWikiResponseHandler(HttpRequest request) throws org.dbwiki.exception.WikiException, MalformedURLException, IOException {
 		
 		DatabaseWikiProperties properties = new DatabaseWikiProperties(request.parameters());
 		
@@ -763,7 +634,7 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 			//
 			// If the parameter values are valid the database wiki is created
 			//
-			if ((request.user() == null) && (_authenticationMode != WikiAuthenticator.AuthenticateNever)) {
+			if ((request.user() == null) && (_authenticationMode != DatabaseWiki.AuthenticateNever)) {
 				throw new WikiFatalException("User information is missing");
 			}
 			
@@ -798,40 +669,40 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 		}
 	}
 
-	/** Creates new database with a given schema and import given data into it
-	 * TODO #import Move this into a separate class, to factor out common functionality with DatabaseImport
-	 * @param name - string identifying database tables
-	 * @param title - human readable title
-	 * @param path - path to entries in the document
-	 * @param resource
-	 * @param databaseSchema
-	 * @param user
-	 * @param authenticationMode
-	 * @param autoSchemaChanges
-	 * @throws NumberFormatException
-	 * @throws WikiException
-	 * @throws SQLException
-	 */
-	public void registerDatabase(String name, String title, String path, URL resource, DatabaseSchema databaseSchema, User user, int authenticationMode, int autoSchemaChanges)
-		throws NumberFormatException, WikiException, SQLException {
+	
+	public abstract void registerDatabase(String name, String title, String path,
+			URL resourceURL, DatabaseSchema databaseSchema, User user,
+			int authentication, int autoSchemaChanges)
+	throws NumberFormatException, WikiException, SQLException;
+
+	// FIXME: This inner class should be used for other database creation forms/tools 
+	class CreateDatabaseRecord {
+		public String name;
+		public String title;
+		public int authenticationMode;
+		public int autoSchemaChanges;
+		DatabaseSchema databaseSchema;
+		User user;
 		
-		WikiAuthenticator authenticator = null;
-		DatabaseWiki wiki = null;
-
-		Connection con = _connector.getConnection();
-		int wikiID = -1;
-		SQLVersionIndex versionIndex = new SQLVersionIndex(con, name, users(), true);
-
-		con.setAutoCommit(false);
-		con.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
-		try {
+		CreateDatabaseRecord(String _name, String _title,int _auth, int _auto, DatabaseSchema _databaseSchema, User _user) {
+			name = _name;
+			title = _title;
+			authenticationMode = _auth;
+			databaseSchema = _databaseSchema;
+			user = _user;
+		}
+		
+	
+	public int createDatabase(Connection con,SQLVersionIndex versionIndex) 
+		throws WikiException, SQLException {
+			int wikiID;
 			_connector.createDatabase(con, name, databaseSchema, user, versionIndex);
-
+	
 			PreparedStatement pStmt = con.prepareStatement(
 					"INSERT INTO " + RelationDatabase + "(" +
 					RelDatabaseColName + ", " + RelDatabaseColTitle + ", " + 
 					RelDatabaseColAuthentication + ", " + RelDatabaseColAutoSchemaChanges + ", " +
-					RelDatabaseColUser + ") VALUES(? , ?, ?, ? , ?)", Statement.RETURN_GENERATED_KEYS);
+					RelDatabaseColUser + ") VALUES(? , ? , ? , ? , ?)", Statement.RETURN_GENERATED_KEYS);
 			pStmt.setString(1, name);
 			pStmt.setString(2, title);
 			pStmt.setInt(3, authenticationMode);
@@ -849,43 +720,10 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 				throw new WikiFatalException("There are no generated keys.");
 			}
 			rs.close();
-			
-			authenticator = new WikiAuthenticator("/" + name, authenticationMode, _users);
-			wiki = new DatabaseWiki(wikiID, name, title, authenticator, autoSchemaChanges, _connector, this,
-									con, versionIndex);
-
-			String realm = wiki.database().identifier().databaseHomepage();
-			// HACK: for command line imports _webserver may be null
-			if(_webServer != null) {
-				HttpContext context = _webServer.createContext(realm, wiki);
-				context.setAuthenticator(authenticator);
-			}
-			_wikiListing.add(wiki);
-			Collections.sort(_wikiListing);
-			con.commit();
-			//
-			// Import data into created database wiki if the user specified an import resource.
-			//
-			if (resource != null) {
-				RDBMSDatabase database = (RDBMSDatabase)wiki.database();
-				// Note that database.schema() is a copy of databaseSchema that has been read back from the database
-				// after being loaded in when we created new database above.
-				// We should really deal with the target path separately, e.g. via extra text field
-				XMLDocumentImportReader reader = new XMLDocumentImportReader(resource, 
-														database.schema(),
-														path, user, false, false);
-				DatabaseImportHandler importHandler = new DatabaseImportHandler(con, database);
-				reader.setImportHandler(importHandler);
-				reader.start();
-			}
-		} catch (java.sql.SQLException sqlException) {
-			con.rollback();
-			con.close();
-			throw new WikiFatalException(sqlException);
+			return wikiID;
 		}
-		con.commit();
-		con.close();
 	}
+	
 	
 	/** 
 	 * Gets the wiki corresponding to parameter "key" of request parameters.
@@ -896,7 +734,7 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 	 * @return
 	 * @throws org.dbwiki.exception.WikiException
 	 */
-	private DatabaseWiki getRequestWiki(ServerRequest<?> request, String key) throws org.dbwiki.exception.WikiException {
+	protected DatabaseWiki getRequestWiki(HttpRequest request, String key) throws org.dbwiki.exception.WikiException {
 		RequestParameter parameter = request.parameters().get(key);
 		if (parameter.hasValue()) {
 			try {
@@ -923,7 +761,7 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 	 * @return
 	 * @throws org.dbwiki.exception.WikiException
 	 */
-	private ServerResponseHandler getUpdateWikiResponseHandler(ServerRequest<?> request) throws org.dbwiki.exception.WikiException {
+	protected ServerResponseHandler getUpdateWikiResponseHandler(HttpRequest request) throws org.dbwiki.exception.WikiException {
 		//TODO: Simplify validation/control flow.  
 		
 		// Validate data passed in from form
@@ -944,7 +782,7 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 			return responseHandler;
 		} else {
 			// Otherwise, apply the changes.
-			if ((request.user() == null) && (_authenticationMode != WikiAuthenticator.AuthenticateNever)) {
+			if ((request.user() == null) && (_authenticationMode != DatabaseWiki.AuthenticateNever)) {
 				throw new WikiFatalException("User information is missing");
 			}
 			try {
@@ -965,10 +803,10 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 			} catch (java.sql.SQLException sqlException) {
 				throw new WikiFatalException(sqlException);
 			}
-			wiki.authenticator().setAuthenticationMode(properties.getAuthentication());
+			wiki.setAuthenticationMode(properties.getAuthentication());
 			wiki.setAutoSchemaChanges(properties.getAutoSchemaChanges());
 			wiki.setTitle(properties.getTitle());
-			Collections.sort(_wikiListing);
+			sortWikiListing();
 			return this.getHomepageResponseHandler(request);
 		}
 	}
@@ -1055,88 +893,6 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 		return value;
 	}
 
-	/** Respond to a HttpExchange.
-	 * First, parse the exchange into a ServerRequest and use its isX() methods 
-	 * to figure out what is being requested.  
-	 * In each case, construct an appropriate ServerResponseHandler.
-	 * Then find the server template and decorate the template using the ServerResponseHandler
-	 * This handles server-level requests only; DatabaseWiki-level requests are dispatched to the 
-	 * DatabaseWiki object.  
-	 * @param exchange
-	 * @throws java.io.IOException
-	 * @throws org.dbwiki.exception.WikiException
-	 */
-	private void respondTo(HttpExchange exchange) throws java.io.IOException, org.dbwiki.exception.WikiException {
-		ServerResponseHandler responseHandler = null;
-		
-		ServerRequest<HttpExchange> request = new ServerRequest<HttpExchange>(this, new HttpExchangeWrapper(exchange));
-
-		if (request.type().isIndex()) {
-			responseHandler = this.getHomepageResponseHandler(request);
-		} else if (request.type().isCreate()) {
-			responseHandler = new ServerResponseHandler(request, _wikiTitle + " - Create Database Wiki");
-			responseHandler.put(HtmlContentGenerator.ContentContent, new DatabaseWikiFormPrinter("Create Database Wiki"));
-		} else if (request.type().isEdit()) {
-			DatabaseWiki wiki = this.getRequestWiki(request, RequestParameter.ParameterEdit);
-			responseHandler = new ServerResponseHandler(request, _wikiTitle + " - Edit Database Wiki");
-			responseHandler.put(HtmlContentGenerator.ContentContent, new DatabaseWikiFormPrinter(new DatabaseWikiProperties(wiki), RequestParameterAction.ActionUpdate, "Edit Database Wiki"));
-		} else if (request.type().isReset()) {
-			this.resetWikiConfiguration(this.getRequestWiki(request, RequestParameter.ParameterReset));
-			responseHandler = this.getHomepageResponseHandler(request);
-		} else if (request.type().isAction()) {
-			RequestParameterAction action = RequestParameter.actionParameter(request.parameters().get(RequestParameter.ParameterAction));
-			if (action.actionInsert()) {
-				responseHandler = this.getInsertWikiResponseHandler(request);
-			} else if (action.actionCancel()) {
-				responseHandler = this.getHomepageResponseHandler(request);
-			} else if (action.actionUpdate()) {
-				responseHandler = this.getUpdateWikiResponseHandler(request);
-			} else {
-				throw new WikiRequestException(WikiRequestException.InvalidRequest, request.toString());
-			}
-		} else {
-			throw new WikiRequestException(WikiRequestException.InvalidRequest, request.toString());
-		}
-		
-		File template = null;
-
-		//
-		// TODO: Improve handling of individual home pages.
-		//
-		// This part is still a bit tricky. In order to identify whether the response handler results from
-		// a call to getHomepageResponseHandler() we rely on the fact that only getHomepageResponseHandler()
-		// adds content handler for Menu and Content.
-		//
-		if (responseHandler.contains(HtmlContentGenerator.ContentMenu) && responseHandler.contains(HtmlContentGenerator.ContentContent)) {
-			template = _homepageTemplate;
-		} else {
-			template = _formTemplate;
-		}
-
-		HtmlSender.send(HtmlTemplateDecorator.decorate(new BufferedReader(new FileReader(template)), responseHandler),exchange);
-	}
 	
-	/** Sends CSS file for the server.
-	 * 
-	 * @param name - name of the wiki CSS file, in format "wikiID_version"
-	 * @param exchange - exchange to respond to
-	 * @throws java.io.IOException
-	 * @throws org.dbwiki.exception.WikiException
-	 */
-	private void sendCSSFile(String name, HttpExchange exchange) throws java.io.IOException, org.dbwiki.exception.WikiException {
-		int wikiID = -1;
-		int fileVersion = -1;
-		
-		try {
-			int pos = name.indexOf("_");
-			wikiID = Integer.valueOf(name.substring(0, pos));
-			fileVersion = Integer.valueOf(name.substring(pos + 1));
-		} catch (Exception exception ) {
-			HtmlSender.send(new FileNotFoundPage(exchange.getRequestURI().getPath()),exchange);
-			return;
-		}
-		
-		String value = this.readConfigFile(wikiID, RelConfigFileColFileTypeValCSS, fileVersion);
-		this.sendData(exchange, "text/css", new ByteArrayInputStream(value.getBytes("UTF-8")));
-	}
+	public abstract void sortWikiListing ();
 }

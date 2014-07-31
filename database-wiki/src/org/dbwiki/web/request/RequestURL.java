@@ -34,11 +34,15 @@ import org.dbwiki.exception.WikiFatalException;
 
 import org.dbwiki.web.request.parameter.RequestParameterList;
 
-import org.dbwiki.web.server.DatabaseWiki;
-
 // TODO: Abstract over the part of HttpExchange interface that we need to remove dependency
 
-public class RequestURL<T> {
+public class RequestURL {
+	/*
+	 * Public Constants
+	 */
+	public static final String WikiPageRequestPrefix = "wiki";
+	public static final String SchemaRequestPrefix = "schema";
+	
 	/*
 	 * Private Variables
 	 */
@@ -53,7 +57,7 @@ public class RequestURL<T> {
 	private String _cookie = null;
 	
 	private Vector<URLComponent> _components;
-	private Exchange<T> _exchange = null;
+	private Exchange _exchange = null;
 	
 	private boolean _isGETRequest = false;
 	private RequestParameterList _parameters = null;
@@ -64,7 +68,7 @@ public class RequestURL<T> {
 	 */
 	
 	// TODO #request: Factor the URL / request parsing code out
-	public RequestURL(Exchange<T> exchange, String ignorePathPrefix) throws org.dbwiki.exception.WikiException {
+	public RequestURL(Exchange exchange, String ignorePathPrefix) throws org.dbwiki.exception.WikiException {
 		_exchange = exchange;
 		
 		_uri = exchange.getRequestURI();
@@ -76,10 +80,10 @@ public class RequestURL<T> {
 		_components = this.split(_uri.getPath().substring(ignorePathPrefix.length()));
 		if (_components.size() > 0) {
 			String firstComponent = _components.get(0).decodedText();
-			if (firstComponent.equals(DatabaseWiki.WikiPageRequestPrefix)) {
+			if (firstComponent.equals(WikiPageRequestPrefix)) {
 				_components.remove(0);
 				_type = Type.Page;
-			} else if (firstComponent.equals(DatabaseWiki.SchemaRequestPrefix)) {
+			} else if (firstComponent.equals(SchemaRequestPrefix)) {
 				_components.remove(0);
 				_type = Type.Schema;
 			}
@@ -132,10 +136,7 @@ public class RequestURL<T> {
 		_components.add(component);
 	}
 	
-	public T exchange() {
-		return _exchange.get();
-	}
-	
+
 	public URLComponent get(int index) {
 		return _components.get(index);
 	}

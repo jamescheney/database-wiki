@@ -38,19 +38,19 @@ import org.dbwiki.web.ui.printer.HtmlContentPrinter;
  * @author jcheney
  *
  */
-public class CreateSchemaNodeFormPrinter implements HtmlContentPrinter {
+public class CreateSchemaNodeFormPrinter extends HtmlContentPrinter {
 	/*
 	 * Private Variables
 	 */
 	
-	private WikiRequest<?>  _request;
+	private WikiRequest  _request;
 	
 	
 	/*
 	 * Constructors
 	 */
 	
-	public CreateSchemaNodeFormPrinter(WikiRequest<?>  request) {
+	public CreateSchemaNodeFormPrinter(WikiRequest  request) {
 		_request = request;
 	}
 	

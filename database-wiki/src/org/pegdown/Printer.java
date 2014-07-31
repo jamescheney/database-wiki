@@ -64,56 +64,58 @@ public class Printer {
     }
 
     public Printer printWithAbbreviations(String string) {
-        if (abbreviations.isEmpty()) return print(string);
-        Map<Integer, Map.Entry<String, String>> expansions = null;
-
-        for (Map.Entry<String, String> entry : abbreviations.entrySet()) {
-            // first check, whether we have a legal match
-            String abbr = entry.getKey();
-
-            int ix = 0;
-            while (true) {
-                int sx = string.indexOf(abbr, ix);
-                if (sx == -1) break;
-
-                // only allow whole word matches
-                ix = sx + abbr.length();
-
-                if (sx > 0 && Character.isLetterOrDigit(string.charAt(sx - 1))) continue;
-                if (ix < string.length() && Character.isLetterOrDigit(string.charAt(ix))) {
-                    continue;
-                }
-
-                // ok, legal match so save an expansions "task" for all matches
-                if (expansions == null) {
-                    expansions = new TreeMap<Integer, Map.Entry<String, String>>();
-                }
-                expansions.put(sx, entry);
-            }
+        String result = string; 
+        if (!abbreviations.isEmpty()) {
+	        Map<Integer, Map.Entry<String, String>> expansions = null;
+	
+	        for (Map.Entry<String, String> entry : abbreviations.entrySet()) {
+	            // first check, whether we have a legal match
+	            String abbr = entry.getKey();
+	
+	            int ix = 0;
+	            while (true) {
+	                int sx = string.indexOf(abbr, ix);
+	                if (sx == -1) break;
+	
+	                // only allow whole word matches
+	                ix = sx + abbr.length();
+	
+	                if (sx > 0 && Character.isLetterOrDigit(string.charAt(sx - 1))) continue;
+	                if (ix < string.length() && Character.isLetterOrDigit(string.charAt(ix))) {
+	                    continue;
+	                }
+	
+	                // ok, legal match so save an expansions "task" for all matches
+	                if (expansions == null) {
+	                    expansions = new TreeMap<Integer, Map.Entry<String, String>>();
+	                }
+	                expansions.put(sx, entry);
+	            }
+	        }
+	
+	        if (expansions != null) {
+	            StringBuilder localSB = new StringBuilder();
+	            int ix = 0;
+	            for (Map.Entry<Integer, Map.Entry<String, String>> entry : expansions.entrySet()) {
+	                int sx = entry.getKey();
+	                String abbr = entry.getValue().getKey();
+	                String expansion = entry.getValue().getValue();
+	
+	                localSB.append(string.substring(ix, sx));
+	
+	                StringBuilder replaceSB = new StringBuilder("<abbr");
+	                if (StringUtils.isNotEmpty(expansion)) replaceSB.append(" title=\"").append(expansion).append('"');
+	                replaceSB.append('>').append(abbr).append("</abbr>");
+	                String replace = replaceSB.toString();
+	
+	                localSB.append(replace);
+	                ix = sx + abbr.length();
+	            }
+	            localSB.append(string.substring(ix));
+	            result = localSB.toString();
+	        }
         }
-
-        if (expansions != null) {
-            StringBuilder localSB = new StringBuilder();
-            int ix = 0;
-            for (Map.Entry<Integer, Map.Entry<String, String>> entry : expansions.entrySet()) {
-                int sx = entry.getKey();
-                String abbr = entry.getValue().getKey();
-                String expansion = entry.getValue().getValue();
-
-                localSB.append(string.substring(ix, sx));
-
-                StringBuilder replaceSB = new StringBuilder("<abbr");
-                if (StringUtils.isNotEmpty(expansion)) replaceSB.append(" title=\"").append(expansion).append('"');
-                replaceSB.append('>').append(abbr).append("</abbr>");
-                String replace = replaceSB.toString();
-
-                localSB.append(replace);
-                ix = sx + abbr.length();
-            }
-            localSB.append(string.substring(ix));
-            string = localSB.toString();
-        }
-        return print(string);
+        return print(result);
     }
 
     public Printer print(char c) {

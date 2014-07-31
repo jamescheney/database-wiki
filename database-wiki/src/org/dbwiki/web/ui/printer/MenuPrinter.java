@@ -24,9 +24,9 @@ package org.dbwiki.web.ui.printer;
 import java.net.URLEncoder;
 
 import org.dbwiki.web.html.HtmlLinePrinter;
+import org.dbwiki.web.request.RequestURL;
 import org.dbwiki.web.request.WikiRequest;
 import org.dbwiki.web.request.parameter.RequestParameter;
-import org.dbwiki.web.server.DatabaseWiki;
 import org.dbwiki.web.ui.CSS;
 
 /** 
@@ -34,7 +34,7 @@ import org.dbwiki.web.ui.CSS;
  * @author jcheney
  *
  */
-public abstract class MenuPrinter implements HtmlContentPrinter {
+public abstract class MenuPrinter extends HtmlContentPrinter {
 	/*
 	 * Public Constants
 	 */
@@ -52,14 +52,14 @@ public abstract class MenuPrinter implements HtmlContentPrinter {
 	 * Private Variables
 	 */
 	
-	private WikiRequest<?>  _request;
+	private WikiRequest  _request;
 	
 	
 	/*
 	 * Constructors
 	 */
 	
-	public MenuPrinter(WikiRequest<?>  request) {
+	public MenuPrinter(WikiRequest  request) {
 		_request = request;
 	}
 	
@@ -136,8 +136,8 @@ public abstract class MenuPrinter implements HtmlContentPrinter {
 		
 		printer.add("\t\t\t\t\t<li><a href=\"/\">Server Home</a></li>");
 		printer.add("\t\t\t\t\t<li><a href=\"" + _request.wiki().database().identifier().databaseHomepage() + "\">Database</a></li>");
-		printer.add("\t\t\t\t\t<li><a href=\"" + _request.wiki().database().identifier().databaseHomepage() + "/" + DatabaseWiki.WikiPageRequestPrefix + "\">Wiki</a></li>");
-		printer.add("\t\t\t\t\t<li><a href=\"" + _request.wiki().database().identifier().databaseHomepage() + "/" + DatabaseWiki.SchemaRequestPrefix + "\">Schema</a></li>");
+		printer.add("\t\t\t\t\t<li><a href=\"" + _request.wiki().database().identifier().databaseHomepage() + "/" + RequestURL.WikiPageRequestPrefix + "\">Wiki</a></li>");
+		printer.add("\t\t\t\t\t<li><a href=\"" + _request.wiki().database().identifier().databaseHomepage() + "/" + RequestURL.SchemaRequestPrefix + "\">Schema</a></li>");
 		
 		printer.add("\t\t\t\t</ul>");
 		printer.add("\t\t\t</div>");

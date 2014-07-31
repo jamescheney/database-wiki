@@ -53,11 +53,11 @@ public class PartialIndexPrinter extends IndexContentPrinter {
 	 * Constructors
 	 */
 	
-	public PartialIndexPrinter(WikiRequest<?> request, DatabaseContent content, int entriesPerPage) {
+	public PartialIndexPrinter(WikiRequest request, DatabaseContent content, int entriesPerPage) {
 		super(request, content);
 		_entriesPerPage = entriesPerPage;
 	}
-	public PartialIndexPrinter(WikiRequest<?> request, DatabaseContent content) {
+	public PartialIndexPrinter(WikiRequest request, DatabaseContent content) {
 		super(request, content);
 	}
 	
@@ -66,7 +66,7 @@ public class PartialIndexPrinter extends IndexContentPrinter {
 	 * Public Methods
 	 */
 	
-	public void listContent(DatabaseIdentifier databaseIdentifier, ContentIterator iterator, WikiRequest<?> request, HtmlLinePrinter body) throws org.dbwiki.exception.WikiException {
+	public void listContent(DatabaseIdentifier databaseIdentifier, ContentIterator iterator, WikiRequest request, HtmlLinePrinter body) throws org.dbwiki.exception.WikiException {
 		int maxOutputCount = _entriesPerPage;
 		int outputCount = 0;
 		int readCount = 0;

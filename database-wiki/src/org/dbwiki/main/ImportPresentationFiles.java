@@ -28,12 +28,13 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.util.Properties;
 
+import org.dbwiki.data.database.Database;
 import org.dbwiki.driver.rdbms.DatabaseConnector;
 import org.dbwiki.driver.rdbms.DatabaseConnectorFactory;
-import org.dbwiki.driver.rdbms.RDBMSDatabase;
 import org.dbwiki.exception.WikiException;
 import org.dbwiki.web.server.DatabaseWiki;
 import org.dbwiki.web.server.WikiServer;
+import org.dbwiki.web.server.WikiServerStandalone;
 
 /**
  * Import presentation files into a database wiki.
@@ -70,13 +71,13 @@ public class ImportPresentationFiles {
 
 	private WikiServer _server;
 	private DatabaseWiki _wiki;
-	private RDBMSDatabase _database;
+	private Database _database;
 	private String _username;
 	
 	/*
 	 * Public Methods
 	 */
-	public ImportPresentationFiles(WikiServer server, DatabaseWiki wiki, RDBMSDatabase database, String username) {
+	public ImportPresentationFiles(WikiServer server, DatabaseWiki wiki, Database database, String username) {
 		_server = server;
 		_wiki = wiki;
 		_database = database;
@@ -112,19 +113,22 @@ public class ImportPresentationFiles {
 		try {
 			Properties properties = org.dbwiki.lib.IO.loadProperties(configFile);
 			DatabaseConnector connector = new DatabaseConnectorFactory().getConnector(properties);
-			WikiServer server = new WikiServer(properties);
-			DatabaseWiki wiki = null;
+			//TODO #server: Use non-web wiki server for this
+			WikiServer server = new WikiServerStandalone(properties);
+			/*
+			 * DatabaseWiki wiki = null;
 			for (int iWiki = 0; iWiki < server.size(); iWiki++) {
 				if (server.get(iWiki).name().equalsIgnoreCase(wikiName)) {
 					wiki = server.get(iWiki);
 					break;
 				}
-			}
+			}*/
+			DatabaseWiki wiki = server.get(wikiName);
 			
 			// [wiki] should never be null
 			assert(wiki != null);
 			
-			RDBMSDatabase database = (RDBMSDatabase)wiki.database();
+			Database database = wiki.database();
 						
 			Connection con = connector.getConnection();
 			con.setAutoCommit(false);

@@ -31,7 +31,7 @@ import org.dbwiki.data.time.VersionIndex;
 import org.dbwiki.web.request.parameter.RequestParameter;
 import org.dbwiki.web.server.DatabaseWiki;
 
-public class WikiDataRequest<T> extends WikiRequest<T> {
+public class WikiDataRequest extends WikiRequest {
 	/*
 	 * Private Constants
 	 */
@@ -55,7 +55,7 @@ public class WikiDataRequest<T> extends WikiRequest<T> {
 	 * Constructor
 	 */
 	
-	public WikiDataRequest(DatabaseWiki wiki, RequestURL<T> url) throws org.dbwiki.exception.WikiException {
+	public WikiDataRequest(DatabaseWiki wiki, RequestURL url) throws org.dbwiki.exception.WikiException {
 		super(wiki, url);
 		
 		_isRootRequest = url.isRoot();

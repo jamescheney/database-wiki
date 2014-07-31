@@ -39,19 +39,19 @@ import org.dbwiki.web.ui.CSS;
  * @author jcheney
  *
  */
-public class ObjectAnnotationPrinter implements HtmlContentPrinter {
+public class ObjectAnnotationPrinter extends HtmlContentPrinter {
 	/*
 	 * Private Variables
 	 */
 	
-	private WikiDataRequest<?> _request;
+	private WikiDataRequest _request;
 	
 	
 	/*
 	 * Constructors
 	 */
 	
-	public ObjectAnnotationPrinter(WikiDataRequest<?> request) {
+	public ObjectAnnotationPrinter(WikiDataRequest request) {
 		_request = request;
 	}
 	

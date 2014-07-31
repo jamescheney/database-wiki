@@ -34,7 +34,6 @@ import org.dbwiki.data.query.xpath.IndexCondition;
 import org.dbwiki.data.query.xpath.SubPathCondition;
 import org.dbwiki.data.query.xpath.XPath;
 import org.dbwiki.data.query.xpath.XPathComponent;
-import org.dbwiki.data.schema.GroupSchemaNode;
 import org.dbwiki.data.schema.SchemaNode;
 import org.dbwiki.data.time.VersionIndex;
 import org.dbwiki.exception.data.WikiQueryException;
@@ -83,7 +82,7 @@ public class AbsoluteTargetPathGenerator implements TargetPathGenerator {
 		}
 		
 		if (pathTokens.hasNext()) {
-			return new XPath(pathElement, new RelativeTargetPathGenerator().getTargetPath((GroupSchemaNode)rootEntity, versionIndex, pathTokens));
+			return new XPath(pathElement, new RelativeTargetPathGenerator().getTargetPath(rootEntity, versionIndex, pathTokens));
 		} else {
 			return new XPath(pathElement);
 		}

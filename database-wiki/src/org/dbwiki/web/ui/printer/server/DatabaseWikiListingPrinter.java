@@ -21,6 +21,7 @@
 */
 package org.dbwiki.web.ui.printer.server;
 
+
 import org.dbwiki.exception.WikiException;
 import org.dbwiki.web.html.HtmlLinePrinter;
 import org.dbwiki.web.server.DatabaseWiki;
@@ -33,11 +34,12 @@ import org.dbwiki.web.ui.printer.HtmlContentPrinter;
  * @author jcheney
  *
  */
-public class DatabaseWikiListingPrinter implements HtmlContentPrinter {
+public class DatabaseWikiListingPrinter extends HtmlContentPrinter {
 	/*
 	 * Private Variables
 	 */
 	
+	//private List<DatabaseWikiProperties> _wikilist;
 	private WikiServer _server;
 	
 	
@@ -47,7 +49,9 @@ public class DatabaseWikiListingPrinter implements HtmlContentPrinter {
 	
 	public DatabaseWikiListingPrinter(WikiServer server) {
 		_server = server;
+		
 	}
+	
 	
 	
 	/*
@@ -61,6 +65,8 @@ public class DatabaseWikiListingPrinter implements HtmlContentPrinter {
 			DatabaseWiki wiki = _server.get(iWiki);
 			printer.listITEM(wiki.database().identifier().databaseHomepage(), wiki.getTitle(), CSS.CSSDatabase);
 		}
+		
+		
 		
 		printer.closeLIST();
 	}

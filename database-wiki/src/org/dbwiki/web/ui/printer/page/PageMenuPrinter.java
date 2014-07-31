@@ -27,10 +27,10 @@ import org.dbwiki.data.wiki.DatabaseWikiPage;
 import org.dbwiki.exception.WikiException;
 import org.dbwiki.web.html.HtmlLinePrinter;
 
+import org.dbwiki.web.request.RequestURL;
 import org.dbwiki.web.request.WikiPageRequest;
 
 import org.dbwiki.web.request.parameter.RequestParameter;
-import org.dbwiki.web.server.DatabaseWiki;
 
 import org.dbwiki.web.ui.CSS;
 
@@ -46,14 +46,14 @@ public class PageMenuPrinter extends MenuPrinter {
 	 * Private Variables
 	 */
 	
-	private WikiPageRequest<?> _request;
+	private WikiPageRequest _request;
 	
 	
 	/*
 	 * Constructors
 	 */
 	
-	public PageMenuPrinter(WikiPageRequest<?> request) {
+	public PageMenuPrinter(WikiPageRequest request) {
 		super(request);
 		
 		_request = request;
@@ -82,10 +82,10 @@ public class PageMenuPrinter extends MenuPrinter {
 		
 		printer.add("\t\t\t\t\t<li><a href=\"/\">Server Home</a></li>");
 		printer.add("\t\t\t\t\t<li><a href=\"" + _request.wiki().database().identifier().databaseHomepage() + "\">Database</a></li>");
-		printer.add("\t\t\t\t\t<li><a href=\"" + _request.wiki().database().identifier().databaseHomepage() + "/" + DatabaseWiki.WikiPageRequestPrefix + "\">Wiki</a></li>");
+		printer.add("\t\t\t\t\t<li><a href=\"" + _request.wiki().database().identifier().databaseHomepage() + "/" + RequestURL.WikiPageRequestPrefix + "\">Wiki</a></li>");
  
 		if(name != null) { // only add if this is a specific page request
-			printer.add("\t\t\t\t\t<li><a href=\"" + _request.wiki().database().identifier().databaseHomepage() + "/" + DatabaseWiki.WikiPageRequestPrefix +
+			printer.add("\t\t\t\t\t<li><a href=\"" + _request.wiki().database().identifier().databaseHomepage() + "/" + RequestURL.WikiPageRequestPrefix +
  
 										"/" + name + "?history" + "\">History</a></li>");
  

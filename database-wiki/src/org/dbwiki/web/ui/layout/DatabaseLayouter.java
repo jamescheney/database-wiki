@@ -33,7 +33,6 @@ import org.dbwiki.data.schema.SchemaNode;
 
 import org.dbwiki.exception.WikiFatalException;
 
-import org.dbwiki.web.server.DatabaseWiki;
 
 /** Collects the information used to lay out the data in a DatabaseWiki 
  * 
@@ -59,13 +58,18 @@ public class DatabaseLayouter {
 	
 	public static final String PropertyIndexType = "INDEX_TYPE";
 	
+	public static final String IndexAZMultiPage     = "AZ_MULTI_PAGE";
+	public static final String IndexAZSinglePage    = "AZ_SINGLE_PAGE";
+	public static final String IndexFullList        = "FULL_LIST";
+	public static final String IndexMultiColumn     = "MULTI_COLUMN";
+	public static final String IndexPartialList     = "PARTIAL_LIST";
 	
 	/*
 	 * Private Variables
 	 */
 	
 	private int _displaySchemaID = -1;
-	private String _indexType = DatabaseWiki.IndexFullList;
+	private String _indexType = IndexFullList;
 	private Hashtable<Integer, SchemaLayout> _layouter;
 	
 	
@@ -90,7 +94,7 @@ public class DatabaseLayouter {
 				if (properties.containsKey(PropertyIndexType)) {
 					_indexType = properties.getProperty(PropertyIndexType);
 				} else {
-					_indexType = DatabaseWiki.IndexFullList;
+					_indexType = IndexFullList;
 				}
 				// The following assumes that for each schema node the layout definition
 				// (in property) contains a key for at least the schema node name and the

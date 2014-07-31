@@ -29,6 +29,7 @@ import org.dbwiki.user.UserListing;
 import org.dbwiki.web.request.parameter.RequestParameter;
 import org.dbwiki.web.request.parameter.RequestParameterList;
 
+import org.dbwiki.web.server.DatabaseWiki;
 import org.dbwiki.web.server.WikiServer;
 
 import com.sun.net.httpserver.Authenticator;
@@ -47,10 +48,6 @@ public class WikiAuthenticator extends Authenticator {
 	/*
 	 * Public Constants
 	 */
-	
-	public static final int AuthenticateAlways = 0;
-	public static final int AuthenticateNever = 1;
-	public static final int AuthenticateWriteOnly = 2;
 	
 	
 
@@ -104,8 +101,8 @@ public class WikiAuthenticator extends Authenticator {
 		
 		String auth = rmap.getFirst("Authorization");
 		if (auth == null) {
-			if ((_mode == AuthenticateAlways)
-					|| ((_mode == AuthenticateWriteOnly) && (isProtectedRequest))
+			if ((_mode == DatabaseWiki.AuthenticateAlways)
+					|| ((_mode == DatabaseWiki.AuthenticateWriteOnly) && (isProtectedRequest))
 					|| (exchange.getRequestURI().getPath().equals(WikiServer.SpecialFolderLogin))) {
 				Headers map = exchange.getResponseHeaders();
 				map.set("WWW-Authenticate", "Basic realm=" + "\"" + _realm + "\"");
@@ -123,8 +120,8 @@ public class WikiAuthenticator extends Authenticator {
 			int colon = userpass.indexOf(':');
 			String uname = userpass.substring(0, colon);
 			String pass = userpass.substring(colon + 1);
-			if ((_mode == AuthenticateAlways) 
-					|| ((_mode == AuthenticateWriteOnly) && (isProtectedRequest))
+			if ((_mode == DatabaseWiki.AuthenticateAlways) 
+					|| ((_mode == DatabaseWiki.AuthenticateWriteOnly) && (isProtectedRequest))
 					|| (exchange.getRequestURI().getPath().equals(WikiServer.SpecialFolderLogin))) {
 				if (checkCredentials(uname, pass)) {
 					return new Authenticator.Success(new HttpPrincipal(uname, _realm));

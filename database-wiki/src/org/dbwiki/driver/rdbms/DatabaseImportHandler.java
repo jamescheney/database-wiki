@@ -36,7 +36,7 @@ import org.dbwiki.exception.WikiFatalException;
 import org.dbwiki.user.User;
 
 /** Import handler that loads the xml data being imported into RDBMSDatabase 
- * 
+ * FIXME: This should really be part of the Database interface, since to use this we currently need to case Database to RDBMSDatabase
  * @author jcheney
  *
  */

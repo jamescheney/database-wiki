@@ -30,15 +30,18 @@ import org.dbwiki.exception.WikiException;
 import org.dbwiki.web.html.HtmlPage;
 
 import org.dbwiki.web.request.WikiRequest;
-import org.dbwiki.web.request.parameter.RequestParameter;
 import org.dbwiki.web.request.parameter.RequestParameterList;
-import org.dbwiki.web.server.DatabaseWiki;
 import org.dbwiki.web.ui.printer.CSSLinePrinter;
+import org.dbwiki.web.ui.printer.DatabaseLinkPrinter;
 import org.dbwiki.web.ui.printer.ExceptionPrinter;
 import org.dbwiki.web.ui.printer.ImportPrinter;
+import org.dbwiki.web.ui.printer.LoginContentPrinter;
+import org.dbwiki.web.ui.printer.SearchPrinter;
+import org.dbwiki.web.ui.printer.TitlePrinter;
 
 
 /** Extends HtmlContentGenerator to provide behavior specific to DBWiki pages */
+// TODO: Refactor into separate printers for the title, search and database link
 
 public class DatabaseWikiContentGenerator extends HtmlContentGenerator {
 	/*
@@ -56,36 +59,36 @@ public class DatabaseWikiContentGenerator extends HtmlContentGenerator {
 	 * Constructors
 	 */
 	
-	// FIXME #inline next two constructors
-	protected DatabaseWikiContentGenerator(WikiRequest<?> request, String title, CSSLinePrinter cssPrinter) {
-		super(request);
+	public DatabaseWikiContentGenerator(WikiRequest request, String title, CSSLinePrinter cssPrinter) {
+		super();
 		
 		_dbIdentifier = request.wri().databaseIdentifier();
 		_parameters = request.parameters();
 		_title = title;
-		
+		this.put(ContentLogin, new LoginContentPrinter(request));
 		this.put(ContentCSS, cssPrinter);
 		this.put(ContentImport, new ImportPrinter());
+		this.put(ContentTitle, new TitlePrinter(_title));
+		this.put(ContentSearch, new SearchPrinter(_parameters,_dbIdentifier));
+		this.put(ContentDatabaseLink, new DatabaseLinkPrinter(_title,_dbIdentifier));
+
 	}
 
-	public DatabaseWikiContentGenerator(DatabaseWiki wiki, WikiRequest<?> request) {
-		this(request, request.wiki().getTitle(), wiki.cssLinePrinter());
-	}
 	
 	// FIXME #htmlgeneration: This seems to not initialize the parent's _request field 
-	// FIXME #inline next two constructors
-	protected DatabaseWikiContentGenerator(DatabaseIdentifier dbIdentifier, String title, CSSLinePrinter cssPrinter) {
+
+	public DatabaseWikiContentGenerator(DatabaseIdentifier dbIdentifier, String title, CSSLinePrinter cssPrinter, WikiException exception) {
+		
 		_dbIdentifier = dbIdentifier;
 		_parameters = new RequestParameterList();
 		_title = title;
 
 		this.put(ContentCSS, cssPrinter);
-	}
-
-	public DatabaseWikiContentGenerator(DatabaseWiki wiki, WikiException exception) {
-		this(wiki.identifier(), wiki.getTitle(), wiki.cssLinePrinter());
-		
 		this.put(ContentContent, new ExceptionPrinter(exception));
+		this.put(ContentTitle, new TitlePrinter(_title));
+		this.put(ContentSearch, new SearchPrinter(_parameters,_dbIdentifier));
+		this.put(ContentDatabaseLink, new DatabaseLinkPrinter(_title,_dbIdentifier));
+
 	}
 	
 	
@@ -110,8 +113,9 @@ public class DatabaseWikiContentGenerator extends HtmlContentGenerator {
 	 *  Overrides the Search key to add the search textbox, using the "search" parameter to fill in a value from the URL if any.
 	 *  Overrides Title to use title, with first argument as optional prefix.
 	 */
+	//TODO: Move DatabaseLink into separate class
 	public void print(String key, Vector<String> args, HtmlPage page, String indention) throws org.dbwiki.exception.WikiException {
-		if (key.equals(ContentDatabaseLink)) {
+		/*if (key.equals(ContentDatabaseLink)) {
 			String title = null;
 			if (args != null) {
 				if (args.size() > 0) {
@@ -124,7 +128,7 @@ public class DatabaseWikiContentGenerator extends HtmlContentGenerator {
 			}
 			String link = "<a CLASS=\"" + CSS.CSSDatabaseHomeLink + "\" HREF=\"" + _dbIdentifier.databaseHomepage() + "\">" + title + "</a>";
 			page.add(indention + "<p CLASS=\"" + CSS.CSSDatabaseHomeLink + "\">" + link + "</p>");
-		} else if (key.equals(ContentSearch)) {
+		} *//*else if (key.equals(ContentSearch)) {
 			page.add(indention + "<form name=\"frmSearch\" method=\"GET\" action=\"" + _dbIdentifier.databaseHomepage() + "\">");
 			String line = "<input id=\"" + CSS.CSSSearch + "\" name=\"search\" type=\"text\" value=\"";
 			if (_parameters.hasParameter(RequestParameter.ParameterSearch)) {
@@ -135,14 +139,15 @@ public class DatabaseWikiContentGenerator extends HtmlContentGenerator {
 			}
 			page.add(indention + line + "\"/>");
 			page.add(indention + "</form>");
-		} else if (key.equals(ContentTitle)) {
+		} */ /*else if (key.equals(ContentTitle)) {
 			if (args != null) {
 				page.add(args.get(0) + " - " + _title);
 			} else {
 				page.add(_title);
 			}
-		} else {
+		} */
+		//else {
 			super.print(key, args, page, indention);
-		}
+		//}
 	}
 }

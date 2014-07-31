@@ -23,7 +23,6 @@ package org.dbwiki.data.resource;
 
 import org.dbwiki.exception.web.WikiRequestException;
 import org.dbwiki.web.request.RequestURL;
-import org.dbwiki.web.server.DatabaseWiki;
 
 /** An SchemaNodeIdentifier - id of a schema node
  * 
@@ -50,7 +49,7 @@ public class SchemaNodeIdentifier implements ResourceIdentifier {
 		_nodeID = nodeID;
 	}
 	
-	public SchemaNodeIdentifier(RequestURL<?> url) throws org.dbwiki.exception.WikiException {
+	public SchemaNodeIdentifier(RequestURL url) throws org.dbwiki.exception.WikiException {
 		if (url.size() == 0) {
 			_nodeID = -1;
 		} else if (url.size() == 1) {
@@ -90,9 +89,9 @@ public class SchemaNodeIdentifier implements ResourceIdentifier {
 	
 	public String toURLString() {
 		if (_nodeID == -1) {
-			return "/" + DatabaseWiki.SchemaRequestPrefix + "/";
+			return "/" + RequestURL.SchemaRequestPrefix + "/";
 		} else {
-			return "/" + DatabaseWiki.SchemaRequestPrefix + "/" + Integer.toHexString(_nodeID).toUpperCase();
+			return "/" + RequestURL.SchemaRequestPrefix + "/" + Integer.toHexString(_nodeID).toUpperCase();
 		}
 	}
 }

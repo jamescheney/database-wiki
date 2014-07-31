@@ -33,7 +33,7 @@ import org.dbwiki.web.server.WikiServerConstants;
  * @author jcheney
  *
  */
-public class CSSLinePrinter implements HtmlContentPrinter {
+public class CSSLinePrinter extends HtmlContentPrinter {
 	/*
 	 * Private Variables
 	 */

@@ -37,7 +37,7 @@ import org.dbwiki.web.ui.printer.HtmlContentPrinter;
  * @author jcheney
  *
  */
-public class InputFormPrinter implements HtmlContentPrinter {
+public class InputFormPrinter extends HtmlContentPrinter {
 	/*
 	 * Private Variables
 	 */
@@ -45,7 +45,7 @@ public class InputFormPrinter implements HtmlContentPrinter {
 	private String _actionParameterName;
 	private String _command;
 	private String _inputParameterName;
-	private WikiDataRequest<?> _request;
+	private WikiDataRequest _request;
 	private String _title;
 	
 	
@@ -53,7 +53,7 @@ public class InputFormPrinter implements HtmlContentPrinter {
 	 * Constructors
 	 */
 	
-	public InputFormPrinter(WikiDataRequest<?> request, String title, String command, String actionParameterName, String inputParameterName) {
+	public InputFormPrinter(WikiDataRequest request, String title, String command, String actionParameterName, String inputParameterName) {
 		_actionParameterName = actionParameterName;
 		_command = command;
 		_inputParameterName = inputParameterName;

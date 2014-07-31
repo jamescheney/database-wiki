@@ -36,7 +36,7 @@ import org.dbwiki.web.ui.printer.HtmlContentPrinter;
  * @author jcheney
  *
  */
-public class ServerMenuPrinter implements HtmlContentPrinter {
+public class ServerMenuPrinter extends HtmlContentPrinter {
 	/*
 	 * Private Variables
 	 */

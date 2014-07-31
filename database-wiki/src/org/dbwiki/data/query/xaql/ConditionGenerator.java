@@ -50,6 +50,7 @@ import org.dbwiki.data.time.VersionIndex;
 
 import org.dbwiki.exception.WikiFatalException;
 
+
 public class ConditionGenerator {
 	
 	/*
@@ -170,6 +171,9 @@ public class ConditionGenerator {
 				throw new WikiFatalException("Invalid token type " + token.type() + " in getProvenanceCondition()");
 			}
 		}
+		
+		assert(startDate != null); // because the condition list is nonempty
+		assert(endDate != null); // because the condition list is nonempty
 		
 		ProvenanceCondition versions = new ProvenanceCondition();
 		

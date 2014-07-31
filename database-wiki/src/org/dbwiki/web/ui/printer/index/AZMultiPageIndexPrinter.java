@@ -48,7 +48,7 @@ public class AZMultiPageIndexPrinter extends IndexContentPrinter {
 	 * Constructors
 	 */
 	
-	public AZMultiPageIndexPrinter(WikiRequest<?>  request, DatabaseContent content) {
+	public AZMultiPageIndexPrinter(WikiRequest  request, DatabaseContent content) {
 		super(request, content);
 	}
 	
@@ -57,7 +57,7 @@ public class AZMultiPageIndexPrinter extends IndexContentPrinter {
 	 * Public Methods
 	 */
 	
-	public void listContent(DatabaseIdentifier databaseIdentifier, ContentIterator iterator, WikiRequest<?>  request, HtmlLinePrinter body) throws org.dbwiki.exception.WikiException {
+	public void listContent(DatabaseIdentifier databaseIdentifier, ContentIterator iterator, WikiRequest  request, HtmlLinePrinter body) throws org.dbwiki.exception.WikiException {
 		ContentIndex contentIndex = new ContentIndex(iterator);
 		
 		String indexLine = "";

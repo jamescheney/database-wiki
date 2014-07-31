@@ -54,6 +54,7 @@ import org.dbwiki.data.document.PasteTextNode;
 import org.dbwiki.data.index.DatabaseContent;
 import org.dbwiki.data.index.VectorDatabaseListing;
 
+import org.dbwiki.data.io.ImportHandler;
 import org.dbwiki.data.io.NodeWriter;
 
 import org.dbwiki.data.provenance.ProvenanceActivate;
@@ -117,7 +118,7 @@ public class RDBMSDatabase implements Database, DatabaseConstants {
 	private SQLDatabaseSchema _schema;
 	private SQLVersionIndex _versionIndex;
 	private DatabaseWiki _wiki;
-
+	
 	/*
 	 * Constructors
 	 */
@@ -273,6 +274,18 @@ public class RDBMSDatabase implements Database, DatabaseConstants {
 		out.endDatabase(this);
 	}
 
+	/** Validates data and generates error report to stderr
+	 * 
+	 */
+	public void validate() throws org.dbwiki.exception.WikiException {
+		Connection con = _connector.getConnection();
+		try {
+			DatabaseReader.validateTimestamps(con, this); 
+			con.close();
+		} catch (java.sql.SQLException sqlException) {
+			throw new WikiFatalException(sqlException);
+		}
+	}
 
 	public DatabaseNode get(ResourceIdentifier identifier) throws org.dbwiki.exception.WikiException {
 		Connection con = _connector.getConnection();
@@ -290,6 +303,7 @@ public class RDBMSDatabase implements Database, DatabaseConstants {
 		return _schema.get(((SchemaNodeIdentifier)identifier).nodeID());
 	}
 
+	// TODO: This probably belongs somewhere else, like the ui level.
 	public AttributeSchemaNode getDisplaySchemaNode() {
 		return _wiki.layouter().displaySchemaNode(schema());
 	}
@@ -350,11 +364,11 @@ public class RDBMSDatabase implements Database, DatabaseConstants {
 		return result;
 	}
 	
-	public ResourceIdentifier getNodeIdentifierForURL(RequestURL<?> url) throws org.dbwiki.exception.WikiException {
+	public ResourceIdentifier getNodeIdentifierForURL(RequestURL url) throws org.dbwiki.exception.WikiException {
 		return new NodeIdentifier(url);
 	}
 
-	public ResourceIdentifier getSchemaNodeIdentifierForURL(RequestURL<?> url) throws org.dbwiki.exception.WikiException {
+	public ResourceIdentifier getSchemaNodeIdentifierForURL(RequestURL url) throws org.dbwiki.exception.WikiException {
 		return new SchemaNodeIdentifier(url);
 	}
 	
@@ -581,7 +595,8 @@ public class RDBMSDatabase implements Database, DatabaseConstants {
 					}
 					activateElementNode(con, (DatabaseElementNode)node, deletedAt, version);
 				} else {
-					
+					// FIXME: Suspicious sideways-cast, is this code reachable?
+					assert(parent instanceof DatabaseAttributeNode);
 					DatabaseNodeValue values = ((DatabaseAttributeNode)parent).value();
 					if (values.size() > 1) {
 						for (int iValue = 0; iValue < values.size(); iValue++) {
@@ -891,6 +906,12 @@ public class RDBMSDatabase implements Database, DatabaseConstants {
 			"AND d1." + RelDataColParent + " = d2." + RelDataColID + " " +
 			"AND d2." + RelDataColSchema + " = " + condition.entity().id());
 		condition.listValues(parameters);
+	}
+
+	@Override
+	public ImportHandler createImportHandler(Connection con) {
+		
+		return new DatabaseImportHandler(con,this);
 	}
 }
 

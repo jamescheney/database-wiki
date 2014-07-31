@@ -45,7 +45,7 @@ public class FullIndexPrinter extends IndexContentPrinter {
 	 * Constructors
 	 */
 	
-	public FullIndexPrinter(WikiRequest<?> request, DatabaseContent content) {
+	public FullIndexPrinter(WikiRequest request, DatabaseContent content) {
 		super(request, content);
 	}
 	
@@ -54,7 +54,7 @@ public class FullIndexPrinter extends IndexContentPrinter {
 	 * Public Methods
 	 */
 	
-	public void listContent(DatabaseIdentifier databaseIdentifier, ContentIterator iterator, WikiRequest<?> request, HtmlLinePrinter body) throws org.dbwiki.exception.WikiException {
+	public void listContent(DatabaseIdentifier databaseIdentifier, ContentIterator iterator, WikiRequest request, HtmlLinePrinter body) throws org.dbwiki.exception.WikiException {
 		body.add("<ul CLASS=\"" + CSS.CSSIndexContent + "\">");
 		
 		RequestParameterVersion versionParameter = RequestParameter.versionParameter(request.parameters().get(RequestParameter.ParameterVersion));

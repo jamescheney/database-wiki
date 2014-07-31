@@ -63,7 +63,7 @@ public class SelectClause {
 	 * Constructors
 	 */
 	
-	public SelectClause() throws org.dbwiki.exception.WikiException {
+	public SelectClause() {
 		
 		_statements = new Vector<SubTreeSelectStatement>();
 	}

@@ -21,6 +21,8 @@
 */
 package org.dbwiki.web.ui.printer;
 
+import java.util.Vector;
+
 import org.dbwiki.web.html.HtmlLinePrinter;
 
 /** Interface for things that can print out to an HtmlLinePrinter
@@ -28,9 +30,12 @@ import org.dbwiki.web.html.HtmlLinePrinter;
  * @author jcheney
  *
  */
-public interface HtmlContentPrinter {
+public abstract class HtmlContentPrinter {
 	/*
 	 * Interface Methods
 	 */
-	public void print(HtmlLinePrinter printer) throws org.dbwiki.exception.WikiException;
+	public abstract void print(HtmlLinePrinter printer) throws org.dbwiki.exception.WikiException;
+	public void print(HtmlLinePrinter printer,Vector<String> args) throws org.dbwiki.exception.WikiException {
+		print(printer);
+	}
 }

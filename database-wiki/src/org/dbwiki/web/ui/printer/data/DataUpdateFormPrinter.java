@@ -49,20 +49,20 @@ import org.dbwiki.web.ui.printer.HtmlContentPrinter;
  * @author jcheney
  *
  */
-public class DataUpdateFormPrinter implements HtmlContentPrinter {
+public class DataUpdateFormPrinter extends HtmlContentPrinter {
 	/*
 	 * Private Variables
 	 */
 	
 	private DatabaseLayouter _layouter;
-	private WikiDataRequest<?> _request;
+	private WikiDataRequest _request;
 	
 	
 	/*
 	 * Constructors
 	 */
 	
-	public DataUpdateFormPrinter(WikiDataRequest<?> request, DatabaseLayouter layouter) {
+	public DataUpdateFormPrinter(WikiDataRequest request, DatabaseLayouter layouter) {
 		_request = request;
 		_layouter = layouter;
 	}
@@ -113,7 +113,7 @@ public class DataUpdateFormPrinter implements HtmlContentPrinter {
 		return this.getTextareaLine(Integer.toString(schema.id()), "", height);
 	}
 
-	private void printInsertForm(WikiDataRequest<?> request, SchemaNode schema, HtmlLinePrinter body) {
+	private void printInsertForm(WikiDataRequest request, SchemaNode schema, HtmlLinePrinter body) {
 		body.openFORM("frmInsert", "POST", request.wri().getURL());
 		body.addHIDDEN(RequestParameter.ActionValueSchemaNode, Integer.toString(schema.id()));
 
@@ -190,7 +190,7 @@ public class DataUpdateFormPrinter implements HtmlContentPrinter {
 		body.closeTR();
 	}
 
-	private void printUpdateForm(WikiDataRequest<?> request, DatabaseNode node, HtmlLinePrinter body) throws org.dbwiki.exception.WikiException {
+	private void printUpdateForm(WikiDataRequest request, DatabaseNode node, HtmlLinePrinter body) throws org.dbwiki.exception.WikiException {
 		body.openFORM("frmInsert", "POST", request.wri().getURL());
 		
 		if (node.isElement()) {

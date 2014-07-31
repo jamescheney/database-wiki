@@ -45,20 +45,20 @@ import org.dbwiki.web.ui.printer.HtmlContentPrinter;
  * @author jcheney
  *
  */
-public abstract class IndexContentPrinter implements HtmlContentPrinter {
+public abstract class IndexContentPrinter extends HtmlContentPrinter {
 	/*
 	 * Private Variables
 	 */
 	
 	private DatabaseContent _content;
-	private WikiRequest<?>  _request;
+	private WikiRequest  _request;
 	
 	
 	/*
 	 * Constructors
 	 */
 	
-	public IndexContentPrinter(WikiRequest<?>  request, DatabaseContent content) {
+	public IndexContentPrinter(WikiRequest  request, DatabaseContent content) {
 		_request = request;
 		_content = content;
 	}
@@ -68,7 +68,7 @@ public abstract class IndexContentPrinter implements HtmlContentPrinter {
 	 * Abstract Methods
 	 */
 	
-	public abstract void listContent(DatabaseIdentifier databaseIdentifier, ContentIterator iterator, WikiRequest<?>  request, HtmlLinePrinter body) throws org.dbwiki.exception.WikiException;
+	public abstract void listContent(DatabaseIdentifier databaseIdentifier, ContentIterator iterator, WikiRequest  request, HtmlLinePrinter body) throws org.dbwiki.exception.WikiException;
 	
 	
 	/*
@@ -94,4 +94,6 @@ public abstract class IndexContentPrinter implements HtmlContentPrinter {
 			this.listContent(_request.wri().databaseIdentifier(), iterator, _request, body);
 		}
 	}
+	
+
 }

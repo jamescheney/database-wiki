@@ -49,19 +49,19 @@ import org.dbwiki.web.ui.layout.SchemaLayout;
  * @author jcheney
  *
  */
-public class LayoutEditor implements HtmlContentPrinter {
+public class LayoutEditor extends HtmlContentPrinter {
 	/*
 	 * Private Variables
 	 */
 	
-	private WikiRequest<?> _request;
+	private WikiRequest _request;
 	
 	
 	/*
 	 * Constructors
 	 */
 	
-	public LayoutEditor(WikiRequest<?> request) {
+	public LayoutEditor(WikiRequest request) {
 		_request = request;
 	}
 	
@@ -367,34 +367,34 @@ public class LayoutEditor implements HtmlContentPrinter {
 	private void printIndexSelectBox(HtmlLinePrinter printer) {
 		String selected = _request.wiki().layouter().indexType();
 		
-		if (selected.equals(DatabaseWiki.IndexAZMultiPage)) {
-			printer.addRADIOBUTTON("A-Z Multi-Page", DatabaseLayouter.PropertyIndexType, DatabaseWiki.IndexAZMultiPage, true);
+		if (selected.equals(DatabaseLayouter.IndexAZMultiPage)) {
+			printer.addRADIOBUTTON("A-Z Multi-Page", DatabaseLayouter.PropertyIndexType, DatabaseLayouter.IndexAZMultiPage, true);
 		} else {
-			printer.addRADIOBUTTON("A-Z Multi-Page", DatabaseLayouter.PropertyIndexType, DatabaseWiki.IndexAZMultiPage, false);
+			printer.addRADIOBUTTON("A-Z Multi-Page", DatabaseLayouter.PropertyIndexType, DatabaseLayouter.IndexAZMultiPage, false);
 		}
 		printer.addBR();
-		if (selected.equals(DatabaseWiki.IndexAZSinglePage)) {
-			printer.addRADIOBUTTON("A-Z Single-Page", DatabaseLayouter.PropertyIndexType, DatabaseWiki.IndexAZSinglePage, true);
+		if (selected.equals(DatabaseLayouter.IndexAZSinglePage)) {
+			printer.addRADIOBUTTON("A-Z Single-Page", DatabaseLayouter.PropertyIndexType, DatabaseLayouter.IndexAZSinglePage, true);
 		} else {
-			printer.addRADIOBUTTON("A-Z Single-Page", DatabaseLayouter.PropertyIndexType, DatabaseWiki.IndexAZSinglePage, false);
+			printer.addRADIOBUTTON("A-Z Single-Page", DatabaseLayouter.PropertyIndexType, DatabaseLayouter.IndexAZSinglePage, false);
 		}
 		printer.addBR();
-		if (selected.equals(DatabaseWiki.IndexFullList)) {
-			printer.addRADIOBUTTON("Full Listing", DatabaseLayouter.PropertyIndexType, DatabaseWiki.IndexFullList, true);
+		if (selected.equals(DatabaseLayouter.IndexFullList)) {
+			printer.addRADIOBUTTON("Full Listing", DatabaseLayouter.PropertyIndexType, DatabaseLayouter.IndexFullList, true);
 		} else {
-			printer.addRADIOBUTTON("Full Listing", DatabaseLayouter.PropertyIndexType, DatabaseWiki.IndexFullList, false);
+			printer.addRADIOBUTTON("Full Listing", DatabaseLayouter.PropertyIndexType, DatabaseLayouter.IndexFullList, false);
 		}
 		printer.addBR();
-		if (selected.equals(DatabaseWiki.IndexMultiColumn)) {
-			printer.addRADIOBUTTON("Multi Column", DatabaseLayouter.PropertyIndexType, DatabaseWiki.IndexMultiColumn, true);
+		if (selected.equals(DatabaseLayouter.IndexMultiColumn)) {
+			printer.addRADIOBUTTON("Multi Column", DatabaseLayouter.PropertyIndexType, DatabaseLayouter.IndexMultiColumn, true);
 		} else {
-			printer.addRADIOBUTTON("Multi Column", DatabaseLayouter.PropertyIndexType, DatabaseWiki.IndexMultiColumn, false);
+			printer.addRADIOBUTTON("Multi Column", DatabaseLayouter.PropertyIndexType, DatabaseLayouter.IndexMultiColumn, false);
 		}
 		printer.addBR();
-		if (selected.equals(DatabaseWiki.IndexPartialList)) {
-			printer.addRADIOBUTTON("Partial Listing", DatabaseLayouter.PropertyIndexType, DatabaseWiki.IndexPartialList, true);
+		if (selected.equals(DatabaseLayouter.IndexPartialList)) {
+			printer.addRADIOBUTTON("Partial Listing", DatabaseLayouter.PropertyIndexType, DatabaseLayouter.IndexPartialList, true);
 		} else {
-			printer.addRADIOBUTTON("Partial Listing", DatabaseLayouter.PropertyIndexType, DatabaseWiki.IndexPartialList, false);
+			printer.addRADIOBUTTON("Partial Listing", DatabaseLayouter.PropertyIndexType, DatabaseLayouter.IndexPartialList, false);
 		}
 	}
 }

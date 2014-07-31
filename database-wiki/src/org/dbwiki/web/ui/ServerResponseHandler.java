@@ -21,46 +21,25 @@
 */
 package org.dbwiki.web.ui;
 
-import java.util.Vector;
-
-import org.dbwiki.web.html.HtmlPage;
-import org.dbwiki.web.request.ServerRequest;
+import org.dbwiki.web.request.HttpRequest;
+import org.dbwiki.web.ui.printer.LoginContentPrinter;
+import org.dbwiki.web.ui.printer.TitlePrinter;
 
 /** Handles server responses.  Called from WikiServer.
  * @jcheney
  * */
 public class ServerResponseHandler extends HtmlContentGenerator {
-	/*
-	 * Private Variables
-	 */
-	
-	private String _title;
-	
-	
+
 	/*
 	 * Constructors
 	 */
 	
-	public ServerResponseHandler(ServerRequest<?> request, String title) {
-		super(request);
-		
-		_title = title;
+	
+	public ServerResponseHandler(HttpRequest request, String title) {
+		super();
+		put(HtmlContentGenerator.ContentLogin, new LoginContentPrinter(request));
+		put(HtmlContentGenerator.ContentTitle, new TitlePrinter(title));
 	}
 	
 	
-	/*
-	 * Public Methods
-	 */
-	
-	public void print(String key, Vector<String> args, HtmlPage page, String indention) throws org.dbwiki.exception.WikiException {
-		if (key.equals(ContentTitle)) {
-			if (args != null) {
-				page.add(args.get(0));
-			} else {
-				page.add(_title);
-			}
-		} else {
-			super.print(key, args, page, indention);
-		}
-	}
 }

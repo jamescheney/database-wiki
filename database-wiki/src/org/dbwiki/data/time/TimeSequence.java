@@ -59,21 +59,37 @@ public class TimeSequence {
 	}
 	
 	/** Generate a time sequence from a text representation of the timestamp
-	 * 
 	 * @param text
 	 * @throws org.dbwiki.exception.WikiException
 	 */
+	
 	public TimeSequence(String text) throws org.dbwiki.exception.WikiException {
-		_intervals = new Vector<TimeInterval>();
-		
-		int pos;
-		while ((pos = text.indexOf(',')) != -1) {
-			_intervals.add(this.parseInterval(text.substring(0, pos).trim()));
-			text = text.substring(pos + 1).trim();
-		}
-		_intervals.add(this.parseInterval(text));
+
+		_intervals = parseTimeSequence(text);
 		this.checkForConsistency();
 	}
+	
+	/** Parses a string of the form s-e,...,s-e to a time sequence
+	 * TODO: Clean this up to avoid string surgery
+	 * @param text
+	 * @return
+	 */
+	public static Vector<TimeInterval> parseTimeSequence(String text) {
+		String tmp = text;
+
+		Vector<TimeInterval> intervals = new Vector<TimeInterval>();
+		
+		int pos;
+		while ((pos = tmp.indexOf(',')) != -1) {
+			intervals.add(TimeInterval.parseInterval(tmp.substring(0, pos).trim()));
+			tmp = tmp.substring(pos + 1).trim();
+		}
+		intervals.add(TimeInterval.parseInterval(tmp));
+		return intervals;
+	}
+	
+
+	
 	
 	/** Make set with single interval starting at time and ending at "now"
 	 * 
@@ -406,26 +422,6 @@ public class TimeSequence {
 		return result;
 	}
 
-	/** Parses a string of the form s-e,...,s-e to a time sequence
-	 * 
-	 * @param text
-	 * @param timestampPrinter
-	 * @return
-	 */
-	@Deprecated
-	public static TimeSequence parseTimeSequence(String text, VersionIndex index) {
-		
-		Vector<TimeInterval> intervals = new Vector<TimeInterval>();
-		
-		int pos;
-		while ((pos = text.indexOf(',')) != -1) {
-			intervals.add(TimeInterval.parseInterval(text.substring(0, pos).trim()));
-			text = text.substring(pos + 1).trim();
-		}
-		intervals.add(TimeInterval.parseInterval(text));
-		return new TimeSequence(intervals,index);
-	}
-	
 	/*
 	 * Private Methods
 	 */
@@ -446,21 +442,5 @@ public class TimeSequence {
 		}
 	}
 
-	private TimeInterval parseInterval(String text) {
-		
-		int pos  = text.indexOf('-');
-		if (pos != -1) {
-			int start = Integer.parseInt(text.substring(0, pos));
-			String end = text.substring(pos + 1);
-			if (end.equals(OpenIntervalChar)) {
-				return new TimeInterval(start);
-			} else {
-				return new TimeInterval(start, Integer.parseInt(end));
-			}
-		} else {
-			int time = Integer.parseInt(text);
-			return new TimeInterval(time, time);
-		}
-	}
-
+	
 }

@@ -168,6 +168,9 @@ public class QueryNode extends Node {
     		case Pie:
     			typeString = "pie";
     			break;
+    		case Map:
+    			// Do nothing
+    			break;	
     	};
     	
 		String chartId = freshName("chart");

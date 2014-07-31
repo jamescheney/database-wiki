@@ -26,8 +26,6 @@ import org.dbwiki.exception.WikiException;
 import org.dbwiki.web.html.HtmlLinePrinter;
 
 import org.dbwiki.web.request.parameter.RequestParameterAction;
-import org.dbwiki.web.security.WikiAuthenticator;
-
 import org.dbwiki.web.server.DatabaseWiki;
 import org.dbwiki.web.server.WikiServer;
 
@@ -41,7 +39,7 @@ import org.dbwiki.web.ui.printer.HtmlContentPrinter;
  * @author jcheney
  *
  */
-public class DatabaseWikiFormPrinter implements HtmlContentPrinter {
+public class DatabaseWikiFormPrinter extends HtmlContentPrinter {
 	/*
 	 * Public Constants
 	 */
@@ -182,21 +180,21 @@ public class DatabaseWikiFormPrinter implements HtmlContentPrinter {
 		if (_message != MessageNone) {
 			printer.openTD(CSS.CSSFormText);
 			printer.addHIDDEN(WikiServer.ParameterAuthenticationMode, String.valueOf(_properties.getAuthentication()));
-			if (_properties.getAuthentication() == WikiAuthenticator.AuthenticateNever) {
+			if (_properties.getAuthentication() == DatabaseWiki.AuthenticateNever) {
 				printer.text("Never login (<i>NO AUTHENTICATION</i>)");
-			} else if (_properties.getAuthentication() == WikiAuthenticator.AuthenticateWriteOnly) {
+			} else if (_properties.getAuthentication() == DatabaseWiki.AuthenticateWriteOnly) {
 				printer.text("Login for updates (<i>WRITE-ONLY AUTHENTICATION</i>)");
-			} else if (_properties.getAuthentication() == WikiAuthenticator.AuthenticateAlways) {
+			} else if (_properties.getAuthentication() == DatabaseWiki.AuthenticateAlways) {
 				printer.text("Always login (<i>FULL AUTHENTICATION</i>)");
 			}
 			printer.closeTD();
 		} else {
 			printer.openTD(CSS.CSSFormControl);
-			printer.addRADIOBUTTON("Never login (<i>NO AUTHENTICATION</i>)", WikiServer.ParameterAuthenticationMode, Integer.toString(WikiAuthenticator.AuthenticateNever), (_properties.getAuthentication() == WikiAuthenticator.AuthenticateNever));
+			printer.addRADIOBUTTON("Never login (<i>NO AUTHENTICATION</i>)", WikiServer.ParameterAuthenticationMode, Integer.toString(DatabaseWiki.AuthenticateNever), (_properties.getAuthentication() == DatabaseWiki.AuthenticateNever));
 			printer.addBR();
-			printer.addRADIOBUTTON("Login for updates (<i>WRITE-ONLY AUTHENTICATION</i>)", WikiServer.ParameterAuthenticationMode, Integer.toString(WikiAuthenticator.AuthenticateWriteOnly), (_properties.getAuthentication() == WikiAuthenticator.AuthenticateWriteOnly));
+			printer.addRADIOBUTTON("Login for updates (<i>WRITE-ONLY AUTHENTICATION</i>)", WikiServer.ParameterAuthenticationMode, Integer.toString(DatabaseWiki.AuthenticateWriteOnly), (_properties.getAuthentication() == DatabaseWiki.AuthenticateWriteOnly));
 			printer.addBR();
-			printer.addRADIOBUTTON("Always login (<i>FULL AUTHENTICATION</i>)", WikiServer.ParameterAuthenticationMode, Integer.toString(WikiAuthenticator.AuthenticateAlways), (_properties.getAuthentication() == WikiAuthenticator.AuthenticateAlways));
+			printer.addRADIOBUTTON("Always login (<i>FULL AUTHENTICATION</i>)", WikiServer.ParameterAuthenticationMode, Integer.toString(DatabaseWiki.AuthenticateAlways), (_properties.getAuthentication() == DatabaseWiki.AuthenticateAlways));
 			printer.closeTD();
 		}
 		

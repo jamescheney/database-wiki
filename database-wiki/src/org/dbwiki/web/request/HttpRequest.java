@@ -30,8 +30,7 @@ import org.dbwiki.web.request.parameter.RequestParameterList;
 
 import java.net.URI;
 
-// TOOD: Abstract out HttpExchange
-public abstract class HttpRequest<T> {
+public class HttpRequest {
 	/*
 	 * Public Constants
 	 */
@@ -45,7 +44,7 @@ public abstract class HttpRequest<T> {
 
 	private String _copyBuffer = null;
 	private RequestType _type;
-	private RequestURL<T> _url;
+	private RequestURL _url;
 	private User _user;
 
 	
@@ -53,7 +52,7 @@ public abstract class HttpRequest<T> {
 	 * Constructors
 	 */
 	
-	public HttpRequest(RequestURL<T> url, UserListing users) {
+	public HttpRequest(RequestURL url, UserListing users) {
 		_type = new RequestType(url);
 		
 		_url = url;
@@ -84,11 +83,7 @@ public abstract class HttpRequest<T> {
 	public String copyBuffer() {
 		return _copyBuffer;
 	}
-	
-	public T exchange() {
-		return _url.exchange();
-	}
-	
+
 	public RequestParameterList parameters() {
 		return _url.parameters();
 	}

@@ -21,6 +21,8 @@
 */
 package org.dbwiki.data.database;
 
+import java.sql.Connection;
+
 import org.dbwiki.data.annotation.Annotation;
 
 import org.dbwiki.data.document.DocumentNode;
@@ -28,6 +30,7 @@ import org.dbwiki.data.document.PasteNode;
 
 import org.dbwiki.data.index.DatabaseContent;
 
+import org.dbwiki.data.io.ImportHandler;
 import org.dbwiki.data.io.NodeWriter;
 
 import org.dbwiki.data.schema.DatabaseSchema;
@@ -41,7 +44,6 @@ import org.dbwiki.data.query.condition.AttributeConditionListing;
 
 import org.dbwiki.data.resource.DatabaseIdentifier;
 import org.dbwiki.data.resource.ResourceIdentifier;
-
 import org.dbwiki.user.User;
 import org.dbwiki.user.UserListing;
 
@@ -92,7 +94,7 @@ public interface Database {
 	public DatabaseNode get(ResourceIdentifier identifier) throws org.dbwiki.exception.WikiException;
 	public DatabaseContent getMatchingEntries(AttributeConditionListing listing) throws org.dbwiki.exception.WikiException;
 	public ResourceIdentifier getIdentifierForParameterString(String urlString) throws org.dbwiki.exception.WikiException;
-	public ResourceIdentifier getNodeIdentifierForURL(RequestURL<?> url) throws org.dbwiki.exception.WikiException;
+	public ResourceIdentifier getNodeIdentifierForURL(RequestURL url) throws org.dbwiki.exception.WikiException;
 	
 	public QueryResultSet query(String query) throws org.dbwiki.exception.WikiException;
 	public DatabaseContent search(String keywords) throws org.dbwiki.exception.WikiException;
@@ -113,7 +115,7 @@ public interface Database {
 	public void activate(ResourceIdentifier identifier, User user) throws org.dbwiki.exception.WikiException;
 	public void annotate(ResourceIdentifier identifier, Annotation annotation) throws org.dbwiki.exception.WikiException;
 	public void paste(ResourceIdentifier target, PasteNode pasteNode, String sourceURL, User user) throws org.dbwiki.exception.WikiException;
-	
+	public void validate() throws org.dbwiki.exception.WikiException;
 	/* Import/export */
 	public void export(ResourceIdentifier identifier, int version, NodeWriter out) throws org.dbwiki.exception.WikiException;
 
@@ -121,9 +123,12 @@ public interface Database {
 	/* Schema operations */
 	public DatabaseSchema schema();
 	public SchemaNode getSchemaNode(ResourceIdentifier identifier) throws org.dbwiki.exception.WikiException;
-	public ResourceIdentifier getSchemaNodeIdentifierForURL(RequestURL<?> url) throws org.dbwiki.exception.WikiException;
+	public ResourceIdentifier getSchemaNodeIdentifierForURL(RequestURL url) throws org.dbwiki.exception.WikiException;
 
 	public void deleteSchemaNode(ResourceIdentifier identifier, User user) throws org.dbwiki.exception.WikiException;
 	public void insertSchemaNode(GroupSchemaNode parent, String name, byte type, User user) throws org.dbwiki.exception.WikiException;
 
+/* ImportHandler */
+	// FIXME: Do we really need dependence on Connection?
+	public ImportHandler createImportHandler(Connection con);
 }

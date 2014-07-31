@@ -42,20 +42,20 @@ import org.dbwiki.web.ui.printer.HtmlContentPrinter;
  * @author jcheney
  *
  */
-public class NodePathPrinter implements HtmlContentPrinter {
+public class NodePathPrinter extends HtmlContentPrinter {
 	/*
 	 * Private Variables
 	 */
 	
 	private DatabaseLayouter _layouter;
-	private WikiDataRequest<?> _request;
+	private WikiDataRequest _request;
 	
 	
 	/*
 	 * Constructors
 	 */
 	
-	public NodePathPrinter(WikiDataRequest<?>  request, DatabaseLayouter layouter) {
+	public NodePathPrinter(WikiDataRequest  request, DatabaseLayouter layouter) {
 		_request = request;
 		_layouter = layouter;
 	}

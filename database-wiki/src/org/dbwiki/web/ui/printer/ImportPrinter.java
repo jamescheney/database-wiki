@@ -9,7 +9,7 @@ import org.dbwiki.web.html.HtmlLinePrinter;
  * @author jcheney
  *
  */
-public class ImportPrinter implements HtmlContentPrinter {
+public class ImportPrinter extends HtmlContentPrinter {
 
 	@Override
 	public void print(HtmlLinePrinter printer) throws WikiException {

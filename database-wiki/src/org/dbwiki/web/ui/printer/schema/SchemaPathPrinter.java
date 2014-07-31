@@ -38,18 +38,18 @@ import org.dbwiki.web.ui.printer.HtmlContentPrinter;
  * @author jcheney
  *
  */
-public class SchemaPathPrinter implements HtmlContentPrinter {
+public class SchemaPathPrinter extends HtmlContentPrinter {
 	/*
 	 * Private Variables
 	 */
 	
-	private WikiSchemaRequest<?> _request;
+	private WikiSchemaRequest _request;
 	
 	/*
 	 * Constructors
 	 */
 	
-	public SchemaPathPrinter(WikiSchemaRequest<?> request) {
+	public SchemaPathPrinter(WikiSchemaRequest request) {
 		_request = request;
 	}
 	

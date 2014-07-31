@@ -46,20 +46,20 @@ import org.dbwiki.web.ui.printer.HtmlContentPrinter;
  * @author jcheney
  *
  */
-public class SearchResultPrinter implements HtmlContentPrinter {
+public class SearchResultPrinter extends HtmlContentPrinter {
 	/*
 	 * Private Variables
 	 */
 	
 	private DatabaseContent _content;
-	private WikiRequest<?> _request;
+	private WikiRequest _request;
 	
 	
 	/*
 	 * Constructors
 	 */
 	
-	public SearchResultPrinter(WikiRequest<?> request, DatabaseContent content) {
+	public SearchResultPrinter(WikiRequest request, DatabaseContent content) {
 		_request = request;
 		_content = content;
 	}

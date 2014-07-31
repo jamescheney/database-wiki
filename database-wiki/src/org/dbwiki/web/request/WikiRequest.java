@@ -28,7 +28,7 @@ import org.dbwiki.data.time.VersionIndex;
 import org.dbwiki.web.server.DatabaseWiki;
 
 
-public abstract class WikiRequest<T> extends HttpRequest<T> {
+public abstract class WikiRequest extends HttpRequest {
 	/*
 	 * Private Variables
 	 */
@@ -40,7 +40,7 @@ public abstract class WikiRequest<T> extends HttpRequest<T> {
 	 * Constructors
 	 */
 	
-	public WikiRequest(DatabaseWiki wiki, RequestURL<T> url) {
+	public WikiRequest(DatabaseWiki wiki, RequestURL url) {
 		super(url, wiki.server().users());
 		
 		_wiki = wiki;

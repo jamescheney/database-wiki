@@ -40,6 +40,7 @@ import org.dbwiki.exception.WikiException;
 import org.dbwiki.user.User;
 import org.dbwiki.web.server.DatabaseWiki;
 import org.dbwiki.web.server.WikiServer;
+import org.dbwiki.web.server.WikiServerStandalone;
 import org.dbwiki.main.ImportPresentationFiles.PresentationFileType;
 
 /** Imports a database "package".  Arguments:
@@ -169,7 +170,8 @@ public class DatabasePackageImport {
 			
 			
 			Properties properties = org.dbwiki.lib.IO.loadProperties(args.configFile);
-			_server = new WikiServer(properties);
+			//TODO #server: Use non-web wiki server for this
+			_server = new WikiServerStandalone(properties);
 			
 			// attempt to generate a schema from the input file
 			InputStream in = null;

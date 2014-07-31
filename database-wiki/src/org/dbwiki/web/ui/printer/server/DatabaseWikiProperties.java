@@ -1,10 +1,10 @@
 package org.dbwiki.web.ui.printer.server;
 
 import org.dbwiki.web.request.parameter.RequestParameterList;
-import org.dbwiki.web.security.WikiAuthenticator;
 import org.dbwiki.web.server.DatabaseWiki;
 import org.dbwiki.web.server.WikiServer;
 
+// TODO: Move this to main or server.
 public class DatabaseWikiProperties {
 
 	/*
@@ -29,7 +29,7 @@ public class DatabaseWikiProperties {
 		if (parameters.hasParameter(WikiServer.ParameterAuthenticationMode)) {
 			_authentication = Integer.parseInt(parameters.get(WikiServer.ParameterAuthenticationMode).value());
 		} else {
-			_authentication = WikiAuthenticator.AuthenticateWriteOnly;
+			_authentication = DatabaseWiki.AuthenticateWriteOnly;
 		}
 		if (parameters.hasParameter(WikiServer.ParameterAutoSchemaChanges)) {
 			_autoSchemaChanges = Integer.parseInt(parameters.get(WikiServer.ParameterAutoSchemaChanges).value());
@@ -65,7 +65,7 @@ public class DatabaseWikiProperties {
 	
 	public DatabaseWikiProperties(DatabaseWiki wiki) {
 		
-		_authentication = wiki.authenticator().getAuthenticationMode();
+		_authentication = wiki.getAuthenticationMode();
 		_autoSchemaChanges = wiki.getAutoSchemaChanges();
 		_name = wiki.name();
 		_resource = "";
@@ -76,7 +76,7 @@ public class DatabaseWikiProperties {
 	
 	public DatabaseWikiProperties() {
 		
-		_authentication = WikiAuthenticator.AuthenticateWriteOnly;
+		_authentication = DatabaseWiki.AuthenticateWriteOnly;
 		_autoSchemaChanges = DatabaseWiki.AutoSchemaChangesIgnore;
 		_name = "";
 		_resource = "";

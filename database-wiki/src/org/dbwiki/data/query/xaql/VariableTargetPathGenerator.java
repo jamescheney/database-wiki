@@ -29,7 +29,6 @@ package org.dbwiki.data.query.xaql;
 import java.util.Iterator;
 
 import org.dbwiki.data.query.xpath.VariableXPath;
-import org.dbwiki.data.schema.GroupSchemaNode;
 import org.dbwiki.data.schema.SchemaNode;
 import org.dbwiki.data.time.VersionIndex;
 
@@ -40,7 +39,7 @@ public class VariableTargetPathGenerator implements TargetPathGenerator {
 		String variableName = pathTokens.next().value();
 		
 		if (pathTokens.hasNext()) {
-			return new VariableXPath(variableName, entity, new RelativeTargetPathGenerator().getTargetPath((GroupSchemaNode)entity, versionIndex, pathTokens));
+			return new VariableXPath(variableName, entity, new RelativeTargetPathGenerator().getTargetPath(entity, versionIndex, pathTokens));
 		} else {
 			return new VariableXPath(variableName, entity);
 		}

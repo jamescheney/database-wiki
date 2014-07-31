@@ -23,9 +23,9 @@ package org.dbwiki.main;
 
 import java.io.File;
 
-import org.dbwiki.web.server.WikiServer;
+import org.dbwiki.web.server.WikiServerHttpHandler;
 
-/** Starts the server.
+/** Starts the HTTP server.
  * 
  * @author jcheney
  *
@@ -49,7 +49,7 @@ public class StartServer {
 		}
 		
 		try {
-			new WikiServer(org.dbwiki.lib.IO.loadProperties(new File(args[0]))).start();
+			new WikiServerHttpHandler(org.dbwiki.lib.IO.loadProperties(new File(args[0]))).start();
 		} catch (Exception exception) {
 			exception.printStackTrace();
 			System.exit(0);

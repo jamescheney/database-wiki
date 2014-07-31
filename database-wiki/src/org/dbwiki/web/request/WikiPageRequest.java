@@ -36,7 +36,7 @@ import org.dbwiki.exception.data.WikiNodeException;
 import org.dbwiki.web.request.parameter.RequestParameter;
 import org.dbwiki.web.server.DatabaseWiki;
 
-public class WikiPageRequest<T> extends WikiRequest<T>  {
+public class WikiPageRequest extends WikiRequest  {
 	/*
 	 * Private Variables
 	 */
@@ -49,10 +49,10 @@ public class WikiPageRequest<T> extends WikiRequest<T>  {
 	 * Constructors
 	 */
 	
-	public WikiPageRequest(DatabaseWiki wiki, RequestURL<T> url) throws org.dbwiki.exception.WikiException {
+	public WikiPageRequest(DatabaseWiki wiki, RequestURL url) throws org.dbwiki.exception.WikiException {
 		super(wiki, url);
 		
-		DatabaseIdentifier wikiIdentifier = new DatabaseIdentifier(wiki.identifier().databaseHomepage() + "/" + DatabaseWiki.WikiPageRequestPrefix);
+		DatabaseIdentifier wikiIdentifier = new DatabaseIdentifier(wiki.identifier().databaseHomepage() + "/" + RequestURL.WikiPageRequestPrefix);
 		if (url.size() == 0) {
 			_wri = new WRI(wikiIdentifier, new PageIdentifier());
 		} else if (url.size() == 1) {

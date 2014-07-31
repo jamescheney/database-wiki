@@ -36,19 +36,19 @@ import org.dbwiki.web.ui.CSS;
  * @author jcheney
  *
  */
-public class SettingsListingPrinter implements HtmlContentPrinter {
+public class SettingsListingPrinter extends HtmlContentPrinter {
 	/*
 	 * Private Variables
 	 */
 	
-	private WikiRequest<?> _request;
+	private WikiRequest _request;
 	
 	
 	/*
 	 * Constructors
 	 */
 	
-	public SettingsListingPrinter(WikiRequest<?> request) {
+	public SettingsListingPrinter(WikiRequest request) {
 		_request = request;
 	}
 	

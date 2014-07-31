@@ -50,20 +50,20 @@ import org.dbwiki.web.ui.layout.DatabaseLayouter;
  * @author jcheney
  *
  */
-public class ObjectProvenancePrinter implements HtmlContentPrinter {
+public class ObjectProvenancePrinter extends HtmlContentPrinter {
 	/*
 	 * Private Variables
 	 */
 	
 	private DatabaseLayouter _layouter;
-	private WikiDataRequest<?> _request;
+	private WikiDataRequest _request;
 	
 	
 	/*
 	 * Constructors
 	 */
 	
-	public ObjectProvenancePrinter(WikiDataRequest<?> request, DatabaseLayouter layouter) {
+	public ObjectProvenancePrinter(WikiDataRequest request, DatabaseLayouter layouter) {
 		_request = request;
 		_layouter = layouter;
 	}

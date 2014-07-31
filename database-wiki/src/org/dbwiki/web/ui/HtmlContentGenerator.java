@@ -21,17 +21,11 @@
 */
 package org.dbwiki.web.ui;
 
-import java.net.URLEncoder;
-
 import java.util.Hashtable;
 import java.util.Vector;
 
 import org.dbwiki.web.html.HtmlLinePrinter;
 import org.dbwiki.web.html.HtmlPage;
-
-import org.dbwiki.web.request.HttpRequest;
-import org.dbwiki.web.request.parameter.RequestParameter;
-import org.dbwiki.web.server.WikiServer;
 
 import org.dbwiki.web.ui.printer.HtmlContentPrinter;
 
@@ -40,12 +34,7 @@ import org.dbwiki.web.ui.printer.HtmlContentPrinter;
  *  the templates used by DBWiki.  Some of the symbols have predefined behavior,  
  *  the rest are handled by symbol table entries.
  * 
- * FIXME #server: This depends on HttpRequest in an inessential way.  
- * All we really need to know is whether the user is logged in and, if so, the user id.  
- * This could be indicated some other way, such as by having a boolean indicating whether 
- * "@login" is available and a User that if nonnull says which user is logged in.
  * 
- * FIXME #abstract: This abstract class has only one immediate subclass.
  * @author jcheney
  *
  */
@@ -73,22 +62,16 @@ public abstract class HtmlContentGenerator {
 	 */
 	/** _contentPrinter maps keys to actual printers that will be used.  */
 	private Hashtable<String, HtmlContentPrinter> _contentPrinter;
-	/** _request is used to determine whether user is logged in, and if so, to find out user name */
-	private HttpRequest<?> _request;
 	
 	
 	/*
 	 * Constructors
 	 */
 	
-	public HtmlContentGenerator(HttpRequest<?> request) {
-		_request = request;
-		
-		_contentPrinter = new Hashtable<String, HtmlContentPrinter>();
-	}
 	
 	public HtmlContentGenerator() {
-		this(null);
+		_contentPrinter = new Hashtable<String, HtmlContentPrinter>();
+
 	}
 	
 	
@@ -98,11 +81,7 @@ public abstract class HtmlContentGenerator {
 	
 	/** Tests whether a content printer key is present in this generator */
 	public boolean contains(String key) {
-		if (key.equals(ContentLogin)) {
-			return (_request != null);
-		} else {
-			return _contentPrinter.containsKey(key);
-		}
+		return _contentPrinter.containsKey(key);
 	}
 	
 	/** Adds a new HtmlContentPrinter @printer to the mapping with key @key 
@@ -121,20 +100,9 @@ public abstract class HtmlContentGenerator {
 	 */
 	
 	public void print(String key, Vector<String> args, HtmlPage page, String indention) throws org.dbwiki.exception.WikiException {
-	if (key.equals(ContentLogin)) {
-		if (_request != null) {
-			try {
-				if (_request.user() != null) {
-					page.add(indention + "<p CLASS=\"" + CSS.CSSLogin + "\">You are currently logged in as <span CLASS=\"" + CSS.CSSLogin + "\">" + _request.user().fullName() + "</span></p>");
-				} else {
-					String loginRedirectLink = WikiServer.SpecialFolderLogin + "?" + RequestParameter.ParameterResource + "=" + URLEncoder.encode(_request.getRequestURI().toASCIIString(), "UTF-8");
-					page.add(indention + "<p CLASS=\"" + CSS.CSSLogin + "\"><a CLASS=\"" + CSS.CSSLogin + "\" HREF=\"" + loginRedirectLink + "\">Login</a></p>");
-				}
-			} catch (java.io.UnsupportedEncodingException uee) {
-			}
-		}
-	} else if (_contentPrinter.containsKey(key)) {
-			_contentPrinter.get(key).print(new HtmlLinePrinter(page, indention));
+
+		if (_contentPrinter.containsKey(key)) {
+			_contentPrinter.get(key).print(new HtmlLinePrinter(page, indention),args);
 		}
 	}
 }

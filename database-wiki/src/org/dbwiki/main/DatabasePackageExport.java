@@ -41,6 +41,7 @@ import org.dbwiki.data.wiki.WikiPageDescription;
 import org.dbwiki.exception.WikiException;
 import org.dbwiki.web.server.DatabaseWiki;
 import org.dbwiki.web.server.WikiServer;
+import org.dbwiki.web.server.WikiServerStandalone;
 import org.dbwiki.lib.XML;
 import org.dbwiki.main.ImportPresentationFiles.PresentationFileType;
 
@@ -229,7 +230,8 @@ public class DatabasePackageExport {
 			Args args = new Args(argv);
 			
 			Properties properties = org.dbwiki.lib.IO.loadProperties(args.configFile);
-			_server = new WikiServer(properties);
+			//TODO #server: Use non-web wiki server for this
+			_server = new WikiServerStandalone(properties);
 			
 			// attempt to generate a schema from the input file
 			OutputStream out = null;
@@ -286,7 +288,7 @@ public class DatabasePackageExport {
 					OutputStreamWriter wikiout = new OutputStreamWriter(wikioutstream);
 					
 					DatabaseWikiPage content = _wiki.wiki().get(wikiEntry.identifier());
-					// TODO: Move this to DatabaseWikiPage
+					// TODO: Move this to DatabaseWikiPage 
 					// For each wiki page
 					// Create file named <wikipagedir>/page<id>.xml
 					// Write content of each file

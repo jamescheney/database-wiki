@@ -62,6 +62,7 @@ public class WhereClauseGenerator {
 				break;
 			}
 		}
+		assert(variable != null); // because child list has to be nonempty
 		return new WhereCondition(variable.name(), new ConditionGenerator().getCondition(variable.targetEntity(), versionIndex, token.children(), new VariableTargetPathGenerator()));
 	}
 	

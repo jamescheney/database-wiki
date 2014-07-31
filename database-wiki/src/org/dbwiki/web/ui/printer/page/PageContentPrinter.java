@@ -49,7 +49,7 @@ public class PageContentPrinter extends DataNodePrinter {
 	 * Private Variables
 	 */
 	
-	private WikiPageRequest<?> _request;
+	private WikiPageRequest _request;
 	
 	private ExtendedPegDownProcessor _pegDownProcessor;
 	
@@ -58,7 +58,7 @@ public class PageContentPrinter extends DataNodePrinter {
 	 * Constructors
 	 */
 	
-	public PageContentPrinter(WikiPageRequest<?> request, DatabaseLayouter layouter) {
+	public PageContentPrinter(WikiPageRequest request, DatabaseLayouter layouter) {
 		super(request.wiki().database().identifier(), layouter, new TimestampPrinter(request.wiki().database().versionIndex()));
 		
 		_request = request;

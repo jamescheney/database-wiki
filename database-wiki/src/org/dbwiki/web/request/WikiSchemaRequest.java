@@ -26,7 +26,7 @@ import org.dbwiki.data.schema.SchemaNode;
 import org.dbwiki.data.time.VersionIndex;
 import org.dbwiki.web.server.DatabaseWiki;
 
-public class WikiSchemaRequest<T> extends WikiRequest <T>{
+public class WikiSchemaRequest extends WikiRequest {
 	// TODO: Much of this code is shared with WikiDataRequest.
 	// Perhaps we should refactor...
 	
@@ -43,7 +43,7 @@ public class WikiSchemaRequest<T> extends WikiRequest <T>{
 	/**
 	 * Constructors
 	 */
-	public WikiSchemaRequest(DatabaseWiki wiki, RequestURL<T> url) throws org.dbwiki.exception.WikiException {
+	public WikiSchemaRequest(DatabaseWiki wiki, RequestURL url) throws org.dbwiki.exception.WikiException {
 		super(wiki, url);
 		
 		_isRootRequest = url.isRoot();

@@ -44,19 +44,19 @@ import org.dbwiki.web.ui.printer.HtmlContentPrinter;
  * @author jcheney
  *
  */
-public class PageHistoryPrinter implements HtmlContentPrinter {
+public class PageHistoryPrinter extends HtmlContentPrinter {
 	/*
 	 * Private Variables
 	 */
 	
-	private WikiPageRequest<?> _request;
+	private WikiPageRequest _request;
 	
 	
 	/*
 	 * Constructors
 	 */
 	
-	public PageHistoryPrinter(WikiPageRequest<?> request) {	
+	public PageHistoryPrinter(WikiPageRequest request) {	
 		_request = request;
 	}
 	
@@ -69,17 +69,17 @@ public class PageHistoryPrinter implements HtmlContentPrinter {
 	public void print(HtmlLinePrinter body) throws WikiException {
 		body.paragraph("Page History", CSS.CSSHeadline);
 		
-		printPageVersions(_request, body);
+		printPageVersions(body);
 	}
 	
 	/*
 	 * Private Methods
 	 */
 	
-	private void printPageVersions(WikiPageRequest<?> request, HtmlLinePrinter body) {
+	private void printPageVersions( HtmlLinePrinter body) {
 		List<DatabaseWikiPage> versions = null;
 		try {
-			versions = request.versions();
+			versions = _request.versions();
 		} catch (WikiException e) {
 			e.printStackTrace();
 		}

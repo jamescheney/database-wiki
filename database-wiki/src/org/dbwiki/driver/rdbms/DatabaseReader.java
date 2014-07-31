@@ -70,7 +70,7 @@ public class DatabaseReader implements DatabaseConstants {
 		ResultSet rs = statement.executeQuery(
 				"SELECT " + RelDataColID +  " FROM " + database.name() + RelationData + " " +
 				"WHERE " + RelDataColSchema + " = " + identifier.nodeID());
-		
+
 		while (rs.next()) {
 			int id = rs.getInt(RelDataColID);
 			nodes.add(new NodeIdentifier(id));
@@ -94,9 +94,7 @@ public class DatabaseReader implements DatabaseConstants {
 	public static DatabaseNode get(Connection con, RDBMSDatabase database, NodeIdentifier identifier) throws org.dbwiki.exception.WikiException {
 		Hashtable<Integer, DatabaseNode> nodeIndex = new Hashtable<Integer, DatabaseNode>();
 		
-		try {
-	//	 	long startevalute = System.nanoTime();
-			
+		try {			
 			Statement stmt = con.createStatement();
 			
 			// This query uses pre/post indexes to select the node and all its ancestors and descendants.
@@ -104,7 +102,6 @@ public class DatabaseReader implements DatabaseConstants {
 			// the ancestors will be missed.  Pulling in all ancestors is probably overkill;
 			// maybe we can calculate the root timestamp on the database somehow, but this doesn't seem
 			// like a bottleneck.
-			
 			/*
 			ResultSet rs= stmt.executeQuery(
 					" SELECT v2.* "+
@@ -212,18 +209,16 @@ public class DatabaseReader implements DatabaseConstants {
 				}
 			}
 			System.out.println(i);
-		//	System.out.println(rs.getInt(ViewDataColNodeID));
 			rs.close();
 			stmt.close();
-	// 		long getnode = System.nanoTime() - startevalute; 
- 	//		 System.out.println("getnode:\t"+getnode);
 			 
 		} catch (java.sql.SQLException sqlException) {
 			throw new WikiFatalException(sqlException);
 		}  
 		return nodeIndex.get(new Integer(identifier.nodeID()));
 	}
-		
+	
+	@Deprecated // Old version of get that does not use indexing.  Included for comparison purposes.
 	public static DatabaseNode getold(Connection con, RDBMSDatabase database, NodeIdentifier identifier) throws org.dbwiki.exception.WikiException {
 			Hashtable<Integer, DatabaseNode> nodeIndex = new Hashtable<Integer, DatabaseNode>();
 			
@@ -335,4 +330,57 @@ public class DatabaseReader implements DatabaseConstants {
 			}  
 			return nodeIndex.get(new Integer(identifier.nodeID()));
 		}
+	
+	/* Validation 
+	 */
+	
+	/** Look for id that have multiple timestamps with the same start or overlapping intervals 
+	 * 
+	 */
+	public static void validateTimestamps(Connection con, RDBMSDatabase database) throws org.dbwiki.exception.WikiException {
+		System.out.println("Validating " + database.name() + RelationTimesequence);
+		try {
+			
+			Statement statement = con.createStatement();
+			ResultSet orderViolations = statement.executeQuery(
+					"SELECT "+ RelTimesequenceColID + 
+					" FROM " +  database.name() + RelationTimesequence  +
+					" WHERE " + RelTimesequenceColStart +" > " + RelTimesequenceColStop +
+					" AND "   + RelTimesequenceColStop +" > " + "-1");
+			
+			ResultSet keyViolations = statement.executeQuery(
+					"SELECT "+ "t1."+ RelTimesequenceColID + 
+					" FROM " +  database.name() + RelationTimesequence + " t1, " +
+					            database.name() + RelationTimesequence + " t2 " +
+					" WHERE " + "t1." + RelTimesequenceColID +" = " + "t2." + RelTimesequenceColID +
+					" AND "   + "t1." + RelTimesequenceColStart +" = " + "t2." + RelTimesequenceColStart +
+					" AND "   + "t1." + RelTimesequenceColStop +" = " + "t2." + RelTimesequenceColStop);
+			
+			ResultSet disjViolations = statement.executeQuery(
+					"SELECT "+ "t1."+ RelTimesequenceColID + 
+					" FROM " +  database.name() + RelationTimesequence + " t1, " +
+					            database.name() + RelationTimesequence + " t2 " +
+					" WHERE " + "t1." + RelTimesequenceColID +" = " + "t2." + RelTimesequenceColID +
+					" AND "   + "t1." + RelTimesequenceColStart +" < " + "t2." + RelTimesequenceColStart +
+					" AND "   + "t2." + RelTimesequenceColStart +" <= " + "t1." + RelTimesequenceColStop);
+			
+			while (!orderViolations.isClosed() && orderViolations.next()) {
+				int id = orderViolations.getInt(RelDataColID);
+				System.err.println("Order violation in timesequence id " + id);
+			}
+			
+			while (!keyViolations.isClosed() && keyViolations.next()) {
+				int id = keyViolations.getInt(RelDataColID);
+				System.err.println("Key violation in timesequence id " + id);
+			}
+			
+			while (!disjViolations.isClosed() && disjViolations.next()) {
+				int id = disjViolations.getInt(RelDataColID);
+				System.err.println("Disjointness violation in timesequence id " + id);
+			}
+		} catch (java.sql.SQLException sqlException) {
+			throw new WikiFatalException(sqlException);
+		}
+
+	}
 }

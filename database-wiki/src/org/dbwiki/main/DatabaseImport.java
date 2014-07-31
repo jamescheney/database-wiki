@@ -31,6 +31,7 @@ import org.dbwiki.data.io.SAXCallbackInputHandler;
 import org.dbwiki.data.io.StructureParser;
 import org.dbwiki.data.schema.DatabaseSchema;
 import org.dbwiki.web.server.WikiServer;
+import org.dbwiki.web.server.WikiServerStandalone;
 
 /** Imports a database serialized as an XML file, infers a schema and creates a new DBWiki.
  * TODO: Remove this in favor of package import/export
@@ -63,9 +64,11 @@ public class DatabaseImport {
 	
 		try {
 			Properties properties = org.dbwiki.lib.IO.loadProperties(configFile);
-			WikiServer server = new WikiServer(properties);
+			//TODO #server: Use non-web wiki server for this
+			WikiServer server = new WikiServerStandalone(properties);
 			
 			// attempt to generate a schema from the input file
+			// 1. get input file stream
 			InputStream in = null;
 
 			URL inputURL = new File(inputName).toURI().toURL();
@@ -74,7 +77,7 @@ public class DatabaseImport {
 			} else {
 				in = inputURL.openStream();
 			}
-			
+			// 2.  parse to infer schema
 			StructureParser structureParser = new StructureParser();
 			new SAXCallbackInputHandler(structureParser, false).parse(in, false, false);
 			in.close();

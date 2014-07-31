@@ -79,7 +79,7 @@ public class DatabaseWriter implements DatabaseConstants {
 	/*
 	 * Public Methods
 	 */
-	/** Using a query, insert an annotation to identified node.
+	/** Using a query, insert an annotation attached to identified node.
 	 * 
 	 */
 	public void insertAnnotation(NodeIdentifier identifier, Annotation annotation) throws org.dbwiki.exception.WikiException {
@@ -273,7 +273,6 @@ public class DatabaseWriter implements DatabaseConstants {
 	 * @throws org.dbwiki.exception.WikiException
 	 * @throws IOException 
 	 */
-	// TODO #indexing: Fix this to work correctly in presence of pre/post indexing
 	
 	
 	public ResourceIdentifier insertNode(NodeIdentifier identifier, DocumentNode node, Version version) throws org.dbwiki.exception.WikiException {
@@ -315,6 +314,67 @@ public class DatabaseWriter implements DatabaseConstants {
 		return nodeIdentifier;
 	}
 	
+	
+
+	/** Update the time interval starting at interval.start() associated with an identified resource with a new end.
+	 * @param identifier
+	 * @param interval
+	 * @throws org.dbwiki.exception.WikiException
+	 */
+	public void updateTimestamp(ResourceIdentifier identifier, TimeInterval interval) throws org.dbwiki.exception.WikiException {
+		try {
+			int timestamp = getTimestamp(identifier);
+			PreparedStatement pStmtUpdateTimestamp = _con.prepareStatement(
+				"UPDATE " + _database.name() + RelationTimesequence + " " +
+					"SET " + RelTimesequenceColStop + " = ? " +
+					"WHERE " + RelTimesequenceColID + " = ? AND " + RelTimesequenceColStart + " = ?");
+			pStmtUpdateTimestamp.setInt(1, interval.end());
+			pStmtUpdateTimestamp.setInt(2, timestamp);
+			pStmtUpdateTimestamp.setInt(3, interval.start());
+			pStmtUpdateTimestamp.execute();
+			pStmtUpdateTimestamp.close();
+		} catch (java.sql.SQLException sqlException) {
+			throw new WikiFatalException(sqlException);
+		}
+	}
+
+	
+	/** Takes a DatabaseNode which contains possibly updated text nodes and writes them to the database.
+	 * The id information embedded in the DatabaseNode is used to determine where the data goes.
+	 * 
+	 * @param node
+	 * @throws org.dbwiki.exception.WikiException
+	 */
+	public void updateNode(DatabaseNode node) throws org.dbwiki.exception.WikiException {
+		DatabaseNode entry = node;
+		while (entry.parent() != null) {
+			entry = entry.parent();
+		}
+
+		try {
+			int entryID = ((NodeIdentifier)entry.identifier()).nodeID();
+			
+			// FIXME: ugly casts - perhaps a visitor
+			// would be appropriate here?
+			if (node.isElement()) {
+				DatabaseElementNode element = (DatabaseElementNode)node;
+				if (element.isAttribute()) {
+					writeTextNodes((RDBMSDatabaseAttributeNode)element, entryID);
+				} else {
+					writeTextNodes((RDBMSDatabaseGroupNode)element, entryID);
+				}
+			} else {
+				writeTextNodes((RDBMSDatabaseAttributeNode)node.parent(), entryID);
+			}
+		} catch (java.sql.SQLException sqlException) {
+			throw new WikiFatalException(sqlException);
+		}
+	}
+	
+	/*
+	 * Private Methods
+	 */
+	
 	/**
 	 *  Bumps all the existing pre/post numbers in the entry up by newpost via SQL UPDATE.
 		 (It is fine to insert at the end or beginning or anywhere in the middle of the parent list; 
@@ -337,58 +397,9 @@ public class DatabaseWriter implements DatabaseConstants {
 			pStmtUpdatePre.execute();
 			pStmtUpdatePre.close();
 	}
-
-	/** Update the time interval starting at interval.start() associated with an identified resource with a new end.
-	 * FIXME: Check here and complain if there are multiple intervals starting at "start" 
-	 * @param identifier
-	 * @param interval
-	 * @throws org.dbwiki.exception.WikiException
-	 */
-	public void updateTimestamp(ResourceIdentifier identifier, TimeInterval interval) throws org.dbwiki.exception.WikiException {
-		try {
-			int timestamp = getTimestamp(identifier);
-			PreparedStatement pStmtUpdateTimestamp = _con.prepareStatement(
-				"UPDATE " + _database.name() + RelationTimesequence + " " +
-					"SET " + RelTimesequenceColStop + " = ? " +
-					"WHERE " + RelTimesequenceColID + " = ? AND " + RelTimesequenceColStart + " = ?");
-			pStmtUpdateTimestamp.setInt(1, interval.end());
-			pStmtUpdateTimestamp.setInt(2, timestamp);
-			pStmtUpdateTimestamp.setInt(3, interval.start());
-			pStmtUpdateTimestamp.execute();
-			pStmtUpdateTimestamp.close();
-		} catch (java.sql.SQLException sqlException) {
-			throw new WikiFatalException(sqlException);
-		}
-	}
-
-	public void updateNode(DatabaseNode node) throws org.dbwiki.exception.WikiException {
-		DatabaseNode entry = node;
-		while (entry.parent() != null) {
-			entry = entry.parent();
-		}
-
-		try {
-			int entryID = ((NodeIdentifier)entry.identifier()).nodeID();
-			
-			// ugly casts - perhaps a visitor
-			// would be appropriate here?
-			if (node.isElement()) {
-				DatabaseElementNode element = (DatabaseElementNode)node;
-				if (element.isAttribute()) {
-					writeTextNodes((RDBMSDatabaseAttributeNode)element, entryID);
-				} else {
-					writeTextNodes((RDBMSDatabaseGroupNode)element, entryID);
-				}
-			} else {
-				writeTextNodes((RDBMSDatabaseAttributeNode)node.parent(), entryID);
-			}
-		} catch (java.sql.SQLException sqlException) {
-			throw new WikiFatalException(sqlException);
-		}
-	}
 	
-	/*
-	 * Private Methods
+	/** Gets the timesequence id of an identified element of a relation (that has timestamps).
+	 * 
 	 */
 	private int getTimestamp(String relation, String idColumn, String timestampColumn, int id) throws SQLException, WikiFatalException {
 		PreparedStatement q = _con.prepareStatement("" +
@@ -398,7 +409,7 @@ public class DatabaseWriter implements DatabaseConstants {
 				);
 		ResultSet rs = q.executeQuery();
 		if (rs.next()) {
-			int timestamp = rs.getInt(1);
+			int timestamp = rs.getInt(1); 
 			rs.close();
 			return timestamp;
 		} else {
@@ -407,14 +418,35 @@ public class DatabaseWriter implements DatabaseConstants {
 		
 	}
 	
+	/**
+	 * Convenience function for getting timestamps of schema nodes.
+	 * @param id
+	 * @return
+	 * @throws SQLException
+	 * @throws WikiFatalException
+	 */
 	private int getSchemaTimestamp(int id) throws SQLException, WikiFatalException {
 		return getTimestamp(RelationSchema, RelSchemaColID, RelSchemaColTimesequence, id);
 	}
 	
+	/**
+	 * Convenience function for getting timestamps of regular nodes.
+	 * @param id
+	 * @return
+	 * @throws SQLException
+	 * @throws WikiFatalException
+	 */
 	private int getNodeTimestamp(int id) throws SQLException, WikiFatalException {
 		return getTimestamp(RelationData, RelDataColID, RelDataColTimesequence, id);		
 	}
 	
+	/** Convenience function for getting timestamps based on resourceID
+	 * 
+	 * @param identifier
+	 * @return
+	 * @throws SQLException
+	 * @throws WikiFatalException
+	 */
 	private int getTimestamp(ResourceIdentifier identifier) throws SQLException, WikiFatalException {
 		int timestamp = -1;
 		
@@ -426,6 +458,13 @@ public class DatabaseWriter implements DatabaseConstants {
 		return timestamp;
 	}
 	
+	/** Retrieves the key values resulting from an insert, so that we know what ids were inserted 
+	 * 
+	 * @param insertStatement
+	 * @return
+	 * @throws WikiFatalException
+	 * @throws SQLException
+	 */
 	private int getGeneratedKey(PreparedStatement insertStatement) throws WikiFatalException, SQLException {
 		ResultSet rs = insertStatement.getGeneratedKeys();
 		if (rs.next()) {
@@ -451,14 +490,40 @@ public class DatabaseWriter implements DatabaseConstants {
 		updateNode.close();
 	}
 	
+	/** Convenience function for recording timestamp of schema nodes
+	 * 
+	 * @param id
+	 * @param timestamp
+	 * @throws SQLException
+	 */
 	private void recordNewSchemaTimestamp(int id, int timestamp) throws SQLException {
 		recordNewTimestamp(RelationSchema, RelSchemaColID, RelSchemaColTimesequence, id, timestamp);
 	}
 	
+	/** Convenience function for recording timestamp of ordinary nodes
+	 * 
+	 * @param id
+	 * @param timestamp
+	 * @throws SQLException
+	 */
 	private void recordNewNodeTimestamp(int id, int timestamp) throws SQLException {
 		recordNewTimestamp(RelationData, RelDataColID, RelDataColTimesequence, id, timestamp);
 	}
 		
+	/** 
+	 * Convenience function that inserts an attribute node into the db 
+	 * and returns a new instance of RDBMSDatabaseAttributeNode
+	 * @param schema
+	 * @param parent
+	 * @param entry
+	 * @param timestamp
+	 * @param value
+	 * @param pre
+	 * @param post
+	 * @return
+	 * @throws java.sql.SQLException
+	 * @throws org.dbwiki.exception.WikiException
+	 */
 	private RDBMSDatabaseAttributeNode 
 			insertAttributeNode(
 				AttributeSchemaNode schema, 
@@ -469,16 +534,28 @@ public class DatabaseWriter implements DatabaseConstants {
 				int post) 
 
 			throws java.sql.SQLException, org.dbwiki.exception.WikiException {
-		RDBMSDatabaseAttributeNode attribute = new RDBMSDatabaseAttributeNode(this.insertNode(schema, parent, entry, timestamp, null, pre, post), schema, parent, timestamp, pre, post);
+		// FIXME: This seems unnecessarily convoluted; we call insertNode twice with different arguments
+		// This means we generate two rows in the data table, one for the attribute name and 
+		// one for the value, whcih is a child of the name
+		int insertedID = this.insertNode(schema, parent, entry, timestamp, null, pre, post);
+		RDBMSDatabaseAttributeNode attribute = 
+			new RDBMSDatabaseAttributeNode(insertedID, schema, parent, timestamp, pre, post);
 		this.insertNode(null, attribute, entry, null, value, pre, post);
 		return attribute;
 	}
 
-	private void 
-			insertGroupChildren(
-				DocumentGroupNode group, 
-				RDBMSDatabaseGroupNode parent, 
-				int entry) 
+	/**
+	 * Inserts the children of a group node, recursively handling nested groups
+	 * @param group
+	 * @param parent
+	 * @param entry
+	 * @throws java.sql.SQLException
+	 * @throws org.dbwiki.exception.WikiException
+	 */
+	private void insertGroupChildren(
+					DocumentGroupNode group, 
+					RDBMSDatabaseGroupNode parent, 
+					int entry) 
 			throws java.sql.SQLException, org.dbwiki.exception.WikiException {
 		for (int iChild = 0; iChild < group.children().size(); iChild++) {
 			DocumentNode element = group.children().get(iChild);
@@ -495,6 +572,19 @@ public class DatabaseWriter implements DatabaseConstants {
 		}
 	}
 
+	/**
+	 * Convenience function that inserts a group node into the db 
+	 * and returns a new instance of RDBMSDatabaseGroupNode
+	 * @param schema
+	 * @param parent
+	 * @param entry
+	 * @param timestamp
+	 * @param pre
+	 * @param post
+	 * @return
+	 * @throws java.sql.SQLException
+	 * @throws org.dbwiki.exception.WikiException
+	 */
 	private RDBMSDatabaseGroupNode 
 			insertGroupNode(
 				GroupSchemaNode schema, 
@@ -504,7 +594,8 @@ public class DatabaseWriter implements DatabaseConstants {
 				int pre,
 				int post) 
 	 		throws java.sql.SQLException, org.dbwiki.exception.WikiException {
-		return new RDBMSDatabaseGroupNode(insertNode(schema, parent, entry, timestamp, null, pre, post), schema, parent, timestamp, pre, post);
+		int insertedId = insertNode(schema, parent, entry, timestamp, null, pre, post);
+		return new RDBMSDatabaseGroupNode(insertedId, schema, parent, timestamp, pre, post);
 	}
 	
 	private int insertNode(

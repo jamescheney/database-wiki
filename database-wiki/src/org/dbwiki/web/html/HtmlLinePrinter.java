@@ -172,8 +172,8 @@ public class HtmlLinePrinter  {
 		this.add(_indentation + indentExtension + "<textarea name=\"" + name + "\" cols=" + cols + " style=height:1.2em>" + value + "</textarea>");
 	}
 
-	public void addTEXTBOX(String name) {
-		this.add(_indentation + indentExtension + "<input type=\"text\" name=\"" + name + "\"/>");
+	public void addTEXTBOX(String name,String value,String cssClass) {
+		this.add(_indentation + indentExtension + "<input id=\""+cssClass+"\" type=\"text\" name=\"" + name + "\" value=\""+ value+ "\"/>");
 	}
 	
 	public void addFILE(String name) {

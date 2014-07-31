@@ -32,7 +32,7 @@ import org.dbwiki.web.ui.CSS;
  * @author jcheney
  *
  */
-public class ExceptionPrinter implements HtmlContentPrinter {
+public class ExceptionPrinter extends HtmlContentPrinter {
 	/*
 	 * Private Variables
 	 */

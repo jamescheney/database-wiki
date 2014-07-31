@@ -34,19 +34,19 @@ import org.dbwiki.web.ui.printer.HtmlContentPrinter;
 /** Prints wiki page editor form
  * FIXME #ui: Simplify this to avoid dependence on WikiPageRequest
  */
-public class PageUpdateFormPrinter implements HtmlContentPrinter {
+public class PageUpdateFormPrinter extends HtmlContentPrinter {
 	/*
 	 * Private Variables
 	 */
 	
-	private WikiPageRequest<?> _request;
+	private WikiPageRequest _request;
 	
 	
 	/*
 	 * Constructors
 	 */
 	
-	public PageUpdateFormPrinter(WikiPageRequest<?> request) {
+	public PageUpdateFormPrinter(WikiPageRequest request) {
 		_request = request;
 	}
 	
