@@ -19,7 +19,7 @@
     along with Database Wiki.  If not, see <http://www.gnu.org/licenses/>.
     END LICENSE BLOCK
 */
-package org.dbwiki.data.query.condition;
+package org.dbwiki.data.query.handler;
 
 /** Implements a QueryNodeHandler for conditions, i.e., the given
  * condition is evaluated against a query node and if the condition
@@ -28,12 +28,12 @@ package org.dbwiki.data.query.condition;
  * @author hmueller
  *
  */
-// TODO: Rename this to ConditionedNodeHandler; move to handler package
 
 import org.dbwiki.data.database.DatabaseElementNode;
+import org.dbwiki.data.query.condition.Condition;
 import org.dbwiki.data.query.handler.QueryNodeHandler;
 
-public class ConditionedNodeConsumer implements QueryNodeHandler {
+public class ConditionedNodeHandler implements QueryNodeHandler {
 
 	/*
 	 * Private Variables
@@ -47,7 +47,7 @@ public class ConditionedNodeConsumer implements QueryNodeHandler {
 	 * Constructors
 	 */
 	
-	public ConditionedNodeConsumer(QueryNodeHandler nodeHandler, Condition condition) {
+	public ConditionedNodeHandler(QueryNodeHandler nodeHandler, Condition condition) {
 		
 		_nodeHandler = nodeHandler;
 		_condition = condition;

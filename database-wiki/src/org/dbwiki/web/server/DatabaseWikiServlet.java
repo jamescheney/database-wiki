@@ -809,6 +809,8 @@ public class DatabaseWikiServlet extends DatabaseWiki {
 		}
 	}
 
+	// TODO: Merge XML and JSON export to avoid code duplication
+
 	/**
 	 * Handles data export requests (generating JSON)
 	 * 

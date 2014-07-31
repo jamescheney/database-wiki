@@ -102,7 +102,6 @@ import org.dbwiki.web.ui.printer.server.ServerMenuPrinter;
  *
  */
 
-// TODO: Still need to factor out the file server stuff.
 
 public abstract class WikiServer  implements WikiServerConstants {
 	/*

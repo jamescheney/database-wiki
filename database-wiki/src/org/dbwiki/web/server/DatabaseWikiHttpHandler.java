@@ -207,6 +207,8 @@ public class DatabaseWikiHttpHandler extends DatabaseWiki implements
 			HtmlSender.send(new FatalExceptionPage(exception), exchange);
 		}
 	}
+	
+	// TODO: Merge XML and JSON export to avoid code duplication
 
 	/**
 	 * Handles data export requests (generating XML)

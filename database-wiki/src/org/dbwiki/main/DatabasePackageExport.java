@@ -247,7 +247,7 @@ public class DatabasePackageExport {
 
 			_wiki = _server.get(args.name);
 
-			// TODO: Write out the xml
+			// Write out the xml
 			NodeWriter writer = new ExportNodeWriter();
 			BufferedWriter outstr = new BufferedWriter(new OutputStreamWriter(out));
 			
