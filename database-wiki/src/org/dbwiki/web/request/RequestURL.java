@@ -57,7 +57,7 @@ public class RequestURL {
 	private String _cookie = null;
 	
 	private Vector<URLComponent> _components;
-	private Exchange _exchange = null;
+	private Exchange<?> _exchange = null;
 	
 	private boolean _isGETRequest = false;
 	private RequestParameterList _parameters = null;
@@ -68,7 +68,7 @@ public class RequestURL {
 	 */
 	
 	// TODO #request: Factor the URL / request parsing code out
-	public RequestURL(Exchange exchange, String ignorePathPrefix) throws org.dbwiki.exception.WikiException {
+	public RequestURL(Exchange<?> exchange, String ignorePathPrefix) throws org.dbwiki.exception.WikiException {
 		_exchange = exchange;
 		
 		_uri = exchange.getRequestURI();

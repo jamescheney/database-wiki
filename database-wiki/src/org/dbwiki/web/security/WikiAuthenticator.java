@@ -81,8 +81,8 @@ public class WikiAuthenticator extends Authenticator {
 		// a '.' in the request path), then no authorization is
 		// required.
 		// FIXME #security: Security hole? Generalize the test for whether something is a file.
-		System.err.println(path);
-		return path .indexOf('.') != -1;
+		// System.err.println(path);
+		return path.indexOf('.') != -1;
 	}
 	
 	public synchronized Result authenticate(HttpExchange exchange) {

@@ -160,6 +160,8 @@ public class DatabasePackageExport {
 			case URLDecoding:
 				configFile = _server.getURLDecoding(_wiki, version);
 				break;
+			default:
+				assert(false);
 		}
 		
 		writer.write(configFile);

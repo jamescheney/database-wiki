@@ -63,7 +63,7 @@ public class DatabaseConnectorFactory {
 
 		try {
 			if (rdbmsTypePostgreSQL.equalsIgnoreCase(rdbmsType)) {
-				//Class.forName("org.postgresql.Driver");
+				Class.forName("org.postgresql.Driver");
 				return new PSQLDatabaseConnector(url, user, password);
 			} else if (rdbmsTypeMySQL.equalsIgnoreCase(rdbmsType)) {
 				Class.forName("com.mysql.jdbc.Driver");

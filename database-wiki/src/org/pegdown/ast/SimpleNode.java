@@ -43,10 +43,12 @@ public class SimpleNode extends Node implements SimpleNodeTypes {
             case LINEBREAK:
                 p.print("<br/>").println();
                 return;
+            default:
+        		throw new IllegalStateException();
         }
-
-        throw new IllegalStateException();
     }
+
+        
 
     @Override
     public String getText() {
@@ -65,8 +67,10 @@ public class SimpleNode extends Node implements SimpleNodeTypes {
                 return "<br/>";
             case NBSP:
                 return "&nbsp;";
+            default:
+            	throw new IllegalStateException();
         }
-        throw new IllegalStateException();
+        
     }
 
 }

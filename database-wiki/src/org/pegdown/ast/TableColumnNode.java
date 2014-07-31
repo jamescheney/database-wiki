@@ -46,8 +46,9 @@ public class TableColumnNode extends Node {
             case 0x03:
                 printer.print(" align=\"center\"");
                 return;
+            default:
+                throw new IllegalStateException();
         }
-        throw new IllegalStateException();
     }
 
 }

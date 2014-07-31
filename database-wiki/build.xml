@@ -28,6 +28,16 @@
       <classpath refid="master-classpath"/>
     </javac>
   </target>
+  
+  <target name="build-war" depends="compile"
+		description="compile and create .war package">
+	<!-- Compile the java code from ${src} into a war package -->
+	<war destfile="${dist}/DatabaseWiki.war" webxml="web.xml">
+	  <fileset dir="." includes="resources/**"/>
+	  <lib dir="lib"/>
+	  <classes dir="${build}"/>
+	</war>	
+  </target>
 
   <target name="dist" depends="compile"
           description="generate the distribution">

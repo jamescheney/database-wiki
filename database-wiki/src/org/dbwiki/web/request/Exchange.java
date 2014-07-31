@@ -11,8 +11,9 @@ public interface Exchange<T> {
 	public String getCookie();
 	public boolean isGet();
 	public boolean isPost();
-	public InputStream getRequestBody();
-	public void send(HtmlPage page) throws java.io.IOException ;
+	public InputStream getRequestBody() throws java.io.IOException;
+	public void send(HtmlPage page) throws java.io.IOException;
 	public void send(HtmlPage page, int responseCode) throws java.io.IOException;
+	@Deprecated 
 	public T get();
 	}

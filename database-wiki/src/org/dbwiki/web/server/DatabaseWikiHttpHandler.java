@@ -645,6 +645,7 @@ public class DatabaseWikiHttpHandler extends DatabaseWiki implements
 
 		// Send the resulting page to the user.
 		HtmlSender.send(page, exchange);
+		
 	}
 
 	/**

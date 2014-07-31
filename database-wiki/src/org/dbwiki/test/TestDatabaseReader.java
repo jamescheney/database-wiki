@@ -10,7 +10,7 @@ import org.dbwiki.web.server.WikiServerStandalone;
 public class TestDatabaseReader {
 	public static void main(String[] args) {
 		  try {
-				WikiServerStandalone wikiserver=new WikiServerStandalone(org.dbwiki.lib.IO.loadProperties(new File(args[0])));
+			  	WikiServerStandalone wikiserver=new WikiServerStandalone(org.dbwiki.lib.IO.loadProperties(new File(args[0])));
 				PSQLDatabaseConnector psql = new PSQLDatabaseConnector("jdbc:postgresql://localhost", "dbwiki", "password");
 				RDBMSDatabase database= new RDBMSDatabase(wikiserver.get(1), psql);
 				NodeIdentifier nodeidentifier= new NodeIdentifier();

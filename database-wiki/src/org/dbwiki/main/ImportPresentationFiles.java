@@ -94,6 +94,7 @@ public class ImportPresentationFiles {
 			String contents = new String(buf);
 			
 			_server.updateConfigFile(_wiki.id(), type.getNumber(), contents, _database.users().get(_username));
+			reader.close();
 		} else {
 			System.out.println("File not found: " + filename);
 		}

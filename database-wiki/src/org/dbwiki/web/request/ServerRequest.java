@@ -37,7 +37,7 @@ public class ServerRequest extends HttpRequest {
 	 * Constructors
 	 */
 	
-	public ServerRequest(WikiServer server, Exchange exchange) throws org.dbwiki.exception.WikiException {
+	public ServerRequest(WikiServer server, Exchange<?> exchange) throws org.dbwiki.exception.WikiException {
 		super(new RequestURL(exchange, ""), server.users());
 		
 		_server = server;

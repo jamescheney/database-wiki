@@ -21,16 +21,20 @@
 */
 package org.dbwiki.web.log;
 
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.Map;
+
 
 //import com.sun.net.httpserver.Headers;
 //import com.sun.net.httpserver.HttpExchange;
 
 import java.net.URI;
 import java.net.InetSocketAddress;
+
+import javax.servlet.http.HttpServletRequest;
 
 /** An abstract class for logs used to report server events.
  * 
@@ -91,6 +95,28 @@ public abstract class ServerLog {
 	    	while (iter.hasNext()) {
 	    		String key = iter.next();
 	    		List<String> values = requestHeaders.get(key);
+	    		this.writeln(key + " = " + values.toString());
+	    	}
+	    	this.writeln("--");
+	    	this.closeLog();
+		} catch (Exception excpt) {
+			excpt.printStackTrace();
+		}
+	}
+	
+	/** Servlet request log wrapper
+	 * @param request
+	 */
+	public synchronized void logRequest(HttpServletRequest request) {
+		try {
+			this.openLog();
+			this.writeln("Date = [" + new java.util.Date() + "]");
+			this.writeln("URI = [" + request.getRequestURI() + "]");
+			this.writeln("Remote-IP = [" + request.getRemoteAddr() + ":" + request.getRemotePort() + "]");
+	    	Enumeration<String> names = request.getHeaderNames();
+	    	while (names.hasMoreElements()) {
+	    		String key = names.nextElement();
+	    		Enumeration<String> values = request.getHeaders(key);
 	    		this.writeln(key + " = " + values.toString());
 	    	}
 	    	this.writeln("--");

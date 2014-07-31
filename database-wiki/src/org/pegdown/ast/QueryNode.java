@@ -170,7 +170,9 @@ public class QueryNode extends Node {
     			break;
     		case Map:
     			// Do nothing
-    			break;	
+    			break;
+			default:
+				assert(false);
     	};
     	
 		String chartId = freshName("chart");

@@ -104,7 +104,6 @@ import org.dbwiki.web.ui.printer.server.ServerMenuPrinter;
 
 // TODO: Still need to factor out the file server stuff.
 
-@SuppressWarnings("restriction")
 public abstract class WikiServer  implements WikiServerConstants {
 	/*
 	 * Public Constants
@@ -153,8 +152,8 @@ public abstract class WikiServer  implements WikiServerConstants {
 	
 //	private ExtendedPegDownProcessor _pegDownProcessor = null;
 
-	public WikiServer(Properties properties) throws org.dbwiki.exception.WikiException {
-		_directory = new File(properties.getProperty(propertyDirectory));
+	public WikiServer(String prefix, Properties properties) throws org.dbwiki.exception.WikiException {
+		_directory = new File(prefix + properties.getProperty(propertyDirectory));
 		
 		initServerLog(properties.getProperty(propertyLogFile));
 		
@@ -181,6 +180,10 @@ public abstract class WikiServer  implements WikiServerConstants {
 		} catch (java.sql.SQLException sqlException) {
 			throw new WikiFatalException(sqlException);
 		}
+	}
+	
+	public WikiServer(Properties properties) throws org.dbwiki.exception.WikiException {
+		this("", properties);
 	}
 	
 	public File directory() {

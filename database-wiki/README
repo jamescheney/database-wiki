@@ -1,3 +1,5 @@
+*DEPRECATED VERSION*
+
 Database Wiki
 =============
 
@@ -157,3 +159,5 @@ also be deleted.
 
 
 TODO: describe DatabasePackageExport and DatabasePackageImport
+
+test

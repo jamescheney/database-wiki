@@ -1,0 +1,72 @@
+Installation instructions:
+
+Unix/MacOS command line:
+
+Need: 
+  * subversion command line tools
+  * javac/JDK (Java 1.6)
+  * tomcat
+  * ant
+  * postgreSQL (>= 8.4)
+  * Firefox web browser
+
+1.  Check out sources:
+
+  svn checkout https://database-wiki.googlecode.com/svn/branches/ondrej database-wiki
+
+2.  Create a PostgreSQL user and database owned by that user (e.g. 
+dbwiki).  Give the user a password.  Make sure the server is 
+running and the password is correct efore proceeding.
+
+3.  Create config and initial user list files:
+
+  cd resources/configuration/server
+  cp config.sample config
+  cp users.sample users
+
+Edit config so that JDBC_USER is the username (e.g. dbwiki) and 
+JDBC_PASSWORD is that user's password.  If the PostgreSQL server 
+you want to use is remote, then change JDBC_URL to point to the 
+appropriate host.
+
+4.  Change back to the root of the source tree and initialize the
+ database:
+
+  cd ../../..
+  sh create-server.sh
+
+This should produce no output on success.  You can confirm this by 
+checking that three tables have been added to the dbwiki database.
+
+5.  Build and deploy the project:
+
+  ant build-war
+  cp dist/DatabaseWiki.war <tomcat>/webapps
+	
+6.	Configure tomcat to make DatabaseWiki the root application
+	Add the following line under <Host> to conf/server.xml in the tomcat folder
+
+  <Context path="" docBase="DatabaseWiki" debug="0" reloadable="true"></Context>
+
+7.  Test that the server is running correctly by visiting
+
+  http://localhost:8080
+
+using Firefox (other web browsers may work but have sometimes 
+had incompatibilities).
+
+8.  Load some data.  One way to do this is by clicking "New" on the server home page, and entering the following values:
+
+Short Name: TEST
+Name: Test
+
+...
+
+URL: http://homepages.inf.ed.ac.uk/jcheney/test.xml
+
+Leave the other fields blank/default values.  Click "Save".
+
+Currently, the system will read xml from a URL and infer a schema for it, 
+and after clicking Save the schema will be filled in.  You can change it, 
+but there is no reason to: just click Save again, and a database will 
+be created.
