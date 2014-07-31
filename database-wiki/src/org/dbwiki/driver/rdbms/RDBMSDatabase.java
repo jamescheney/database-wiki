@@ -96,6 +96,7 @@ import org.dbwiki.user.UserListing;
 import org.dbwiki.web.request.RequestURL;
 
 import org.dbwiki.web.server.DatabaseWiki;
+import org.dbwiki.web.server.DatabaseWikiProperties;
 
 
 /** Implementation of the Database interface using a relational database.
@@ -732,14 +733,14 @@ public class RDBMSDatabase implements Database, DatabaseConstants {
 				}
 			}
 			if (schemaNode == null) {
-				if (_wiki.getAutoSchemaChanges() == DatabaseWiki.AutoSchemaChangesAllow) {
+				if (_wiki.getAutoSchemaChanges() == DatabaseWikiProperties.AutoSchemaChangesAllow) {
 					if (sourceNode.isAttribute()) {
 						schemaNode = new AttributeSchemaNode(schema.size(), sourceNode.label(), parentSchemaNode, null);
 					} else {
 						schemaNode = new GroupSchemaNode(schema.size(), sourceNode.label(), parentSchemaNode, null);
 					}
 					schema.add(schemaNode);
-				} else if (_wiki.getAutoSchemaChanges() == DatabaseWiki.AutoSchemaChangesNever) {
+				} else if (_wiki.getAutoSchemaChanges() == DatabaseWikiProperties.AutoSchemaChangesNever) {
 					throw new WikiDataException(WikiDataException.UnknownSchemaNode, sourceNode.label() + " not allowed under " + parentSchemaNode.label());
 				}
 			}
@@ -749,10 +750,10 @@ public class RDBMSDatabase implements Database, DatabaseConstants {
 				throw new WikiDataException(WikiDataException.InvalidPasteTarget, "Node label does not match root label");
 			}
 		} else {
-			if (_wiki.getAutoSchemaChanges() == DatabaseWiki.AutoSchemaChangesAllow) {
+			if (_wiki.getAutoSchemaChanges() == DatabaseWikiProperties.AutoSchemaChangesAllow) {
 				schemaNode = new GroupSchemaNode(schema.size(), sourceNode.label(), null, null);
 				schema.add(schemaNode);
-			} else if (_wiki.getAutoSchemaChanges() == DatabaseWiki.AutoSchemaChangesNever) {
+			} else if (_wiki.getAutoSchemaChanges() == DatabaseWikiProperties.AutoSchemaChangesNever) {
 				throw new WikiDataException(WikiDataException.UnknownSchemaNode, sourceNode.label() + " not allowed as schema root");
 			}
 		}

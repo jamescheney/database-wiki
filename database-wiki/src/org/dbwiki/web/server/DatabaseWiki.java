@@ -60,7 +60,7 @@ import org.dbwiki.web.request.parameter.RequestParameter;
 import org.dbwiki.web.ui.layout.DatabaseLayouter;
 
 import org.dbwiki.web.ui.printer.CSSLinePrinter;
-import org.dbwiki.web.ui.printer.server.DatabaseWikiProperties;
+import org.dbwiki.web.server.DatabaseWikiProperties;
 
 
 /** Implements the DatabaseWiki functionality for a given database. 
@@ -69,24 +69,10 @@ import org.dbwiki.web.ui.printer.server.DatabaseWikiProperties;
  *
  */
 public abstract class DatabaseWiki implements Comparable<DatabaseWiki> {
+	
 	/*
 	 * Public Constants
 	 */
-	// TODO: These belong elsewhere.
-	
-	// Parameter values that indicate whether automatic schema
-	// changes are allowed when importing (copy/paste, merge)
-	// data
-	public static final int AutoSchemaChangesAllow  = 0;
-	public static final int AutoSchemaChangesIgnore = 1;
-	public static final int AutoSchemaChangesNever  = 2;
-	
-	public static final int AuthenticateAlways = 0;
-	public static final int AuthenticateNever = 1;
-	public static final int AuthenticateWriteOnly = 2;
-	
-	
-	
 	public static final String ParameterSchemaNodeName = "schema_node_name";
 	public static final String ParameterSchemaNodeType = "schema_node_type";
 	public static final String ParameterFileContent    = "file_content";
@@ -167,12 +153,7 @@ public abstract class DatabaseWiki implements Comparable<DatabaseWiki> {
 		return _database;
 	}
 	
-	// TODO: #delete
-	@Deprecated
-	public AttributeSchemaNode displaySchemaNode(DatabaseSchema schema) {
-		return _layouter.displaySchemaNode(schema);
-	}
-	
+
 	/** Gets the string value of a template or stylesheet, for use in the editor form.
 	 * 
 	 * @param fileType
@@ -239,7 +220,9 @@ public abstract class DatabaseWiki implements Comparable<DatabaseWiki> {
 	/** Sets the auto schema changes policy.
 	 */
 	public void setAutoSchemaChanges(int autoSchemaChanges) {
-		assert(autoSchemaChanges == AutoSchemaChangesNever || autoSchemaChanges == AutoSchemaChangesIgnore || autoSchemaChanges == AutoSchemaChangesAllow);
+		assert(autoSchemaChanges == DatabaseWikiProperties.AutoSchemaChangesNever 
+				|| autoSchemaChanges == DatabaseWikiProperties.AutoSchemaChangesIgnore 
+				|| autoSchemaChanges == DatabaseWikiProperties.AutoSchemaChangesAllow);
 		_autoSchemaChanges = autoSchemaChanges;
 	}
 

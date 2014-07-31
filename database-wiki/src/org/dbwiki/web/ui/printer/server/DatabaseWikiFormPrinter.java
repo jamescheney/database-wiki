@@ -26,7 +26,7 @@ import org.dbwiki.exception.WikiException;
 import org.dbwiki.web.html.HtmlLinePrinter;
 
 import org.dbwiki.web.request.parameter.RequestParameterAction;
-import org.dbwiki.web.server.DatabaseWiki;
+import org.dbwiki.web.server.DatabaseWikiProperties;
 import org.dbwiki.web.server.WikiServer;
 
 
@@ -180,21 +180,21 @@ public class DatabaseWikiFormPrinter extends HtmlContentPrinter {
 		if (_message != MessageNone) {
 			printer.openTD(CSS.CSSFormText);
 			printer.addHIDDEN(WikiServer.ParameterAuthenticationMode, String.valueOf(_properties.getAuthentication()));
-			if (_properties.getAuthentication() == DatabaseWiki.AuthenticateNever) {
+			if (_properties.getAuthentication() == DatabaseWikiProperties.AuthenticateNever) {
 				printer.text("Never login (<i>NO AUTHENTICATION</i>)");
-			} else if (_properties.getAuthentication() == DatabaseWiki.AuthenticateWriteOnly) {
+			} else if (_properties.getAuthentication() == DatabaseWikiProperties.AuthenticateWriteOnly) {
 				printer.text("Login for updates (<i>WRITE-ONLY AUTHENTICATION</i>)");
-			} else if (_properties.getAuthentication() == DatabaseWiki.AuthenticateAlways) {
+			} else if (_properties.getAuthentication() == DatabaseWikiProperties.AuthenticateAlways) {
 				printer.text("Always login (<i>FULL AUTHENTICATION</i>)");
 			}
 			printer.closeTD();
 		} else {
 			printer.openTD(CSS.CSSFormControl);
-			printer.addRADIOBUTTON("Never login (<i>NO AUTHENTICATION</i>)", WikiServer.ParameterAuthenticationMode, Integer.toString(DatabaseWiki.AuthenticateNever), (_properties.getAuthentication() == DatabaseWiki.AuthenticateNever));
+			printer.addRADIOBUTTON("Never login (<i>NO AUTHENTICATION</i>)", WikiServer.ParameterAuthenticationMode, Integer.toString(DatabaseWikiProperties.AuthenticateNever), (_properties.getAuthentication() == DatabaseWikiProperties.AuthenticateNever));
 			printer.addBR();
-			printer.addRADIOBUTTON("Login for updates (<i>WRITE-ONLY AUTHENTICATION</i>)", WikiServer.ParameterAuthenticationMode, Integer.toString(DatabaseWiki.AuthenticateWriteOnly), (_properties.getAuthentication() == DatabaseWiki.AuthenticateWriteOnly));
+			printer.addRADIOBUTTON("Login for updates (<i>WRITE-ONLY AUTHENTICATION</i>)", WikiServer.ParameterAuthenticationMode, Integer.toString(DatabaseWikiProperties.AuthenticateWriteOnly), (_properties.getAuthentication() == DatabaseWikiProperties.AuthenticateWriteOnly));
 			printer.addBR();
-			printer.addRADIOBUTTON("Always login (<i>FULL AUTHENTICATION</i>)", WikiServer.ParameterAuthenticationMode, Integer.toString(DatabaseWiki.AuthenticateAlways), (_properties.getAuthentication() == DatabaseWiki.AuthenticateAlways));
+			printer.addRADIOBUTTON("Always login (<i>FULL AUTHENTICATION</i>)", WikiServer.ParameterAuthenticationMode, Integer.toString(DatabaseWikiProperties.AuthenticateAlways), (_properties.getAuthentication() == DatabaseWikiProperties.AuthenticateAlways));
 			printer.closeTD();
 		}
 		
@@ -252,21 +252,21 @@ public class DatabaseWikiFormPrinter extends HtmlContentPrinter {
 		if (_message != MessageNone) {
 			printer.openTD(CSS.CSSFormText);
 			printer.addHIDDEN(WikiServer.ParameterAutoSchemaChanges, String.valueOf(_properties.getAutoSchemaChanges()));
-			if (_properties.getAutoSchemaChanges() == DatabaseWiki.AutoSchemaChangesNever) {
+			if (_properties.getAutoSchemaChanges() == DatabaseWikiProperties.AutoSchemaChangesNever) {
 				printer.text("Never change schema automatically.");
-			} else if (_properties.getAutoSchemaChanges() == DatabaseWiki.AutoSchemaChangesIgnore) {
+			} else if (_properties.getAutoSchemaChanges() == DatabaseWikiProperties.AutoSchemaChangesIgnore) {
 				printer.text("Ignore unknown node types.");
-			} else if (_properties.getAutoSchemaChanges() == DatabaseWiki.AutoSchemaChangesAllow) {
+			} else if (_properties.getAutoSchemaChanges() == DatabaseWikiProperties.AutoSchemaChangesAllow) {
 				printer.text("Automatically add new node types if necessary.");
 			}
 			printer.closeTD();
 		} else {
 			printer.openTD(CSS.CSSFormControl);
-			printer.addRADIOBUTTON("Never change schema automatically.", WikiServer.ParameterAutoSchemaChanges, Integer.toString(DatabaseWiki.AutoSchemaChangesNever), (_properties.getAutoSchemaChanges() == DatabaseWiki.AutoSchemaChangesNever));
+			printer.addRADIOBUTTON("Never change schema automatically.", WikiServer.ParameterAutoSchemaChanges, Integer.toString(DatabaseWikiProperties.AutoSchemaChangesNever), (_properties.getAutoSchemaChanges() == DatabaseWikiProperties.AutoSchemaChangesNever));
 			printer.addBR();
-			printer.addRADIOBUTTON("Ignore unknown node types.", WikiServer.ParameterAutoSchemaChanges, Integer.toString(DatabaseWiki.AutoSchemaChangesIgnore), (_properties.getAutoSchemaChanges() == DatabaseWiki.AutoSchemaChangesIgnore));
+			printer.addRADIOBUTTON("Ignore unknown node types.", WikiServer.ParameterAutoSchemaChanges, Integer.toString(DatabaseWikiProperties.AutoSchemaChangesIgnore), (_properties.getAutoSchemaChanges() == DatabaseWikiProperties.AutoSchemaChangesIgnore));
 			printer.addBR();
-			printer.addRADIOBUTTON("Automatically add new node types if necessary.", WikiServer.ParameterAutoSchemaChanges, Integer.toString(DatabaseWiki.AutoSchemaChangesAllow), (_properties.getAutoSchemaChanges() == DatabaseWiki.AutoSchemaChangesAllow));
+			printer.addRADIOBUTTON("Automatically add new node types if necessary.", WikiServer.ParameterAutoSchemaChanges, Integer.toString(DatabaseWikiProperties.AutoSchemaChangesAllow), (_properties.getAutoSchemaChanges() == DatabaseWikiProperties.AutoSchemaChangesAllow));
 			printer.closeTD();
 		}
 		printer.closeTR();

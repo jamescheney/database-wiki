@@ -123,7 +123,6 @@ public class DatabasePackageImport {
 		public Args (String[] args) throws IOException {
 			configFile = new File(args[0]);
 			if(args.length == 10) {
-				// TODO: Pkginfo only.
 				name = args[1];
 				title = args[2];
 				path = args[3];

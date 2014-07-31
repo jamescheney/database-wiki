@@ -34,7 +34,6 @@ import org.dbwiki.exception.WikiFatalException;
 
 import org.dbwiki.web.request.parameter.RequestParameterList;
 
-// TODO: Abstract over the part of HttpExchange interface that we need to remove dependency
 
 public class RequestURL {
 	/*

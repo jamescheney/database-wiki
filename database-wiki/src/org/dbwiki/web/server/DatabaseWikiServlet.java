@@ -232,7 +232,7 @@ public class DatabaseWikiServlet extends DatabaseWiki {
 		// someone
 		// managed to get past the WikiAuthenticator.
 		if ((request.user() == null)
-				&& (getAuthenticationMode() != AuthenticateNever)) {
+				&& (getAuthenticationMode() != DatabaseWikiProperties.AuthenticateNever)) {
 			if ((request.type().isAction()) || (request.type().isActivate())
 					|| (request.type().isDelete()) || request.type().isPaste()) {
 				throw new WikiFatalException(

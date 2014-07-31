@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.dbwiki.user.UserListing;
 import org.dbwiki.web.request.parameter.RequestParameter;
-import org.dbwiki.web.server.DatabaseWiki;
+import org.dbwiki.web.server.DatabaseWikiProperties;
 import org.dbwiki.web.server.WikiServer;
 
 
@@ -39,8 +39,8 @@ public class WikiServletAuthenticator {
 		
 		String auth = request.getHeader("Authorization");
 		if(auth == null) {
-			if ((_mode == DatabaseWiki.AuthenticateAlways)
-					|| ((_mode == DatabaseWiki.AuthenticateWriteOnly) && needsAuth)
+			if ((_mode == DatabaseWikiProperties.AuthenticateAlways)
+					|| ((_mode == DatabaseWikiProperties.AuthenticateWriteOnly) && needsAuth)
 					|| (path.equals(WikiServer.SpecialFolderLogin))) {
 				return false;
 			}
@@ -58,8 +58,8 @@ public class WikiServletAuthenticator {
 			int colon = userpass.indexOf(':');
 			String name = userpass.substring(0, colon);
 			String pass = userpass.substring(colon + 1);
-			if ((_mode == DatabaseWiki.AuthenticateAlways)
-					|| ((_mode == DatabaseWiki.AuthenticateWriteOnly) && needsAuth)
+			if ((_mode == DatabaseWikiProperties.AuthenticateAlways)
+					|| ((_mode == DatabaseWikiProperties.AuthenticateWriteOnly) && needsAuth)
 					|| (path.equals(WikiServer.SpecialFolderLogin))) {
 				if (checkCredentials(name, pass)) {
 					if(request.getSession().getAttribute("user") == null) {

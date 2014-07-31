@@ -21,6 +21,10 @@
 */
 package org.dbwiki.data.wiki;
 
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+
+import org.dbwiki.lib.XML;
 import org.dbwiki.user.User;
 
 /** A struct that contains the database wiki page information:
@@ -70,5 +74,19 @@ public class DatabaseWikiPage {
 	
 	public User getUser() {
 		return _user;
+	}
+	
+	public void write(OutputStreamWriter wikiout) throws IOException {
+		// For each wiki page
+		// Create file named <wikipagedir>/page<id>.xml
+		// Write content of each file
+		wikiout.write("<page id=\"" + getID() 
+				    + "\" title=\"" + getName());
+		if(getUser() != null) {
+			wikiout.write( "\" user=\"" + getUser().login());
+		}
+		wikiout.write("\" timestamp=\"" + getTimestamp() + "\" >\n");
+		wikiout.write(XML.maskText(getContent())); 
+		wikiout.write("</page>");
 	}
 }

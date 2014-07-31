@@ -42,7 +42,6 @@ import org.dbwiki.exception.WikiException;
 import org.dbwiki.web.server.DatabaseWiki;
 import org.dbwiki.web.server.WikiServer;
 import org.dbwiki.web.server.WikiServerStandalone;
-import org.dbwiki.lib.XML;
 import org.dbwiki.main.ImportPresentationFiles.PresentationFileType;
 
 /** Imports a database "package".  Arguments:
@@ -290,19 +289,7 @@ public class DatabasePackageExport {
 					OutputStreamWriter wikiout = new OutputStreamWriter(wikioutstream);
 					
 					DatabaseWikiPage content = _wiki.wiki().get(wikiEntry.identifier());
-					// TODO: Move this to DatabaseWikiPage 
-					// For each wiki page
-					// Create file named <wikipagedir>/page<id>.xml
-					// Write content of each file
-					wikiout.write("<page id=\"" + content.getID() 
-							    + "\" title=\"" + content.getName());
-					if(content.getUser() != null) {
-						wikiout.write( "\" user=\"" + content.getUser().login());
-					}
-					wikiout.write("\" timestamp=\"" + content.getTimestamp() + "\" >\n");
-					wikiout.write(XML.maskText(content.getContent())); 
-					wikiout.write("</page>");
-					// Close file
+					content.write(wikiout);
 					wikiout.close();
 					wikioutstream.close();
 				}

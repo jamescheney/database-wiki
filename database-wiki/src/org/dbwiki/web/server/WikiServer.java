@@ -73,7 +73,7 @@ import org.dbwiki.web.ui.ServerResponseHandler;
 
 import org.dbwiki.web.ui.printer.server.DatabaseWikiFormPrinter;
 import org.dbwiki.web.ui.printer.server.DatabaseWikiListingPrinter;
-import org.dbwiki.web.ui.printer.server.DatabaseWikiProperties;
+import org.dbwiki.web.server.DatabaseWikiProperties;
 import org.dbwiki.web.ui.printer.server.ServerMenuPrinter;
 
 
@@ -636,7 +636,7 @@ public abstract class WikiServer  implements WikiServerConstants {
 			//
 			// If the parameter values are valid the database wiki is created
 			//
-			if ((request.user() == null) && (_authenticationMode != DatabaseWiki.AuthenticateNever)) {
+			if ((request.user() == null) && (_authenticationMode != DatabaseWikiProperties.AuthenticateNever)) {
 				throw new WikiFatalException("User information is missing");
 			}
 			
@@ -784,7 +784,7 @@ public abstract class WikiServer  implements WikiServerConstants {
 			return responseHandler;
 		} else {
 			// Otherwise, apply the changes.
-			if ((request.user() == null) && (_authenticationMode != DatabaseWiki.AuthenticateNever)) {
+			if ((request.user() == null) && (_authenticationMode != DatabaseWikiProperties.AuthenticateNever)) {
 				throw new WikiFatalException("User information is missing");
 			}
 			try {

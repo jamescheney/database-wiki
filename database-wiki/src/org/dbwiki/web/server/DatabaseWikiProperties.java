@@ -1,12 +1,20 @@
-package org.dbwiki.web.ui.printer.server;
+package org.dbwiki.web.server;
 
 import org.dbwiki.web.request.parameter.RequestParameterList;
-import org.dbwiki.web.server.DatabaseWiki;
-import org.dbwiki.web.server.WikiServer;
 
-// TODO: Move this to main or server.
 public class DatabaseWikiProperties {
 
+	// Parameter values that indicate whether automatic schema
+	// changes are allowed when importing (copy/paste, merge)
+	// data
+	public static final int AutoSchemaChangesAllow  = 0;
+	public static final int AutoSchemaChangesIgnore = 1;
+	public static final int AutoSchemaChangesNever  = 2;
+	
+	public static final int AuthenticateAlways = 0;
+	public static final int AuthenticateNever = 1;
+	public static final int AuthenticateWriteOnly = 2;
+	
 	/*
 	 * Private Variables
 	 */
@@ -29,12 +37,12 @@ public class DatabaseWikiProperties {
 		if (parameters.hasParameter(WikiServer.ParameterAuthenticationMode)) {
 			_authentication = Integer.parseInt(parameters.get(WikiServer.ParameterAuthenticationMode).value());
 		} else {
-			_authentication = DatabaseWiki.AuthenticateWriteOnly;
+			_authentication = AuthenticateWriteOnly;
 		}
 		if (parameters.hasParameter(WikiServer.ParameterAutoSchemaChanges)) {
 			_autoSchemaChanges = Integer.parseInt(parameters.get(WikiServer.ParameterAutoSchemaChanges).value());
 		} else {
-			_autoSchemaChanges = DatabaseWiki.AutoSchemaChangesIgnore;
+			_autoSchemaChanges = AutoSchemaChangesIgnore;
 		}
 		if (parameters.hasParameter(WikiServer.ParameterName)) {
 			_name = parameters.get(WikiServer.ParameterName).value().toUpperCase();
@@ -76,8 +84,8 @@ public class DatabaseWikiProperties {
 	
 	public DatabaseWikiProperties() {
 		
-		_authentication = DatabaseWiki.AuthenticateWriteOnly;
-		_autoSchemaChanges = DatabaseWiki.AutoSchemaChangesIgnore;
+		_authentication = AuthenticateWriteOnly;
+		_autoSchemaChanges = AutoSchemaChangesIgnore;
 		_name = "";
 		_resource = "";
 		_schema = "";

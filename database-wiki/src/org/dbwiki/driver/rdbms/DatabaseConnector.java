@@ -187,7 +187,6 @@ public abstract class DatabaseConnector implements DatabaseConstants, WikiServer
 						String login = tokens.nextToken();
 						String fullName = tokens.nextToken();
 						String password = tokens.nextToken();
-						// TODO: prepared statements
 						String sql = "INSERT INTO " + RelationUser + "(" +
 							RelUserColLogin + ", " +
 							RelUserColFullName + ", " +

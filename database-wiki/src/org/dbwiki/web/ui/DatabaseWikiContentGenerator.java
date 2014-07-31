@@ -113,7 +113,7 @@ public class DatabaseWikiContentGenerator extends HtmlContentGenerator {
 	 *  Overrides the Search key to add the search textbox, using the "search" parameter to fill in a value from the URL if any.
 	 *  Overrides Title to use title, with first argument as optional prefix.
 	 */
-	//TODO: Move DatabaseLink into separate class
+	//TODO: Is this code still needed?
 	public void print(String key, Vector<String> args, HtmlPage page, String indention) throws org.dbwiki.exception.WikiException {
 		/*if (key.equals(ContentDatabaseLink)) {
 			String title = null;
