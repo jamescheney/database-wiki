@@ -1,0 +1,17 @@
+$COUNTRY {
+	@NAME,
+	$CATEGORY {
+		@NAME,
+		$PROPERTY {
+			@NAME,
+			@TEXT,
+			@NOTE,
+			@RANK,
+			$SUBPROP {
+				@NAME,
+				@TEXT,
+				@RANK
+			}
+		}
+	}
+}

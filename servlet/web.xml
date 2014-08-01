@@ -1,0 +1,11 @@
+<web-app>
+	<display-name>DatabaseWiki</display-name>
+    <servlet>
+              <servlet-name>DatabaseWiki</servlet-name>
+              <servlet-class>org.dbwiki.main.ServletInterface</servlet-class>
+     </servlet>
+     <servlet-mapping>
+             <servlet-name>DatabaseWiki</servlet-name>
+             <url-pattern>/*</url-pattern>
+     </servlet-mapping>
+</web-app>
