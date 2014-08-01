@@ -1,14 +1,9 @@
 package org.dbwiki.web.server;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -31,7 +26,6 @@ import org.dbwiki.exception.WikiFatalException;
 import org.dbwiki.exception.web.WikiRequestException;
 import org.dbwiki.user.User;
 import org.dbwiki.web.html.FatalExceptionPage;
-import org.dbwiki.web.html.FileNotFoundPage;
 import org.dbwiki.web.html.RedirectPage;
 import org.dbwiki.web.request.HttpRequest;
 import org.dbwiki.web.request.RequestURL;
@@ -205,7 +199,7 @@ public class WikiServerServlet extends WikiServer {
 					response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "");
 				}
 			} else if ((path.startsWith(SpecialFolderDatabaseWikiStyle + "/")) && (path.endsWith(".css"))) {
-				this.sendCSSFile(path.substring(SpecialFolderDatabaseWikiStyle.length() + 1, path.length() - 4), path, response);
+				this.sendCSSFile(path.substring(SpecialFolderDatabaseWikiStyle.length() + 1, path.length() - 4), new ServletExchangeWrapper(request,response));
 			} else if (path.equals(SpecialFolderLogin)) {
 				//FIXME: #request This is a convoluted way of parsing the request parameter!
 				if(_authenticator.authenticate(request)) {
@@ -225,10 +219,10 @@ public class WikiServerServlet extends WikiServer {
 				if (wiki != null) {
 					wiki.handle(request, response);
 				} else {
-					this.sendFile(path, response);
+					this.sendFile(new ServletExchangeWrapper(request,response));
 				}
 			} else {
-				this.sendFile(path, response);
+				this.sendFile(new ServletExchangeWrapper(request,response));
 			}
 		} catch (Exception exception) {
 			try {
@@ -299,117 +293,6 @@ public class WikiServerServlet extends WikiServer {
 		HtmlServletSender.send(HtmlTemplateDecorator.decorate(new BufferedReader(new FileReader(template)), responseHandler), response);
 	}
 	
-	/** Sends CSS file for the server.
-	 * 
-	 * @param name - name of the wiki CSS file, in format "wikiID_version"
-	 * @param exchange - exchange to respond to
-	 * @throws java.io.IOException
-	 * @throws org.dbwiki.exception.WikiException
-	 */
-	private void sendCSSFile(String name, String uri, HttpServletResponse response) throws java.io.IOException, org.dbwiki.exception.WikiException {
-		int wikiID = -1;
-		int fileVersion = -1;
-		
-		try {
-			int pos = name.indexOf("_");
-			wikiID = Integer.valueOf(name.substring(0, pos));
-			fileVersion = Integer.valueOf(name.substring(pos + 1));
-		} catch (Exception exception ) {
-			HtmlServletSender.send(new FileNotFoundPage(uri), response);
-			return;
-		}
-		
-		String value = this.readConfigFile(wikiID, RelConfigFileColFileTypeValCSS, fileVersion);
-		this.sendData(response, "text/css", new ByteArrayInputStream(value.getBytes("UTF-8")));
-	}
-		
-	protected void sendData(HttpServletResponse response, String contentType, InputStream is) throws java.io.IOException {
-		response.setContentType(contentType);
-    	response.setStatus(HttpURLConnection.HTTP_OK);
-		OutputStream os = response.getOutputStream();
-		int n;
-		byte[] buf = new byte[2048];
-		while ((n = is.read(buf)) > 0) {
-			os.write(buf, 0, n);
-		}
-		is.close();
-	}
 	
-	// FIXME #security: Seems like a bad idea for the default behavior to be to send files from file sys...
-	protected void sendFile(String uri, HttpServletResponse response) throws java.io.IOException {
-		String contentType = this.contentType(uri);
-		File file = new File(_directory.getAbsolutePath() + uri);
-		if ((file.exists()) && (!file.isDirectory())) {
-			this.sendData(response, contentType, new FileInputStream(file));
-		} else {
-			System.out.println("File Not Found: " + uri);
-			HtmlServletSender.send(new FileNotFoundPage(uri), response);
-		}
-	}
-	
-	protected void sendXML(HttpServletResponse response, InputStream is) throws java.io.IOException {
-		this.sendData(response, "application/xml", is);
-	}
-	
-	protected void sendJSON(HttpServletResponse response, InputStream is) throws java.io.IOException {
-		this.sendData(response, "application/json", is);
-	}
-		
-	private String contentType(String filename) {
-		int pos = filename.lastIndexOf('.');
-		if (pos != -1) {
-			String suffix = filename.substring(pos);
-			if (suffix.equalsIgnoreCase(".uu")) {
-				return "application/octet-stream";
-			} else if (suffix.equalsIgnoreCase(".exe")) {
-				return "application/octet-stream";
-			} else if (suffix.equalsIgnoreCase(".ps")) {
-				return "application/postscript";
-			} else if (suffix.equalsIgnoreCase(".zip")) {
-				return "application/zip";
-			} else if (suffix.equalsIgnoreCase(".sh")) {
-				return "application/x-shar";
-			} else if (suffix.equalsIgnoreCase(".tar")) {
-				return "application/x-tar";
-			} else if (suffix.equalsIgnoreCase(".snd")) {
-				return "audio/basic";
-			} else if (suffix.equalsIgnoreCase(".au")) {
-				return "audio/basic";
-			} else if (suffix.equalsIgnoreCase(".wav")) {
-				return "audio/x-wav";
-			} else if (suffix.equalsIgnoreCase(".gif")) {
-				return "image/gif";
-			} else if (suffix.equalsIgnoreCase(".jpg")) {
-				return "image/jpeg";
-			} else if (suffix.equalsIgnoreCase(".jpeg")) {
-				return "image/jpeg";
-			} else if (suffix.equalsIgnoreCase(".htm")) {
-				return "text/html";
-			} else if (suffix.equalsIgnoreCase(".html")) {
-				return "text/html";
-			} else if (suffix.equalsIgnoreCase(".text")) {
-				return "text/plain";
-			} else if (suffix.equalsIgnoreCase(".c")) {
-				return "text/plain";
-			} else if (suffix.equalsIgnoreCase(".cc")) {
-				return "text/plain";
-			} else if (suffix.equalsIgnoreCase(".css")) {
-				return "text/css";
-			} else if (suffix.equalsIgnoreCase(".c++")) {
-				return "text/plain";
-			} else if (suffix.equalsIgnoreCase(".h")) {
-				return "text/plain";
-			} else if (suffix.equalsIgnoreCase(".pl")) {
-				return "text/plain";
-			} else if (suffix.equalsIgnoreCase(".txt")) {
-				return "text/plain";
-			} else if (suffix.equalsIgnoreCase(".java")) {
-				return "text/plain";
-			} else {
-				return "content/unknown";
-			}
-		} else {
-			return "content/unknown";
-		}
-	}
+
 }

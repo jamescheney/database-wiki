@@ -22,7 +22,9 @@
 package org.dbwiki.web.server;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -59,10 +61,12 @@ import org.dbwiki.exception.web.WikiRequestException;
 import org.dbwiki.user.User;
 import org.dbwiki.user.UserListing;
 
+import org.dbwiki.web.html.FileNotFoundPage;
 import org.dbwiki.web.log.FileServerLog;
 import org.dbwiki.web.log.ServerLog;
 import org.dbwiki.web.log.StandardOutServerLog;
 
+import org.dbwiki.web.request.Exchange;
 import org.dbwiki.web.request.HttpRequest;
 
 import org.dbwiki.web.request.parameter.RequestParameter;
@@ -897,4 +901,109 @@ public abstract class WikiServer  implements WikiServerConstants {
 
 	
 	public abstract void sortWikiListing ();
+	
+	//TODO: Move this somewhere more generic
+		protected static String contentType(String filename) {
+			int pos = filename.lastIndexOf('.');
+			if (pos != -1) {
+				String suffix = filename.substring(pos);
+				if (suffix.equalsIgnoreCase(".uu")) {
+					return "application/octet-stream";
+				} else if (suffix.equalsIgnoreCase(".exe")) {
+					return "application/octet-stream";
+				} else if (suffix.equalsIgnoreCase(".ps")) {
+					return "application/postscript";
+				} else if (suffix.equalsIgnoreCase(".zip")) {
+					return "application/zip";
+				} else if (suffix.equalsIgnoreCase(".sh")) {
+					return "application/x-shar";
+				} else if (suffix.equalsIgnoreCase(".tar")) {
+					return "application/x-tar";
+				} else if (suffix.equalsIgnoreCase(".snd")) {
+					return "audio/basic";
+				} else if (suffix.equalsIgnoreCase(".au")) {
+					return "audio/basic";
+				} else if (suffix.equalsIgnoreCase(".wav")) {
+					return "audio/x-wav";
+				} else if (suffix.equalsIgnoreCase(".gif")) {
+					return "image/gif";
+				} else if (suffix.equalsIgnoreCase(".jpg")) {
+					return "image/jpeg";
+				} else if (suffix.equalsIgnoreCase(".jpeg")) {
+					return "image/jpeg";
+				} else if (suffix.equalsIgnoreCase(".htm")) {
+					return "text/html";
+				} else if (suffix.equalsIgnoreCase(".html")) {
+					return "text/html";
+				} else if (suffix.equalsIgnoreCase(".text")) {
+					return "text/plain";
+				} else if (suffix.equalsIgnoreCase(".c")) {
+					return "text/plain";
+				} else if (suffix.equalsIgnoreCase(".cc")) {
+					return "text/plain";
+				} else if (suffix.equalsIgnoreCase(".css")) {
+					return "text/css";
+				} else if (suffix.equalsIgnoreCase(".c++")) {
+					return "text/plain";
+				} else if (suffix.equalsIgnoreCase(".h")) {
+					return "text/plain";
+				} else if (suffix.equalsIgnoreCase(".pl")) {
+					return "text/plain";
+				} else if (suffix.equalsIgnoreCase(".txt")) {
+					return "text/plain";
+				} else if (suffix.equalsIgnoreCase(".java")) {
+					return "text/plain";
+				} else {
+					return "content/unknown";
+				}
+			} else {
+				return "content/unknown";
+			}
+		}
+		
+	/** Sends CSS file for the server.
+	 * 
+	 * @param name - name of the wiki CSS file, in format "wikiID_version"
+	 * @param exchange - exchange to respond to
+	 * @throws java.io.IOException
+	 * @throws org.dbwiki.exception.WikiException
+	 */
+	protected void sendCSSFile(String name, Exchange<?> exchange) throws java.io.IOException, org.dbwiki.exception.WikiException {
+		int wikiID = -1;
+		int fileVersion = -1;
+		
+		try {
+			int pos = name.indexOf("_");
+			wikiID = Integer.valueOf(name.substring(0, pos));
+			fileVersion = Integer.valueOf(name.substring(pos + 1));
+		} catch (Exception exception ) {
+			exchange.send(new FileNotFoundPage(exchange.getRequestURI().getPath()));
+			return;
+		}
+		
+		String value = this.readConfigFile(wikiID, RelConfigFileColFileTypeValCSS, fileVersion);
+		exchange.sendData("text/css", new ByteArrayInputStream(value.getBytes("UTF-8")));
+	}
+
+		
+	/* From FileServer */
+		
+
+
+		
+		
+	// FIXME #security: Seems like a bad idea for the default behavior to be to send files from file sys...
+	protected void sendFile(Exchange<?> exchange) throws java.io.IOException {
+		String path = exchange.getRequestURI().getPath();
+		String contentType = contentType(path);
+		
+		File file = new File(_directory.getAbsolutePath() + path);
+		if ((file.exists()) && (!file.isDirectory())) {
+			exchange.sendData(contentType, new FileInputStream(file));
+		} else {
+			System.out.println("File Not Found: " + path);
+			exchange.send(new FileNotFoundPage(path));
+		}
+	}
+	
 }

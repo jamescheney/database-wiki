@@ -1,11 +1,5 @@
 package org.dbwiki.web.server;
 
-import java.io.BufferedWriter;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.StringWriter;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.sql.Connection;
@@ -24,7 +18,6 @@ import org.dbwiki.data.index.DatabaseContent;
 import org.dbwiki.data.io.CopyPasteNodeWriter;
 import org.dbwiki.data.io.ExportJSONNodeWriter;
 import org.dbwiki.data.io.ExportNodeWriter;
-import org.dbwiki.data.io.NodeWriter;
 import org.dbwiki.data.resource.PageIdentifier;
 import org.dbwiki.data.schema.GroupSchemaNode;
 import org.dbwiki.data.wiki.SimpleWiki;
@@ -153,7 +146,7 @@ public class DatabaseWikiServlet extends DatabaseWiki {
 			if(_authenticator.authenticate(request)) {
 				int pos = filename.lastIndexOf('.');
 				if (pos != -1) {
-					_server.sendFile(filename, response);
+					_server.sendFile(new ServletExchangeWrapper(request,response));
 				} else {
 					if (_server.serverLog() != null) {
 						_server.serverLog().logRequest(request);
@@ -369,15 +362,16 @@ public class DatabaseWikiServlet extends DatabaseWiki {
 			isIndexRequest = !isGetRequest;
 		} else if (request.type().isCopyPasteExport()) {
 			this.respondToExportXMLRequest(request, new CopyPasteNodeWriter(),
-					response);
+					new ServletExchangeWrapper(httpRequest,response));
 			return;
 		} else if (request.type().isExportXML()) {
 			this.respondToExportXMLRequest(request, new ExportNodeWriter(),
-					response);
+					new ServletExchangeWrapper(httpRequest,response));
 			return;
 		} else if (request.type().isExportJSON()) {
 			this.respondToExportJSONRequest(request,
-					new ExportJSONNodeWriter(), response);
+					new ExportJSONNodeWriter(), 
+					new ServletExchangeWrapper(httpRequest,response));
 			return;
 		}
 
@@ -761,101 +755,6 @@ public class DatabaseWikiServlet extends DatabaseWiki {
 				response);
 	}
 	
-	/**
-	 * Handles data export requests (generating XML)
-	 * 
-	 * @param request
-	 * @param writer
-	 * @throws org.dbwiki.exception.WikiException
-	 */
-	private void respondToExportXMLRequest(WikiDataRequest request,
-			NodeWriter writer, HttpServletResponse response)
-			throws org.dbwiki.exception.WikiException {
-		int versionNumber = database().versionIndex().getLastVersion().number();
-		if (request.parameters()
-				.hasParameter(RequestParameter.ParameterVersion)) {
-			versionNumber = ((RequestParameterVersionSingle) RequestParameter
-					.versionParameter(request.parameters().get(
-							RequestParameter.ParameterVersion)))
-					.versionNumber();
-		}
+	
 
-		try {
-			// if the request is for all the data in a DatabaseWiki, create a
-			// temporary file.
-			// Otherwise, do it in memory (ASSUMES each entry is small!).
-			// TODO: This could probably be done uniformly by streaming instead.
-			if (request.isRootRequest()) {
-				File tmpFile = File.createTempFile("dbwiki", "xml");
-				BufferedWriter out = new BufferedWriter(new FileWriter(tmpFile));
-				writer.init(out);
-				database().export(request.wri().resourceIdentifier(),
-						versionNumber, writer);
-				out.close();
-				_server.sendXML(response, new FileInputStream(tmpFile));
-				tmpFile.delete();
-			} else {
-				StringWriter buf = new StringWriter();
-				BufferedWriter out = new BufferedWriter(buf);
-				writer.init(out);
-				database().export(request.wri().resourceIdentifier(),
-						versionNumber, writer);
-				out.close();
-				_server.sendXML(response, new ByteArrayInputStream(buf
-						.toString().getBytes("UTF-8")));
-			}
-		} catch (java.io.IOException ioException) {
-			throw new WikiFatalException(ioException);
-		}
-	}
-
-	// TODO: Merge XML and JSON export to avoid code duplication
-
-	/**
-	 * Handles data export requests (generating JSON)
-	 * 
-	 * @param request
-	 * @param writer
-	 * @throws org.dbwiki.exception.WikiException
-	 */
-	private void respondToExportJSONRequest(WikiDataRequest request,
-			NodeWriter writer, HttpServletResponse response)
-			throws org.dbwiki.exception.WikiException {
-		int versionNumber = database().versionIndex().getLastVersion().number();
-		if (request.parameters()
-				.hasParameter(RequestParameter.ParameterVersion)) {
-			versionNumber = ((RequestParameterVersionSingle) RequestParameter
-					.versionParameter(request.parameters().get(
-							RequestParameter.ParameterVersion)))
-					.versionNumber();
-		}
-
-		try {
-			// if the request is for all the data in a DatabaseWiki, create a
-			// temporary file.
-			// Otherwise, do it in memory (ASSUMES each entry is small!).
-			// TODO: This could probably be done uniformly by streaming instead.
-			if (request.isRootRequest()) {
-				File tmpFile = File.createTempFile("dbwiki", "json");
-				BufferedWriter out = new BufferedWriter(new FileWriter(tmpFile));
-				writer.init(out);
-				database().export(request.wri().resourceIdentifier(),
-						versionNumber, writer);
-				out.close();
-				_server.sendJSON(response, new FileInputStream(tmpFile));
-				tmpFile.delete();
-			} else {
-				StringWriter buf = new StringWriter();
-				BufferedWriter out = new BufferedWriter(buf);
-				writer.init(out);
-				database().export(request.wri().resourceIdentifier(),
-						versionNumber, writer);
-				out.close();
-				_server.sendJSON(response, new ByteArrayInputStream(buf
-						.toString().getBytes("UTF-8")));
-			}
-		} catch (java.io.IOException ioException) {
-			throw new WikiFatalException(ioException);
-		}
-	}
 }

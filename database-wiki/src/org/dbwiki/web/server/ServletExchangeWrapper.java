@@ -2,6 +2,7 @@ package org.dbwiki.web.server;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URI;
@@ -12,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.dbwiki.web.html.HtmlPage;
 import org.dbwiki.web.request.Exchange;
+
 /**
  * Wrapper for the HttpServlet classes to provide methods that we need in RequestURL
  * @author o.cierny
@@ -85,5 +87,30 @@ public class ServletExchangeWrapper implements Exchange<HttpServletRequest> {
 
 	public HttpServletRequest get() {
 		return _request;	
+	}
+
+	public String contentType() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void sendData(String contentType, InputStream is) throws java.io.IOException {
+		_response.setContentType(contentType);
+    	_response.setStatus(HttpURLConnection.HTTP_OK);
+		OutputStream os = _response.getOutputStream();
+		int n;
+		byte[] buf = new byte[2048];
+		while ((n = is.read(buf)) > 0) {
+			os.write(buf, 0, n);
+		}
+		is.close();
+	}
+	
+	public void sendXML(InputStream is) throws java.io.IOException {
+		sendData("application/xml", is);
+	}
+	
+	public void sendJSON(InputStream is) throws java.io.IOException {
+		sendData("application/json", is);
 	}
 }

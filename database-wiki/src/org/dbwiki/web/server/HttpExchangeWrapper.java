@@ -2,6 +2,7 @@ package org.dbwiki.web.server;
 
 import java.io.BufferedWriter;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URI;
@@ -72,8 +73,90 @@ public class HttpExchangeWrapper  implements Exchange<HttpExchange> {
     	}
     	out.close();
 	}
+	
+	public String contentType() {
+		String filename = _exchange.getRequestURI().getPath();
+		
+		int pos = filename.lastIndexOf('.');
+		if (pos != -1) {
+			String suffix = filename.substring(pos);
+			if (suffix.equalsIgnoreCase(".uu")) {
+				return "application/octet-stream";
+			} else if (suffix.equalsIgnoreCase(".exe")) {
+				return "application/octet-stream";
+			} else if (suffix.equalsIgnoreCase(".ps")) {
+				return "application/postscript";
+			} else if (suffix.equalsIgnoreCase(".zip")) {
+				return "application/zip";
+			} else if (suffix.equalsIgnoreCase(".sh")) {
+				return "application/x-shar";
+			} else if (suffix.equalsIgnoreCase(".tar")) {
+				return "application/x-tar";
+			} else if (suffix.equalsIgnoreCase(".snd")) {
+				return "audio/basic";
+			} else if (suffix.equalsIgnoreCase(".au")) {
+				return "audio/basic";
+			} else if (suffix.equalsIgnoreCase(".wav")) {
+				return "audio/x-wav";
+			} else if (suffix.equalsIgnoreCase(".gif")) {
+				return "image/gif";
+			} else if (suffix.equalsIgnoreCase(".jpg")) {
+				return "image/jpeg";
+			} else if (suffix.equalsIgnoreCase(".jpeg")) {
+				return "image/jpeg";
+			} else if (suffix.equalsIgnoreCase(".htm")) {
+				return "text/html";
+			} else if (suffix.equalsIgnoreCase(".html")) {
+				return "text/html";
+			} else if (suffix.equalsIgnoreCase(".text")) {
+				return "text/plain";
+			} else if (suffix.equalsIgnoreCase(".c")) {
+				return "text/plain";
+			} else if (suffix.equalsIgnoreCase(".cc")) {
+				return "text/plain";
+			} else if (suffix.equalsIgnoreCase(".css")) {
+				return "text/css";
+			} else if (suffix.equalsIgnoreCase(".c++")) {
+				return "text/plain";
+			} else if (suffix.equalsIgnoreCase(".h")) {
+				return "text/plain";
+			} else if (suffix.equalsIgnoreCase(".pl")) {
+				return "text/plain";
+			} else if (suffix.equalsIgnoreCase(".txt")) {
+				return "text/plain";
+			} else if (suffix.equalsIgnoreCase(".java")) {
+				return "text/plain";
+			} else {
+				return "content/unknown";
+			}
+		} else {
+			return "content/unknown";
+		}
+	}
 
 
+
+	public void sendData(String contentType, InputStream is) throws java.io.IOException {
+		Headers responseHeaders = _exchange.getResponseHeaders();
+		responseHeaders.set("Content-Type", contentType);
+		_exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
+		OutputStream os = _exchange.getResponseBody();
+		int n;
+		byte[] buf = new byte[2048];
+		while ((n = is.read(buf)) > 0) {
+			os.write(buf, 0, n);
+		}
+		is.close();
+		os.close();
+	}
+	
+	public void sendXML(InputStream is) throws java.io.IOException {
+		sendData("application/xml", is);
+	}
+	
+	public void sendJSON(InputStream is) throws java.io.IOException {
+		sendData("application/json", is);
+	}
 	@Override
 	public HttpExchange get() {
 		return _exchange;

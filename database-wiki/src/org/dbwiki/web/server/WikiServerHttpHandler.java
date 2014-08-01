@@ -1,13 +1,8 @@
 package org.dbwiki.web.server;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileReader;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.URL;
 import java.sql.Connection;
@@ -29,7 +24,6 @@ import org.dbwiki.exception.WikiFatalException;
 import org.dbwiki.exception.web.WikiRequestException;
 import org.dbwiki.user.User;
 import org.dbwiki.web.html.FatalExceptionPage;
-import org.dbwiki.web.html.FileNotFoundPage;
 import org.dbwiki.web.html.RedirectPage;
 import org.dbwiki.web.request.HttpRequest;
 import org.dbwiki.web.request.RequestURL;
@@ -41,7 +35,6 @@ import org.dbwiki.web.ui.HtmlTemplateDecorator;
 import org.dbwiki.web.ui.ServerResponseHandler;
 import org.dbwiki.web.ui.printer.server.DatabaseWikiFormPrinter;
 
-import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpContext;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -203,12 +196,13 @@ public class WikiServerHttpHandler extends WikiServer implements HttpHandler {
 			DatabaseWikiHttpHandler wiki = new DatabaseWikiHttpHandler(wikiID, name, title, authenticator, autoSchemaChanges, _connector, this,
 									con, versionIndex);
 
+			// this should now only be called when starting a web server
+			assert(_webServer != null); 
+
 			String realm = wiki.database().identifier().databaseHomepage();
-			// HACK: for command line imports _webserver may be null
-			if(_webServer != null) {
-				HttpContext context = _webServer.createContext(realm, wiki);
-				context.setAuthenticator(authenticator);
-			}
+			HttpContext context = _webServer.createContext(realm, wiki);
+			context.setAuthenticator(authenticator);
+			
 			_wikiListing.add(wiki);
 			Collections.sort(_wikiListing);
 			//
@@ -254,7 +248,7 @@ public class WikiServerHttpHandler extends WikiServer implements HttpHandler {
 				}
 				this.respondTo(exchange);
 			} else if ((path.startsWith(SpecialFolderDatabaseWikiStyle + "/")) && (path.endsWith(".css"))) {
-	    		this.sendCSSFile(path.substring(SpecialFolderDatabaseWikiStyle.length() + 1, path.length() - 4), exchange);
+	    		this.sendCSSFile(path.substring(SpecialFolderDatabaseWikiStyle.length() + 1, path.length() - 4), new HttpExchangeWrapper(exchange));
 			} else if (path.equals(SpecialFolderLogin)) {
 				//FIXME: #request This is a convoluted way of parsing the request parameter!
 				HtmlSender.send(new RedirectPage(new RequestURL( new HttpExchangeWrapper(exchange),"").parameters().get(RequestParameter.ParameterResource).value()),exchange);
@@ -274,7 +268,7 @@ public class WikiServerHttpHandler extends WikiServer implements HttpHandler {
 		    //		this.sendFile(exchange);
 	    	//	}
 			} else {
-	    		this.sendFile(exchange);
+	    		this.sendFile(new HttpExchangeWrapper(exchange));
 	    	}
 		} catch (Exception exception) {
 			HtmlSender.send(new FatalExceptionPage(exception),exchange);
@@ -343,132 +337,6 @@ public class WikiServerHttpHandler extends WikiServer implements HttpHandler {
 		HtmlSender.send(HtmlTemplateDecorator.decorate(new BufferedReader(new FileReader(template)), responseHandler),exchange);
 	}
 	
-	/** Sends CSS file for the server.
-	 * 
-	 * @param name - name of the wiki CSS file, in format "wikiID_version"
-	 * @param exchange - exchange to respond to
-	 * @throws java.io.IOException
-	 * @throws org.dbwiki.exception.WikiException
-	 */
-	private void sendCSSFile(String name, HttpExchange exchange) throws java.io.IOException, org.dbwiki.exception.WikiException {
-		int wikiID = -1;
-		int fileVersion = -1;
-		
-		try {
-			int pos = name.indexOf("_");
-			wikiID = Integer.valueOf(name.substring(0, pos));
-			fileVersion = Integer.valueOf(name.substring(pos + 1));
-		} catch (Exception exception ) {
-			HtmlSender.send(new FileNotFoundPage(exchange.getRequestURI().getPath()),exchange);
-			return;
-		}
-		
-		String value = this.readConfigFile(wikiID, RelConfigFileColFileTypeValCSS, fileVersion);
-		this.sendData(exchange, "text/css", new ByteArrayInputStream(value.getBytes("UTF-8")));
-	}
 
-	
-/* From FileServer */
-	
-
-
-	
-	private String contentType(HttpExchange exchange) {
-		String filename = exchange.getRequestURI().getPath();
-		
-		int pos = filename.lastIndexOf('.');
-		if (pos != -1) {
-			String suffix = filename.substring(pos);
-			if (suffix.equalsIgnoreCase(".uu")) {
-				return "application/octet-stream";
-			} else if (suffix.equalsIgnoreCase(".exe")) {
-				return "application/octet-stream";
-			} else if (suffix.equalsIgnoreCase(".ps")) {
-				return "application/postscript";
-			} else if (suffix.equalsIgnoreCase(".zip")) {
-				return "application/zip";
-			} else if (suffix.equalsIgnoreCase(".sh")) {
-				return "application/x-shar";
-			} else if (suffix.equalsIgnoreCase(".tar")) {
-				return "application/x-tar";
-			} else if (suffix.equalsIgnoreCase(".snd")) {
-				return "audio/basic";
-			} else if (suffix.equalsIgnoreCase(".au")) {
-				return "audio/basic";
-			} else if (suffix.equalsIgnoreCase(".wav")) {
-				return "audio/x-wav";
-			} else if (suffix.equalsIgnoreCase(".gif")) {
-				return "image/gif";
-			} else if (suffix.equalsIgnoreCase(".jpg")) {
-				return "image/jpeg";
-			} else if (suffix.equalsIgnoreCase(".jpeg")) {
-				return "image/jpeg";
-			} else if (suffix.equalsIgnoreCase(".htm")) {
-				return "text/html";
-			} else if (suffix.equalsIgnoreCase(".html")) {
-				return "text/html";
-			} else if (suffix.equalsIgnoreCase(".text")) {
-				return "text/plain";
-			} else if (suffix.equalsIgnoreCase(".c")) {
-				return "text/plain";
-			} else if (suffix.equalsIgnoreCase(".cc")) {
-				return "text/plain";
-			} else if (suffix.equalsIgnoreCase(".css")) {
-				return "text/css";
-			} else if (suffix.equalsIgnoreCase(".c++")) {
-				return "text/plain";
-			} else if (suffix.equalsIgnoreCase(".h")) {
-				return "text/plain";
-			} else if (suffix.equalsIgnoreCase(".pl")) {
-				return "text/plain";
-			} else if (suffix.equalsIgnoreCase(".txt")) {
-				return "text/plain";
-			} else if (suffix.equalsIgnoreCase(".java")) {
-				return "text/plain";
-			} else {
-				return "content/unknown";
-			}
-		} else {
-			return "content/unknown";
-		}
-	}
-	protected void sendData(HttpExchange exchange, String contentType, InputStream is) throws java.io.IOException {
-		Headers responseHeaders = exchange.getResponseHeaders();
-		responseHeaders.set("Content-Type", contentType);
-		exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
-		OutputStream os = exchange.getResponseBody();
-		int n;
-		byte[] buf = new byte[2048];
-		while ((n = is.read(buf)) > 0) {
-			os.write(buf, 0, n);
-		}
-		is.close();
-		os.close();
-	}
-	
-	// FIXME #security: Seems like a bad idea for the default behavior to be to send files from file sys...
-	protected void sendFile(HttpExchange exchange) throws java.io.IOException {
-		String contentType = this.contentType(exchange);
-		
-		String path = exchange.getRequestURI().getPath();
-		
-		File file = new File(_directory.getAbsolutePath() + path);
-		if ((file.exists()) && (!file.isDirectory())) {
-			this.sendData(exchange, contentType, new FileInputStream(file));
-		} else {
-			System.out.println("File Not Found: " + path);
-			HtmlSender.send(new FileNotFoundPage(path),exchange);
-		}
-	}
-	
-	
-	protected void sendXML(HttpExchange exchange, InputStream is) throws java.io.IOException {
-		this.sendData(exchange, "application/xml", is);
-	}
-	
-	protected void sendJSON(HttpExchange exchange, InputStream is) throws java.io.IOException {
-		this.sendData(exchange, "application/json", is);
-	}
-	
 			
 }
