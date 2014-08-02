@@ -50,6 +50,7 @@ public abstract class ServerLog {
 	public abstract void openLog() throws java.io.IOException;
 	public abstract void writeln(String line) throws java.io.IOException;
 	
+	// TODO: Make logging a request a metnod of Exchange<T>?
 	
 	/*
 	 * Public Methods

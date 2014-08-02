@@ -113,4 +113,13 @@ public class ServletExchangeWrapper implements Exchange<HttpServletRequest> {
 	public void sendJSON(InputStream is) throws java.io.IOException {
 		sendData("application/json", is);
 	}
+
+	public void setResponseHeader(String header, String value) {
+		_response.setHeader(header, value);
+	}
+
+	public int getLocalPort() {
+		
+		return _request.getLocalPort();
+	}
 }

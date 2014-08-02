@@ -9,6 +9,7 @@ public interface Exchange<T> {
 	public URI getRequestURI();
 	public String getUsername();
 	public String getCookie();
+	public int getLocalPort();
 	public boolean isGet();
 	public boolean isPost();
 	public String contentType();
@@ -20,4 +21,5 @@ public interface Exchange<T> {
 	public void sendJSON(InputStream is) throws java.io.IOException;
 	
 	public T get();
+	public void setResponseHeader(String string, String string2);
 	}

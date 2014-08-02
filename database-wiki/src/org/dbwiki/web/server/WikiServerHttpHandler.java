@@ -1,8 +1,5 @@
 package org.dbwiki.web.server;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.net.InetSocketAddress;
 import java.net.URL;
 import java.sql.Connection;
@@ -21,20 +18,13 @@ import org.dbwiki.data.schema.DatabaseSchema;
 import org.dbwiki.driver.rdbms.SQLVersionIndex;
 import org.dbwiki.exception.WikiException;
 import org.dbwiki.exception.WikiFatalException;
-import org.dbwiki.exception.web.WikiRequestException;
 import org.dbwiki.user.User;
 import org.dbwiki.web.html.FatalExceptionPage;
 import org.dbwiki.web.html.RedirectPage;
-import org.dbwiki.web.request.HttpRequest;
+import org.dbwiki.web.request.Exchange;
 import org.dbwiki.web.request.RequestURL;
 import org.dbwiki.web.request.parameter.RequestParameter;
-import org.dbwiki.web.request.parameter.RequestParameterAction;
 import org.dbwiki.web.security.WikiAuthenticator;
-import org.dbwiki.web.ui.HtmlContentGenerator;
-import org.dbwiki.web.ui.HtmlTemplateDecorator;
-import org.dbwiki.web.ui.ServerResponseHandler;
-import org.dbwiki.web.ui.printer.server.DatabaseWikiFormPrinter;
-
 import com.sun.net.httpserver.HttpContext;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -238,20 +228,20 @@ public class WikiServerHttpHandler extends WikiServer implements HttpHandler {
 	 * wikis are handled by DatabaseWiki.handle())
 	 * The HttpExchange is side-effected and the response part is eventually sent back to the client.
 	 */
-	public void handle(HttpExchange exchange) throws java.io.IOException {
-		
+	public void handle(HttpExchange httpExchange) throws java.io.IOException {
+		Exchange<HttpExchange> exchange = new HttpExchangeWrapper(httpExchange);
 		try {
 			String path = exchange.getRequestURI().getPath();
 			if (path.equals("/")) {
 				if (_serverLog != null) {
-					_serverLog.logRequest(exchange.getRequestURI(),exchange.getRemoteAddress(),exchange.getResponseHeaders());
+					_serverLog.logRequest(exchange.getRequestURI(),exchange.get().getRemoteAddress(),exchange.get().getResponseHeaders());
 				}
 				this.respondTo(exchange);
 			} else if ((path.startsWith(SpecialFolderDatabaseWikiStyle + "/")) && (path.endsWith(".css"))) {
-	    		this.sendCSSFile(path.substring(SpecialFolderDatabaseWikiStyle.length() + 1, path.length() - 4), new HttpExchangeWrapper(exchange));
+	    		this.sendCSSFile(path.substring(SpecialFolderDatabaseWikiStyle.length() + 1, path.length() - 4), exchange);
 			} else if (path.equals(SpecialFolderLogin)) {
 				//FIXME: #request This is a convoluted way of parsing the request parameter!
-				HtmlSender.send(new RedirectPage(new RequestURL( new HttpExchangeWrapper(exchange),"").parameters().get(RequestParameter.ParameterResource).value()),exchange);
+				exchange.send(new RedirectPage(new RequestURL( exchange,"").parameters().get(RequestParameter.ParameterResource).value()));
 	    	// The following code is necessary if using only a single HttpContext
 	    	// instead of multiple ones (i.e., one per Database Wiki).
 	    	//} else if (path.length() > 1) {
@@ -268,74 +258,15 @@ public class WikiServerHttpHandler extends WikiServer implements HttpHandler {
 		    //		this.sendFile(exchange);
 	    	//	}
 			} else {
-	    		this.sendFile(new HttpExchangeWrapper(exchange));
+	    		this.sendFile(exchange);
 	    	}
 		} catch (Exception exception) {
-			HtmlSender.send(new FatalExceptionPage(exception),exchange);
+			exchange.send(new FatalExceptionPage(exception));
 		}
 	}
 	
 	
-	/** Respond to a HttpExchange.
-	 * First, parse the exchange into a ServerRequest and use its isX() methods 
-	 * to figure out what is being requested.  
-	 * In each case, construct an appropriate ServerResponseHandler.
-	 * Then find the server template and decorate the template using the ServerResponseHandler
-	 * This handles server-level requests only; DatabaseWiki-level requests are dispatched to the 
-	 * DatabaseWiki object.  
-	 * @param exchange
-	 * @throws java.io.IOException
-	 * @throws org.dbwiki.exception.WikiException
-	 */
-	private void respondTo(HttpExchange exchange) throws java.io.IOException, org.dbwiki.exception.WikiException {
-		ServerResponseHandler responseHandler = null;
-		
-		HttpRequest request = new HttpRequest(new RequestURL(new HttpExchangeWrapper(exchange),""), users());
 
-		if (request.type().isIndex()) {
-			responseHandler = this.getHomepageResponseHandler(request);
-		} else if (request.type().isCreate()) {
-			responseHandler = new ServerResponseHandler(request, _wikiTitle + " - Create Database Wiki");
-			responseHandler.put(HtmlContentGenerator.ContentContent, new DatabaseWikiFormPrinter("Create Database Wiki"));
-		} else if (request.type().isEdit()) {
-			DatabaseWiki wiki = this.getRequestWiki(request, RequestParameter.ParameterEdit);
-			responseHandler = new ServerResponseHandler(request, _wikiTitle + " - Edit Database Wiki");
-			responseHandler.put(HtmlContentGenerator.ContentContent, new DatabaseWikiFormPrinter(wiki.getProperties(), RequestParameterAction.ActionUpdate, "Edit Database Wiki"));
-		} else if (request.type().isReset()) {
-			this.resetWikiConfiguration(this.getRequestWiki(request, RequestParameter.ParameterReset));
-			responseHandler = this.getHomepageResponseHandler(request);
-		} else if (request.type().isAction()) {
-			RequestParameterAction action = RequestParameter.actionParameter(request.parameters().get(RequestParameter.ParameterAction));
-			if (action.actionInsert()) {
-				responseHandler = this.getInsertWikiResponseHandler(request);
-			} else if (action.actionCancel()) {
-				responseHandler = this.getHomepageResponseHandler(request);
-			} else if (action.actionUpdate()) {
-				responseHandler = this.getUpdateWikiResponseHandler(request);
-			} else {
-				throw new WikiRequestException(WikiRequestException.InvalidRequest, request.toString());
-			}
-		} else {
-			throw new WikiRequestException(WikiRequestException.InvalidRequest, request.toString());
-		}
-		
-		File template = null;
-
-		//
-		// TODO: Improve handling of individual home pages.
-		//
-		// This part is still a bit tricky. In order to identify whether the response handler results from
-		// a call to getHomepageResponseHandler() we rely on the fact that only getHomepageResponseHandler()
-		// adds content handler for Menu and Content.
-		//
-		if (responseHandler.contains(HtmlContentGenerator.ContentMenu) && responseHandler.contains(HtmlContentGenerator.ContentContent)) {
-			template = _homepageTemplate;
-		} else {
-			template = _formTemplate;
-		}
-
-		HtmlSender.send(HtmlTemplateDecorator.decorate(new BufferedReader(new FileReader(template)), responseHandler),exchange);
-	}
 	
 
 			

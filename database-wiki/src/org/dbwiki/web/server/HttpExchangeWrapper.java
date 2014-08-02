@@ -157,8 +157,17 @@ public class HttpExchangeWrapper  implements Exchange<HttpExchange> {
 	public void sendJSON(InputStream is) throws java.io.IOException {
 		sendData("application/json", is);
 	}
-	@Override
+
 	public HttpExchange get() {
 		return _exchange;
+	}
+
+	public void setResponseHeader(String header, String value) {
+		Headers responseHeaders = _exchange.getResponseHeaders();
+		responseHeaders.set(header, value);
+	}
+
+	public int getLocalPort() {
+		return _exchange.getLocalAddress().getPort();
 	}
 }
