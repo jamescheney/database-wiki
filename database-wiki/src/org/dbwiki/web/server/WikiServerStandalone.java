@@ -112,38 +112,11 @@ public class WikiServerStandalone extends WikiServer {
 		con.setAutoCommit(false);
 		con.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 		try {
-			/*_connector.createDatabase(con, name, databaseSchema, user, versionIndex);
-
-			PreparedStatement pStmt = con.prepareStatement(
-					"INSERT INTO " + RelationDatabase + "(" +
-					RelDatabaseColName + ", " + RelDatabaseColTitle + ", " + 
-					RelDatabaseColAuthentication + ", " + RelDatabaseColAutoSchemaChanges + ", " +
-					RelDatabaseColUser + ") VALUES(? , ? , ? , ? , ?)", Statement.RETURN_GENERATED_KEYS);
-			pStmt.setString(1, name);
-			pStmt.setString(2, title);
-			pStmt.setInt(3, authenticationMode);
-			pStmt.setInt(4, autoSchemaChanges);
-			if (user != null) {
-				pStmt.setInt(5, user.id());
-			} else {
-				pStmt.setInt(5, User.UnknownUserID);
-			}
-			pStmt.execute();
-			ResultSet rs = pStmt.getGeneratedKeys();
-			if (rs.next()) {
-				wikiID = rs.getInt(1);
-			} else {
-				throw new WikiFatalException("There are no generated keys.");
-			}
-			rs.close();
-			*/
 			wikiID = r.createDatabase(con, versionIndex);
 			con.commit();
-
 			
 			DatabaseWikiStandalone wiki = new DatabaseWikiStandalone(wikiID, name, title, autoSchemaChanges, authenticationMode,_connector, this,
 									con, versionIndex);
-
 			
 			_wikiListing.add(wiki);
 			Collections.sort(_wikiListing);

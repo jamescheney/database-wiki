@@ -167,12 +167,7 @@ public abstract class DatabaseWiki implements Comparable<DatabaseWiki> {
 	 */
 
 	
-	// TODO: Build properties directly, removing dependence of DatabaseWikiProperties on DatabaseWiki
-	public DatabaseWikiProperties getProperties() {
-		
-		return new DatabaseWikiProperties(this);
-		
-	}
+	
 	/** Comparator.  Compare database wikis by title, to sort list of wikis.
 	 * 
 	 */
@@ -184,6 +179,13 @@ public abstract class DatabaseWiki implements Comparable<DatabaseWiki> {
 	 * 
 	 */
 
+ // TODO: Build properties directly, removing dependence of DatabaseWikiProperties on DatabaseWiki
+ 	public DatabaseWikiProperties getProperties() {
+ 		
+ 		return new DatabaseWikiProperties(this);
+ 		
+ 	}
+ 	
 	public int getAuthenticationMode() {
 		return _authenticationMode;
 	}
@@ -446,63 +448,6 @@ public abstract class DatabaseWiki implements Comparable<DatabaseWiki> {
 		server().resetWikiConfiguration(this, setting.getLayoutVersion(), setting.getTemplateVersion(), setting.getStyleSheetVersion(), setting.getURLDecodingRulesVersion());
 	}
 	
-
-	
-
-	
-
-
-
-	
-	/** Handles POST requests that provide a new version of a config file.
-	 * 
-	 * @param request
-	 * @throws org.dbwiki.exception.WikiException
-	 */
-	  
-	protected synchronized void updateConfigurationFile(WikiRequest  request) throws org.dbwiki.exception.WikiException {
-		int wikiID = Integer.valueOf(request.parameters().get(ParameterDatabaseID).value());
-		int fileType = Integer.valueOf(request.parameters().get(ParameterFileType).value());
-		
-		String value = null;
-		
-		if (fileType == WikiServerConstants.RelConfigFileColFileTypeValLayout) {
-			Properties properties = new Properties();
-			for (int iParameter = 0; iParameter < request.parameters().size(); iParameter++) {
-				RequestParameter parameter = request.parameters().get(iParameter);
-				if (DatabaseLayouter.isLayoutParameter(parameter.name())) {
-					if (parameter.hasValue()) {
-						properties.setProperty(parameter.name(), parameter.value());
-					} else {
-						properties.setProperty(parameter.name(), "(null)");
-					}
-				}
-			}
-			StringWriter writer = new StringWriter();
-			try {
-				properties.store(writer, "Database Layout");
-			} catch (java.io.IOException ioException) {
-				throw new WikiFatalException(ioException);
-			}
-			value = writer.toString();
-		} else {
-			value = request.parameters().get(ParameterFileContent).value();
-		}
-		if (fileType == WikiServerConstants.RelConfigFileColFileTypeValLayout) {
-			server().updateConfigFile(wikiID, fileType, value, request.user());
-			_layouter = new DatabaseLayouter(value);
-		} else if (fileType == WikiServerConstants.RelConfigFileColFileTypeValTemplate) {
-			server().updateConfigFile(wikiID, fileType, value, request.user());
-			_template = value;
-		} else if (fileType == WikiServerConstants.RelConfigFileColFileTypeValCSS) {
-			_cssVersion = server().updateConfigFile(wikiID, fileType, value, request.user());
-			_cssLinePrinter = new CSSLinePrinter(this.id(), _cssVersion);
-		} else if (fileType == WikiServerConstants.RelConfigFileColFileTypeValURLDecoding) {
-			_urlDecoder = new URLDecodingRules(_database.schema(), value);
-			_urlDecodingVersion = server().updateConfigFile(wikiID, fileType, value, request.user());
-		}
-	}
-	
 	// TODO: Merge XML and JSON export to avoid code duplication
 
 	/**
@@ -600,7 +545,6 @@ public abstract class DatabaseWiki implements Comparable<DatabaseWiki> {
 			throw new WikiFatalException(ioException);
 		}
 	}
-	
 	
 	/**
 	 * Handles a request for a data node. First check authentication. Next
@@ -1219,5 +1163,55 @@ public abstract class DatabaseWiki implements Comparable<DatabaseWiki> {
 		exchange.send(HtmlTemplateDecorator.decorate(_template, contentGenerator));
 	}
 
+	
+	/** Handles POST requests that provide a new version of a config file.
+	 * 
+	 * @param request
+	 * @throws org.dbwiki.exception.WikiException
+	 */
+	  
+	protected synchronized void updateConfigurationFile(WikiRequest  request) throws org.dbwiki.exception.WikiException {
+		int wikiID = Integer.valueOf(request.parameters().get(ParameterDatabaseID).value());
+		int fileType = Integer.valueOf(request.parameters().get(ParameterFileType).value());
+		
+		String value = null;
+		
+		if (fileType == WikiServerConstants.RelConfigFileColFileTypeValLayout) {
+			Properties properties = new Properties();
+			for (int iParameter = 0; iParameter < request.parameters().size(); iParameter++) {
+				RequestParameter parameter = request.parameters().get(iParameter);
+				if (DatabaseLayouter.isLayoutParameter(parameter.name())) {
+					if (parameter.hasValue()) {
+						properties.setProperty(parameter.name(), parameter.value());
+					} else {
+						properties.setProperty(parameter.name(), "(null)");
+					}
+				}
+			}
+			StringWriter writer = new StringWriter();
+			try {
+				properties.store(writer, "Database Layout");
+			} catch (java.io.IOException ioException) {
+				throw new WikiFatalException(ioException);
+			}
+			value = writer.toString();
+		} else {
+			value = request.parameters().get(ParameterFileContent).value();
+		}
+		if (fileType == WikiServerConstants.RelConfigFileColFileTypeValLayout) {
+			server().updateConfigFile(wikiID, fileType, value, request.user());
+			_layouter = new DatabaseLayouter(value);
+		} else if (fileType == WikiServerConstants.RelConfigFileColFileTypeValTemplate) {
+			server().updateConfigFile(wikiID, fileType, value, request.user());
+			_template = value;
+		} else if (fileType == WikiServerConstants.RelConfigFileColFileTypeValCSS) {
+			_cssVersion = server().updateConfigFile(wikiID, fileType, value, request.user());
+			_cssLinePrinter = new CSSLinePrinter(this.id(), _cssVersion);
+		} else if (fileType == WikiServerConstants.RelConfigFileColFileTypeValURLDecoding) {
+			_urlDecoder = new URLDecodingRules(_database.schema(), value);
+			_urlDecodingVersion = server().updateConfigFile(wikiID, fileType, value, request.user());
+		}
+	}
+	
 
 }
