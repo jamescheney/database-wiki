@@ -21,13 +21,17 @@
 */
 package org.dbwiki.main;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStreamReader;
+
 import java.sql.Connection;
 import java.sql.Statement;
 
 import org.dbwiki.driver.rdbms.DatabaseConnector;
 import org.dbwiki.driver.rdbms.DatabaseConnectorFactory;
 import org.dbwiki.driver.rdbms.DatabaseConstants;
+
 import org.dbwiki.web.server.WikiServerConstants;
 
 /** PERMANENTLY deletes a DatabaseWiki and removes all of its tables.
@@ -40,7 +44,7 @@ public class DropDatabaseWiki implements DatabaseConstants, WikiServerConstants 
 	 * Private Constants
 	 */
 	
-	private static final String commandLine = "DropDatabaseWiki <config-file> <database-wiki-name>";
+	private static final String commandLine = "DropDatabaseWiki <config-file>";
 	
 	
 	/*
@@ -48,23 +52,26 @@ public class DropDatabaseWiki implements DatabaseConstants, WikiServerConstants 
 	 */
 	
 	public static void main(String[] args) {
-		if (args.length != 2) {
+		if (args.length != 1) {
 			System.out.println("Usage " + commandLine);
 			System.exit(0);
 		}
 		
 		try {
-			String name = args[1];
+			System.out.print("Enter the name of the wiki you want to delete: ");
+			// jcheney: got rid of implicit upper-casing
+			String name = (new BufferedReader(new InputStreamReader(System.in))).readLine();
 			DatabaseConnector connector = new DatabaseConnectorFactory().getConnector(org.dbwiki.lib.IO.loadProperties(new File(args[0])));
 			Connection con = connector.getConnection();
 			Statement stmt = con.createStatement();
-			System.out.println("Dropping " + name + "...");
 			stmt.execute("DELETE FROM " + RelationDatabase + " WHERE " + RelDatabaseColName + " = '" + name + "'");
 			System.out.println("DELETE FROM " + RelationDatabase + " WHERE " + RelDatabaseColName + " = '" + name + "'");
 			stmt.close();
 			connector.dropDatabase(con, name);
+			/*Statement stmt = con.createStatement();
+			stmt.execute("DELETE FROM " + RelationDatabase + " WHERE " + RelDatabaseColName + " = '" + name + "'");
+			stmt.close();*/
 			con.close();
-			System.out.println("Done");
 		} catch (Exception exception) {
 			exception.printStackTrace();
 			System.exit(0);

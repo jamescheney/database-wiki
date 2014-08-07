@@ -46,7 +46,7 @@ public interface DatabaseConstants {
 	
 	public static final String RelDataColID           = "id";
 	public static final String RelDataColParent       = "parent";
-	public static final String RelDataColSchema       = "d_schema";
+	public static final String RelDataColSchema       = "schema";
 	public static final String RelDataColEntry        = "entry";
 	public static final String RelDataColValue        = "value";
 	public static final String RelDataColTimesequence = "timesequence";

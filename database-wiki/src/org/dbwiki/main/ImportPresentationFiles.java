@@ -114,7 +114,16 @@ public class ImportPresentationFiles {
 		try {
 			Properties properties = org.dbwiki.lib.IO.loadProperties(configFile);
 			DatabaseConnector connector = new DatabaseConnectorFactory().getConnector(properties);
-			WikiServer server = new WikiServerStandalone("war", properties);
+			//TODO #server: Use non-web wiki server for this
+			WikiServer server = new WikiServerStandalone(properties);
+			/*
+			 * DatabaseWiki wiki = null;
+			for (int iWiki = 0; iWiki < server.size(); iWiki++) {
+				if (server.get(iWiki).name().equalsIgnoreCase(wikiName)) {
+					wiki = server.get(iWiki);
+					break;
+				}
+			}*/
 			DatabaseWiki wiki = server.get(wikiName);
 			
 			// [wiki] should never be null

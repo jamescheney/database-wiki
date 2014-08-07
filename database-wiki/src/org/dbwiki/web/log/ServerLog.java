@@ -108,7 +108,6 @@ public abstract class ServerLog {
 	/** Servlet request log wrapper
 	 * @param request
 	 */
-	@SuppressWarnings("unchecked")
 	public synchronized void logRequest(HttpServletRequest request) {
 		try {
 			this.openLog();

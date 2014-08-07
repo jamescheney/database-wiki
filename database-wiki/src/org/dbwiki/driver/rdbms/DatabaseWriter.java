@@ -70,14 +70,10 @@ import org.dbwiki.user.User;
 public class DatabaseWriter implements DatabaseConstants {
 	private Connection _con;
 	private RDBMSDatabase _database;
-	private boolean _importScript;
-	private int _total, _current;
 	
 	public DatabaseWriter(Connection con, RDBMSDatabase database) {
 		this._con = con;
 		this._database = database;
-		this._total = 0;
-		this._current = 0;
 	}
 	
 	/*
@@ -253,8 +249,6 @@ public class DatabaseWriter implements DatabaseConstants {
 	public ResourceIdentifier insertRootNode(DocumentGroupNode node, Version version) throws org.dbwiki.exception.WikiException {
 		try {
 			node.doNumberingRoot();
-			this._total = node.getpost();
-			this._importScript = _con.getClientInfo("import") != null;
 			RDBMSDatabaseGroupNode root = this.insertGroupNode((GroupSchemaNode)node.schema(), null, -1, new TimeSequence(version.number()), node.getpre(),node.getpost());
 			this.insertGroupChildren(node, root, root.identifier().nodeID());
 			PreparedStatement pStmtUpdateNode = _con.prepareStatement(
@@ -486,10 +480,7 @@ public class DatabaseWriter implements DatabaseConstants {
 	 * Point a row at its newly generated timestamp.
 	 */
 	private void recordNewTimestamp(String relation, String idColumn, String timestampColumn, int id, int timestamp)
-		throws SQLException {
-		if(_importScript) {
-			this._current++;
-		}
+		throws SQLException {		
 		PreparedStatement updateNode = _con.prepareStatement(
 				"UPDATE " + _database.name() + relation + " " +
 					"SET " + timestampColumn + " = ? WHERE " + idColumn + " = ?");
@@ -573,9 +564,6 @@ public class DatabaseWriter implements DatabaseConstants {
 				insertAttributeNode((AttributeSchemaNode)attributeChild.schema(), parent, entry, null, attributeChild.value(), attributeChild.getpre(), attributeChild.getpost());
 
 			} else {
-				if(_importScript) {
-					this._current++;
-				}
 				DocumentGroupNode groupChild = (DocumentGroupNode)element;
 				RDBMSDatabaseGroupNode node = insertGroupNode((GroupSchemaNode)groupChild.schema(), parent, entry, null, groupChild.getpre(), groupChild.getpost());
 
@@ -618,11 +606,6 @@ public class DatabaseWriter implements DatabaseConstants {
 			String value,
 			int pre, 
 			int post) throws java.sql.SQLException, org.dbwiki.exception.WikiException {
-		
-		if(_importScript) {
-			System.out.print(" Writing child #" + (++this._current) + "/" + this._total + "\r");
-		}
-		
 		PreparedStatement insert = prepareInsertNode();
 		if (schema != null) {
 			insert.setInt(1, schema.id());

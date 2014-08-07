@@ -91,7 +91,6 @@ public class DatabaseReader implements DatabaseConstants {
 	
 		
 	
-	@SuppressWarnings("unused")
 	public static DatabaseNode get(Connection con, RDBMSDatabase database, NodeIdentifier identifier) throws org.dbwiki.exception.WikiException {
 		Hashtable<Integer, DatabaseNode> nodeIndex = new Hashtable<Integer, DatabaseNode>();
 		
@@ -209,7 +208,7 @@ public class DatabaseReader implements DatabaseConstants {
 					}
 				}
 			}
-			//System.out.println(i);
+			System.out.println(i);
 			rs.close();
 			stmt.close();
 			 

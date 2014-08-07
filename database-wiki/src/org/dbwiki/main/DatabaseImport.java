@@ -63,12 +63,9 @@ public class DatabaseImport {
 		String user = args[5];
 	
 		try {
-			
 			Properties properties = org.dbwiki.lib.IO.loadProperties(configFile);
 
-			WikiServer server = new WikiServerStandalone("war", properties);
-			
-			System.out.println("Importing " + name + "...");
+			WikiServer server = new WikiServerStandalone(properties);
 			
 			// attempt to generate a schema from the input file
 			// 1. get input file stream
@@ -91,8 +88,6 @@ public class DatabaseImport {
 			
 			// register the database with the server
 			server.registerDatabase(name, title, path, inputURL, databaseSchema, server.users().get(user), 1, 0);
-			
-			System.out.println("Done");
 		} catch (Exception exception) {
 			exception.printStackTrace();
 			System.exit(0);

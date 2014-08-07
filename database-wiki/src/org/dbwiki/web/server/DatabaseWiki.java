@@ -23,16 +23,15 @@ package org.dbwiki.web.server;
 
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStreamWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
+
 import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Hashtable;
@@ -45,9 +44,11 @@ import org.dbwiki.data.database.DatabaseElementNode;
 import org.dbwiki.data.database.DatabaseTextNode;
 import org.dbwiki.data.database.NodeUpdate;
 import org.dbwiki.data.database.Update;
+
 import org.dbwiki.data.document.DocumentAttributeNode;
 import org.dbwiki.data.document.DocumentGroupNode;
 import org.dbwiki.data.document.DocumentNode;
+
 import org.dbwiki.data.index.DatabaseContent;
 import org.dbwiki.data.io.CopyPasteInputHandler;
 import org.dbwiki.data.io.CopyPasteNodeWriter;
@@ -55,21 +56,24 @@ import org.dbwiki.data.io.ExportJSONNodeWriter;
 import org.dbwiki.data.io.ExportNodeWriter;
 import org.dbwiki.data.io.NodeWriter;
 import org.dbwiki.data.io.SAXCallbackInputHandler;
+
 import org.dbwiki.data.resource.DatabaseIdentifier;
 import org.dbwiki.data.resource.PageIdentifier;
 import org.dbwiki.data.schema.AttributeSchemaNode;
-import org.dbwiki.data.schema.GroupSchemaNode;
 import org.dbwiki.data.schema.SchemaNode;
+import org.dbwiki.data.schema.GroupSchemaNode;
+
 import org.dbwiki.data.wiki.Wiki;
-import org.dbwiki.exception.WikiException;
 import org.dbwiki.exception.WikiFatalException;
+
 import org.dbwiki.exception.web.WikiRequestException;
+
 import org.dbwiki.user.UserListing;
+
 import org.dbwiki.web.html.HtmlPage;
 import org.dbwiki.web.html.RedirectPage;
 import org.dbwiki.web.request.Exchange;
 import org.dbwiki.web.request.HttpRequest;
-import org.dbwiki.web.request.RequestURL;
 import org.dbwiki.web.request.URLDecodingRules;
 import org.dbwiki.web.request.WikiDataRequest;
 import org.dbwiki.web.request.WikiPageRequest;
@@ -83,6 +87,7 @@ import org.dbwiki.web.request.parameter.RequestParameterVersionSingle;
 import org.dbwiki.web.ui.DatabaseWikiContentGenerator;
 import org.dbwiki.web.ui.HtmlTemplateDecorator;
 import org.dbwiki.web.ui.layout.DatabaseLayouter;
+
 import org.dbwiki.web.ui.printer.CSSLinePrinter;
 import org.dbwiki.web.ui.printer.FileEditor;
 import org.dbwiki.web.ui.printer.LayoutEditor;
@@ -110,6 +115,7 @@ import org.dbwiki.web.ui.printer.page.PageUpdateFormPrinter;
 import org.dbwiki.web.ui.printer.schema.SchemaMenuPrinter;
 import org.dbwiki.web.ui.printer.schema.SchemaNodePrinter;
 import org.dbwiki.web.ui.printer.schema.SchemaPathPrinter;
+import org.dbwiki.web.server.DatabaseWikiProperties;
 
 
 /** Implements the DatabaseWiki functionality for a given database. 
@@ -161,12 +167,7 @@ public abstract class DatabaseWiki implements Comparable<DatabaseWiki> {
 	 */
 
 	
-	// TODO: Build properties directly, removing dependence of DatabaseWikiProperties on DatabaseWiki
-	public DatabaseWikiProperties getProperties() {
-		
-		return new DatabaseWikiProperties(this);
-		
-	}
+	
 	/** Comparator.  Compare database wikis by title, to sort list of wikis.
 	 * 
 	 */
@@ -178,6 +179,13 @@ public abstract class DatabaseWiki implements Comparable<DatabaseWiki> {
 	 * 
 	 */
 
+ // TODO: Build properties directly, removing dependence of DatabaseWikiProperties on DatabaseWiki
+ 	public DatabaseWikiProperties getProperties() {
+ 		
+ 		return new DatabaseWikiProperties(this);
+ 		
+ 	}
+ 	
 	public int getAuthenticationMode() {
 		return _authenticationMode;
 	}
@@ -393,9 +401,8 @@ public abstract class DatabaseWiki implements Comparable<DatabaseWiki> {
 	 * @param request
 	 * @param url
 	 * @throws org.dbwiki.exception.WikiException
-	 * @throws UnsupportedEncodingException 
 	 */
-	protected void pasteURL(WikiDataRequest request, String url) throws org.dbwiki.exception.WikiException {
+	protected void pasteURL(WikiDataRequest  request, String url) throws org.dbwiki.exception.WikiException {
 		if (url != null) {
 			CopyPasteInputHandler ioHandler = new CopyPasteInputHandler();
 			String sourceURL = url;
@@ -405,9 +412,11 @@ public abstract class DatabaseWiki implements Comparable<DatabaseWiki> {
 				sourceURL = sourceURL + "?" + RequestParameter.ParameterCopyPasteExport;
 			}
 			try {
-				new SAXCallbackInputHandler(ioHandler, false).parse(getPasteStream(new URL(sourceURL)), false, false);
-			} catch (Exception exception) {
-				throw new WikiFatalException(exception);
+				new SAXCallbackInputHandler(ioHandler, false).parse(new URL(sourceURL).openStream(), false, false);
+			} catch (java.io.IOException ioException) {
+				throw new WikiFatalException(ioException);
+			} catch (org.xml.sax.SAXException saxException) {
+				throw new WikiFatalException(saxException);
 			}
 			/* TODO: The version parameter may be missing in the source URL when copying from
 			 * an external source.
@@ -418,39 +427,6 @@ public abstract class DatabaseWiki implements Comparable<DatabaseWiki> {
 		}
 	}
 	
-	/** Get stream for the paste action
-	 *  If request is local then load data directly, else load stream from an external URL
-	 *  TODO: Generalize this in a less hacky way?
-	 * 
-	 * @param url
-	 * @return
-	 * @throws MalformedURLException
-	 * @throws IOException
-	 * @throws WikiException 
-	 */
-	protected InputStream getPasteStream(URL url) throws MalformedURLException, IOException, WikiException {
-		if (url.getHost().equals("localhost")) {
-			int versionNumber = database().versionIndex().getLastVersion().number();
-			RequestURL request = new RequestURL(url);
-			if (request.parameters()
-					.hasParameter(RequestParameter.ParameterVersion)) {
-				versionNumber = ((RequestParameterVersionSingle) RequestParameter
-						.versionParameter(request.parameters().get(
-								RequestParameter.ParameterVersion)))
-						.versionNumber();
-			}
-			CopyPasteNodeWriter writer = new CopyPasteNodeWriter();
-			ByteArrayOutputStream buf = new ByteArrayOutputStream();
-			BufferedWriter out = new BufferedWriter(new OutputStreamWriter(buf));
-			writer.init(out);
-			database().export(database().getNodeIdentifierForURL(new RequestURL(request.get(1).decodedText())),
-					versionNumber, writer);
-			out.close();
-			return new ByteArrayInputStream(buf.toByteArray());
-		} else {
-			return url.openStream();
-		}
-	}
 	
 	
 	/** Reset the configuration.  
@@ -472,65 +448,16 @@ public abstract class DatabaseWiki implements Comparable<DatabaseWiki> {
 		server().resetWikiConfiguration(this, setting.getLayoutVersion(), setting.getTemplateVersion(), setting.getStyleSheetVersion(), setting.getURLDecodingRulesVersion());
 	}
 	
-	
-	/** Handles POST requests that provide a new version of a config file.
-	 * 
-	 * @param request
-	 * @throws org.dbwiki.exception.WikiException
-	 */
-	  
-	protected synchronized void updateConfigurationFile(WikiRequest  request) throws org.dbwiki.exception.WikiException {
-		int wikiID = Integer.valueOf(request.parameters().get(ParameterDatabaseID).value());
-		int fileType = Integer.valueOf(request.parameters().get(ParameterFileType).value());
-		
-		String value = null;
-		
-		if (fileType == WikiServerConstants.RelConfigFileColFileTypeValLayout) {
-			Properties properties = new Properties();
-			for (int iParameter = 0; iParameter < request.parameters().size(); iParameter++) {
-				RequestParameter parameter = request.parameters().get(iParameter);
-				if (DatabaseLayouter.isLayoutParameter(parameter.name())) {
-					if (parameter.hasValue()) {
-						properties.setProperty(parameter.name(), parameter.value());
-					} else {
-						properties.setProperty(parameter.name(), "(null)");
-					}
-				}
-			}
-			StringWriter writer = new StringWriter();
-			try {
-				properties.store(writer, "Database Layout");
-			} catch (java.io.IOException ioException) {
-				throw new WikiFatalException(ioException);
-			}
-			value = writer.toString();
-		} else {
-			value = request.parameters().get(ParameterFileContent).value();
-		}
-		if (fileType == WikiServerConstants.RelConfigFileColFileTypeValLayout) {
-			server().updateConfigFile(wikiID, fileType, value, request.user());
-			_layouter = new DatabaseLayouter(value);
-		} else if (fileType == WikiServerConstants.RelConfigFileColFileTypeValTemplate) {
-			server().updateConfigFile(wikiID, fileType, value, request.user());
-			_template = value;
-		} else if (fileType == WikiServerConstants.RelConfigFileColFileTypeValCSS) {
-			_cssVersion = server().updateConfigFile(wikiID, fileType, value, request.user());
-			_cssLinePrinter = new CSSLinePrinter(this.id(), _cssVersion);
-		} else if (fileType == WikiServerConstants.RelConfigFileColFileTypeValURLDecoding) {
-			_urlDecoder = new URLDecodingRules(_database.schema(), value);
-			_urlDecodingVersion = server().updateConfigFile(wikiID, fileType, value, request.user());
-		}
-	}
-	
+	// TODO: Merge XML and JSON export to avoid code duplication
+
 	/**
-	 * Handles data export requests
-	 * TODO: Large data sets alternative?
+	 * Handles data export requests (generating XML)
 	 * 
 	 * @param request
 	 * @param writer
 	 * @throws org.dbwiki.exception.WikiException
 	 */
-	protected void respondToExportRequest(WikiDataRequest request,
+	protected void respondToExportXMLRequest(WikiDataRequest request,
 			NodeWriter writer, Exchange<?> exchange)
 			throws org.dbwiki.exception.WikiException {
 		int versionNumber = database().versionIndex().getLastVersion().number();
@@ -541,17 +468,78 @@ public abstract class DatabaseWiki implements Comparable<DatabaseWiki> {
 							RequestParameter.ParameterVersion)))
 					.versionNumber();
 		}
+
 		try {
-			ByteArrayOutputStream buf = new ByteArrayOutputStream();
-			BufferedWriter out = new BufferedWriter(new OutputStreamWriter(buf));
-			writer.init(out);
-			database().export(request.wri().resourceIdentifier(),
-					versionNumber, writer);
-			out.close();
-			if (request.type().isExportJSON()) {
-				exchange.sendJSON(new ByteArrayInputStream(buf.toByteArray()));
+			// if the request is for all the data in a DatabaseWiki, create a
+			// temporary file.
+			// Otherwise, do it in memory (ASSUMES each entry is small!).
+			// TODO: This could probably be done uniformly by streaming instead.
+			if (request.isRootRequest()) {
+				File tmpFile = File.createTempFile("dbwiki", "xml");
+				BufferedWriter out = new BufferedWriter(new FileWriter(tmpFile));
+				writer.init(out);
+				database().export(request.wri().resourceIdentifier(),
+						versionNumber, writer);
+				out.close();
+				exchange.sendXML(new FileInputStream(tmpFile));
+				tmpFile.delete();
 			} else {
-				exchange.sendXML(new ByteArrayInputStream(buf.toByteArray()));
+				StringWriter buf = new StringWriter();
+				BufferedWriter out = new BufferedWriter(buf);
+				writer.init(out);
+				database().export(request.wri().resourceIdentifier(),
+						versionNumber, writer);
+				out.close();
+				exchange.sendXML(new ByteArrayInputStream(buf
+						.toString().getBytes("UTF-8")));
+			}
+		} catch (java.io.IOException ioException) {
+			throw new WikiFatalException(ioException);
+		}
+	}
+
+	/**
+	 * Handles data export requests (generating JSON)
+	 * 
+	 * @param request
+	 * @param writer
+	 * @throws org.dbwiki.exception.WikiException
+	 */
+	protected void respondToExportJSONRequest(WikiDataRequest request,
+			NodeWriter writer, Exchange<?> exchange)
+			throws org.dbwiki.exception.WikiException {
+		int versionNumber = database().versionIndex().getLastVersion().number();
+		if (request.parameters()
+				.hasParameter(RequestParameter.ParameterVersion)) {
+			versionNumber = ((RequestParameterVersionSingle) RequestParameter
+					.versionParameter(request.parameters().get(
+							RequestParameter.ParameterVersion)))
+					.versionNumber();
+		}
+
+		try {
+			// if the request is for all the data in a DatabaseWiki, create a
+			// temporary file.
+			// Otherwise, do it in memory (ASSUMES each entry is small!).
+			// TODO: This could probably be done uniformly by streaming instead.
+			if (request.isRootRequest()) {
+				File tmpFile = File.createTempFile("dbwiki", "json");
+				BufferedWriter out = new BufferedWriter(new FileWriter(tmpFile));
+				writer.init(out);
+				database().export(request.wri().resourceIdentifier(),
+						versionNumber, writer);
+				out.close();
+				exchange.sendJSON(new FileInputStream(tmpFile));
+				tmpFile.delete();
+			} else {
+				StringWriter buf = new StringWriter();
+				BufferedWriter out = new BufferedWriter(buf);
+				writer.init(out);
+				database().export(request.wri().resourceIdentifier(),
+						versionNumber, writer);
+				out.close();
+				exchange.sendJSON(new ByteArrayInputStream(buf
+						.toString().getBytes("UTF-8")));
 			}
 		} catch (java.io.IOException ioException) {
 			throw new WikiFatalException(ioException);
@@ -705,7 +693,7 @@ public abstract class DatabaseWiki implements Comparable<DatabaseWiki> {
 				url = request.parameters().get(RequestParameter.ParameterURL)
 						.value();
 			} else {
-					url = URLDecoder.decode(request.copyBuffer(), "UTF-8");
+				url = URLDecoder.decode(request.copyBuffer(), "UTF-8");
 			}
 			this.pasteURL(request, url);
 			isGetRequest = !request.isRootRequest();
@@ -716,15 +704,15 @@ public abstract class DatabaseWiki implements Comparable<DatabaseWiki> {
 			isGetRequest = !request.isRootRequest();
 			isIndexRequest = !isGetRequest;
 		} else if (request.type().isCopyPasteExport()) {
-			this.respondToExportRequest(request, new CopyPasteNodeWriter(),
+			this.respondToExportXMLRequest(request, new CopyPasteNodeWriter(),
 					exchange);
 			return;
 		} else if (request.type().isExportXML()) {
-			this.respondToExportRequest(request, new ExportNodeWriter(),
+			this.respondToExportXMLRequest(request, new ExportNodeWriter(),
 					exchange);
 			return;
 		} else if (request.type().isExportJSON()) {
-			this.respondToExportRequest(request,
+			this.respondToExportJSONRequest(request,
 					new ExportJSONNodeWriter(), 
 					exchange);
 			return;
@@ -1175,5 +1163,55 @@ public abstract class DatabaseWiki implements Comparable<DatabaseWiki> {
 		exchange.send(HtmlTemplateDecorator.decorate(_template, contentGenerator));
 	}
 
+	
+	/** Handles POST requests that provide a new version of a config file.
+	 * 
+	 * @param request
+	 * @throws org.dbwiki.exception.WikiException
+	 */
+	  
+	protected synchronized void updateConfigurationFile(WikiRequest  request) throws org.dbwiki.exception.WikiException {
+		int wikiID = Integer.valueOf(request.parameters().get(ParameterDatabaseID).value());
+		int fileType = Integer.valueOf(request.parameters().get(ParameterFileType).value());
+		
+		String value = null;
+		
+		if (fileType == WikiServerConstants.RelConfigFileColFileTypeValLayout) {
+			Properties properties = new Properties();
+			for (int iParameter = 0; iParameter < request.parameters().size(); iParameter++) {
+				RequestParameter parameter = request.parameters().get(iParameter);
+				if (DatabaseLayouter.isLayoutParameter(parameter.name())) {
+					if (parameter.hasValue()) {
+						properties.setProperty(parameter.name(), parameter.value());
+					} else {
+						properties.setProperty(parameter.name(), "(null)");
+					}
+				}
+			}
+			StringWriter writer = new StringWriter();
+			try {
+				properties.store(writer, "Database Layout");
+			} catch (java.io.IOException ioException) {
+				throw new WikiFatalException(ioException);
+			}
+			value = writer.toString();
+		} else {
+			value = request.parameters().get(ParameterFileContent).value();
+		}
+		if (fileType == WikiServerConstants.RelConfigFileColFileTypeValLayout) {
+			server().updateConfigFile(wikiID, fileType, value, request.user());
+			_layouter = new DatabaseLayouter(value);
+		} else if (fileType == WikiServerConstants.RelConfigFileColFileTypeValTemplate) {
+			server().updateConfigFile(wikiID, fileType, value, request.user());
+			_template = value;
+		} else if (fileType == WikiServerConstants.RelConfigFileColFileTypeValCSS) {
+			_cssVersion = server().updateConfigFile(wikiID, fileType, value, request.user());
+			_cssLinePrinter = new CSSLinePrinter(this.id(), _cssVersion);
+		} else if (fileType == WikiServerConstants.RelConfigFileColFileTypeValURLDecoding) {
+			_urlDecoder = new URLDecodingRules(_database.schema(), value);
+			_urlDecodingVersion = server().updateConfigFile(wikiID, fileType, value, request.user());
+		}
+	}
+	
 
 }

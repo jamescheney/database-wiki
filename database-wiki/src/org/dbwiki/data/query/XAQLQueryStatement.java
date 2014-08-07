@@ -66,9 +66,8 @@ public class XAQLQueryStatement extends QueryStatement {
 	
 	public XAQLQueryStatement(Database database, String queryExpression) throws org.dbwiki.exception.WikiException {
 	
-		
-		long mid = System.currentTimeMillis();
 		_database = database;
+		
 		XAQLSyntaxParser parser = Parboiled.createParser(XAQLSyntaxParser.class);
 		
 		ParsingResult<XAQLToken> result = new ReportingParseRunner<XAQLToken>(parser.QueryStatement()).run(new DefaultInputBuffer(queryExpression.toCharArray()));
@@ -79,7 +78,6 @@ public class XAQLQueryStatement extends QueryStatement {
     		//result.parseTreeRoot.getValue().print("", "\t");
         	_query = new QueryStatementGenerator().getStatement(database, result.parseTreeRoot.getValue());
         }
-		System.out.println("Query init " + (System.currentTimeMillis()-mid) + "ms!");
 	}
 
 	/**
@@ -89,7 +87,6 @@ public class XAQLQueryStatement extends QueryStatement {
 	 */
 	public QueryResultSet execute() throws WikiException {
 
-		long mid = System.currentTimeMillis();
 		QueryResultSet result = null;
 		if (_query.getVersionClause() != null) {
 			result = new QueryResultSet(_query.getVersionClause().getTimestamp());
@@ -115,7 +112,6 @@ public class XAQLQueryStatement extends QueryStatement {
 				new AbsoluteXPathConsumer().consume(entry, _query.rootTargetPath(), queryHandler);
 			}
 		}
-		System.out.println("Query execute " + (System.currentTimeMillis()-mid) + "ms!");
 		return result;
 	}
 

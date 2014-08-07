@@ -342,7 +342,7 @@ public class QueryNode extends Node {
     			}
     			QueryResultSet rs = database.query(query);
     			body.openPARAGRAPH(CSS.CSSPageText);
-    			drawChart(ChartType.Column, xSize, ySize, rs, body);		
+    			drawChart(ChartType.Column, xSize, ySize, rs, body);
     		} else if(query.toLowerCase().startsWith("pie:") || query.toLowerCase().startsWith("pie(")) {
     			// FIXME: should parse the arguments to charts in a more
     			// sensible scalable way.
