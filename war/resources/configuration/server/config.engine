@@ -1,0 +1,18 @@
+# Server parameters
+PORT=8080
+THREADCOUNT=20
+BACKLOG=10
+
+# Database Wiki parameters
+# Default Authentication.
+# 0 = Always
+# 1 = Never
+# 2 = On write
+AUTHENTICATION=2
+DIRECTORY=/resources/data
+WIKI_TITLE=Edinburgh Database Wiki
+
+# Database parameters
+RDBMS_TYPE=CLOUDSQL
+JDBC_URL=jdbc:google:mysql://database-wiki-cloudsql:test/guestbook
+JDBC_USER=root
