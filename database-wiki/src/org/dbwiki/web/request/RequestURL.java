@@ -24,7 +24,9 @@ package org.dbwiki.web.request;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URL;
 import java.net.URLDecoder;
 
 import java.util.StringTokenizer;
@@ -121,9 +123,14 @@ public class RequestURL {
 	}
 
 
-	
 	public RequestURL(String path) {
 		_components = this.split(path);
+		_parameters = new RequestParameterList();
+	}
+	
+	public RequestURL(URL url) throws MalformedURLException, WikiFatalException {
+		_components = this.split(url.getPath());
+		_parameters = new RequestParameterList(url.getQuery());
 	}
 	
 	

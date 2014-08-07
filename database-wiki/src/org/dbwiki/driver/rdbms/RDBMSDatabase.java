@@ -319,8 +319,8 @@ public class RDBMSDatabase implements Database, DatabaseConstants {
 
 	public DatabaseContent getMatchingEntries(AttributeConditionListing listing) throws org.dbwiki.exception.WikiException {
 		
-		Vector<String> sqlStatements = new Vector<String>();
 		Vector<String> parameters = new Vector<String>();
+		Vector<String> sqlStatements = new Vector<String>();
 		
 		for (int iCondition = 0; iCondition < listing.size(); iCondition++) {
 			AttributeCondition condition = listing.get(iCondition);
@@ -331,17 +331,7 @@ public class RDBMSDatabase implements Database, DatabaseConstants {
 			}
 		}
 		
-		String sql = null;
-		
-		if (sqlStatements.size() > 0) {
-			sql = "SELECT DISTINCT " + RelDataColEntry + " FROM (" + sqlStatements.firstElement();
-			for (int iStatement = 1; iStatement < sqlStatements.size(); iStatement++) {
-				sql = sql + " INTERSECT " + sqlStatements.get(iStatement);
-			}
-			sql = sql + ") q ORDER BY " + RelDataColEntry;
-		} else {
-			sql = "SELECT DISTINCT " + RelDataColEntry + " FROM " + this.name() + RelationData + " ORDER BY " + RelDataColEntry;
-		}
+		String sql = _connector.joinMatchSQLStatements(sqlStatements, this.name());
 		
 		VectorDatabaseListing result = new VectorDatabaseListing();
 		
@@ -580,6 +570,24 @@ public class RDBMSDatabase implements Database, DatabaseConstants {
 	/*
 	 * Private Methods
 	 */
+	
+	private void addSchemaIndexStatement(Vector<String> sqlStatements, Vector<String> parameters, AttributeCondition condition) {
+		sqlStatements.add("SELECT DISTINCT " + RelDataColEntry + " " +
+			"FROM " + this.name() + ViewSchemaIndex + " " +
+			"WHERE " + ViewSchemaIndexColMaxCount + " >= " + condition.sqlPreparedStatement() + " " +
+			"AND " + RelDataColSchema + " = " + condition.entity().id());
+	}
+
+	private void addSchemaValueStatement(Vector<String> sqlStatements, Vector<String> parameters, AttributeCondition condition) {
+		
+		sqlStatements.add("SELECT DISTINCT d1." + RelDataColEntry + " " +
+			"FROM " + this.name() + RelationData + " d1, " + this.name() + RelationData + " d2 " +
+			"WHERE d1." + RelDataColSchema + " = " + RelDataColSchemaValUnknown + " " +
+			"AND d1." + RelDataColValue + " " + condition.sqlPreparedStatement() + " " +
+			"AND d1." + RelDataColParent + " = d2." + RelDataColID + " " +
+			"AND d2." + RelDataColSchema + " = " + condition.entity().id());
+		condition.listValues(parameters);
+	}
 	
 	private void activateNode(Connection con, DatabaseNode node, Version version) throws org.dbwiki.exception.WikiException {
 		if (!node.getTimestamp().isCurrent()) {
@@ -889,24 +897,6 @@ public class RDBMSDatabase implements Database, DatabaseConstants {
 		new DatabaseWriter(con, this).insertTimestamp(node.identifier(), interval);
 
 		node.setTimestamp(timestamp);
-	}
-	
-	private void addSchemaIndexStatement(Vector<String> sqlStatements, Vector<String> parameters, AttributeCondition condition) {
-		sqlStatements.add("SELECT DISTINCT " + RelDataColEntry + " " +
-			"FROM " + this.name() + ViewSchemaIndex + " " +
-			"WHERE " + ViewSchemaIndexColMaxCount + " >= " + condition.sqlPreparedStatement() + " " +
-			"AND " + RelDataColSchema + " = " + condition.entity().id());
-	}
-
-	private void addSchemaValueStatement(Vector<String> sqlStatements, Vector<String> parameters, AttributeCondition condition) {
-		
-		sqlStatements.add("SELECT DISTINCT d1." + RelDataColEntry + " " +
-			"FROM " + this.name() + RelationData + " d1, " + this.name() + RelationData + " d2 " +
-			"WHERE d1." + RelDataColSchema + " = " + RelDataColSchemaValUnknown + " " +
-			"AND d1." + RelDataColValue + " " + condition.sqlPreparedStatement() + " " +
-			"AND d1." + RelDataColParent + " = d2." + RelDataColID + " " +
-			"AND d2." + RelDataColSchema + " = " + condition.entity().id());
-		condition.listValues(parameters);
 	}
 
 	@Override

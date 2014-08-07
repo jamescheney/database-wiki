@@ -29,18 +29,16 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.Date;
 import java.util.List;
+import java.util.Vector;
 
 import org.dbwiki.data.provenance.ProvenanceCreate;
 import org.dbwiki.data.schema.DatabaseSchema;
-import org.dbwiki.data.schema.SchemaNode;
 import org.dbwiki.data.schema.GroupSchemaNode;
+import org.dbwiki.data.schema.SchemaNode;
 import org.dbwiki.data.time.Version;
-
 import org.dbwiki.exception.WikiException;
 import org.dbwiki.exception.WikiFatalException;
-
 import org.dbwiki.user.User;
-
 import org.dbwiki.web.server.WikiServerConstants;
 
 /** A connection to a database, representing the basic tables of a DatabaseWiki 
@@ -259,6 +257,20 @@ public abstract class DatabaseConnector implements DatabaseConstants, WikiServer
 		} catch (java.sql.SQLException sqlException) {
 			throw new WikiFatalException(sqlException); 
 		}
+	}
+	
+	public String joinMatchSQLStatements(Vector<String> sqlStatements, String database) {
+		String sql = null;
+		if (sqlStatements.size() > 0) {
+			sql = "SELECT DISTINCT " + RelDataColEntry + " FROM (" + sqlStatements.firstElement();
+			for (int iStatement = 1; iStatement < sqlStatements.size(); iStatement++) {
+				sql = sql + " INTERSECT " + sqlStatements.get(iStatement);
+			}
+			sql = sql + ") q ORDER BY " + RelDataColEntry;
+		} else {
+			sql = "SELECT DISTINCT " + RelDataColEntry + " FROM " + database + RelationData + " ORDER BY " + RelDataColEntry;
+		}
+		return sql;
 	}
 
 	
@@ -497,4 +509,5 @@ public abstract class DatabaseConnector implements DatabaseConstants, WikiServer
 		} catch (java.sql.SQLException sqlException) {
 		}
 	}
+	
 }

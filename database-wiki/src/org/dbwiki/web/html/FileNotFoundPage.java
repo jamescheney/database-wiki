@@ -21,6 +21,9 @@
 */
 package org.dbwiki.web.html;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 /** 
  * Responds to a request for a resource not found on the server.
  * 
@@ -33,6 +36,8 @@ public class FileNotFoundPage extends HtmlPage {
 	 */
 	
 	public FileNotFoundPage(String filename) {
-		this.add("<html><head><title>Database Wiki - File Not Found</title></head><body><h1>Server error 404</h1><h2>File Not Found</h2><p>" + filename + " </p>");
+		StringWriter sw = new StringWriter();
+		new Throwable().printStackTrace(new PrintWriter(sw));
+		this.add("<html><head><title>Database Wiki - File Not Found</title></head><body><h1>Server error 404</h1><h2>File Not Found</h2><p>" + filename + "<br><br>" + sw.toString() + "</p></body></html>");
 	}
 }

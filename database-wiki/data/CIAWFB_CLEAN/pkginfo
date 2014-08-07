@@ -1,9 +1,0 @@
-NAME=CIAWFB_CLEAN
-TITLE=CIA World Factbook
-PATH=/CIAWFB_CLEAN/COUNTRY
-INPUT_XML=CIAWFB_CLEAN_20110506.xml.gz
-TEMPLATE=presentation/CIAWFB_CLEAN.template
-CSS=presentation/CIAWFB_CLEAN.css
-LAYOUT=presentation/CIAWFB_CLEAN.layout
-URLDECODING=presentation/CIAWFB_CLEAN.urldecoding
-WIKI=wiki

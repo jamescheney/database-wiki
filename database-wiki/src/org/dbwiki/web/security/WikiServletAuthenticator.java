@@ -100,6 +100,7 @@ public class WikiServletAuthenticator {
 	 * @param request HttpServletRequest
 	 * @return boolean
 	 */
+	@SuppressWarnings("unchecked")
 	private boolean isProtectedRequest(HttpServletRequest request) {
 	    if ("GET".equalsIgnoreCase(request.getMethod())) {
 	    	List<String> parameters = Collections.list(request.getParameterNames());

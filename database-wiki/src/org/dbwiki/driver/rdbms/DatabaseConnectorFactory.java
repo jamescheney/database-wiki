@@ -69,7 +69,7 @@ public class DatabaseConnectorFactory {
 				Class.forName("com.mysql.jdbc.Driver");
 				return new MySQLDatabaseConnector(url, user, password);
 			} else if (rdbmsTypeGoogleCloudSQL.equalsIgnoreCase(rdbmsType)) {
-				Class.forName("com.google.appengine.api.rdbms.AppEngineDriver");
+				Class.forName("com.mysql.jdbc.GoogleDriver");
 				return new MySQLDatabaseConnector(url, user, password);
 			} else if (rdbmsTypeSQLServer.equalsIgnoreCase(rdbmsType)) {
 				Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
