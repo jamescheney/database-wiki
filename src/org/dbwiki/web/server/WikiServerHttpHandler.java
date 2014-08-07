@@ -154,7 +154,7 @@ public class WikiServerHttpHandler extends WikiServer implements HttpHandler {
 		con.setAutoCommit(false);
 		con.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 		try {
-			
+
 			wikiID = r.createDatabase(con, versionIndex);
 			con.commit();
 

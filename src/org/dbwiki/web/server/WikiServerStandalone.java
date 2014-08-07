@@ -31,6 +31,11 @@ public class WikiServerStandalone extends WikiServer {
 
 	}
 	
+	public WikiServerStandalone(String prefix, Properties properties) throws org.dbwiki.exception.WikiException {
+		super(prefix, properties);
+
+	}
+	
 	
 	/** 
 	 * Initialize list of DatabaseWikis from database
@@ -109,21 +114,20 @@ public class WikiServerStandalone extends WikiServer {
 		int wikiID = -1;
 		SQLVersionIndex versionIndex = new SQLVersionIndex(con, name, users(), true);
 		CreateDatabaseRecord r = new CreateDatabaseRecord(name,title,authenticationMode,autoSchemaChanges,databaseSchema,user);
-		con.setAutoCommit(false);
-		con.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+		con.setAutoCommit(true);
 		try {
 			wikiID = r.createDatabase(con, versionIndex);
-			con.commit();
 			
 			DatabaseWikiStandalone wiki = new DatabaseWikiStandalone(wikiID, name, title, autoSchemaChanges, authenticationMode,_connector, this,
 									con, versionIndex);
-			
+
 			_wikiListing.add(wiki);
 			Collections.sort(_wikiListing);
 			//
 			// Import data into created database wiki if the user specified an import resource.
 			//
 			if (resource != null) {
+				con.setClientInfo("import", "true");
 				Database database = wiki.database();
 				// Note that database.schema() is a copy of databaseSchema that has been read back from the database
 				// after being loaded in when we created new database above.
@@ -136,11 +140,9 @@ public class WikiServerStandalone extends WikiServer {
 				reader.start();
 			}
 		} catch (java.sql.SQLException sqlException) {
-			con.rollback();
 			con.close();
 			throw new WikiFatalException(sqlException);
 		}
-		con.commit();
 		con.close();
 	}
 	

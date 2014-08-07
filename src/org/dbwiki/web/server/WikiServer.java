@@ -684,7 +684,6 @@ public abstract class WikiServer  implements WikiServerConstants {
 	throws NumberFormatException, WikiException, SQLException;
 
 	// FIXME: This inner class should be used for other database creation forms/tools 
-	// Unify with DatabaseWikiProperties???
 	class CreateDatabaseRecord {
 		public String name;
 		public String title;
@@ -702,8 +701,8 @@ public abstract class WikiServer  implements WikiServerConstants {
 		}
 		
 	
-		public int createDatabase(Connection con,SQLVersionIndex versionIndex) 
-			throws WikiException, SQLException {
+	public int createDatabase(Connection con,SQLVersionIndex versionIndex) 
+		throws WikiException, SQLException {
 			int wikiID;
 			_connector.createDatabase(con, name, databaseSchema, user, versionIndex);
 	
@@ -905,6 +904,7 @@ public abstract class WikiServer  implements WikiServerConstants {
 	
 	public abstract void sortWikiListing ();
 	
+	
 	/** Respond to an Exchange.
 	 * First, parse the exchange into a ServerRequest and use its isX() methods 
 	 * to figure out what is being requested.  
@@ -966,7 +966,6 @@ public abstract class WikiServer  implements WikiServerConstants {
 		exchange.send(HtmlTemplateDecorator.decorate(new BufferedReader(new FileReader(template)), responseHandler));
 	}
 	
-	
 	/** Sends CSS file for the server.
 	 * 
 	 * @param name - name of the wiki CSS file, in format "wikiID_version"
@@ -993,10 +992,7 @@ public abstract class WikiServer  implements WikiServerConstants {
 
 		
 	/* From FileServer */
-		
 
-
-		
 		
 	// FIXME #security: Seems like a bad idea for the default behavior to be to send files from file sys...
 	protected void sendFile(Exchange<?> exchange) throws java.io.IOException {

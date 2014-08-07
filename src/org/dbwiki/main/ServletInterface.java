@@ -32,6 +32,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.dbwiki.web.server.WikiServerServlet;
 
+import com.google.appengine.api.utils.SystemProperty;
+
 /** Servlet interface for the database wiki
  * 
  * @author o.cierny
@@ -49,7 +51,13 @@ public class ServletInterface extends HttpServlet {
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);		
 		try {
-			_server = new WikiServerServlet(getServletContext().getRealPath("/"), org.dbwiki.lib.IO.loadProperties(new File(getServletContext().getRealPath("/resources/configuration/server/config"))));
+			String settings = null;
+			if (SystemProperty.environment.value() == SystemProperty.Environment.Value.Production) {
+				settings = "/resources/configuration/server/config.engine";
+			} else {
+				settings = "/resources/configuration/server/config.local";
+			}
+			_server = new WikiServerServlet(getServletContext().getRealPath("/"), org.dbwiki.lib.IO.loadProperties(new File(getServletContext().getRealPath(settings))));
 		} catch (Exception e) {
 			throw new ServletException(e);
 		}

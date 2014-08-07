@@ -91,7 +91,7 @@ public class DatabaseWikiServlet extends DatabaseWiki {
 			throws java.io.IOException {
 		Exchange<HttpServletRequest> exchange = new ServletExchangeWrapper(request,response);
 		try {
-			String filename = exchange.getRequestURI().toString();
+			String filename = exchange.getRequestURI().getPath();
 			if(_authenticator.authenticate(request)) {
 				int pos = filename.lastIndexOf('.');
 				if (pos != -1) {

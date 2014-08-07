@@ -23,6 +23,7 @@ package org.dbwiki.driver.rdbms;
 
 import java.sql.Connection;
 import java.sql.Statement;
+import java.util.Vector;
 
 /** Subclass of DatabaseConnector to provide MySQL specific functionality */
 
@@ -42,6 +43,34 @@ public class MySQLDatabaseConnector extends DatabaseConnector {
 		super(url, user, password);
 	}
 	
+	/*
+	 * Public Methods
+	 */
+	
+	public String joinMatchSQLStatements(Vector<String> sqlStatements, String database) {
+		/*String sql = null;
+		if (sqlStatements.size() > 0) {
+			sql = "SELECT DISTINCT " + RelDataColEntry + " FROM (" + sqlStatements.firstElement();
+			for (int iStatement = 1; iStatement < sqlStatements.size(); iStatement++) {
+				sql = sql + " UNION ALL " + sqlStatements.get(iStatement);
+			}
+			sql = sql + ") q GROUP BY " + RelDataColEntry + " HAVING COUNT(*) = " + sqlStatements.size() + " ORDER BY " + RelDataColEntry;
+		} else {
+			sql = "SELECT DISTINCT " + RelDataColEntry + " FROM " + database + RelationData + " ORDER BY " + RelDataColEntry;
+		}*/
+		String sql = null;
+		if (sqlStatements.size() > 0) {
+			sql = "SELECT DISTINCT " + RelDataColEntry + " FROM (SELECT DISTINCT " + RelDataColEntry + " FROM "
+					+  database + RelationData;
+			for (int iStatement = 0; iStatement < sqlStatements.size(); iStatement++) {
+				sql = sql + " INNER JOIN (" + sqlStatements.get(iStatement) + ") i" + iStatement + " USING (" + RelDataColEntry + ")";
+			}
+			sql = sql + ") q ORDER BY " + RelDataColEntry;
+		} else {
+			sql = "SELECT DISTINCT " + RelDataColEntry + " FROM " + database + RelationData + " ORDER BY " + RelDataColEntry;
+		}
+		return sql;
+	}
 	
 	/*
 	 * Protected Methods
@@ -62,6 +91,50 @@ public class MySQLDatabaseConnector extends DatabaseConnector {
 				"SELECT " + RelDataColEntry + ", " + RelDataColSchema + ", MAX(cnt) " + ViewSchemaIndexColMaxCount + " " + 
 				"FROM " + name + viewSchemaIndexBase + " " +
 				"GROUP BY " + RelDataColEntry + ", " + RelDataColSchema);
+		stmt.execute("DROP VIEW " + name + viewSchemaIndexBase);
+		
+		stmt.close();
+	}
+	
+	protected void createSchemaTable(Connection con, String dbName) throws java.sql.SQLException {
+		Statement statement = con.createStatement();
+		String relName = dbName + RelationSchema;
+		
+		statement.execute("CREATE TABLE " + relName + " (" +
+				RelSchemaColID + " int NOT NULL, " +
+				RelSchemaColType + " int NOT NULL, " +
+				RelSchemaColLabel + " varchar(255) NOT NULL, " +
+				RelSchemaColParent + " int NOT NULL, " +
+				RelSchemaColUser + " int NOT NULL, " +
+				RelSchemaColTimesequence + " int NOT NULL DEFAULT -1, " +
+				"PRIMARY KEY (" + RelSchemaColID + "), " +
+				"UNIQUE(" + RelSchemaColLabel + ", " + RelSchemaColParent + "))");
+
+		statement.close();
+	}
+	
+	protected void createDataTable(Connection con, String dbName) throws java.sql.SQLException {
+		Statement stmt = con.createStatement();
+		
+		String relName = dbName + RelationData;
+		
+		stmt.execute("CREATE TABLE " + relName + " (" +	
+				autoIncrementColumn(RelDataColID) + ", " +
+				RelDataColSchema + " int NOT NULL, " +
+				RelDataColParent + " int NOT NULL, " +
+				RelDataColEntry + " int NOT NULL, " +
+				RelDataColValue + " text, " +
+				RelDataColTimesequence + " int NOT NULL DEFAULT -1, " +	
+				RelDataColPre + " int NOT NULL, " +
+				RelDataColPost + " int NOT NULL, " +
+				"PRIMARY KEY (" + RelDataColID + "))");
+		
+		stmt.execute("CREATE INDEX idx_pre_" + relName + "_" + RelDataColPre +  " USING btree ON " + relName + " (" + RelDataColPre + ")" );
+		stmt.execute("CREATE INDEX idx_post_" + relName + "_" + RelDataColPost + " USING btree ON " + relName + " (" + RelDataColPost +")");
+		stmt.execute("CREATE INDEX idx_par_" + relName + "_" + RelDataColParent + " USING hash ON " + relName + " (" + RelDataColParent +")");
+		stmt.execute("CREATE INDEX idx_schema_" + relName + "_" + RelDataColSchema + " USING hash ON " + relName + " (" + RelDataColSchema +")");		
+		stmt.execute("CREATE INDEX idx_ID_" + relName + "_" + RelDataColID + " USING hash ON " + relName + " (" + RelDataColID +")");
+		stmt.execute("CREATE INDEX idx_entry_" + relName + "_" + RelDataColEntry + " USING hash ON " + relName + " (" + RelDataColEntry +")");
 		
 		stmt.close();
 	}

@@ -319,8 +319,8 @@ public class RDBMSDatabase implements Database, DatabaseConstants {
 
 	public DatabaseContent getMatchingEntries(AttributeConditionListing listing) throws org.dbwiki.exception.WikiException {
 		
-		Vector<String> sqlStatements = new Vector<String>();
 		Vector<String> parameters = new Vector<String>();
+		Vector<String> sqlStatements = new Vector<String>();
 		
 		for (int iCondition = 0; iCondition < listing.size(); iCondition++) {
 			AttributeCondition condition = listing.get(iCondition);
@@ -331,17 +331,7 @@ public class RDBMSDatabase implements Database, DatabaseConstants {
 			}
 		}
 		
-		String sql = null;
-		
-		if (sqlStatements.size() > 0) {
-			sql = "SELECT DISTINCT " + RelDataColEntry + " FROM (" + sqlStatements.firstElement();
-			for (int iStatement = 1; iStatement < sqlStatements.size(); iStatement++) {
-				sql = sql + " INTERSECT " + sqlStatements.get(iStatement);
-			}
-			sql = sql + ") q ORDER BY " + RelDataColEntry;
-		} else {
-			sql = "SELECT DISTINCT " + RelDataColEntry + " FROM " + this.name() + RelationData + " ORDER BY " + RelDataColEntry;
-		}
+		String sql = _connector.joinMatchSQLStatements(sqlStatements, this.name());
 		
 		VectorDatabaseListing result = new VectorDatabaseListing();
 		

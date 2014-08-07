@@ -49,6 +49,7 @@ public class DatabaseImportHandler implements ImportHandler {
 	private RDBMSDatabase _database;
 	private Version _importVersion;
 	
+	private int _counter;
 	
 	/*
 	 * Constructors
@@ -57,6 +58,7 @@ public class DatabaseImportHandler implements ImportHandler {
 	public DatabaseImportHandler(Connection con, RDBMSDatabase database) {
 		_con = con;
 		_database = database;
+		_counter = 0;
 	}
 	
 	
@@ -78,6 +80,9 @@ public class DatabaseImportHandler implements ImportHandler {
 			_con.setAutoCommit(false);
 			boolean success = true;
 			try {
+				if(_con.getClientInfo("import") != null) {
+					System.out.println("Writing node #" + (++_counter));
+				}
 				new DatabaseWriter(_con, _database).insertRootNode(document, _importVersion);
 			} catch (Exception exception) {
 				_con.rollback();
@@ -85,6 +90,7 @@ public class DatabaseImportHandler implements ImportHandler {
 				throw new WikiFatalException(exception);
 			}
 			if (success) {
+				System.out.print("\n");
 				_con.commit();
 			}
 			_con.setAutoCommit(true);

@@ -119,7 +119,10 @@ public class ServletExchangeWrapper implements Exchange<HttpServletRequest> {
 	}
 
 	public int getLocalPort() {
-		
-		return _request.getLocalPort();
+		if(_request.getLocalPort() != 0) {
+			return _request.getLocalPort();
+		} else {
+			return 80;
+		}
 	}
 }
