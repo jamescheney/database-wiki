@@ -90,8 +90,7 @@ public class ServletExchangeWrapper implements Exchange<HttpServletRequest> {
 	}
 
 	public String contentType() {
-		// TODO Auto-generated method stub
-		return null;
+		return _request.getContentType();
 	}
 
 	public void sendData(String contentType, InputStream is) throws java.io.IOException {

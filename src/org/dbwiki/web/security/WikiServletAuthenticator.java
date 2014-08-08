@@ -1,6 +1,7 @@
 package org.dbwiki.web.security;
 
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -102,7 +103,7 @@ public class WikiServletAuthenticator {
 	 */
 	private boolean isProtectedRequest(HttpServletRequest request) {
 	    if ("GET".equalsIgnoreCase(request.getMethod())) {
-	    	List<String> parameters = Collections.list(request.getParameterNames());
+	    	List<?> parameters = Collections.list((Enumeration<?>)request.getParameterNames());
 			if (parameters != null) {
 				if(parameters.size() == 0) {
 					return false;

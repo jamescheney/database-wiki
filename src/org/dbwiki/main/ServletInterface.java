@@ -23,6 +23,7 @@ package org.dbwiki.main;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Logger;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -43,13 +44,14 @@ import com.google.appengine.api.utils.SystemProperty;
 public class ServletInterface extends HttpServlet {
 	
 	private WikiServerServlet _server;
+	public static final Logger log = Logger.getLogger(ServletInterface.class.getName());
 	
 	/*
 	 * Public Methods
 	 */
 	
 	public void init(ServletConfig config) throws ServletException {
-		super.init(config);		
+		super.init(config);
 		try {
 			String settings = null;
 			if (SystemProperty.environment.value() == SystemProperty.Environment.Value.Production) {

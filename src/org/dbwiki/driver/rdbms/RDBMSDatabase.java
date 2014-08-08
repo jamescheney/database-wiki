@@ -89,6 +89,7 @@ import org.dbwiki.exception.WikiFatalException;
 import org.dbwiki.exception.data.WikiDataException;
 import org.dbwiki.exception.data.WikiSchemaException;
 import org.dbwiki.exception.web.WikiRequestException;
+import org.dbwiki.main.ServletInterface;
 
 import org.dbwiki.user.User;
 import org.dbwiki.user.UserListing;
@@ -198,8 +199,10 @@ public class RDBMSDatabase implements Database, DatabaseConstants {
 	}
 	
 	public RDBMSDatabaseListing content() throws org.dbwiki.exception.WikiException {
-		//return DatabaseContentReader.get(_connector.getConnection(), this);
-		return new RDBMSDatabaseListing(_connector.getConnection(), this);
+		//long start = System.currentTimeMillis();
+		RDBMSDatabaseListing listing = new RDBMSDatabaseListing(_connector.getConnection(), this);
+		//ServletInterface.log.warning("Listing '" + _identifier.databaseHomepage() + "' took " + (System.currentTimeMillis() - start) + "ms");
+		return listing;
 	}
 
 	public synchronized void delete(ResourceIdentifier identifier, User user) throws org.dbwiki.exception.WikiException {
@@ -289,13 +292,17 @@ public class RDBMSDatabase implements Database, DatabaseConstants {
 	}
 
 	public DatabaseNode get(ResourceIdentifier identifier) throws org.dbwiki.exception.WikiException {
+		//long start = System.currentTimeMillis();
 		Connection con = _connector.getConnection();
+		//ServletInterface.log.warning("Connecting to '" + _identifier.databaseHomepage() +"' took " + (System.currentTimeMillis() - start) + "ms");
+		//start = System.currentTimeMillis();
 		DatabaseNode node = DatabaseReader.get(con, this, (NodeIdentifier)identifier);
 		try {
 			con.close();
 		} catch (java.sql.SQLException sqlException) {
 			throw new WikiFatalException(sqlException);
 		}
+		//ServletInterface.log.warning("Querying '" + _wiki.name() + identifier.toURLString() + "' took " + (System.currentTimeMillis() - start) + "ms");
 		return node;
 	}
 	
@@ -516,9 +523,7 @@ public class RDBMSDatabase implements Database, DatabaseConstants {
 
 	/** Evaluates a wiki query with respect to the database */
 	public QueryResultSet query(String query) throws org.dbwiki.exception.WikiException {
-
-		return QueryStatement.createStatement(this,query).execute();
-
+		return QueryStatement.createStatement(this, query).execute();
 	}
 
 	public DatabaseSchema schema() {

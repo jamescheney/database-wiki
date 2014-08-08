@@ -114,10 +114,10 @@ public abstract class ServerLog {
 			this.writeln("Date = [" + new java.util.Date() + "]");
 			this.writeln("URI = [" + request.getRequestURI() + "]");
 			this.writeln("Remote-IP = [" + request.getRemoteAddr() + ":" + request.getRemotePort() + "]");
-	    	Enumeration<String> names = request.getHeaderNames();
+	    	Enumeration<?> names = request.getHeaderNames();
 	    	while (names.hasMoreElements()) {
-	    		String key = names.nextElement();
-	    		Enumeration<String> values = request.getHeaders(key);
+	    		String key = names.nextElement().toString();
+	    		Enumeration<?> values = request.getHeaders(key);
 	    		this.writeln(key + " = " + values.toString());
 	    	}
 	    	this.writeln("--");
