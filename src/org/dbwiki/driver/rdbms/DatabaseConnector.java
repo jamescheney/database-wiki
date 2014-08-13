@@ -95,7 +95,6 @@ public abstract class DatabaseConnector implements DatabaseConstants, WikiServer
 			createVersionTable(con, dbName);
 			createTimestampTable(con, dbName);
 			createPagesTable(con, dbName);
-			createDataView(con, dbName);
 			createSchemaIndexView(con, dbName);
 			
 			// store the schema, generating a version number and timestamp for the root
@@ -314,36 +313,11 @@ public abstract class DatabaseConnector implements DatabaseConstants, WikiServer
 				"PRIMARY KEY (" + RelDataColID + "))");
 		
 		stmt.execute("CREATE INDEX idx_pre_" + relName + "_" + RelDataColPre + " ON " + relName + " USING btree " + " (" + RelDataColPre + ")" );
-		stmt.execute("CREATE INDEX idx_post_" + relName + "_" + RelDataColPost + " ON " + relName + " USING btree "+ " (" + RelDataColPost +")");
-		stmt.execute("CREATE INDEX idx_par_" + relName + "_" + RelDataColParent + " ON " + relName + " USING hash "+ " (" + RelDataColParent +")");
+		stmt.execute("CREATE INDEX idx_post_" + relName + "_" + RelDataColPost + " ON " + relName + " USING btree " + " (" + RelDataColPost +")");
+		stmt.execute("CREATE INDEX idx_par_" + relName + "_" + RelDataColParent + " ON " + relName + " USING hash " + " (" + RelDataColParent +")");
 		stmt.execute("CREATE INDEX idx_schema_" + relName + "_" + RelDataColSchema + " ON " + relName + " USING hash "+ " (" + RelDataColSchema +")");		
-		stmt.execute("CREATE INDEX idx_ID_" + relName + "_" + RelDataColID + " ON " + relName + " USING hash "+ " (" + RelDataColID +")");
-		stmt.execute("CREATE INDEX idx_entry_" + relName + "_" + RelDataColEntry + " ON " + relName + " USING hash "+ " (" + RelDataColEntry +")");
-		
-		stmt.close();
-	}
-	
-	protected void createDataView(Connection con, String dbName) throws java.sql.SQLException {
-		Statement stmt = con.createStatement();
-		
-		stmt.execute("CREATE VIEW " + dbName + ViewData + " AS " +
-				"SELECT " + 
-					"d." + RelDataColID + " " + ViewDataColNodeID + ", " +
-					"d." + RelDataColParent + " " + ViewDataColNodeParent + ", " +
-					"d." + RelDataColSchema + " " + ViewDataColNodeSchema + ", " +
-					"d." + RelDataColEntry + " " + ViewDataColNodeEntry + ", " +
-					"d." + RelDataColValue + " " + ViewDataColNodeValue + ", " +
-					"d." + RelDataColPre + " " + ViewDataColNodePre + ", " +
-					"d." + RelDataColPost + " " + ViewDataColNodePost + ", " +
-					"t." + RelTimesequenceColStart + " " + ViewDataColTimestampStart + ", " +
-					"t." + RelTimesequenceColStop + " " + ViewDataColTimestampEnd + ", " +
-					"a." + RelAnnotationColID + " " + ViewDataColAnnotationID + ", " +
-					"a." + RelAnnotationColDate + " " + ViewDataColAnnotationDate + ", " +
-					"a." + RelAnnotationColUser + " " + ViewDataColAnnotationUser + ", " +
-					"a." + RelAnnotationColText + " " + ViewDataColAnnotationText + " " +
-				"FROM " + dbName + RelationData + " d " +
-				"LEFT OUTER JOIN " + dbName + RelationTimesequence + " t ON (d." + RelDataColTimesequence + " = " + "t." + RelTimesequenceColID + ") " +
-				"LEFT OUTER JOIN " + dbName + RelationAnnotation + " a ON (d." + RelDataColID + " = " + "a." + RelAnnotationColNode + ")");
+		stmt.execute("CREATE INDEX idx_ID_" + relName + "_" + RelDataColID + " ON " + relName + " USING hash " + " (" + RelDataColID +")");
+		stmt.execute("CREATE INDEX idx_entry_" + relName + "_" + RelDataColEntry + " ON " + relName + " USING hash " + " (" + RelDataColEntry +")");
 		
 		stmt.close();
 	}

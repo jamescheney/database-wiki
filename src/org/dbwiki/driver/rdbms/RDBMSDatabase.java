@@ -31,7 +31,6 @@ import java.util.Hashtable;
 import java.util.Vector;
 
 import org.dbwiki.data.annotation.Annotation;
-
 import org.dbwiki.data.database.Database;
 import org.dbwiki.data.database.DatabaseAttributeNode;
 import org.dbwiki.data.database.DatabaseElementNode;
@@ -41,7 +40,6 @@ import org.dbwiki.data.database.DatabaseNodeValue;
 import org.dbwiki.data.database.DatabaseTextNode;
 import org.dbwiki.data.database.NodeUpdate;
 import org.dbwiki.data.database.Update;
-
 import org.dbwiki.data.document.DocumentAttributeNode;
 import org.dbwiki.data.document.DocumentGroupNode;
 import org.dbwiki.data.document.DocumentNode;
@@ -50,52 +48,40 @@ import org.dbwiki.data.document.PasteElementNode;
 import org.dbwiki.data.document.PasteGroupNode;
 import org.dbwiki.data.document.PasteNode;
 import org.dbwiki.data.document.PasteTextNode;
-
 import org.dbwiki.data.index.DatabaseContent;
 import org.dbwiki.data.index.VectorDatabaseListing;
-
 import org.dbwiki.data.io.ImportHandler;
 import org.dbwiki.data.io.NodeWriter;
-
 import org.dbwiki.data.provenance.ProvenanceActivate;
 import org.dbwiki.data.provenance.ProvenanceCopy;
 import org.dbwiki.data.provenance.ProvenanceDelete;
 import org.dbwiki.data.provenance.ProvenanceInsert;
 import org.dbwiki.data.provenance.ProvenanceUnknown;
 import org.dbwiki.data.provenance.ProvenanceUpdate;
-
 import org.dbwiki.data.query.QueryResultSet;
 import org.dbwiki.data.query.QueryStatement;
 import org.dbwiki.data.query.condition.AttributeCondition;
 import org.dbwiki.data.query.condition.AttributeConditionListing;
-
 import org.dbwiki.data.resource.DatabaseIdentifier;
-import org.dbwiki.data.resource.SchemaNodeIdentifier;
 import org.dbwiki.data.resource.NodeIdentifier;
 import org.dbwiki.data.resource.ResourceIdentifier;
-
+import org.dbwiki.data.resource.SchemaNodeIdentifier;
 import org.dbwiki.data.schema.AttributeSchemaNode;
 import org.dbwiki.data.schema.DatabaseSchema;
-import org.dbwiki.data.schema.SchemaNode;
 import org.dbwiki.data.schema.GroupSchemaNode;
-
+import org.dbwiki.data.schema.SchemaNode;
 import org.dbwiki.data.time.TimeInterval;
 import org.dbwiki.data.time.TimeSequence;
 import org.dbwiki.data.time.TimestampedObject;
 import org.dbwiki.data.time.Version;
 import org.dbwiki.data.time.VersionIndex;
-
 import org.dbwiki.exception.WikiFatalException;
 import org.dbwiki.exception.data.WikiDataException;
 import org.dbwiki.exception.data.WikiSchemaException;
 import org.dbwiki.exception.web.WikiRequestException;
-import org.dbwiki.main.ServletInterface;
-
 import org.dbwiki.user.User;
 import org.dbwiki.user.UserListing;
-
 import org.dbwiki.web.request.RequestURL;
-
 import org.dbwiki.web.server.DatabaseWiki;
 import org.dbwiki.web.server.DatabaseWikiProperties;
 
@@ -199,9 +185,7 @@ public class RDBMSDatabase implements Database, DatabaseConstants {
 	}
 	
 	public RDBMSDatabaseListing content() throws org.dbwiki.exception.WikiException {
-		//long start = System.currentTimeMillis();
 		RDBMSDatabaseListing listing = new RDBMSDatabaseListing(_connector.getConnection(), this);
-		//ServletInterface.log.warning("Listing '" + _identifier.databaseHomepage() + "' took " + (System.currentTimeMillis() - start) + "ms");
 		return listing;
 	}
 
@@ -292,17 +276,13 @@ public class RDBMSDatabase implements Database, DatabaseConstants {
 	}
 
 	public DatabaseNode get(ResourceIdentifier identifier) throws org.dbwiki.exception.WikiException {
-		//long start = System.currentTimeMillis();
 		Connection con = _connector.getConnection();
-		//ServletInterface.log.warning("Connecting to '" + _identifier.databaseHomepage() +"' took " + (System.currentTimeMillis() - start) + "ms");
-		//start = System.currentTimeMillis();
 		DatabaseNode node = DatabaseReader.get(con, this, (NodeIdentifier)identifier);
 		try {
 			con.close();
 		} catch (java.sql.SQLException sqlException) {
 			throw new WikiFatalException(sqlException);
 		}
-		//ServletInterface.log.warning("Querying '" + _wiki.name() + identifier.toURLString() + "' took " + (System.currentTimeMillis() - start) + "ms");
 		return node;
 	}
 	

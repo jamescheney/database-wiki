@@ -127,14 +127,42 @@ public class MySQLDatabaseConnector extends DatabaseConnector {
 				RelDataColTimesequence + " int NOT NULL DEFAULT -1, " +	
 				RelDataColPre + " int NOT NULL, " +
 				RelDataColPost + " int NOT NULL, " +
-				"PRIMARY KEY (" + RelDataColID + "))");
+				"PRIMARY KEY (" + RelDataColID + "), " +
+				"KEY idx" + RelationData + " (" + RelDataColPost + ", " + RelDataColParent +
+				", " + RelDataColSchema + ", " + RelDataColPre + ", " + RelDataColEntry + "))");
+
+		stmt.close();
+	}
+	
+	protected void createAnnotationTable(Connection con, String dbName) throws java.sql.SQLException {
+		Statement stmt = con.createStatement();
 		
-		stmt.execute("CREATE INDEX idx_pre_" + relName + "_" + RelDataColPre +  " USING btree ON " + relName + " (" + RelDataColPre + ")" );
-		stmt.execute("CREATE INDEX idx_post_" + relName + "_" + RelDataColPost + " USING btree ON " + relName + " (" + RelDataColPost +")");
-		stmt.execute("CREATE INDEX idx_par_" + relName + "_" + RelDataColParent + " USING hash ON " + relName + " (" + RelDataColParent +")");
-		stmt.execute("CREATE INDEX idx_schema_" + relName + "_" + RelDataColSchema + " USING hash ON " + relName + " (" + RelDataColSchema +")");		
-		stmt.execute("CREATE INDEX idx_ID_" + relName + "_" + RelDataColID + " USING hash ON " + relName + " (" + RelDataColID +")");
-		stmt.execute("CREATE INDEX idx_entry_" + relName + "_" + RelDataColEntry + " USING hash ON " + relName + " (" + RelDataColEntry +")");
+		String relName = dbName + RelationAnnotation;
+		
+		stmt.execute("CREATE TABLE " + relName + "(" +
+				autoIncrementColumn(RelAnnotationColID) + ", " +
+				RelAnnotationColNode + " int NOT NULL, " +
+				RelAnnotationColParent + " int, " +
+				RelAnnotationColDate + " varchar(80) NOT NULL, " +
+				RelAnnotationColText + " varchar(4000) NOT NULL, " +
+				RelAnnotationColUser + " int NOT NULL, " +
+				"PRIMARY KEY (" + RelAnnotationColID + "), " +
+				"KEY idx" + RelationAnnotation + "(" + RelAnnotationColNode + "))");
+		
+		stmt.close();
+	}
+	
+	protected void createTimestampTable(Connection con, String dbName) throws java.sql.SQLException {
+		Statement stmt = con.createStatement();
+		
+		String relName = dbName + RelationTimesequence;
+
+		stmt.execute("CREATE TABLE " + relName + "(" +
+				autoIncrementColumn(RelTimesequenceColID) + ", " +
+				RelTimesequenceColStart + " int NOT NULL, " +
+				RelTimesequenceColStop + " int NOT NULL, " +
+				"PRIMARY KEY (" + RelTimesequenceColID + "), " +
+				"KEY idx" + RelationTimesequence + " (" + RelTimesequenceColStart + ", " + RelTimesequenceColStop + "))");
 		
 		stmt.close();
 	}

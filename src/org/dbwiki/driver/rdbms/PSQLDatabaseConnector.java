@@ -41,7 +41,6 @@ public class PSQLDatabaseConnector extends DatabaseConnector {
 	 */
 	
 	protected String autoIncrementColumn(String name) {
-		// jcheney: this should just be SERIAL
 		return name + " SERIAL";
 	}
 

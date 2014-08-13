@@ -88,9 +88,7 @@ public class DatabaseReader implements DatabaseConstants {
 	 * and all annotations for the node and its children.
 	 */
 	
-	
-		
-	
+
 	@SuppressWarnings("unused")
 	public static DatabaseNode get(Connection con, RDBMSDatabase database, NodeIdentifier identifier) throws org.dbwiki.exception.WikiException {
 		Hashtable<Integer, DatabaseNode> nodeIndex = new Hashtable<Integer, DatabaseNode>();
@@ -103,40 +101,42 @@ public class DatabaseReader implements DatabaseConstants {
 			// the ancestors will be missed.  Pulling in all ancestors is probably overkill;
 			// maybe we can calculate the root timestamp on the database somehow, but this doesn't seem
 			// like a bottleneck.
-			/*
-			ResultSet rs= stmt.executeQuery(
-					" SELECT v2.* "+
-					" FROM "+ database.name() + RelationData +" v1, " + database.name() + ViewData + " v2 "+
-					" WHERE v1.id = " + identifier.nodeID() +
-				 	" AND v1.pre <= v2.n_pre " +
-				 	" AND v1.post >= v2.n_post " +
-					" AND v2.n_entry=v1.entry "+
-			 	  	" UNION select v2.* "+
-				  	" FROM " +database.name()+ RelationData +" v1, " + database.name()+  ViewData + " v2 " +
-				  	" WHERE v1.id =  "  + identifier.nodeID() +
-				 	" AND v1.pre >= v2.n_pre " +
-				   	" AND v1.post <= v2.n_post " +
-				 	" AND v2.n_entry=v1.entry "+
-					" ORDER BY n_id, t_start, a_id ");
 			
-			 */
-			ResultSet rs= stmt.executeQuery(
-					" SELECT v2.* "+
-					" FROM "+ database.name() + RelationData +" v1, " + database.name() + ViewData + " v2 "+
-					" WHERE v1.id = " + identifier.nodeID() +
-				 	" AND ((v1.pre <= v2.n_pre AND v1.post >= v2.n_post ) OR (v1.pre >= v2.n_pre AND v1.post <= v2.n_post))" +
-					" AND v2.n_entry=v1.entry" +
-					" ORDER BY n_id, t_start, a_id ");
+			ResultSet rs = stmt.executeQuery(
+					"SELECT " +
+					"d." + RelDataColID + " " + ViewDataColNodeID + ", " +
+					"d." + RelDataColParent + " " + ViewDataColNodeParent + ", " +
+					"d." + RelDataColSchema + " " + ViewDataColNodeSchema + ", " +
+					"d." + RelDataColValue + " " + ViewDataColNodeValue + ", " +
+					"d." + RelDataColPre + " " + ViewDataColNodePre + ", " +
+					"d." + RelDataColPost + " " + ViewDataColNodePost + ", " +
+					"t." + RelTimesequenceColStart + " " + ViewDataColTimestampStart + ", " +
+					"t." + RelTimesequenceColStop + " " + ViewDataColTimestampEnd + ", " +
+					"a." + RelAnnotationColID + " " + ViewDataColAnnotationID + ", " +
+					"a." + RelAnnotationColDate + " " + ViewDataColAnnotationDate + ", " +
+					"a." + RelAnnotationColUser + " " + ViewDataColAnnotationUser + ", " +
+					"a." + RelAnnotationColText + " " + ViewDataColAnnotationText + " " +
+					"FROM (SELECT * FROM " + database.name() + RelationData + " ORDER BY " + RelDataColID + ") d " +
+					"LEFT JOIN (SELECT * FROM " + database.name() + RelationTimesequence + " ORDER BY " + RelTimesequenceColStart +
+						") t ON (d." + RelDataColTimesequence + " = " + "t." + RelTimesequenceColID + ") " +
+					"LEFT JOIN (SELECT * FROM " + database.name() + RelationAnnotation + " ORDER BY " + RelAnnotationColID +
+						") a ON (d." + RelDataColID + " = " + "a." + RelAnnotationColNode + ") " +
+					"INNER JOIN " +	database.name() + RelationData + " v1" +
+					" ON v1." + RelDataColID + " = " + identifier.nodeID() +
+				 	" AND ((v1." + RelDataColPre + " <= d." + RelDataColPre +
+				 	" AND v1." + RelDataColPost + " >= d." + RelDataColPost +
+				 	" ) OR (v1." + RelDataColPre + " >= d." + RelDataColPre +
+				 	" AND v1." + RelDataColPost + " <= d." + RelDataColPost + "))" +
+					" AND d." + RelDataColEntry + " = d." + RelDataColEntry +
+					" ORDER BY v1." + RelDataColID);
+
 	
-
-
 			DatabaseNode node = null;
 			int i=0;
 			 
 			while (rs.next()) {
 				i++;
 			  int id = rs.getInt(ViewDataColNodeID);
-		//		System.out.println(id);
 				// The following condition allows information about nodes to be built up
 				// incrementally when spread across multiple rows.
 				//
@@ -209,7 +209,6 @@ public class DatabaseReader implements DatabaseConstants {
 					}
 				}
 			}
-			//System.out.println(i);
 			rs.close();
 			stmt.close();
 			 
