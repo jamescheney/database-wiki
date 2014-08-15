@@ -99,6 +99,7 @@ public abstract class DatabaseConnector implements DatabaseConstants, WikiServer
 			createVersionTable(con, dbName);
 			createTimestampTable(con, dbName);
 			createPagesTable(con, dbName);
+			createPolicyTable(con, dbName);
 			createDataView(con, dbName);
 			createSchemaIndexView(con, dbName);
 			
@@ -175,6 +176,26 @@ public abstract class DatabaseConnector implements DatabaseConstants, WikiServer
 					RelUserColFullName + " varchar(80) NOT NULL, " +
 					RelUserColPassword + " varchar(80) NOT NULL, " +
 					"PRIMARY KEY (" + RelUserColID + "))");
+			
+			System.out.print("CREATE TABLE " + RelationUser + " (" +
+					autoIncrementColumn(RelUserColID) + ", " +
+					RelUserColLogin + " varchar(80) NOT NULL UNIQUE, " +
+					RelUserColFullName + " varchar(80) NOT NULL, " +
+					RelUserColPassword + " varchar(80) NOT NULL, " +
+					"PRIMARY KEY (" + RelUserColID + "))");
+			
+//			stmt.execute("CREATE TABLE " + RelationAuthorization + " (" +
+//					RelAuthenticationColDatabaseName + " character varying NOT NULL, " +
+//					RelAuthenticationColUserLogin + " character varying(80) NOT NULL, " +
+//					RelAuthenticationColRead + " boolean NOT NULL DEFAULT true, " +
+//					RelAuthenticationColInsert + " boolean NOT NULL DEFAULT true, " +
+//					RelAuthenticationColDelete + " boolean NOT NULL DEFAULT true, " +
+//					RelAuthenticationColUpdate + " boolean NOT NULL DEFAULT true, " +
+//					" PRIMARY KEY (" + RelAuthenticationColDatabaseName + ", " + RelAuthenticationColUserLogin + ")," + 
+//					" FOREIGN KEY (" + RelAuthenticationColDatabaseName + ") REFERENCES " + RelationDatabase + "(" + RelDatabaseColName +")," +
+//					" FOREIGN KEY (" + RelAuthenticationColUserLogin + ") REFERENCES " + RelationUser + "(" + RelUserColLogin +"))");
+//			
+			
 			
 			// TODO #users: Split this off into a separate reader for List<User>, so that this isn't dependent on File.
 			
@@ -472,6 +493,19 @@ public abstract class DatabaseConnector implements DatabaseConstants, WikiServer
 				RelVersionColNode + " int NOT NULL, " +
 				"PRIMARY KEY (" + RelVersionColNumber + "))");
 		
+		stmt.close();
+	}
+	
+	protected void createPolicyTable(Connection con, String dbName) throws java.sql.SQLException {
+		Statement stmt = con.createStatement();
+		stmt.execute("CREATE TABLE " + dbName + RelationPolicy + " (" +
+				RelPolicyEntry + " int NOT NULL, " +
+				RelPolicyUserID + " int NOT NULL, " +
+				RelPolicyRead + " boolean NOT NULL, " +
+				RelPolicyInsert + " boolean NOT NULL, " +
+				RelPolicyDelete + " boolean NOT NULL, " +
+				RelPolicyUpdate + " boolean NOT NULL, " +
+				"PRIMARY KEY (" + RelPolicyEntry + ", " + RelPolicyUserID + "))");
 		stmt.close();
 	}
 	

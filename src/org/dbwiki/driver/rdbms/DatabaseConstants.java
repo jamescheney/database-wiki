@@ -138,4 +138,18 @@ public interface DatabaseConstants {
 	public static final String RelVersionColTime        = "time";
 	
 	public static final int RelVersionColNodeValImport = -1;
+	
+	
+	//
+	// Policy
+	//
+	public static final String RelationPolicy = "_policy";
+	
+	public static final String RelPolicyEntry = "entry";
+	public static final String RelPolicyUserID = "user_id";
+	public static final String RelPolicyRead = "read";
+	public static final String RelPolicyInsert = "insert";
+	public static final String RelPolicyDelete = "delete";
+	public static final String RelPolicyUpdate = "update";
+	
 }
