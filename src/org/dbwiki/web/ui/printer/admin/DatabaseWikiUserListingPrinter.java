@@ -9,13 +9,14 @@ import org.dbwiki.web.request.parameter.RequestParameterAction;
 import org.dbwiki.web.ui.CSS;
 import org.dbwiki.web.ui.printer.HtmlContentPrinter;
 
+/**
+ * Generates a form that allows managing the user information and identities
+ */
 
 public class DatabaseWikiUserListingPrinter implements HtmlContentPrinter {
 	
 	public static final int MessageNone                 = -1;
-	public static final int MessageNoLoginName          = 0;
 	public static final int MessageNoFullName           = 1;
-	public static final int MessageDuplicateName        = 2;
 	
 	private String _headline;
 	private UserListing _user_listing;
@@ -49,7 +50,17 @@ public class DatabaseWikiUserListingPrinter implements HtmlContentPrinter {
 		printer.paragraph(_headline, CSS.CSSHeadline);
 
 		printer.openFORM("frmUpdateUsers", "POST", "/");
-
+		
+		printer.openPARAGRAPH(CSS.CSSButtonLine);
+		printer.openCENTER();
+		printer.addREALBUTTON("submit",
+				"action", _action, "<img src=\"/pictures/button_save.gif\">");
+		printer.text("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+		printer.addREALBUTTON("submit",
+				"action", RequestParameterAction.ActionCancel, "<img src=\"/pictures/button_cancel.gif\">");
+		printer.closeCENTER();
+		printer.closePARAGRAPH();
+		
 		printer.openTABLE(CSS.CSSFormContainer);
 		printer.openTR();
 		printer.openTD(CSS.CSSFormContainer);
@@ -95,50 +106,15 @@ public class DatabaseWikiUserListingPrinter implements HtmlContentPrinter {
 			//
 			printer.openTR();
 			printer.openTD(CSS.CSSFormLabel);
-			printer.addREADONLYTEXTBOX(_user_listing.get(i).id()+"", "200", _user_listing.get(i).id()+"");
+			printer.text(_user_listing.get(i).id()+"");
 			printer.closeTD();
 			
 			//
 			// Login Name
 			//
-			if(_probs != null){
-				for(int iUser=0;iUser<_probs.size();iUser++){
-					Integer[] prob = _probs.get(iUser);
-					int user_index = prob[0];
-					int message = prob[1];
-					if(user_index == i && message == MessageNoLoginName){
-						System.out.print(user_index+" ");
-						System.out.println(message);
-						_message = message;
-						break;
-					}else if(user_index == i && message == MessageDuplicateName){
-						System.out.print(user_index+" ");
-						System.out.println(message);
-						_message = message;
-						break;
-					}
-				}
-			}
-			if(_message == MessageNoLoginName){
-				System.out.print("no login");
-				printer.openTD(CSS.CSSFormMessage);
-				printer.text("Please enter a valid name.");
-				printer.addBR();
-				printer.addTEXTBOX(_user_listing.get(i).login(), "300", _user_listing.get(i).login());
-				printer.closeTD();
-			}else if (_message == MessageDuplicateName) {
-				System.out.print("duplicate");
-				printer.openTD(CSS.CSSFormMessage);
-				printer.text("This login name already exists.");
-				printer.addBR();
-				printer.addTEXTBOX(_user_listing.get(i).login(), "300", _user_listing.get(i).login());
-				printer.closeTD();
-			}else{
-				printer.openTD(CSS.CSSFormLabel);
-				printer.addTEXTBOX(_user_listing.get(i).login(), "300", _user_listing.get(i).login());
-				printer.closeTD();
-			}
-			
+			printer.openTD(CSS.CSSFormLabel);
+			printer.text(_user_listing.get(i).login());
+			printer.closeTD();
 			//
 			// Full Name
 			//
