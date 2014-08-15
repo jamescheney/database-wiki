@@ -39,6 +39,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Vector;
 import java.util.concurrent.Executors;
@@ -51,6 +52,7 @@ import org.dbwiki.data.schema.DatabaseSchema;
 import org.dbwiki.data.schema.SchemaParser;
 import org.dbwiki.driver.rdbms.DatabaseConnector;
 import org.dbwiki.driver.rdbms.DatabaseConnectorFactory;
+import org.dbwiki.driver.rdbms.DatabaseConstants;
 import org.dbwiki.driver.rdbms.DatabaseImportHandler;
 import org.dbwiki.driver.rdbms.RDBMSDatabase;
 import org.dbwiki.driver.rdbms.SQLVersionIndex;
@@ -65,17 +67,16 @@ import org.dbwiki.web.html.RedirectPage;
 import org.dbwiki.web.log.FileServerLog;
 import org.dbwiki.web.log.ServerLog;
 import org.dbwiki.web.log.StandardOutServerLog;
-import org.dbwiki.web.request.HttpRequest;
 import org.dbwiki.web.request.RequestURL;
 import org.dbwiki.web.request.ServerRequest;
 import org.dbwiki.web.request.parameter.RequestParameter;
 import org.dbwiki.web.request.parameter.RequestParameterAction;
-import org.dbwiki.web.request.parameter.RequestParameterList;
 import org.dbwiki.web.security.WikiAuthenticator;
 import org.dbwiki.web.ui.HtmlContentGenerator;
 import org.dbwiki.web.ui.HtmlTemplateDecorator;
 import org.dbwiki.web.ui.ServerResponseHandler;
-import org.dbwiki.web.ui.printer.admin.DatabaseWikiAuthenticationPrinter;
+import org.dbwiki.web.ui.printer.admin.DatabaseWikiAuthorizationPrinter;
+import org.dbwiki.web.ui.printer.admin.DatabaseWikiEntryAuthorizationPrinter;
 import org.dbwiki.web.ui.printer.admin.DatabaseWikiUserListingPrinter;
 import org.dbwiki.web.ui.printer.server.DatabaseAccessDeniedPrinter;
 import org.dbwiki.web.ui.printer.server.DatabaseWikiFormPrinter;
@@ -83,8 +84,16 @@ import org.dbwiki.web.ui.printer.server.DatabaseWikiListingPrinter;
 import org.dbwiki.web.ui.printer.server.DatabaseWikiProperties;
 import org.dbwiki.web.ui.printer.server.ServerMenuPrinter;
 
+
 //import org.pegdown.ExtendedPegDownProcessor;
 //import org.pegdown.ExtendedPegDownProcessor;
+
+
+
+
+
+
+
 
 
 
@@ -161,7 +170,7 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 	private String _wikiTitle = "Database Wiki";
 	private int _authenticationMode;
 	private int _backlog;
-	private DatabaseConnector _connector;
+	private static DatabaseConnector _connector;
 	private File _formTemplate = null;
 	private File _homepageTemplate = null;
 	private int _port;
@@ -171,7 +180,6 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 	private HttpServer _webServer = null;
 	private Vector<DatabaseWiki> _wikiListing;
 	private Vector<Authorization> _authorizationListing;
-	private String wiki_name;
 
 	// private ExtendedPegDownProcessor _pegDownProcessor = null;
 
@@ -301,7 +309,7 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 	}
 
 	/**
-	 * Initialize authentication listing from database
+	 * Initialize authorization listing from database
 	 * 
 	 */
 	private void getAuthorizationListing(Connection connection)
@@ -311,10 +319,9 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 		ResultSet rs = stmt.executeQuery("SELECT * FROM "
 				+ RelationAuthorization);
 		while (rs.next()) {
-
 			_authorizationListing.add(new Authorization(rs
 					.getString(RelAuthenticationColDatabaseName), rs
-					.getString(RelAuthenticationColUserLogin), rs
+					.getInt(RelAuthenticationColUserID), rs
 					.getBoolean(RelAuthenticationColRead), rs
 					.getBoolean(RelAuthenticationColInsert), rs
 					.getBoolean(RelAuthenticationColDelete), rs
@@ -323,6 +330,87 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 		rs.close();
 		stmt.close();
 
+	}
+	
+	/**
+	 * Get entry permissions of a user to a database DB from DB_policy table
+	 * @param wiki_name the short name of a wiki
+	 * @param user_id the id of a user
+	 * @return Map<Integer, Map<Integer,DBPolicy>>
+	 */
+	public static Map<Integer,Map<Integer,DBPolicy>> getDBPolicyListing(String wiki_name, int user_id) {
+		
+		Map<Integer,Map<Integer,DBPolicy>> policyListing = new HashMap<Integer,Map<Integer,DBPolicy>>();
+		try{
+		Connection con = _connector.getConnection();
+		con.setAutoCommit(false);
+		Statement stmt = con.createStatement();
+		ResultSet rs = stmt.executeQuery("SELECT * FROM "
+				+ wiki_name + DatabaseConstants.RelationPolicy
+				+" WHERE " + DatabaseConstants.RelPolicyUserID + " = "+user_id);
+		
+		while (rs.next()) {
+			if(policyListing.get(rs.getInt(DatabaseConstants.RelPolicyUserID))==null){
+				Map<Integer,DBPolicy> map = new HashMap<Integer,DBPolicy>();
+				map.put(rs.getInt(DatabaseConstants.RelPolicyEntry), new DBPolicy(rs
+					.getInt(DatabaseConstants.RelPolicyUserID), rs
+					.getInt(DatabaseConstants.RelPolicyEntry), rs
+					.getBoolean(DatabaseConstants.RelPolicyRead), rs
+					.getBoolean(DatabaseConstants.RelPolicyInsert), rs
+					.getBoolean(DatabaseConstants.RelPolicyDelete), rs
+					.getBoolean(DatabaseConstants.RelPolicyUpdate)));
+				policyListing.put(rs.getInt(DatabaseConstants.RelPolicyUserID), map);
+			} else {
+				policyListing.get(rs.getInt(DatabaseConstants.RelPolicyUserID)).put(rs.getInt(DatabaseConstants.RelPolicyEntry), new DBPolicy(rs
+					.getInt(DatabaseConstants.RelPolicyUserID), rs
+					.getInt(DatabaseConstants.RelPolicyEntry), rs
+					.getBoolean(DatabaseConstants.RelPolicyRead), rs
+					.getBoolean(DatabaseConstants.RelPolicyInsert), rs
+					.getBoolean(DatabaseConstants.RelPolicyDelete), rs
+					.getBoolean(DatabaseConstants.RelPolicyUpdate)));
+			}
+		}
+		rs.close();
+		stmt.close();
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return policyListing;
+	}
+	
+	/**
+	 * Get entry listing of a specific database in DBWiki
+	 * @param wiki_name name of the wiki 
+	 * @return Map<Integer, Entry>
+	 * @throws SQLException
+	 * @throws WikiException
+	 */
+	public static Map<Integer, Entry> getEntryListing(String wiki_name)
+			throws SQLException, WikiException {
+		Map<Integer, Entry> entryListing = new HashMap<Integer, Entry>();
+		Connection con = _connector.getConnection();
+		con.setAutoCommit(false);
+		Statement stmt = con.createStatement();
+		ResultSet rs = stmt.executeQuery("SELECT DISTINCT ss." + DatabaseConstants.RelDataColEntry + ", ss." + DatabaseConstants.RelDataColValue +
+				" FROM " + wiki_name + DatabaseConstants.RelationData + " ss "+
+				" JOIN " + wiki_name + DatabaseConstants.RelationData + " s "+
+				" ON ss." + DatabaseConstants.RelDataColParent + " = s." + DatabaseConstants.RelDataColID +
+				" JOIN " + wiki_name + DatabaseConstants.RelationData + " p "+
+				" ON s." + DatabaseConstants.RelDataColParent + " = p." + DatabaseConstants.RelDataColID +
+				" WHERE p." + DatabaseConstants.RelSchemaColParent + " = -1" +
+				" AND s." + DatabaseConstants.RelDataColTimesequence + " = -1" +
+				" ORDER BY ss." + DatabaseConstants.RelDataColValue + " ASC");
+		while (rs.next()) {
+			if(rs.getString(DatabaseConstants.RelDataColValue)!= null){
+			Entry entry = new Entry(rs.getInt(DatabaseConstants.RelDataColEntry), rs.getString(DatabaseConstants.RelDataColValue));
+			entryListing.put(entry.entry_id(),entry);
+			}else{
+				break;
+			}
+		}
+		rs.close();
+		stmt.close();
+		return entryListing;
 	}
 
 	/**
@@ -367,7 +455,7 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 	/*
 	 * Public Methods
 	 */
-
+	
 	/** Get the DatabaseWiki with index i */
 	public DatabaseWiki get(int index) {
 		return _wikiListing.get(index);
@@ -383,9 +471,6 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 		return null;
 	}
 
-	public User getUser(int index) {
-		return _users.get(index);
-	}
 
 	/**
 	 * Depending on the file version of the requested css-definition-file this
@@ -775,21 +860,15 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 		return responseHandler;
 	}
 
-	private ServerResponseHandler getAllUsersResponseHandler(
-			ServerRequest<?> request) {
-		ServerResponseHandler responseHandler = new ServerResponseHandler(
-				request, _wikiTitle + " - Manage Users");
-		responseHandler.put(HtmlContentGenerator.ContentContent,
-				new DatabaseWikiUserListingPrinter(_users,
-						RequestParameterAction.ActionUpdateUsers,
-						"Manage Users"));
-		return responseHandler;
-	}
-
+	/**
+	 * Creates appropriate response handler for database top-level setting page
+	 * 
+	 */
 	private ServerResponseHandler getEditResponseHandler(
 			ServerRequest<?> request) throws WikiException {
 
-		DatabaseWiki wiki = get(wiki_name);
+		//DatabaseWiki wiki = get(wiki_name);
+		DatabaseWiki wiki = this.getRequestWiki(request, ParameterName);
 		ServerResponseHandler responseHandler = new ServerResponseHandler(
 				request, _wikiTitle + " - Edit Database Wiki");
 		responseHandler.put(HtmlContentGenerator.ContentContent,
@@ -798,6 +877,27 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 						"Edit Database Wiki"));
 		return responseHandler;
 	}
+	
+	/**
+	 * Creates appropriate response handler for database-level permission setting page
+	 * 
+	 */
+	private ServerResponseHandler getEditAuthorizationResponseHandler(
+			ServerRequest<?> request) throws WikiException {
+
+		DatabaseWiki wiki = this.getRequestWiki(request, ParameterName);
+		ServerResponseHandler responseHandler = new ServerResponseHandler(request, _wikiTitle
+				+ " - Manage Authorization");
+		responseHandler
+				.put(HtmlContentGenerator.ContentContent,
+						new DatabaseWikiAuthorizationPrinter(
+								"Manage Authorization",
+								RequestParameterAction.ActionUpdateAuthorization,
+								new DatabaseWikiProperties(wiki),
+								_users, _authorizationListing));
+		return responseHandler;
+	}
+	
 
 	/**
 	 * Creates appropriate response handler for new DatabaseWiki request. FIXME
@@ -1101,32 +1201,6 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 				request.toString());
 	}
 
-	// ///////////crystal
-	private User getRequestUser(ServerRequest<?> request, String key)
-			throws org.dbwiki.exception.WikiException {
-		RequestParameter parameter = request.parameters().get(key);
-		if (parameter.hasValue()) {
-			try {
-				int userID = Integer.parseInt(parameter.value());
-				for (int iUser = 0; iUser < this.size(); iUser++) {
-					if (this.get(iUser).id() == userID) {
-						return this.getUser(iUser);
-					}
-				}
-			} catch (NumberFormatException exception) {
-				for (int iUser = 0; iUser < this.size(); iUser++) {
-					if (this.get(iUser).name()
-							.equalsIgnoreCase(parameter.value())) {
-						return this.getUser(iUser);
-					}
-				}
-			}
-		}
-		throw new WikiRequestException(WikiRequestException.InvalidRequest,
-				request.toString());
-	}
-
-	// //////////
 
 	/**
 	 * Constructs a response handler for a DatabaseWiki update page.
@@ -1206,7 +1280,12 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 		}
 	}
 
-	// /////////crystal
+	/**
+	 * Constructs a response handler for a user information management page.
+	 * @param request
+	 * @return
+	 * @throws org.dbwiki.exception.WikiException
+	 */
 	private ServerResponseHandler getUpdateUsersResponseHandler(
 			ServerRequest<?> request) throws org.dbwiki.exception.WikiException {
 		// TODO: Simplify validation/control flow.
@@ -1215,78 +1294,42 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 			ArrayList<User> frm_users = new ArrayList<User>();
 			Connection con = _connector.getConnection();
 			con.setAutoCommit(false);
-			
 			//Get all user information from the form
-			for (int para_index = 0; para_index <= request.parameters()
-					.size() - 2; para_index += 4) {
-				System.out.println("para size: "+request.parameters().size());
-				int user_id = Integer.parseInt(request.parameters().get(para_index).value());
-				String user_login = request.parameters().get(para_index + 1).value();
-				String full_name = request.parameters().get(para_index + 2).value();
+			int user_id=1;
+			int first_para=0;
+			if(request.parameters().get(0).name().equals("action")){
+				first_para=1;
+			}
+			for (int para_index = first_para; para_index <= request.parameters()
+					.size() - 2; para_index += 2) {
+				String user_login = _users.get(user_id).login();
+				String full_name = request.parameters().get(para_index).value();
 				boolean is_admin = false;
-				if ((request.parameters().get(para_index + 3).value())
+				if ((request.parameters().get(para_index + 1).value())
 						.equals("admin")) {
 					is_admin = true;
-				}else if(request.parameters().get(para_index + 3).value().equals("not_admin")) {
+				}else if(request.parameters().get(para_index + 1).value().equals("not_admin")) {
 					is_admin = false;
 					}
 				
-				System.out.println(user_id);
-				System.out.println(user_login);
-				System.out.println(full_name);
-				System.out.println(is_admin);
-				
-				//User user = new User(user_id,user_login,full_name,"",false);
 				User user = new User(user_id,user_login,full_name,_users.get(user_id).password(),is_admin);
-				//User user = _users.get(user_id);
-//				user.set_login(user_login);
-//				user.set_fullName(full_name);
-//				user.set_is_admin(is_admin);
-				
 				frm_users.add(user);
+				user_id++;
 			}
 			
 			// Check whether there are invalid information from the form
 			for(int user_index=0;user_index<frm_users.size();user_index++){
 				int message = DatabaseWikiUserListingPrinter.MessageNone;
-				int user_id = frm_users.get(user_index).id();
-				String user_login = frm_users.get(user_index).login();
 				String full_name = frm_users.get(user_index).fullName();
 
-				if (user_login.equals("")) {
-					 message = DatabaseWikiUserListingPrinter.MessageNoLoginName;
-					 System.out.print(user_index+" ");
-					 System.out.println(message);
-					 probs.add(new Integer[]{user_index+1,message});
-					 }
 				if (full_name.equals("")) {
 					 message = DatabaseWikiUserListingPrinter.MessageNoFullName;
-					 System.out.print(user_index+" ");
-					 System.out.println(message);
 					 probs.add(new Integer[]{user_index+1,message});
 					 }
-				for(int iUser = 0;iUser<frm_users.size();iUser++){
-					String login = frm_users.get(iUser).login();
-					int id = frm_users.get(iUser).id();
-					if(login.equals(user_login) && id != user_id){
-						System.out.print("duplicate");
-						message = DatabaseWikiUserListingPrinter.MessageDuplicateName;
-						System.out.print(user_index+" ");
-						System.out.println(message);
-						probs.add(new Integer[]{user_index+1,message});
-					}
-				}
-				
 			}
 			
 			// If there are invalid information, go back to the setting page.
 			if (!probs.isEmpty()) {
-				System.out.println("********************");
-				 System.out.println(_users.get(1).id());
-				 System.out.println(_users.get(1).login());
-				 System.out.println(_users.get(1).fullName());
-				 System.out.println(_users.get(1).is_admin());
-				 System.out.println("********************");
 				 ServerResponseHandler responseHandler = new
 				 ServerResponseHandler(request, _wikiTitle + " - Manage Users");
 				 responseHandler.put(HtmlContentGenerator.ContentContent,
@@ -1303,25 +1346,20 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 				}
 				
 				for(int iUser = 0; iUser< frm_users.size(); iUser++){
-					int user_id = frm_users.get(iUser).id();
-					String user_login = frm_users.get(iUser).login();
 					String full_name = frm_users.get(iUser).fullName();
 					boolean is_admin = frm_users.get(iUser).is_admin();
 					
 					PreparedStatement pStmt = con.prepareStatement("UPDATE "
-							+ RelationUser + " " + "SET " + RelUserColLogin
-							+ " = ?, " + RelUserColFullName + " = ?, "
+							+ RelationUser + " " + "SET " + RelUserColFullName + " = ?, "
 							+ RelUserColIsAdmin + " = ? " + "WHERE "
-							+ RelUserColID + " = "
-							+ user_id);
+							+ RelUserColID + " = ?");
 
-					pStmt.setString(1, user_login);
-					pStmt.setString(2, full_name);
-					pStmt.setBoolean(3, is_admin);
+					pStmt.setString(1, full_name);
+					pStmt.setBoolean(2, is_admin);
+					pStmt.setInt(3, iUser+1);
 					pStmt.execute();
 					pStmt.close();
 					
-					_users.get(iUser+1).set_login(user_login);
 					_users.get(iUser+1).set_fullName(full_name);
 					_users.get(iUser+1).set_is_admin(is_admin);
 				}
@@ -1333,26 +1371,35 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 			throw new WikiFatalException(sqlException);
 		}
 
-		return this.getAllUsersResponseHandler(request);
+		return this.getHomepageResponseHandler(request);
 	}
 
+	/**
+	 * Constructs a response handler for a database-level permission setting page.
+	 * @param request
+	 * @return
+	 * @throws org.dbwiki.exception.WikiException
+	 * @throws IOException
+	 */
 	private ServerResponseHandler getUpdateAuthorizationResponseHandler(
 			ServerRequest<?> request)
 			throws org.dbwiki.exception.WikiException, IOException {
 		
-		//Get all user information from the form
-	//	ArrayList<Authorization> frm_auth = new ArrayList<Authorization>();
 		try {
+			DatabaseWiki wiki = this.getRequestWiki(request, ParameterName);
 			Connection con = _connector.getConnection();
 			con.setAutoCommit(false);
-		for (int para_index = 0, user_index = 1; para_index <= request.parameters()
-				.size() - 2; para_index += 4, user_index++) {
-			String login = _users.get(user_index).login();
+			int first_para=0;
+			if(request.parameters().get(0).name().equals("action")){
+				first_para=1;
+			}
+		for (int para_index = first_para, user_index = 1; para_index <= request.parameters()
+				.size() - 3; para_index += 4, user_index++) {
+			String wiki_name = wiki.name();
 			boolean is_read = false;
 			boolean is_insert = false;
 			boolean is_delete = false;
 			boolean is_update = false;
-			
 			if ((request.parameters().get(para_index).value())
 					.equals("HoldPermission")) {
 				is_read = true;
@@ -1372,23 +1419,16 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 					.equals("HoldPermission")) {
 				is_update = true;
 			}
-			
-			System.out.println(login);
-			System.out.println(is_read);
-			System.out.println(is_insert);
-			System.out.println(is_delete);
-			System.out.println(is_update);
-			System.out.println("*************");
-			
-			//Authorization auth = new Authorization(wiki_name,login,is_read,is_insert,is_delete,is_update);
-			
-			//frm_auth.add(auth);
+			if(is_insert || is_delete || is_update){
+				is_read = true;
+			}
 			
 			boolean flag = false;
 			int j = 0;
 			for(j = 0; j<_authorizationListing.size();j++){
-				String user_login = _authorizationListing.get(j).user_login();
-				if(user_login.equals(login)){
+				int user_id = _authorizationListing.get(j).user_id();
+				String database_name = _authorizationListing.get(j).database_name();
+				if(user_id==user_index && database_name.equals(wiki_name)){
 					flag = true;
 					break;
 				}
@@ -1403,7 +1443,7 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 						+ RelAuthenticationColInsert + " = ?, "
 						+ RelAuthenticationColDelete + " = ?, "
 						+ RelAuthenticationColUpdate + " = ? "
-						+ "WHERE " + RelAuthenticationColUserLogin
+						+ "WHERE " + RelAuthenticationColUserID
 						+ " = ? " + "AND "
 						+ RelAuthenticationColDatabaseName + " = ?");
 
@@ -1411,16 +1451,15 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 				pStmt.setBoolean(2, is_insert);
 				pStmt.setBoolean(3, is_delete);
 				pStmt.setBoolean(4, is_update);
-				pStmt.setString(5, login);
+				pStmt.setInt(5, user_index);
 				pStmt.setString(6, wiki_name);
 				pStmt.execute();
-				System.out.println(pStmt.toString());
 				pStmt.close();
 			} else {
 				pStmt = con.prepareStatement("INSERT INTO "
 						+ RelationAuthorization + "("
 						+ RelAuthenticationColDatabaseName + ", "
-						+ RelAuthenticationColUserLogin + ", "
+						+ RelAuthenticationColUserID + ", "
 						+ RelAuthenticationColRead + ", "
 						+ RelAuthenticationColInsert + ", "
 						+ RelAuthenticationColDelete + ", "
@@ -1428,7 +1467,7 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 						+ ") VALUES(?, ?, ?, ?, ?, ?)");
 
 				pStmt.setString(1, wiki_name);
-				pStmt.setString(2, login);
+				pStmt.setInt(2, user_index);
 				pStmt.setBoolean(3, is_read);
 				pStmt.setBoolean(4, is_insert);
 				pStmt.setBoolean(5, is_delete);
@@ -1441,75 +1480,144 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 		con.commit();
 		getAuthorizationListing(con);
 		getWikiListing(con);
+		wiki.authenticator().updateAuthorizationListing(_authorizationListing);
 		con.close();
 		
 		} catch (SQLException sqlException) {
 			// TODO Auto-generated catch block
 			throw new WikiFatalException(sqlException);
 		}
-		
-//		try {
-//			int user_index = 1;
-//
-//			Connection con = _connector.getConnection();
-//			con.setAutoCommit(false);
-//			PreparedStatement pStmt = null;
-//
-//			while (_users.get(user_index) != null) {
-//
-//				int authorization_mode = Integer.parseInt(request.parameters()
-//						.get(user_index - 1).value());
-//
-//				String login = _users.get(user_index).login();
-//
-//				if (user_index - 1 < _authorizationListing.size()) {
-//					pStmt = con.prepareStatement("UPDATE "
-//							+ RelationAuthorization + " " + "SET "
-//							+ RelAuthenticationColRead + " = ? "
-//							+ RelAuthenticationColInsert + " = ? "
-//							+ RelAuthenticationColDelete + " = ? "
-//							+ RelAuthenticationColUpdate + " = ? "
-//							+ "WHERE " + RelAuthenticationColUserLogin
-//							+ " = ? " + "AND "
-//							+ RelAuthenticationColDatabaseName + " = ?");
-//
-//					pStmt.setInt(1, authorization_mode);
-//					pStmt.setString(2, login);
-//					pStmt.setString(3, wiki_name);
-//					pStmt.execute();
-//					pStmt.close();
-//				} else {
-//					pStmt = con.prepareStatement("INSERT INTO "
-//							+ RelationAuthorization + "("
-//							+ RelAuthenticationColDatabaseName + ", "
-//							+ RelAuthenticationColUserLogin + ", "
-//							+ RelAuthenticationColRead + ", "
-//							+ RelAuthenticationColInsert + ", "
-//							+ RelAuthenticationColDelete + ", "
-//							+ RelAuthenticationColUpdate
-//							+ ") VALUES(?, ?, ?)");
-//
-//					pStmt.setString(1, wiki_name);
-//					pStmt.setString(2, login);
-//					pStmt.setInt(3, authorization_mode);
-//					pStmt.execute();
-//					pStmt.close();
-//				}
-//				getAuthorizationListing(con);
-//				getWikiListing(con);
-//
-//				user_index++;
-//
-//			}
-//			con.commit();
-//			con.close();
-//		} catch (java.sql.SQLException sqlException) {
-//			throw new WikiFatalException(sqlException);
-//		}
-
-		// }
 
 		return this.getEditResponseHandler(request);
+	}
+	
+	/**
+	 * Constructs a response handler for a entry-level setting page.
+	 * @param request
+	 * @return
+	 * @throws org.dbwiki.exception.WikiException
+	 * @throws IOException
+	 */
+	private ServerResponseHandler getUpdateEntryAuthorizationResponseHandler(
+			ServerRequest<?> request)
+			throws org.dbwiki.exception.WikiException, IOException {
+		
+		try {
+			int user_id = Integer.parseInt(request.parameters().get("user_id").value());
+			DatabaseWiki wiki = this.getRequestWiki(request, ParameterName);
+			String wiki_name = wiki.name();
+			Map<Integer,Entry> entryListing = getEntryListing(wiki_name);
+			Map<Integer,Map<Integer,DBPolicy>> policyListing = getDBPolicyListing(wiki_name, user_id);
+			Connection con = _connector.getConnection();
+			con.setAutoCommit(false);
+			
+			ArrayList<Integer> keys = new ArrayList<Integer>(entryListing.keySet());
+			Collections.sort(keys);
+			int first_para=0;
+			if(request.parameters().get(0).name().equals("action")){
+				first_para=1;
+			}
+		for (int para_index = first_para, index = 0; para_index <= request.parameters()
+				.size() - 4; para_index += 4,index++) {
+			int entry= keys.get(index);
+			boolean is_read = false;
+			boolean is_insert = false;
+			boolean is_delete = false;
+			boolean is_update = false;
+			if ((request.parameters().get(para_index).value())
+					.equals("HoldPermission")) {
+				is_read = true;
+			}
+			
+			if ((request.parameters().get(para_index + 1).value())
+					.equals("HoldPermission")) {
+				is_insert = true;
+			}
+			
+			if ((request.parameters().get(para_index + 2).value())
+					.equals("HoldPermission")) {
+				is_delete = true;
+			}
+			
+			if ((request.parameters().get(para_index + 3).value())
+					.equals("HoldPermission")) {
+				is_update = true;
+			}
+			if(is_insert || is_delete || is_update){
+				is_read = true;
+			}
+			
+			boolean flag = false;
+//			int j = 0;
+//			List<String> policy_keys = new ArrayList(policyListing.keySet());
+//			Collections.sort(keys);
+//			for(j = 0; j<policyListing.size();j++){
+//			for(j = 0; j<policy_keys.size();j++){
+			for( int key : policyListing.keySet()){
+				if (user_id == key){
+					Map<Integer,DBPolicy> map = policyListing.get(key);
+					for(Integer entryId : map.keySet()){
+						if(entryId == entry){
+							flag = true;
+							break;
+						}
+					}
+				}
+			}
+				
+			PreparedStatement pStmt = null;
+			
+			if (flag) {
+				pStmt = con.prepareStatement("UPDATE "
+						+ wiki_name + DatabaseConstants.RelationPolicy + " " + "SET "
+						+ DatabaseConstants.RelPolicyRead + " = ?, "
+						+ DatabaseConstants.RelPolicyInsert + " = ?, "
+						+ DatabaseConstants.RelPolicyUpdate + " = ?, "
+						+ DatabaseConstants.RelPolicyDelete + " = ? "
+						+ "WHERE " + DatabaseConstants.RelPolicyEntry + " = ? "
+						+ "AND " + DatabaseConstants.RelPolicyUserID + " = ?");
+
+				pStmt.setBoolean(1, is_read);
+				pStmt.setBoolean(2, is_insert);
+				pStmt.setBoolean(3, is_delete);
+				pStmt.setBoolean(4, is_update);
+				pStmt.setInt(5, entry);
+				pStmt.setInt(6, user_id);
+				pStmt.execute();
+				pStmt.close();
+			} else {
+				pStmt = con.prepareStatement("INSERT INTO "
+						+ wiki_name + DatabaseConstants.RelationPolicy + "("
+						+ DatabaseConstants.RelPolicyEntry + ", "
+						+ DatabaseConstants.RelPolicyUserID + ", "
+						+ DatabaseConstants.RelPolicyRead + ", "
+						+ DatabaseConstants.RelPolicyInsert + ", "
+						+ DatabaseConstants.RelPolicyUpdate + ", "
+						+ DatabaseConstants.RelPolicyDelete
+						+ ") VALUES(?, ?, ?, ?, ?, ?)");
+
+				pStmt.setInt(1, entry);
+				pStmt.setInt(2, user_id);
+				pStmt.setBoolean(3, is_read);
+				pStmt.setBoolean(4, is_insert);
+				pStmt.setBoolean(5, is_delete);
+				pStmt.setBoolean(6, is_update);
+				pStmt.execute();
+				pStmt.close();
+			}
+		}
+		
+		con.commit();
+		getEntryListing(wiki_name);
+		getDBPolicyListing(wiki_name, user_id);
+		con.close();
+		
+		} catch (SQLException sqlException) {
+			// TODO Auto-generated catch block
+			throw new WikiFatalException(sqlException);
+		}
+
+		return this.getEditAuthorizationResponseHandler(request);
 	}
 
 	// //////////////////////
@@ -1615,9 +1723,11 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 	 * @param exchange
 	 * @throws java.io.IOException
 	 * @throws org.dbwiki.exception.WikiException
+	 * @throws SQLException 
 	 */
 	private void respondTo(HttpExchange exchange) throws java.io.IOException,
-			org.dbwiki.exception.WikiException {
+			org.dbwiki.exception.WikiException, SQLException {
+       		
 		ServerResponseHandler responseHandler = null;
 		ServerRequest<HttpExchange> request = new ServerRequest<HttpExchange>(
 				this, new HttpExchangeWrapper(exchange));
@@ -1639,7 +1749,6 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 			if (request.user() != null && request.user().is_admin()) {
 				DatabaseWiki wiki = this.getRequestWiki(request,
 						RequestParameter.ParameterEdit);
-				wiki_name = wiki.name();
 				responseHandler = new ServerResponseHandler(request, _wikiTitle
 						+ " - Edit Database Wiki");
 				responseHandler.put(HtmlContentGenerator.ContentContent,
@@ -1663,7 +1772,6 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 				responseHandler.put(HtmlContentGenerator.ContentContent,
 						new DatabaseAccessDeniedPrinter());
 			}
-			// //////////crystal
 		} else if (request.type().isAllUsers()) {
 			if (request.user() != null && request.user().is_admin()) {
 				responseHandler = new ServerResponseHandler(request, _wikiTitle
@@ -1681,13 +1789,15 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 
 		} else if (request.type().isAuthorization()) {
 			if (request.user() != null && request.user().is_admin()) {
+				DatabaseWiki wiki = getRequestWiki(request, RequestParameter.ParameterAuthorization);
 				responseHandler = new ServerResponseHandler(request, _wikiTitle
-						+ " - Manage Authorization Mode");
+						+ " - Manage Authorization");
 				responseHandler
 						.put(HtmlContentGenerator.ContentContent,
-								new DatabaseWikiAuthenticationPrinter(
-										"Manage Authorization Mode",
+								new DatabaseWikiAuthorizationPrinter(
+										"Manage Authorization",
 										RequestParameterAction.ActionUpdateAuthorization,
+										new DatabaseWikiProperties(wiki),
 										_users, _authorizationListing));
 			} else {
 				responseHandler = new ServerResponseHandler(request,
@@ -1695,12 +1805,36 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 				responseHandler.put(HtmlContentGenerator.ContentContent,
 						new DatabaseAccessDeniedPrinter());
 			}
-			// ////////////
+		} else if (request.getRequestURI().toString().contains(RequestParameter.ParameterEntryAuthorization)) {
+			if (request.user() != null && request.user().is_admin()) {
+				RequestParameter parameter = request.parameters().get(RequestParameter.ParameterEntryAuthorization);
+				int user_id=1;
+				if(parameter.hasValue()){
+					user_id = Integer.parseInt(parameter.value());
+				}
+				String wiki_name = getRequestWiki(request, RequestParameter.ParameterAuthorization).name();
+				Map<Integer,Entry> entryListing = getEntryListing(wiki_name);
+				Map<Integer,Map<Integer,DBPolicy>> policyLising = getDBPolicyListing(wiki_name, user_id);
+				responseHandler = new ServerResponseHandler(request, _wikiTitle
+						+ " - Manage Authorization Mode By Entries");
+				responseHandler
+						.put(HtmlContentGenerator.ContentContent,
+								new DatabaseWikiEntryAuthorizationPrinter(
+										"Manage Authorization Mode By Entries",
+										RequestParameterAction.ActionUpdateEntryAuthorization,_users,wiki_name,user_id,entryListing,policyLising));
+			} else {
+				responseHandler = new ServerResponseHandler(request,
+						"Access Denied");
+				responseHandler.put(HtmlContentGenerator.ContentContent,
+						new DatabaseAccessDeniedPrinter());
+			}
 		} else if (request.type().isAction()) {
 			RequestParameterAction action = RequestParameter
 					.actionParameter(request.parameters().get(
 							RequestParameter.ParameterAction));
 			if (action.actionInsert()) {
+				
+				//if(request.getRequestURI().toString()){}
 				responseHandler = this.getInsertWikiResponseHandler(request);
 			} else if (action.actionCancel()) {
 				responseHandler = this.getHomepageResponseHandler(request);
@@ -1713,6 +1847,11 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 						.getUpdateAuthorizationResponseHandler(request);
 			} else if (action.actionCancelAuthorizationUpdate()) {
 				responseHandler = this.getEditResponseHandler(request);
+			} else if (action.actionUpdateEntryAuthorization()) {
+				responseHandler = this
+						.getUpdateEntryAuthorizationResponseHandler(request);
+			} else if (action.actionCancelEntryAuthorizationUpdate()) {
+				responseHandler = this.getEditAuthorizationResponseHandler(request);
 			} else {
 				throw new WikiRequestException(
 						WikiRequestException.InvalidRequest, request.toString());

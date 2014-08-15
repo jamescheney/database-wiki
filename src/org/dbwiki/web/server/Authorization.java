@@ -1,8 +1,14 @@
 package org.dbwiki.web.server;
 
+/**
+ * Entity class for database-level access permission
+ * 
+ *
+ */
+
 public class Authorization {
 	private String _database_name;
-	private String _user_login;
+	private int _user_id;
 	private boolean _read;
 	private boolean _insert;
 	private boolean _delete;
@@ -10,10 +16,10 @@ public class Authorization {
 	
 	
 
-	public Authorization(String _database_name, String _user_login,
+	public Authorization(String _database_name, int _user_id,
 			boolean _read, boolean _insert, boolean _delete, boolean _update) {
 		this._database_name = _database_name;
-		this._user_login = _user_login;
+		this._user_id = _user_id;
 		this._read = _read;
 		this._insert = _insert;
 		this._delete = _delete;
@@ -28,12 +34,12 @@ public class Authorization {
 		this._database_name = _database_name;
 	}
 
-	public String user_login() {
-		return _user_login;
+	public int user_id() {
+		return _user_id;
 	}
 
-	public void set_user_login(String _user_login) {
-		this._user_login = _user_login;
+	public void set_user_id(int _user_id) {
+		this._user_id = _user_id;
 	}
 
 	public boolean is_read() {

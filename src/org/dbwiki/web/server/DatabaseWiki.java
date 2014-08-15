@@ -27,29 +27,26 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.StringWriter;
-
 import java.net.URL;
-
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
-
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Hashtable;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Vector;
 
 import org.dbwiki.data.annotation.Annotation;
-
 import org.dbwiki.data.database.Database;
 import org.dbwiki.data.database.DatabaseElementNode;
 import org.dbwiki.data.database.DatabaseTextNode;
 import org.dbwiki.data.database.NodeUpdate;
 import org.dbwiki.data.database.Update;
-
 import org.dbwiki.data.document.DocumentAttributeNode;
 import org.dbwiki.data.document.DocumentGroupNode;
 import org.dbwiki.data.document.DocumentNode;
-
 import org.dbwiki.data.index.DatabaseContent;
 import org.dbwiki.data.io.CopyPasteInputHandler;
 import org.dbwiki.data.io.CopyPasteNodeWriter;
@@ -57,31 +54,23 @@ import org.dbwiki.data.io.ExportJSONNodeWriter;
 import org.dbwiki.data.io.ExportNodeWriter;
 import org.dbwiki.data.io.NodeWriter;
 import org.dbwiki.data.io.SAXCallbackInputHandler;
-
 import org.dbwiki.data.resource.DatabaseIdentifier;
 import org.dbwiki.data.resource.PageIdentifier;
-
 import org.dbwiki.data.schema.AttributeSchemaNode;
 import org.dbwiki.data.schema.DatabaseSchema;
 import org.dbwiki.data.schema.SchemaNode;
 import org.dbwiki.data.schema.GroupSchemaNode;
-
 import org.dbwiki.data.wiki.SimpleWiki;
 import org.dbwiki.data.wiki.Wiki;
 import org.dbwiki.driver.rdbms.DatabaseConnector;
 import org.dbwiki.driver.rdbms.RDBMSDatabase;
 import org.dbwiki.driver.rdbms.SQLVersionIndex;
-
 import org.dbwiki.exception.WikiFatalException;
-
 import org.dbwiki.exception.web.WikiRequestException;
-
 import org.dbwiki.user.UserListing;
-
 import org.dbwiki.web.html.FatalExceptionPage;
 import org.dbwiki.web.html.HtmlPage;
 import org.dbwiki.web.html.RedirectPage;
-
 import org.dbwiki.web.request.HttpRequest;
 import org.dbwiki.web.request.RequestURL;
 import org.dbwiki.web.request.URLDecodingRules;
@@ -89,20 +78,16 @@ import org.dbwiki.web.request.WikiDataRequest;
 import org.dbwiki.web.request.WikiPageRequest;
 import org.dbwiki.web.request.WikiRequest;
 import org.dbwiki.web.request.WikiSchemaRequest;
-
 import org.dbwiki.web.request.parameter.RequestParameter;
 import org.dbwiki.web.request.parameter.RequestParameterAction;
 import org.dbwiki.web.request.parameter.RequestParameterActionCancel;
 import org.dbwiki.web.request.parameter.RequestParameterVersion;
 import org.dbwiki.web.request.parameter.RequestParameterVersionSingle;
-
 import org.dbwiki.web.security.WikiAuthenticator;
-
+import org.dbwiki.web.ui.CSS;
 import org.dbwiki.web.ui.DatabaseWikiContentGenerator;
 import org.dbwiki.web.ui.HtmlTemplateDecorator;
-
 import org.dbwiki.web.ui.layout.DatabaseLayouter;
-
 import org.dbwiki.web.ui.printer.CSSLinePrinter;
 import org.dbwiki.web.ui.printer.FileEditor;
 import org.dbwiki.web.ui.printer.LayoutEditor;
@@ -111,26 +96,22 @@ import org.dbwiki.web.ui.printer.ObjectProvenancePrinter;
 import org.dbwiki.web.ui.printer.SettingsListingPrinter;
 import org.dbwiki.web.ui.printer.TimemachinePrinter;
 import org.dbwiki.web.ui.printer.VersionIndexPrinter;
-
 import org.dbwiki.web.ui.printer.data.CreateSchemaNodeFormPrinter;
 import org.dbwiki.web.ui.printer.data.DataMenuPrinter;
 import org.dbwiki.web.ui.printer.data.DataUpdateFormPrinter;
 import org.dbwiki.web.ui.printer.data.DataNodePrinter;
 import org.dbwiki.web.ui.printer.data.InputFormPrinter;
 import org.dbwiki.web.ui.printer.data.NodePathPrinter;
-
 import org.dbwiki.web.ui.printer.index.AZMultiPageIndexPrinter;
 import org.dbwiki.web.ui.printer.index.AZSinglePageIndexPrinter;
 import org.dbwiki.web.ui.printer.index.FullIndexPrinter;
 import org.dbwiki.web.ui.printer.index.MultiColumnIndexPrinter;
 import org.dbwiki.web.ui.printer.index.PartialIndexPrinter;
 import org.dbwiki.web.ui.printer.index.SearchResultPrinter;
-
 import org.dbwiki.web.ui.printer.page.PageContentPrinter;
 import org.dbwiki.web.ui.printer.page.PageHistoryPrinter;
 import org.dbwiki.web.ui.printer.page.PageMenuPrinter;
 import org.dbwiki.web.ui.printer.page.PageUpdateFormPrinter;
-
 import org.dbwiki.web.ui.printer.schema.SchemaNodePrinter;
 import org.dbwiki.web.ui.printer.schema.SchemaMenuPrinter;
 import org.dbwiki.web.ui.printer.schema.SchemaPathPrinter;
@@ -196,6 +177,7 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 	private int _urlDecodingVersion;
 	private URLDecodingRules _urlDecoder;
 	private Wiki _wiki;
+	private Map<Integer,Entry> entryListing;
 	
 	/*
 	 * Constructors
@@ -640,8 +622,9 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 	 * @param request
 	 * @throws java.io.IOException
 	 * @throws org.dbwiki.exception.WikiException
+	 * @throws SQLException 
 	 */
-	private void respondToDataRequest(WikiDataRequest<HttpExchange> request) throws java.io.IOException, org.dbwiki.exception.WikiException {
+	private void respondToDataRequest(WikiDataRequest<HttpExchange> request) throws java.io.IOException, org.dbwiki.exception.WikiException, SQLException {
 		HtmlPage page = null;
 		
 		// The following test is just an additional security check in case someone
@@ -753,6 +736,7 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 		if (page == null) {
 			DatabaseWikiContentGenerator contentGenerator = new DatabaseWikiContentGenerator(this, request);
 			if ((isGetRequest) || (request.type().isCopy())) {// This is the default case where no action has been performed and no special content is requested
+
 				contentGenerator.put(DatabaseWikiContentGenerator.ContentTimemachine, new TimemachinePrinter(request));
 				contentGenerator.put(DatabaseWikiContentGenerator.ContentMenu, new DataMenuPrinter(request, _layouter));
 				contentGenerator.put(DatabaseWikiContentGenerator.ContentObjectLink, new NodePathPrinter(request, _layouter));
@@ -787,6 +771,7 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 				contentGenerator.put(DatabaseWikiContentGenerator.ContentMenu, new DataMenuPrinter(request, _layouter));
 				contentGenerator.put(DatabaseWikiContentGenerator.ContentContent, new SearchResultPrinter(request, content));
 			} else if ((request.type().isCreate()) || (request.type().isEdit())) { // The case for a create or edit request
+				
 				contentGenerator.put(DatabaseWikiContentGenerator.ContentObjectLink, new NodePathPrinter(request, _layouter));
 				contentGenerator.put(DatabaseWikiContentGenerator.ContentContent, new DataUpdateFormPrinter(request, _layouter));
 			} else if (request.type().isCreateSchemaNode()) { // Creating a new schema node.
