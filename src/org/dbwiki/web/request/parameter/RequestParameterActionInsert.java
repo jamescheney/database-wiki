@@ -66,4 +66,16 @@ public class RequestParameterActionInsert extends RequestParameterAction {
 		// TODO Auto-generated method stub
 		return false;
 	}
+
+	@Override
+	public boolean actionUpdateEntryAuthorization() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean actionCancelEntryAuthorizationUpdate() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

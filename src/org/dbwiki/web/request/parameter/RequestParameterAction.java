@@ -35,6 +35,8 @@ public abstract class RequestParameterAction {
 	public static final String ActionUpdateUsers = "update_users";
 	public static final String ActionUpdateAuthorization = "update_authorization";
 	public static final String ActionCancelAuthorizationUpdate = "cancel_authorization_update";
+	public static final String ActionUpdateEntryAuthorization = "update_entry_authorization";
+	public static final String ActionCancelEntryAuthorizationUpdate = "cancel_entry_authorization_update";
 	
 	/*
 	 * Abstract Methods
@@ -48,4 +50,6 @@ public abstract class RequestParameterAction {
 	public abstract boolean actionUpdateUsers();
 	public abstract boolean actionUpdateAuthorization();
 	public abstract boolean actionCancelAuthorizationUpdate();
+	public abstract boolean actionUpdateEntryAuthorization();
+	public abstract boolean actionCancelEntryAuthorizationUpdate();
 }
