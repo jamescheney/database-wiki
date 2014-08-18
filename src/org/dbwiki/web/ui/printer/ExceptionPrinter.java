@@ -47,6 +47,9 @@ public class ExceptionPrinter extends HtmlContentPrinter {
 		_message = exception.toString();
 	}
 	
+	public ExceptionPrinter(String exception) {
+		_message = exception;
+	}
 	
 	/*
 	 * Public Methods

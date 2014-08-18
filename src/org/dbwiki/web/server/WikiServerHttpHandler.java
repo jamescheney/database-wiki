@@ -45,7 +45,7 @@ public class WikiServerHttpHandler extends WikiServer implements HttpHandler {
 	
 	
 	public WikiServerHttpHandler(Properties properties) throws WikiException {
-		super(properties);
+		super("war", properties);
 		// Web Server Properties
 		_backlog = Integer.parseInt(properties.getProperty(propertyBacklog));
 		_port = Integer.parseInt(properties.getProperty(propertyPort));

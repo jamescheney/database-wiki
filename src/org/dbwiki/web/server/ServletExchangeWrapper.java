@@ -38,9 +38,9 @@ public class ServletExchangeWrapper implements Exchange<HttpServletRequest> {
 	}
 
 	public String getUsername() {
-		if(_request.getSession().getAttribute("user") != null)
-			return _request.getSession().getAttribute("user").toString();
-		else {
+		if(_request.getUserPrincipal() != null) {
+			return _request.getUserPrincipal().getName();
+		} else {
 			return null;
 		}
 	}

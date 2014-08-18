@@ -90,7 +90,9 @@ public class DatabaseImportHandler implements ImportHandler {
 				throw new WikiFatalException(exception);
 			}
 			if (success) {
-				System.out.print("\n");
+				if(_con.getClientInfo("import") != null) {
+					System.out.print("\n");
+				}
 				_con.commit();
 			}
 			_con.setAutoCommit(true);

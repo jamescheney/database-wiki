@@ -48,16 +48,6 @@ public class MySQLDatabaseConnector extends DatabaseConnector {
 	 */
 	
 	public String joinMatchSQLStatements(Vector<String> sqlStatements, String database) {
-		/*String sql = null;
-		if (sqlStatements.size() > 0) {
-			sql = "SELECT DISTINCT " + RelDataColEntry + " FROM (" + sqlStatements.firstElement();
-			for (int iStatement = 1; iStatement < sqlStatements.size(); iStatement++) {
-				sql = sql + " UNION ALL " + sqlStatements.get(iStatement);
-			}
-			sql = sql + ") q GROUP BY " + RelDataColEntry + " HAVING COUNT(*) = " + sqlStatements.size() + " ORDER BY " + RelDataColEntry;
-		} else {
-			sql = "SELECT DISTINCT " + RelDataColEntry + " FROM " + database + RelationData + " ORDER BY " + RelDataColEntry;
-		}*/
 		String sql = null;
 		if (sqlStatements.size() > 0) {
 			sql = "SELECT DISTINCT " + RelDataColEntry + " FROM (SELECT DISTINCT " + RelDataColEntry + " FROM "

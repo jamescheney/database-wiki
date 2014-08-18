@@ -31,6 +31,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.dbwiki.user.GoogleUser;
+import org.dbwiki.user.User;
 import org.dbwiki.web.server.WikiServerServlet;
 
 import com.google.appengine.api.utils.SystemProperty;
@@ -67,7 +69,12 @@ public class ServletInterface extends HttpServlet {
 	
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
 		throws ServletException, IOException {
-		request.getSession(true);
+		if(request.getUserPrincipal() != null) {
+			String user = request.getUserPrincipal().getName();
+			if(!_server.users().contains(user)) {
+				_server.users().add(new GoogleUser(User.UnknownUserID, user, 0));
+			}
+		}
 		_server.handle(request, response);
 	}
 	

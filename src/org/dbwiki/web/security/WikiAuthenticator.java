@@ -24,6 +24,7 @@ package org.dbwiki.web.security;
 
 import org.dbwiki.exception.WikiFatalException;
 import org.dbwiki.user.User;
+import org.dbwiki.user.RegularUser;
 import org.dbwiki.user.UserListing;
 
 import org.dbwiki.web.request.parameter.RequestParameter;
@@ -160,7 +161,7 @@ public class WikiAuthenticator extends Authenticator {
 	private boolean checkCredentials(String username, String password) {
 		if (!_users.isEmpty()) {
 			if (_users.contains(username)) {
-				return _users.get(username).password().equals(password);
+				return ((RegularUser)_users.get(username)).password().equals(password);
 			} else {
 				return false;
 			}

@@ -27,6 +27,7 @@ import java.util.Properties;
 
 import org.dbwiki.driver.rdbms.DatabaseConnector;
 import org.dbwiki.driver.rdbms.DatabaseConnectorFactory;
+import org.dbwiki.user.RegularUser;
 import org.dbwiki.user.User;
 
 
@@ -59,7 +60,7 @@ public class CreateServer {
 			File userFile = new File(args[1]);
 			Properties configProperties = org.dbwiki.lib.IO.loadProperties(configFile);
 			DatabaseConnector connector = new DatabaseConnectorFactory().getConnector(configProperties);
-			List<User> users = User.readUsers(userFile);
+			List<User> users = RegularUser.readUsers(userFile);
 			connector.createServer(users);
 		} catch (Exception exception) {
 			exception.printStackTrace();

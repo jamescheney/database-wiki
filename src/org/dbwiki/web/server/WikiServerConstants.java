@@ -93,6 +93,7 @@ public interface WikiServerConstants {
 	public static final String RelationUser = "_user";
 
 	public static final String RelUserColID = "id";
+	public static final String RelUserColLevel = "level";
 	public static final String RelUserColFullName = "full_name";
 	public static final String RelUserColLogin = "login";
 	public static final String RelUserColPassword = "password";

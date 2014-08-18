@@ -89,11 +89,10 @@ public class DatabaseReader implements DatabaseConstants {
 	 */
 	
 
-	@SuppressWarnings("unused")
 	public static DatabaseNode get(Connection con, RDBMSDatabase database, NodeIdentifier identifier) throws org.dbwiki.exception.WikiException {
 		Hashtable<Integer, DatabaseNode> nodeIndex = new Hashtable<Integer, DatabaseNode>();
-		
-		try {			
+
+		try {
 			Statement stmt = con.createStatement();
 			
 			// This query uses pre/post indexes to select the node and all its ancestors and descendants.
@@ -102,8 +101,11 @@ public class DatabaseReader implements DatabaseConstants {
 			// maybe we can calculate the root timestamp on the database somehow, but this doesn't seem
 			// like a bottleneck.
 			
-			ResultSet rs = stmt.executeQuery(
-					"SELECT " +
+			ResultSet rs = null;
+			
+			// FIXME: infrastructure chaos
+			if(con.getClass().getName().startsWith("com.mysql")) {
+				rs = stmt.executeQuery("SELECT " +
 					"d." + RelDataColID + " " + ViewDataColNodeID + ", " +
 					"d." + RelDataColParent + " " + ViewDataColNodeParent + ", " +
 					"d." + RelDataColSchema + " " + ViewDataColNodeSchema + ", " +
@@ -129,13 +131,37 @@ public class DatabaseReader implements DatabaseConstants {
 				 	" AND v1." + RelDataColPost + " <= d." + RelDataColPost + "))" +
 					" AND d." + RelDataColEntry + " = d." + RelDataColEntry +
 					" ORDER BY v1." + RelDataColID);
-
-	
+			} else {
+				rs = stmt.executeQuery("SELECT " +
+					"d." + RelDataColID + " " + ViewDataColNodeID + ", " +
+					"d." + RelDataColParent + " " + ViewDataColNodeParent + ", " +
+					"d." + RelDataColSchema + " " + ViewDataColNodeSchema + ", " +
+					"d." + RelDataColValue + " " + ViewDataColNodeValue + ", " +
+					"d." + RelDataColPre + " " + ViewDataColNodePre + ", " +
+					"d." + RelDataColPost + " " + ViewDataColNodePost + ", " +
+					"t." + RelTimesequenceColStart + " " + ViewDataColTimestampStart + ", " +
+					"t." + RelTimesequenceColStop + " " + ViewDataColTimestampEnd + ", " +
+					"a." + RelAnnotationColID + " " + ViewDataColAnnotationID + ", " +
+					"a." + RelAnnotationColDate + " " + ViewDataColAnnotationDate + ", " +
+					"a." + RelAnnotationColUser + " " + ViewDataColAnnotationUser + ", " +
+					"a." + RelAnnotationColText + " " + ViewDataColAnnotationText + " " +
+					"FROM " + database.name() + RelationData + " d " +
+					"LEFT JOIN " + database.name() + RelationTimesequence + " t ON (d." + RelDataColTimesequence + " = " + "t." + RelTimesequenceColID + ") " +
+					"LEFT JOIN " + database.name() + RelationAnnotation + " a ON (d." + RelDataColID + " = " + "a." + RelAnnotationColNode + ") " +
+					"INNER JOIN " +	database.name() + RelationData + " v1" +
+					" ON v1." + RelDataColID + " = " + identifier.nodeID() +
+					" AND ((v1." + RelDataColPre + " <= d." + RelDataColPre +
+					" AND v1." + RelDataColPost + " >= d." + RelDataColPost +
+					" ) OR (v1." + RelDataColPre + " >= d." + RelDataColPre +
+					" AND v1." + RelDataColPost + " <= d." + RelDataColPost + "))" +
+					" AND d." + RelDataColEntry + " = d." + RelDataColEntry +
+					" ORDER BY " + ViewDataColNodeID + ", " + ViewDataColTimestampStart + ", " + ViewDataColAnnotationID);
+			}
+			
 			DatabaseNode node = null;
-			int i=0;
-			 
+
 			while (rs.next()) {
-				i++;
+				
 			  int id = rs.getInt(ViewDataColNodeID);
 				// The following condition allows information about nodes to be built up
 				// incrementally when spread across multiple rows.

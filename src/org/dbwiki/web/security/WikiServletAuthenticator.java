@@ -6,10 +6,12 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.dbwiki.user.RegularUser;
 import org.dbwiki.user.UserListing;
 import org.dbwiki.web.request.parameter.RequestParameter;
 import org.dbwiki.web.server.DatabaseWikiProperties;
 import org.dbwiki.web.server.WikiServer;
+
 
 
 /** A servlet-based authenticator class for DatabaseWiki 
@@ -29,6 +31,28 @@ public class WikiServletAuthenticator {
 	}
 	
 	public boolean authenticate(HttpServletRequest request) {
+		String path = request.getRequestURI();
+		
+		// File requests don't require authentication
+		if(path.indexOf('.') != -1) {
+			return true;
+		}
+		
+		boolean needsAuth = this.isProtectedRequest(request);
+		if(request.getUserPrincipal() == null) {
+			if ((_mode == DatabaseWikiProperties.AuthenticateAlways) || (_mode == DatabaseWikiProperties.AuthenticateWriteOnly) && needsAuth) {
+				return false;
+			}
+			else {
+				return true;
+			}
+		}
+		
+		return true;
+	}
+	
+	@Deprecated
+	public boolean authenticate_old(HttpServletRequest request) {
 		String path = request.getRequestURI();
 		
 		// File requests don't require authentication
@@ -87,7 +111,7 @@ public class WikiServletAuthenticator {
 	private boolean checkCredentials(String username, String password) {
 		if (!_users.isEmpty()) {
 			if (_users.contains(username)) {
-				return _users.get(username).password().equals(password);
+				return ((RegularUser)_users.get(username)).password().equals(password);
 			} else {
 				return false;
 			}

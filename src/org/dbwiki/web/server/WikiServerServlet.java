@@ -28,6 +28,8 @@ import org.dbwiki.web.request.RequestURL;
 import org.dbwiki.web.request.parameter.RequestParameter;
 import org.dbwiki.web.security.WikiServletAuthenticator;
 
+import com.google.appengine.api.users.UserServiceFactory;
+
 /**
  * Root WikiServer class with a servlet interface
  * 
@@ -187,19 +189,16 @@ public class WikiServerServlet extends WikiServer {
 				if(_authenticator.authenticate(request)) {
 					this.respondTo(exchange);
 				} else {
-					response.setHeader("WWW-Authenticate", "Basic realm=\"/\"");
-					response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "");
+					response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Login required to access this page");
 				}
 			} else if ((path.startsWith(SpecialFolderDatabaseWikiStyle + "/")) && (path.endsWith(".css"))) {
 				this.sendCSSFile(path.substring(SpecialFolderDatabaseWikiStyle.length() + 1, path.length() - 4), exchange);
 			} else if (path.equals(SpecialFolderLogin)) {
-				//FIXME: #request This is a convoluted way of parsing the request parameter!
-				if(_authenticator.authenticate(request)) {
-					exchange.send(new RedirectPage(new RequestURL(exchange,"").parameters().get(RequestParameter.ParameterResource).value()));
-				} else {
-					response.setHeader("WWW-Authenticate", "Basic realm=\"/login\"");
-					response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "");
-				}
+				exchange.send(new RedirectPage(UserServiceFactory.getUserService().createLoginURL(
+						new RequestURL(exchange,"").parameters().get(RequestParameter.ParameterResource).value())));
+			} else if (path.equals(SpecialFolderLogout)) {
+				exchange.send(new RedirectPage(UserServiceFactory.getUserService().createLogoutURL(
+						new RequestURL(exchange,"").parameters().get(RequestParameter.ParameterResource).value())));
 			} else if (path.length() > 1) {
 				int pos = path.indexOf('/', 1);
 				DatabaseWikiServlet wiki = null;

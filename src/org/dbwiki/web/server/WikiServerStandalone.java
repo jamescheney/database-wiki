@@ -127,7 +127,11 @@ public class WikiServerStandalone extends WikiServer {
 			// Import data into created database wiki if the user specified an import resource.
 			//
 			if (resource != null) {
-				con.setClientInfo("import", "true");
+				try {
+					con.setClientInfo("import", "true");
+				} catch (Exception e) {
+					System.out.println("Progress printing unavailable");
+				}
 				Database database = wiki.database();
 				// Note that database.schema() is a copy of databaseSchema that has been read back from the database
 				// after being loaded in when we created new database above.

@@ -9,6 +9,7 @@ import org.dbwiki.driver.rdbms.DatabaseConnector;
 import org.dbwiki.driver.rdbms.RDBMSDatabase;
 import org.dbwiki.driver.rdbms.SQLVersionIndex;
 import org.dbwiki.web.html.FatalExceptionPage;
+import org.dbwiki.web.html.UnauthorizedPage;
 import org.dbwiki.web.request.Exchange;
 import org.dbwiki.web.request.RequestURL;
 import org.dbwiki.web.request.WikiDataRequest;
@@ -113,8 +114,7 @@ public class DatabaseWikiServlet extends DatabaseWiki {
 					}
 				}
 			} else {
-				response.setHeader("WWW-Authenticate", "Basic realm=\"" + filename + "\"");
-				response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "");
+				UnauthorizedPage.send(this, exchange);
 			}
 		} catch (org.dbwiki.exception.WikiException wikiException) {
 			wikiException.printStackTrace();

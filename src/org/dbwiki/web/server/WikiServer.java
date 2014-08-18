@@ -58,6 +58,7 @@ import org.dbwiki.exception.WikiException;
 import org.dbwiki.exception.WikiFatalException;
 import org.dbwiki.exception.web.WikiRequestException;
 
+import org.dbwiki.user.RegularUser;
 import org.dbwiki.user.User;
 import org.dbwiki.user.UserListing;
 
@@ -260,7 +261,7 @@ public abstract class WikiServer  implements WikiServerConstants {
 		Statement stmt = connection.createStatement();
 		ResultSet rs = stmt.executeQuery("SELECT * FROM " + RelationUser);
 		while (rs.next()) {
-			_users.add(new User(rs.getInt(RelUserColID), rs.getString(RelUserColLogin), rs.getString(RelUserColFullName), rs.getString(RelUserColPassword)));
+			_users.add(new RegularUser(rs.getInt(RelUserColID), rs.getString(RelUserColLogin), rs.getString(RelUserColFullName), rs.getString(RelUserColPassword)));
 		}
 		rs.close();
 		stmt.close();

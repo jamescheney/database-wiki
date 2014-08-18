@@ -38,6 +38,7 @@ import org.dbwiki.data.schema.SchemaNode;
 import org.dbwiki.data.time.Version;
 import org.dbwiki.exception.WikiException;
 import org.dbwiki.exception.WikiFatalException;
+import org.dbwiki.user.RegularUser;
 import org.dbwiki.user.User;
 import org.dbwiki.web.server.WikiServerConstants;
 
@@ -104,7 +105,7 @@ public abstract class DatabaseConnector implements DatabaseConstants, WikiServer
 		}
 	}
 
-	public void createDatabase(Connection con, String dbName, User user) throws org.dbwiki.exception.WikiException {
+	public void createDatabase(Connection con, String dbName, RegularUser user) throws org.dbwiki.exception.WikiException {
 		createDatabase(con, dbName, null, user, null);
 	}
 	
@@ -173,28 +174,6 @@ public abstract class DatabaseConnector implements DatabaseConstants, WikiServer
 					RelUserColPassword + " varchar(80) NOT NULL, " +
 					"PRIMARY KEY (" + RelUserColID + "))");
 			
-			
-			/* old code for inserting users
-			if (file != null) {
-				BufferedReader in = new BufferedReader(new FileReader(file));
-				String line;
-				while ((line = in.readLine()) != null) {
-					if (!line.startsWith("#")) {
-						StringTokenizer tokens = new StringTokenizer(line, "\t");
-						String login = tokens.nextToken();
-						String fullName = tokens.nextToken();
-						String password = tokens.nextToken();
-						String sql = "INSERT INTO " + RelationUser + "(" +
-							RelUserColLogin + ", " +
-							RelUserColFullName + ", " +
-							RelUserColPassword + ") VALUES(";
-						sql = sql + "'" + login + "', '" + fullName + "', '" + password + "')";
-						stmt.execute(sql);
-					}
-				}
-				in.close();
-			}*/
-			
 			stmt.close();
 
 			for (User user : users) {
@@ -204,8 +183,8 @@ public abstract class DatabaseConnector implements DatabaseConstants, WikiServer
 						RelUserColFullName + ", " +
 						RelUserColPassword + ") VALUES(?,?,?)");
 				insert.setString(1,user.login());
-				insert.setString(2,user.fullName());
-				insert.setString(3,user.password());
+				insert.setString(2,((RegularUser) user).fullName());
+				insert.setString(3,((RegularUser) user).password());
 				insert.execute();
 			}
 			
@@ -341,7 +320,7 @@ public abstract class DatabaseConnector implements DatabaseConstants, WikiServer
 		// For now we use the number of milliseconds since
 		// 1970/01/01
 		String timestamp = Long.toString(new Date().getTime());
-		int uid = User.UnknownUserID;
+		int uid = RegularUser.UnknownUserID;
 		
 		stmt.execute("INSERT INTO " + relName + "(" +
 				RelPagesColName +", " +
@@ -401,7 +380,7 @@ public abstract class DatabaseConnector implements DatabaseConstants, WikiServer
 				if (user != null) {
 					newNode = newNode + user.id() + ")";
 				} else {
-					newNode = newNode + User.UnknownUserID + ")";
+					newNode = newNode + RegularUser.UnknownUserID + ")";
 				}
 				statement.execute(newNode);
 			}

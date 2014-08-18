@@ -21,9 +21,13 @@ public class LoginContentPrinter extends HtmlContentPrinter {
 	public void print(HtmlLinePrinter printer) throws WikiException {
 		try {
 			if (_request.user() != null) {
+				String logoutRedirectLink = WikiServer.SpecialFolderLogout + "?" 
+						+ RequestParameter.ParameterResource + "=" 
+						+ URLEncoder.encode(_request.getRequestURI().toASCIIString(), "UTF-8");
 				printer.openPARAGRAPH(CSS.CSSLogin);
 				printer.add("You are currently logged in as");
-				printer.addSPAN(_request.user().fullName(), CSS.CSSLogin); 
+				printer.addSPAN(_request.user().fullName(), CSS.CSSLogin);
+				printer.link(logoutRedirectLink, "(Log out)", CSS.CSSLogin);
 				printer.closePARAGRAPH();
 							
 			} else {
