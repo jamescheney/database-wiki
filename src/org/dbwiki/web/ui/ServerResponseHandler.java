@@ -63,4 +63,8 @@ public class ServerResponseHandler extends HtmlContentGenerator {
 			super.print(key, args, page, indention);
 		}
 	}
+	
+	public String title(){
+		return _title;
+	}
 }

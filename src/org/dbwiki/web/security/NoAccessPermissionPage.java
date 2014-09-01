@@ -2,6 +2,11 @@ package org.dbwiki.web.security;
 
 import org.dbwiki.web.html.HtmlPage;
 
+/** 
+ * Responds to a unprivileged request from user.
+ *
+ */
+
 public class NoAccessPermissionPage extends HtmlPage{
 	
 	/*

@@ -22,17 +22,15 @@
 package org.dbwiki.web.ui;
 
 import java.net.URLEncoder;
-
 import java.util.Hashtable;
 import java.util.Vector;
 
+import org.dbwiki.user.User;
 import org.dbwiki.web.html.HtmlLinePrinter;
 import org.dbwiki.web.html.HtmlPage;
-
 import org.dbwiki.web.request.HttpRequest;
 import org.dbwiki.web.request.parameter.RequestParameter;
 import org.dbwiki.web.server.WikiServer;
-
 import org.dbwiki.web.ui.printer.HtmlContentPrinter;
 
 /** Class for generating HTML content to respond to an HTTP Request
@@ -126,6 +124,8 @@ public abstract class HtmlContentGenerator {
 			try {
 				if (_request.user() != null) {
 					page.add(indention + "<p CLASS=\"" + CSS.CSSLogin + "\">You are currently logged in as <span CLASS=\"" + CSS.CSSLogin + "\">" + _request.user().fullName() + "</span></p>");
+					//String loginRedirectLink = WikiServer.SpecialFolderLogout + "?" + RequestParameter.ParameterResource + "=" + URLEncoder.encode(_request.getRequestURI().toASCIIString(), "UTF-8");
+					//page.add(indention + "<p CLASS=\"" + CSS.CSSLogin + "\"><a CLASS=\"" + CSS.CSSLogin + "\" HREF=\"" + loginRedirectLink + "\">Logout</a></p>");
 				} else {
 					String loginRedirectLink = WikiServer.SpecialFolderLogin + "?" + RequestParameter.ParameterResource + "=" + URLEncoder.encode(_request.getRequestURI().toASCIIString(), "UTF-8");
 					page.add(indention + "<p CLASS=\"" + CSS.CSSLogin + "\"><a CLASS=\"" + CSS.CSSLogin + "\" HREF=\"" + loginRedirectLink + "\">Login</a></p>");
@@ -137,4 +137,5 @@ public abstract class HtmlContentGenerator {
 			_contentPrinter.get(key).print(new HtmlLinePrinter(page, indention));
 		}
 	}
+	
 }

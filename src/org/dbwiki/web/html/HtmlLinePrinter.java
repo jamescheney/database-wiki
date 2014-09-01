@@ -175,7 +175,12 @@ public class HtmlLinePrinter  {
 	public void addTEXTBOX(String name) {
 		this.add(_indentation + indentExtension + "<input type=\"text\" name=\"" + name + "\"/>");
 	}
-	
+	public void addTEXTBOX(String name, String width, String value) {
+		this.add(_indentation + indentExtension + "<input type=\"text\" name=\"" + name + "\" style=\"width: "+ width + "px\"; value=\""+value +"\"/>");
+	}
+	public void addREADONLYTEXTBOX(String name, String width, String value) {
+		this.add(_indentation + indentExtension + "<input type=\"text\" name=\"" + name + "\" style=\"width: "+ width + "px\"; value=\""+value +"\" readonly/>");
+	}
 	public void addFILE(String name) {
 		this.add(_indentation + indentExtension + "<input type=\"file\" name=\"" + name + "\"/>");
 	}

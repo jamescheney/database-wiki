@@ -8,6 +8,10 @@ import org.dbwiki.web.ui.CSS;
 import org.dbwiki.web.ui.HtmlContentGenerator;
 import org.dbwiki.web.ui.printer.HtmlContentPrinter;
 
+/**
+ * An error page for ordinary users who make administrator request
+ */
+
 public class DatabaseAccessDeniedPrinter extends HtmlContentGenerator implements HtmlContentPrinter{
 
 	@Override

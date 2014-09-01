@@ -21,6 +21,7 @@
 */
 package org.dbwiki.web.request;
 
+import org.dbwiki.user.User;
 import org.dbwiki.web.server.WikiServer;
 
 
@@ -31,7 +32,7 @@ public class ServerRequest<T> extends HttpRequest<T> {
 	 */
 	
 	private WikiServer _server;
-	
+	private User _user;
 	
 	/*
 	 * Constructors
@@ -51,6 +52,4 @@ public class ServerRequest<T> extends HttpRequest<T> {
 	public WikiServer server() {
 		return _server;
 	}
-	
-	
 }

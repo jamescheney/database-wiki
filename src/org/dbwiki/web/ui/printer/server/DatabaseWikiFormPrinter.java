@@ -22,18 +22,13 @@
 package org.dbwiki.web.ui.printer.server;
 
 import org.dbwiki.exception.WikiException;
-
 import org.dbwiki.web.html.HtmlLinePrinter;
-
+import org.dbwiki.web.request.parameter.RequestParameter;
 import org.dbwiki.web.request.parameter.RequestParameterAction;
 import org.dbwiki.web.security.WikiAuthenticator;
-
 import org.dbwiki.web.server.DatabaseWiki;
 import org.dbwiki.web.server.WikiServer;
-
-
 import org.dbwiki.web.ui.CSS;
-
 import org.dbwiki.web.ui.printer.HtmlContentPrinter;
 
 /** Generates a form that allows creating a new Database Wiki
@@ -201,7 +196,22 @@ public class DatabaseWikiFormPrinter implements HtmlContentPrinter {
 		}
 		
 		printer.closeTR();
-
+		
+		//
+		// Authorization Mode
+		//
+		if(_headline.equals("Edit Database Wiki")){
+			printer.openTR();
+			printer.openTD(CSS.CSSFormLabel);
+			printer.text("Authorization by users");
+			printer.closeTD();
+			
+			printer.openTD(CSS.CSSFormText);
+			printer.link("?"+RequestParameter.ParameterAuthorization + "=" + _properties.getName(), "Manage access authority");
+			printer.closeTD();
+	
+			printer.closeTR();
+		}
 		//
 		// Schema 
 		//

@@ -69,10 +69,7 @@ public class ServerMenuPrinter extends HtmlContentGenerator implements HtmlConte
 			this.printPopUp(RequestParameter.ParameterEdit, body);
 			body.add("\t\t\t<a class=\"" + CSS.CSSMenu + "\" id=\"t3\" onMouseOut=\"HideItem('reset_submenu');\" onMouseOver=\"ShowItem('reset_submenu');\">Reset</a>");
 			this.printPopUp(RequestParameter.ParameterReset, body);
-			//////////////crystal
 			body.add("\t\t\t<a class=\"" + CSS.CSSMenu + "\" id=\"t4\" href=\"/?" + RequestParameter.ParameterAllUsers + "\">Users</a>");
-			//body.add("\t\t\t<a class=\"" + CSS.CSSMenu + "\" id=\"t1\" href=\"/?" + RequestParameter.ParameterSecurity + "\">Security</a>");
-			////////////////////
 		}
 		
 		
