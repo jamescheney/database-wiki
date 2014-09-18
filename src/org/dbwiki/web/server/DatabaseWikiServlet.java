@@ -1,6 +1,8 @@
 package org.dbwiki.web.server;
 
 import java.sql.Connection;
+import java.util.Vector;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -151,7 +153,9 @@ public class DatabaseWikiServlet extends DatabaseWiki {
 		_authenticator.setAuthenticationMode(authMode);
 	}
 	
-
+	public void updateAuthorizationListing(Vector<Authorization> auth) {
+		_authenticator.updateAuthorizationListing(auth);
+	}
 	
 
 }

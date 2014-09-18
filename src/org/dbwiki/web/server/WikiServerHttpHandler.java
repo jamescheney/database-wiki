@@ -76,7 +76,8 @@ public class WikiServerHttpHandler extends WikiServer implements HttpHandler {
 			if (org.dbwiki.lib.JDBC.hasColumn(rs, RelDatabaseColURLDecoding)) {
 				urlDecodingVersion = rs.getInt(RelDatabaseColURLDecoding);
 			}
-			WikiAuthenticator authenticator = new WikiAuthenticator("/" + name, rs.getInt(RelDatabaseColAuthentication), _users);
+			WikiAuthenticator authenticator = new WikiAuthenticator("/" + name, rs.getInt(RelDatabaseColAuthentication),
+				_users, _authorizationListing, _formTemplate);
 			int autoSchemaChanges = rs.getInt(RelDatabaseColAutoSchemaChanges);
 			ConfigSetting setting = new ConfigSetting(layoutVersion, templateVersion, styleSheetVersion, urlDecodingVersion);
 			_wikiListing.add(new DatabaseWikiHttpHandler(id, name, title, authenticator, autoSchemaChanges, setting, _connector, this));
@@ -114,7 +115,8 @@ public class WikiServerHttpHandler extends WikiServer implements HttpHandler {
 		_webServer.setExecutor(Executors.newFixedThreadPool(_threadCount));
 
 		HttpContext context = _webServer.createContext("/", this);
-		context.setAuthenticator(new WikiAuthenticator("/", _authenticationMode, _users));
+		context.setAuthenticator(new WikiAuthenticator("/", _authenticationMode, _users,
+			_authorizationListing, _formTemplate));
 
 		for (int iWiki = 0; iWiki < _wikiListing.size(); iWiki++) {
 			DatabaseWikiHttpHandler wiki = _wikiListing.get(iWiki);
@@ -158,9 +160,10 @@ public class WikiServerHttpHandler extends WikiServer implements HttpHandler {
 			wikiID = r.createDatabase(con, versionIndex);
 			con.commit();
 
-			WikiAuthenticator authenticator = new WikiAuthenticator("/" + name, authenticationMode, _users);
-			DatabaseWikiHttpHandler wiki = new DatabaseWikiHttpHandler(wikiID, name, title, authenticator, autoSchemaChanges, _connector, this,
-									con, versionIndex);
+			WikiAuthenticator authenticator = new WikiAuthenticator("/" + name, authenticationMode, 
+				_users, _authorizationListing, _formTemplate);
+			DatabaseWikiHttpHandler wiki = new DatabaseWikiHttpHandler(wikiID, name, title, authenticator, 
+				autoSchemaChanges, _connector, this, con, versionIndex);
 
 			// this should now only be called when starting a web server
 			assert(_webServer != null); 
@@ -215,7 +218,7 @@ public class WikiServerHttpHandler extends WikiServer implements HttpHandler {
 				this.respondTo(exchange);
 			} else if ((path.startsWith(SpecialFolderDatabaseWikiStyle + "/")) && (path.endsWith(".css"))) {
 	    		this.sendCSSFile(path.substring(SpecialFolderDatabaseWikiStyle.length() + 1, path.length() - 4), exchange);
-			} else if (path.equals(SpecialFolderLogin)) {
+			} else if (path.equals(SpecialFolderLogin) || path.equals(SpecialFolderLogout)) {
 				//FIXME: #request This is a convoluted way of parsing the request parameter!
 				exchange.send(new RedirectPage(new RequestURL( exchange,"").parameters().get(RequestParameter.ParameterResource).value()));
 	    	// The following code is necessary if using only a single HttpContext

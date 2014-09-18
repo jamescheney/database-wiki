@@ -28,59 +28,53 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
-
 import java.net.MalformedURLException;
 import java.net.URL;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-
 import java.text.SimpleDateFormat;
-
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Vector;
-
 import java.util.zip.GZIPInputStream;
 
 import org.dbwiki.data.io.SAXCallbackInputHandler;
 import org.dbwiki.data.io.StructureParser;
 import org.dbwiki.data.schema.DatabaseSchema;
 import org.dbwiki.data.schema.SchemaParser;
-
 import org.dbwiki.driver.rdbms.DatabaseConnector;
 import org.dbwiki.driver.rdbms.DatabaseConnectorFactory;
+import org.dbwiki.driver.rdbms.DatabaseConstants;
 import org.dbwiki.driver.rdbms.SQLVersionIndex;
-
 import org.dbwiki.exception.WikiException;
 import org.dbwiki.exception.WikiFatalException;
 import org.dbwiki.exception.web.WikiRequestException;
-
-import org.dbwiki.user.RegularUser;
 import org.dbwiki.user.User;
 import org.dbwiki.user.UserListing;
-
 import org.dbwiki.web.html.FileNotFoundPage;
 import org.dbwiki.web.log.FileServerLog;
 import org.dbwiki.web.log.ServerLog;
 import org.dbwiki.web.log.StandardOutServerLog;
-
 import org.dbwiki.web.request.Exchange;
 import org.dbwiki.web.request.HttpRequest;
 import org.dbwiki.web.request.RequestURL;
-
 import org.dbwiki.web.request.parameter.RequestParameter;
 import org.dbwiki.web.request.parameter.RequestParameterAction;
-
 import org.dbwiki.web.ui.HtmlContentGenerator;
 import org.dbwiki.web.ui.HtmlTemplateDecorator;
 import org.dbwiki.web.ui.ServerResponseHandler;
-
+import org.dbwiki.web.ui.printer.admin.DatabaseWikiAuthorizationPrinter;
+import org.dbwiki.web.ui.printer.admin.DatabaseWikiEntryAuthorizationPrinter;
+import org.dbwiki.web.ui.printer.admin.DatabaseWikiUserListingPrinter;
+import org.dbwiki.web.ui.printer.server.DatabaseAccessDeniedPrinter;
 import org.dbwiki.web.ui.printer.server.DatabaseWikiFormPrinter;
 import org.dbwiki.web.ui.printer.server.DatabaseWikiListingPrinter;
-import org.dbwiki.web.server.DatabaseWikiProperties;
 import org.dbwiki.web.ui.printer.server.ServerMenuPrinter;
 
 
@@ -123,7 +117,11 @@ public abstract class WikiServer  implements WikiServerConstants {
 	public static final String ParameterPath = "PATH";
 	public static final String ParameterSchema = "SCHEMA";
 	public static final String ParameterTitle = "TITLE";
-		
+	
+	public static final String propertyReadPermission = "READ_PERMISSION";
+	public static final String propertyInsertPermission = "INSERT_PERMISSION";
+	public static final String propertyDeletePermission = "DELETE_PERMISSION";
+	public static final String propertyUpdatePermission = "UPDATE_PERMISSION";
 
 	/*
 	 * Private Constants
@@ -147,12 +145,13 @@ public abstract class WikiServer  implements WikiServerConstants {
 	
 	protected String _wikiTitle = "Database Wiki";
 	protected int _authenticationMode;
-	protected DatabaseConnector _connector;
+	protected static DatabaseConnector _connector;
 	protected File _formTemplate = null;
 	protected File _homepageTemplate = null;
 	protected ServerLog _serverLog = null;
 	protected UserListing _users;
 	protected File _directory;
+	protected Vector<Authorization> _authorizationListing;
 	
 	
 	
@@ -180,6 +179,7 @@ public abstract class WikiServer  implements WikiServerConstants {
 		// from the database we are connected to
 		try {
 			Connection con = _connector.getConnection();
+			getAuthorizationListing(con);
 			getUserListing(con);	
 			getWikiListing(con);
 			con.close();
@@ -261,17 +261,124 @@ public abstract class WikiServer  implements WikiServerConstants {
 		Statement stmt = connection.createStatement();
 		ResultSet rs = stmt.executeQuery("SELECT * FROM " + RelationUser);
 		while (rs.next()) {
-			_users.add(new RegularUser(rs.getInt(RelUserColID), rs.getString(RelUserColLogin), rs.getString(RelUserColFullName), rs.getString(RelUserColPassword)));
+			_users.add(new User(rs.getInt(RelUserColID), rs.getString(RelUserColLogin), 
+				rs.getString(RelUserColFullName), rs.getString(RelUserColPassword), 
+				rs.getBoolean(RelUserColIsAdmin)));
 		}
 		rs.close();
 		stmt.close();
-		
+
+	}
+
+	/**
+	 * Initialize authorization listing from database
+	 * 
+	 */
+	protected void getAuthorizationListing(Connection connection)
+			throws SQLException {
+		_authorizationListing = new Vector<Authorization>();
+		Statement stmt = connection.createStatement();
+		ResultSet rs = stmt.executeQuery("SELECT * FROM "
+				+ RelationAuthorization);
+		while (rs.next()) {
+			_authorizationListing.add(new Authorization(rs
+					.getString(RelAuthenticationColDatabaseName), rs
+					.getInt(RelAuthenticationColUserID), rs
+					.getBoolean(RelAuthenticationColRead), rs
+					.getBoolean(RelAuthenticationColInsert), rs
+					.getBoolean(RelAuthenticationColDelete), rs
+					.getBoolean(RelAuthenticationColUpdate)));
+		}
+		rs.close();
+		stmt.close();
 	}
 	
 	protected abstract void getWikiListing(Connection con) throws SQLException, WikiException ;
 	/*
 	 * Public Methods
 	 */
+	
+	/**
+	 * Get entry permissions of a user to a database DB from DB_policy table
+	 * @param wiki_name the short name of a wiki
+	 * @param user_id the id of a user
+	 * @return Map<Integer, Map<Integer,DBPolicy>>
+	 */
+	public static Map<Integer,Map<Integer,DBPolicy>> getDBPolicyListing(String wiki_name, int user_id) {
+		
+		Map<Integer,Map<Integer,DBPolicy>> policyListing = new HashMap<Integer,Map<Integer,DBPolicy>>();
+		try{
+		Connection con = _connector.getConnection();
+		con.setAutoCommit(false);
+		Statement stmt = con.createStatement();
+		ResultSet rs = stmt.executeQuery("SELECT * FROM "
+				+ wiki_name + DatabaseConstants.RelationPolicy
+				+" WHERE " + DatabaseConstants.RelPolicyUserID + " = "+user_id);
+		
+		while (rs.next()) {
+			if(policyListing.get(rs.getInt(DatabaseConstants.RelPolicyUserID))==null){
+				Map<Integer,DBPolicy> map = new HashMap<Integer,DBPolicy>();
+				map.put(rs.getInt(DatabaseConstants.RelPolicyEntry), new DBPolicy(rs
+					.getInt(DatabaseConstants.RelPolicyUserID), rs
+					.getInt(DatabaseConstants.RelPolicyEntry), rs
+					.getBoolean(DatabaseConstants.RelPolicyRead), rs
+					.getBoolean(DatabaseConstants.RelPolicyInsert), rs
+					.getBoolean(DatabaseConstants.RelPolicyDelete), rs
+					.getBoolean(DatabaseConstants.RelPolicyUpdate)));
+				policyListing.put(rs.getInt(DatabaseConstants.RelPolicyUserID), map);
+			} else {
+				policyListing.get(rs.getInt(DatabaseConstants.RelPolicyUserID)).put(rs.getInt(DatabaseConstants.RelPolicyEntry), new DBPolicy(rs
+					.getInt(DatabaseConstants.RelPolicyUserID), rs
+					.getInt(DatabaseConstants.RelPolicyEntry), rs
+					.getBoolean(DatabaseConstants.RelPolicyRead), rs
+					.getBoolean(DatabaseConstants.RelPolicyInsert), rs
+					.getBoolean(DatabaseConstants.RelPolicyDelete), rs
+					.getBoolean(DatabaseConstants.RelPolicyUpdate)));
+			}
+		}
+		rs.close();
+		stmt.close();
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return policyListing;
+	}
+	
+	/**
+	 * Get entry listing of a specific database in DBWiki
+	 * @param wiki_name name of the wiki 
+	 * @return Map<Integer, Entry>
+	 * @throws SQLException
+	 * @throws WikiException
+	 */
+	public static Map<Integer, Entry> getEntryListing(String wiki_name)
+			throws SQLException, WikiException {
+		Map<Integer, Entry> entryListing = new HashMap<Integer, Entry>();
+		Connection con = _connector.getConnection();
+		con.setAutoCommit(false);
+		Statement stmt = con.createStatement();
+		ResultSet rs = stmt.executeQuery("SELECT DISTINCT ss." + DatabaseConstants.RelDataColEntry + ", ss." + DatabaseConstants.RelDataColValue +
+				" FROM " + wiki_name + DatabaseConstants.RelationData + " ss"+
+				" JOIN " + wiki_name + DatabaseConstants.RelationData + " s"+
+				" ON ss." + DatabaseConstants.RelDataColParent + " = s." + DatabaseConstants.RelDataColID +
+				" JOIN " + wiki_name + DatabaseConstants.RelationData + " p"+
+				" ON s." + DatabaseConstants.RelDataColParent + " = p." + DatabaseConstants.RelDataColID +
+				" WHERE p." + DatabaseConstants.RelSchemaColParent + " = -1" +
+				" AND s." + DatabaseConstants.RelDataColTimesequence + " = -1" +
+				" AND ss." + DatabaseConstants.RelDataColValue + " IS NOT NULL" +
+				" ORDER BY ss." + DatabaseConstants.RelDataColValue + " ASC");
+		while (rs.next()) {
+			if(rs.getString(DatabaseConstants.RelDataColValue) != null){
+			Entry entry = new Entry(rs.getInt(DatabaseConstants.RelDataColEntry), rs.getString(DatabaseConstants.RelDataColValue));
+			entryListing.put(entry.entry_id(),entry);
+			} else {
+				continue;
+			}
+		}
+		rs.close();
+		stmt.close();
+		return entryListing;
+	}
 	
 	public abstract DatabaseWiki get(int index);
 	
@@ -522,6 +629,50 @@ public abstract class WikiServer  implements WikiServerConstants {
 		return _users;
 	}
 	
+	public void addUser(String user) throws WikiException, SQLException {
+		Connection con = _connector.getConnection();
+		PreparedStatement insert = con.prepareStatement(
+				"INSERT INTO " + RelationUser + "(" +
+				RelUserColLogin + ", " +
+				RelUserColFullName + ", " +
+				RelUserColPassword + ", " +
+				RelUserColIsAdmin + ") VALUES(?,?,?,?)");
+		insert.setString(1, user);
+		insert.setString(2, user);
+		insert.setString(3, null);
+		insert.setBoolean(4, false);
+		insert.execute();
+		insert.close();
+		int uid = -1;
+		Statement stmt = con.createStatement();
+		ResultSet rs = stmt.executeQuery("SELECT " + RelUserColID + " FROM " + 
+				RelationUser + " WHERE " + RelUserColLogin + "='" + user + "'");
+		if(rs.next()) uid = rs.getInt(1);
+		rs.close();
+		stmt.close();
+		_users.add(new User(uid, user, user, null, false));
+		/*for (int iWiki = 0; iWiki < this.size(); iWiki++) {
+			insert = con.prepareStatement("INSERT INTO "
+				+ RelationAuthorization + "("
+				+ RelAuthenticationColDatabaseName + ", "
+				+ RelAuthenticationColUserID + ", "
+				+ RelAuthenticationColRead + ", "
+				+ RelAuthenticationColInsert + ", "
+				+ RelAuthenticationColDelete + ", "
+				+ RelAuthenticationColUpdate
+				+ ") VALUES(?, ?, ?, ?, ?, ?)");
+			insert.setString(1, this.get(iWiki).name());
+			insert.setInt(2, uid);
+			insert.setBoolean(3, false);
+			insert.setBoolean(4, false);
+			insert.setBoolean(5, false);
+			insert.setBoolean(6, false);
+			insert.execute();
+			insert.close();
+		}*/
+		con.close();
+	}
+	
 	
 	/*
 	 * Private Methods
@@ -678,6 +829,42 @@ public abstract class WikiServer  implements WikiServerConstants {
 		}
 	}
 
+	/**
+	 * Creates appropriate response handler for database top-level setting page
+	 * 
+	 */
+	private ServerResponseHandler getEditResponseHandler(
+			HttpRequest request) throws WikiException {
+
+		//DatabaseWiki wiki = get(wiki_name);
+		DatabaseWiki wiki = this.getRequestWiki(request, ParameterName);
+		ServerResponseHandler responseHandler = new ServerResponseHandler(
+				request, _wikiTitle + " - Edit Database Wiki");
+		responseHandler.put(HtmlContentGenerator.ContentContent,
+				new DatabaseWikiFormPrinter(new DatabaseWikiProperties(wiki),
+						RequestParameterAction.ActionUpdate,
+						"Edit Database Wiki"));
+		return responseHandler;
+	}
+	
+	/**
+	 * Creates appropriate response handler for database-level permission setting page
+	 * 
+	 */
+	private ServerResponseHandler getEditAuthorizationResponseHandler(
+			HttpRequest request) throws WikiException {
+
+		DatabaseWiki wiki = this.getRequestWiki(request, ParameterName);
+		ServerResponseHandler responseHandler = new ServerResponseHandler(request, _wikiTitle
+				+ " - Manage Authorization");
+		responseHandler.put(HtmlContentGenerator.ContentContent,
+						new DatabaseWikiAuthorizationPrinter(
+								"Manage Authorization",
+								RequestParameterAction.ActionUpdateAuthorization,
+								wiki.getProperties(),
+								_users, _authorizationListing));
+		return responseHandler;
+	}
 	
 	public abstract void registerDatabase(String name, String title, String path,
 			URL resourceURL, DatabaseSchema databaseSchema, User user,
@@ -819,6 +1006,346 @@ public abstract class WikiServer  implements WikiServerConstants {
 			return this.getHomepageResponseHandler(request);
 		}
 	}
+	
+	/**
+	 * Constructs a response handler for a user information management page.
+	 * @param request
+	 * @return
+	 * @throws org.dbwiki.exception.WikiException
+	 */
+	protected ServerResponseHandler getUpdateUsersResponseHandler(
+			HttpRequest request) throws org.dbwiki.exception.WikiException {
+		// TODO: Simplify validation/control flow.
+		try {
+			ArrayList<Integer[]> probs = new ArrayList<Integer[]>();
+			ArrayList<User> frm_users = new ArrayList<User>();
+			Connection con = _connector.getConnection();
+			con.setAutoCommit(false);
+			//Get all user information from the form
+			int user_id=1;
+			int first_para=0;
+			if(request.parameters().get(0).name().equals("action")){
+				first_para=1;
+			}
+			for (int para_index = first_para; para_index <= request.parameters()
+					.size() - 2; para_index += 2) {
+				String user_login = _users.get(user_id).login();
+				String full_name = request.parameters().get(para_index).value();
+				boolean is_admin = false;
+				if ((request.parameters().get(para_index + 1).value())
+						.equals("admin")) {
+					is_admin = true;
+				}else if(request.parameters().get(para_index + 1).value().equals("not_admin")) {
+					is_admin = false;
+					}
+				
+				User user = new User(user_id,user_login,full_name,_users.get(user_id).password(),is_admin);
+				frm_users.add(user);
+				user_id++;
+			}
+			
+			// Check whether there are invalid information from the form
+			for(int user_index=0;user_index<frm_users.size();user_index++){
+				int message = DatabaseWikiUserListingPrinter.MessageNone;
+				String full_name = frm_users.get(user_index).fullName();
+
+				if (full_name.equals("")) {
+					 message = DatabaseWikiUserListingPrinter.MessageNoFullName;
+					 probs.add(new Integer[]{user_index+1,message});
+					 }
+			}
+			
+			// If there are invalid information, go back to the setting page.
+			if (!probs.isEmpty()) {
+				 ServerResponseHandler responseHandler = new
+				 ServerResponseHandler(request, _wikiTitle + " - Manage Users");
+				 responseHandler.put(HtmlContentGenerator.ContentContent,
+							new DatabaseWikiUserListingPrinter(_users,
+									RequestParameterAction.ActionUpdateUsers,
+									"Manage Users", probs));
+				 return responseHandler;
+				 
+			// If there are no problems, apply the change.
+			}else{
+				if ((request.user() == null) && (_authenticationMode !=
+						DatabaseWikiProperties.AuthenticateNever)) {
+						 throw new WikiFatalException("User information is missing");
+				}
+				
+				for(int iUser = 0; iUser< frm_users.size(); iUser++){
+					String full_name = frm_users.get(iUser).fullName();
+					boolean is_admin = frm_users.get(iUser).is_admin();
+					
+					PreparedStatement pStmt = con.prepareStatement("UPDATE "
+							+ RelationUser + " " + "SET " + RelUserColFullName + " = ?, "
+							+ RelUserColIsAdmin + " = ? " + "WHERE "
+							+ RelUserColID + " = ?");
+
+					pStmt.setString(1, full_name);
+					pStmt.setBoolean(2, is_admin);
+					pStmt.setInt(3, iUser+1);
+					pStmt.execute();
+					pStmt.close();
+					
+					_users.get(iUser+1).set_fullName(full_name);
+					_users.get(iUser+1).set_is_admin(is_admin);
+				}
+			}
+			
+			con.commit();
+			con.close();
+		} catch (java.sql.SQLException sqlException) {
+			throw new WikiFatalException(sqlException);
+		}
+
+		return this.getHomepageResponseHandler(request);
+	}
+
+	/**
+	 * Constructs a response handler for a database-level permission setting page.
+	 * @param request
+	 * @return
+	 * @throws org.dbwiki.exception.WikiException
+	 * @throws IOException
+	 */
+	protected ServerResponseHandler getUpdateAuthorizationResponseHandler(
+			HttpRequest request)
+			throws org.dbwiki.exception.WikiException, IOException {
+		
+		try {
+			DatabaseWiki wiki = this.getRequestWiki(request, ParameterName);
+			Connection con = _connector.getConnection();
+			con.setAutoCommit(false);
+			int first_para=0;
+			if(request.parameters().get(0).name().equals("action")){
+				first_para=1;
+			}
+		for (int para_index = first_para, user_index = 1; para_index <= request.parameters()
+				.size() - 3; para_index += 4, user_index++) {
+			String wiki_name = wiki.name();
+			boolean is_read = false;
+			boolean is_insert = false;
+			boolean is_delete = false;
+			boolean is_update = false;
+			if ((request.parameters().get(para_index).value())
+					.equals("HoldPermission")) {
+				is_read = true;
+			}
+			
+			if ((request.parameters().get(para_index + 1).value())
+					.equals("HoldPermission")) {
+				is_insert = true;
+			}
+			
+			if ((request.parameters().get(para_index + 2).value())
+					.equals("HoldPermission")) {
+				is_delete = true;
+			}
+			
+			if ((request.parameters().get(para_index + 3).value())
+					.equals("HoldPermission")) {
+				is_update = true;
+			}
+			if(is_insert || is_delete || is_update){
+				is_read = true;
+			}
+			
+			boolean flag = false;
+			int j = 0;
+			for(j = 0; j<_authorizationListing.size();j++){
+				int user_id = _authorizationListing.get(j).user_id();
+				String database_name = _authorizationListing.get(j).database_name();
+				if(user_id==user_index && database_name.equals(wiki_name)){
+					flag = true;
+					break;
+				}
+			}
+				
+			PreparedStatement pStmt = null;
+			
+			if (flag) {
+				pStmt = con.prepareStatement("UPDATE "
+						+ RelationAuthorization + " " + "SET "
+						+ RelAuthenticationColRead + " = ?, "
+						+ RelAuthenticationColInsert + " = ?, "
+						+ RelAuthenticationColDelete + " = ?, "
+						+ RelAuthenticationColUpdate + " = ? "
+						+ "WHERE " + RelAuthenticationColUserID
+						+ " = ? " + "AND "
+						+ RelAuthenticationColDatabaseName + " = ?");
+
+				pStmt.setBoolean(1, is_read);
+				pStmt.setBoolean(2, is_insert);
+				pStmt.setBoolean(3, is_delete);
+				pStmt.setBoolean(4, is_update);
+				pStmt.setInt(5, user_index);
+				pStmt.setString(6, wiki_name);
+				pStmt.execute();
+				pStmt.close();
+			} else {
+				pStmt = con.prepareStatement("INSERT INTO "
+						+ RelationAuthorization + "("
+						+ RelAuthenticationColDatabaseName + ", "
+						+ RelAuthenticationColUserID + ", "
+						+ RelAuthenticationColRead + ", "
+						+ RelAuthenticationColInsert + ", "
+						+ RelAuthenticationColDelete + ", "
+						+ RelAuthenticationColUpdate
+						+ ") VALUES(?, ?, ?, ?, ?, ?)");
+
+				pStmt.setString(1, wiki_name);
+				pStmt.setInt(2, user_index);
+				pStmt.setBoolean(3, is_read);
+				pStmt.setBoolean(4, is_insert);
+				pStmt.setBoolean(5, is_delete);
+				pStmt.setBoolean(6, is_update);
+				pStmt.execute();
+				pStmt.close();
+			}
+		}
+		
+		con.commit();
+		getAuthorizationListing(con);
+		getWikiListing(con);
+		wiki.updateAuthorizationListing(_authorizationListing);
+		con.close();
+		
+		} catch (SQLException sqlException) {
+			// TODO Auto-generated catch block
+			throw new WikiFatalException(sqlException);
+		}
+
+		return this.getEditResponseHandler(request);
+	}
+	
+	/**
+	 * Constructs a response handler for a entry-level setting page.
+	 * @param request
+	 * @return
+	 * @throws org.dbwiki.exception.WikiException
+	 * @throws IOException
+	 */
+	protected ServerResponseHandler getUpdateEntryAuthorizationResponseHandler(
+			HttpRequest request)
+			throws org.dbwiki.exception.WikiException, IOException {
+		
+		try {
+			int user_id = Integer.parseInt(request.parameters().get("user_id").value());
+			DatabaseWiki wiki = this.getRequestWiki(request, ParameterName);
+			String wiki_name = wiki.name();
+			Map<Integer,Entry> entryListing = getEntryListing(wiki_name);
+			Map<Integer,Map<Integer,DBPolicy>> policyListing = getDBPolicyListing(wiki_name, user_id);
+			Connection con = _connector.getConnection();
+			con.setAutoCommit(false);
+			
+			ArrayList<Integer> keys = new ArrayList<Integer>(entryListing.keySet());
+			Collections.sort(keys);
+			int first_para=0;
+			if(request.parameters().get(0).name().equals("action")){
+				first_para=1;
+			}
+		for (int para_index = first_para, index = 0; para_index <= request.parameters()
+				.size() - 4; para_index += 4,index++) {
+			int entry= keys.get(index);
+			boolean is_read = false;
+			boolean is_insert = false;
+			boolean is_delete = false;
+			boolean is_update = false;
+			if ((request.parameters().get(para_index).value())
+					.equals("HoldPermission")) {
+				is_read = true;
+			}
+			
+			if ((request.parameters().get(para_index + 1).value())
+					.equals("HoldPermission")) {
+				is_insert = true;
+			}
+			
+			if ((request.parameters().get(para_index + 2).value())
+					.equals("HoldPermission")) {
+				is_delete = true;
+			}
+			
+			if ((request.parameters().get(para_index + 3).value())
+					.equals("HoldPermission")) {
+				is_update = true;
+			}
+			if(is_insert || is_delete || is_update){
+				is_read = true;
+			}
+			
+			boolean flag = false;
+//			int j = 0;
+//			List<String> policy_keys = new ArrayList(policyListing.keySet());
+//			Collections.sort(keys);
+//			for(j = 0; j<policyListing.size();j++){
+//			for(j = 0; j<policy_keys.size();j++){
+			for( int key : policyListing.keySet()){
+				if (user_id == key){
+					Map<Integer,DBPolicy> map = policyListing.get(key);
+					for(Integer entryId : map.keySet()){
+						if(entryId == entry){
+							flag = true;
+							break;
+						}
+					}
+				}
+			}
+				
+			PreparedStatement pStmt = null;
+			
+			if (flag) {
+				pStmt = con.prepareStatement("UPDATE "
+						+ wiki_name + DatabaseConstants.RelationPolicy + " " + "SET "
+						+ DatabaseConstants.RelPolicyRead + " = ?, "
+						+ DatabaseConstants.RelPolicyInsert + " = ?, "
+						+ DatabaseConstants.RelPolicyUpdate + " = ?, "
+						+ DatabaseConstants.RelPolicyDelete + " = ? "
+						+ "WHERE " + DatabaseConstants.RelPolicyEntry + " = ? "
+						+ "AND " + DatabaseConstants.RelPolicyUserID + " = ?");
+
+				pStmt.setBoolean(1, is_read);
+				pStmt.setBoolean(2, is_insert);
+				pStmt.setBoolean(3, is_delete);
+				pStmt.setBoolean(4, is_update);
+				pStmt.setInt(5, entry);
+				pStmt.setInt(6, user_id);
+				pStmt.execute();
+				pStmt.close();
+			} else {
+				pStmt = con.prepareStatement("INSERT INTO "
+						+ wiki_name + DatabaseConstants.RelationPolicy + "("
+						+ DatabaseConstants.RelPolicyEntry + ", "
+						+ DatabaseConstants.RelPolicyUserID + ", "
+						+ DatabaseConstants.RelPolicyRead + ", "
+						+ DatabaseConstants.RelPolicyInsert + ", "
+						+ DatabaseConstants.RelPolicyUpdate + ", "
+						+ DatabaseConstants.RelPolicyDelete
+						+ ") VALUES(?, ?, ?, ?, ?, ?)");
+
+				pStmt.setInt(1, entry);
+				pStmt.setInt(2, user_id);
+				pStmt.setBoolean(3, is_read);
+				pStmt.setBoolean(4, is_insert);
+				pStmt.setBoolean(5, is_delete);
+				pStmt.setBoolean(6, is_update);
+				pStmt.execute();
+				pStmt.close();
+			}
+		}
+		
+		con.commit();
+		getEntryListing(wiki_name);
+		getDBPolicyListing(wiki_name, user_id);
+		con.close();
+		
+		} catch (SQLException sqlException) {
+			// TODO Auto-generated catch block
+			throw new WikiFatalException(sqlException);
+		}
+
+		return this.getEditAuthorizationResponseHandler(request);
+	}
 
 	/** Checks whether a given string is a valid short wiki name, i.e. suitable for use
 	 * as a prefix to tables in DBMS.
@@ -916,8 +1443,9 @@ public abstract class WikiServer  implements WikiServerConstants {
 	 * @param exchange
 	 * @throws java.io.IOException
 	 * @throws org.dbwiki.exception.WikiException
+	 * @throws SQLException 
 	 */
-	protected void respondTo(Exchange<?> exchange) throws java.io.IOException, org.dbwiki.exception.WikiException {
+	protected void respondTo(Exchange<?> exchange) throws java.io.IOException, org.dbwiki.exception.WikiException, SQLException {
 		ServerResponseHandler responseHandler = null;
 		
 		HttpRequest request = new HttpRequest(new RequestURL(exchange,""), users());
@@ -934,6 +1462,62 @@ public abstract class WikiServer  implements WikiServerConstants {
 		} else if (request.type().isReset()) {
 			this.resetWikiConfiguration(this.getRequestWiki(request, RequestParameter.ParameterReset));
 			responseHandler = this.getHomepageResponseHandler(request);
+		} else if (request.type().isAllUsers()) {
+			if (request.user() != null && request.user().is_admin()) {
+				responseHandler = new ServerResponseHandler(request, _wikiTitle
+						+ " - Manage Users");
+				responseHandler.put(HtmlContentGenerator.ContentContent,
+						new DatabaseWikiUserListingPrinter(_users,
+								RequestParameterAction.ActionUpdateUsers,
+								"Manage Users"));
+			} else {
+				responseHandler = new ServerResponseHandler(request,
+						"Access Denied");
+				responseHandler.put(HtmlContentGenerator.ContentContent,
+						new DatabaseAccessDeniedPrinter());
+			}
+
+		} else if (request.type().isAuthorization()) {
+			if (request.user() != null && request.user().is_admin()) {
+				DatabaseWiki wiki = getRequestWiki(request, RequestParameter.ParameterAuthorization);
+				responseHandler = new ServerResponseHandler(request, _wikiTitle
+						+ " - Manage Authorization");
+				responseHandler
+						.put(HtmlContentGenerator.ContentContent,
+								new DatabaseWikiAuthorizationPrinter(
+										"Manage Authorization",
+										RequestParameterAction.ActionUpdateAuthorization,
+										new DatabaseWikiProperties(wiki),
+										_users, _authorizationListing));
+			} else {
+				responseHandler = new ServerResponseHandler(request,
+						"Access Denied");
+				responseHandler.put(HtmlContentGenerator.ContentContent,
+						new DatabaseAccessDeniedPrinter());
+			}
+		} else if (request.getRequestURI().toString().contains(RequestParameter.ParameterEntryAuthorization)) {
+			if (request.user() != null && request.user().is_admin()) {
+				RequestParameter parameter = request.parameters().get(RequestParameter.ParameterEntryAuthorization);
+				int user_id=1;
+				if(parameter.hasValue()){
+					user_id = Integer.parseInt(parameter.value());
+				}
+				String wiki_name = getRequestWiki(request, RequestParameter.ParameterAuthorization).name();
+				Map<Integer,Entry> entryListing = getEntryListing(wiki_name);
+				Map<Integer,Map<Integer,DBPolicy>> policyLising = getDBPolicyListing(wiki_name, user_id);
+				responseHandler = new ServerResponseHandler(request, _wikiTitle
+						+ " - Manage Authorization Mode By Entries");
+				responseHandler
+						.put(HtmlContentGenerator.ContentContent,
+								new DatabaseWikiEntryAuthorizationPrinter(
+										"Manage Authorization Mode By Entries",
+										RequestParameterAction.ActionUpdateEntryAuthorization,_users,wiki_name,user_id,entryListing,policyLising));
+			} else {
+				responseHandler = new ServerResponseHandler(request,
+						"Access Denied");
+				responseHandler.put(HtmlContentGenerator.ContentContent,
+						new DatabaseAccessDeniedPrinter());
+			}
 		} else if (request.type().isAction()) {
 			RequestParameterAction action = RequestParameter.actionParameter(request.parameters().get(RequestParameter.ParameterAction));
 			if (action.actionInsert()) {
@@ -942,6 +1526,16 @@ public abstract class WikiServer  implements WikiServerConstants {
 				responseHandler = this.getHomepageResponseHandler(request);
 			} else if (action.actionUpdate()) {
 				responseHandler = this.getUpdateWikiResponseHandler(request);
+			} else if (action.actionUpdateUsers()) {
+				responseHandler = this.getUpdateUsersResponseHandler(request);
+			} else if (action.actionUpdateAuthorization()) {
+				responseHandler = this.getUpdateAuthorizationResponseHandler(request);
+			} else if (action.actionCancelAuthorizationUpdate()) {
+				responseHandler = this.getEditResponseHandler(request);
+			} else if (action.actionUpdateEntryAuthorization()) {
+				responseHandler = this.getUpdateEntryAuthorizationResponseHandler(request);
+			} else if (action.actionCancelEntryAuthorizationUpdate()) {
+				responseHandler = this.getEditAuthorizationResponseHandler(request);
 			} else {
 				throw new WikiRequestException(WikiRequestException.InvalidRequest, request.toString());
 			}

@@ -1,62 +1,22 @@
 package org.dbwiki.web.server;
 
-import java.net.URLEncoder;
 import java.sql.Connection;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.Vector;
 
-import org.dbwiki.data.annotation.Annotation;
-import org.dbwiki.data.database.DatabaseElementNode;
-import org.dbwiki.data.database.DatabaseTextNode;
-import org.dbwiki.data.database.Update;
-import org.dbwiki.data.document.DocumentNode;
-import org.dbwiki.data.index.DatabaseContent;
-import org.dbwiki.data.io.CopyPasteNodeWriter;
-import org.dbwiki.data.io.ExportJSONNodeWriter;
-import org.dbwiki.data.io.ExportNodeWriter;
-import org.dbwiki.data.schema.GroupSchemaNode;
 import org.dbwiki.data.wiki.SimpleWiki;
 import org.dbwiki.driver.rdbms.DatabaseConnector;
 import org.dbwiki.driver.rdbms.RDBMSDatabase;
 import org.dbwiki.driver.rdbms.SQLVersionIndex;
-import org.dbwiki.exception.WikiFatalException;
-import org.dbwiki.exception.web.WikiRequestException;
 import org.dbwiki.web.html.FatalExceptionPage;
-import org.dbwiki.web.html.HtmlPage;
-import org.dbwiki.web.html.RedirectPage;
 import org.dbwiki.web.request.Exchange;
-import org.dbwiki.web.request.HttpRequest;
 import org.dbwiki.web.request.RequestURL;
 import org.dbwiki.web.request.WikiDataRequest;
 import org.dbwiki.web.request.WikiPageRequest;
 import org.dbwiki.web.request.WikiSchemaRequest;
-import org.dbwiki.web.request.parameter.RequestParameter;
-import org.dbwiki.web.request.parameter.RequestParameterAction;
-import org.dbwiki.web.request.parameter.RequestParameterVersion;
-import org.dbwiki.web.request.parameter.RequestParameterVersionSingle;
 import org.dbwiki.web.security.WikiAuthenticator;
 import org.dbwiki.web.ui.DatabaseWikiContentGenerator;
 import org.dbwiki.web.ui.HtmlTemplateDecorator;
-import org.dbwiki.web.ui.layout.DatabaseLayouter;
-import org.dbwiki.web.ui.printer.FileEditor;
-import org.dbwiki.web.ui.printer.LayoutEditor;
-import org.dbwiki.web.ui.printer.ObjectAnnotationPrinter;
-import org.dbwiki.web.ui.printer.ObjectProvenancePrinter;
-import org.dbwiki.web.ui.printer.SettingsListingPrinter;
-import org.dbwiki.web.ui.printer.TimemachinePrinter;
-import org.dbwiki.web.ui.printer.VersionIndexPrinter;
-import org.dbwiki.web.ui.printer.data.CreateSchemaNodeFormPrinter;
-import org.dbwiki.web.ui.printer.data.DataMenuPrinter;
-import org.dbwiki.web.ui.printer.data.DataNodePrinter;
-import org.dbwiki.web.ui.printer.data.DataUpdateFormPrinter;
-import org.dbwiki.web.ui.printer.data.InputFormPrinter;
-import org.dbwiki.web.ui.printer.data.NodePathPrinter;
-import org.dbwiki.web.ui.printer.index.AZMultiPageIndexPrinter;
-import org.dbwiki.web.ui.printer.index.AZSinglePageIndexPrinter;
-import org.dbwiki.web.ui.printer.index.FullIndexPrinter;
-import org.dbwiki.web.ui.printer.index.MultiColumnIndexPrinter;
-import org.dbwiki.web.ui.printer.index.PartialIndexPrinter;
-import org.dbwiki.web.ui.printer.index.SearchResultPrinter;
+
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
@@ -139,6 +99,10 @@ public class DatabaseWikiHttpHandler extends DatabaseWiki implements
 	public void setAuthenticationMode(int authMode) {
 		super.setAuthenticationMode(authMode);
 		_authenticator.setAuthenticationMode(authMode);
+	}
+	
+	public void updateAuthorizationListing(Vector<Authorization> auth) {
+		_authenticator.updateAuthorizationListing(auth);
 	}
 
 	/*

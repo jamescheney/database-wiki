@@ -1,6 +1,7 @@
 package org.dbwiki.web.server;
 
 import java.io.BufferedWriter;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -58,14 +59,19 @@ public class HttpExchangeWrapper  implements Exchange<HttpExchange> {
 	}
 
 		
-	public  void send(HtmlPage page) throws java.io.IOException {
+	public void send(HtmlPage page) throws java.io.IOException {
 		send(page, HttpURLConnection.HTTP_OK);
 	}
 	
 	public void send(HtmlPage page, int responseCode) throws java.io.IOException {
     	Headers responseHeaders = _exchange.getResponseHeaders();
     	responseHeaders.set("Content-Type", "text/html");
+    	try {
     	_exchange.sendResponseHeaders(responseCode, 0);
+    	} catch(IOException e) {
+    		// FIXME: why is send sometime called twice?
+    		return;
+    	}
     	BufferedWriter out = new BufferedWriter(new OutputStreamWriter(_exchange.getResponseBody()));
     	for (int iLine = 0; iLine < page.size(); iLine++) {
     		out.write(page.get(iLine));

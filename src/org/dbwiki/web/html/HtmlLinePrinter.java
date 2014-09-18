@@ -119,7 +119,7 @@ public class HtmlLinePrinter  {
 		this.add(
 				_indentation + indentExtension + 
 					"<button " + "style=\"background:none; border:none\"" +
-					   "type=\"" + type + "\" + name=\"" + name + "\" value=\"" + value + "\">\n" +
+					   " type=\"" + type + "\" name=\"" + name + "\" value=\"" + value + "\">\n" +
 					   _indentation + indentExtension + body +	
 					   _indentation + indentExtension + "</button>");
 	}
@@ -172,8 +172,20 @@ public class HtmlLinePrinter  {
 		this.add(_indentation + indentExtension + "<textarea name=\"" + name + "\" cols=" + cols + " style=height:1.2em>" + value + "</textarea>");
 	}
 
-	public void addTEXTBOX(String name,String value,String cssClass) {
+	public void addTEXTBOXCSS(String name, String value, String cssClass) {
 		this.add(_indentation + indentExtension + "<input id=\""+cssClass+"\" type=\"text\" name=\"" + name + "\" value=\""+ value+ "\"/>");
+	}
+	
+	public void addTEXTBOX(String name) {
+		this.add(_indentation + indentExtension + "<input type=\"text\" name=\"" + name + "\"/>");
+	}
+	
+	public void addTEXTBOX(String name, String width, String value) {
+		this.add(_indentation + indentExtension + "<input type=\"text\" name=\"" + name + "\" style=\"width: "+ width + "px\" value=\""+value +"\"/>");
+	}
+	
+	public void addREADONLYTEXTBOX(String name, String width, String value) {
+		this.add(_indentation + indentExtension + "<input type=\"text\" name=\"" + name + "\" style=\"width: "+ width + "px\" value=\""+value +"\" readonly/>");
 	}
 	
 	public void addFILE(String name) {

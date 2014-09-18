@@ -57,6 +57,10 @@ public class RequestParameter {
 	public static final String ParameterURL              = "url";
 	public static final String ParameterURLDecoding      = "url_decoding";
 	public static final String ParameterVersion          = "version";
+
+	public static final String ParameterAllUsers         = "all_users";
+	public static final String ParameterAuthorization	 = "authorization";
+	public static final String ParameterEntryAuthorization	 = "entry_authorization";
 	
 	public static final String ActionValueAnnotation      = "annotation";
 	public static final String ActionValueSchemaNode      = "schema_node";
@@ -84,6 +88,16 @@ public class RequestParameter {
 				return new RequestParameterActionInsert();
 			} else if (value.equals(RequestParameterAction.ActionUpdate)) {
 				return new RequestParameterActionUpdate();
+			} else if (value.equals(RequestParameterAction.ActionUpdateUsers)) {
+				return new RequestParameterActionUpdateUsers();
+			} else if (value.equals(RequestParameterAction.ActionUpdateAuthorization)) {
+				return new RequestParameterActionUpdateAuthorization();
+			} else if (value.equals(RequestParameterAction.ActionCancelAuthorizationUpdate)) {
+				return new RequestParameterActionCancelAuthorizationUpdate();
+			} else if (value.equals(RequestParameterAction.ActionUpdateEntryAuthorization)) {
+				return new RequestParameterActionUpdateEntryAuthorization();
+			} else if (value.equals(RequestParameterAction.ActionCancelEntryAuthorizationUpdate)) {
+				return new RequestParameterActionCancelEntryAuthorizationUpdate();
 			} else {
 				throw new WikiRequestException(WikiRequestException.InvalidParameterValue, parameter.toString());
 			}

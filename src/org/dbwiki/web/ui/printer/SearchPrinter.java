@@ -25,7 +25,7 @@ public class SearchPrinter extends HtmlContentPrinter {
 		}
 		
 		printer.openFORM("frmSearch", "GET", _dbIdentifier.databaseHomepage());
-		printer.addTEXTBOX("search", searchParameters, CSS.CSSSearch);
+		printer.addTEXTBOXCSS("search", searchParameters, CSS.CSSSearch);
 		printer.closeFORM();
 	}	
 

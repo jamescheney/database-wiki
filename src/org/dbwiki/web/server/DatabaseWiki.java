@@ -317,7 +317,7 @@ public abstract class DatabaseWiki implements Comparable<DatabaseWiki> {
 		return _urlDecodingVersion;
 	}
 	
-
+	public abstract void updateAuthorizationListing(Vector<Authorization> auth);
 	
 	/*
 	 * Private Methods

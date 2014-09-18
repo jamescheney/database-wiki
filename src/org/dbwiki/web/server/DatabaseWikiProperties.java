@@ -15,6 +15,8 @@ public class DatabaseWikiProperties {
 	public static final int AuthenticateNever = 1;
 	public static final int AuthenticateWriteOnly = 2;
 	
+	public static final boolean HoldPermission = true;
+	
 	/*
 	 * Private Variables
 	 */

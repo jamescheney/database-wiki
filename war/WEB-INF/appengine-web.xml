@@ -24,5 +24,6 @@
     With this feature enabled, there is a very small chance your app will see
     stale session data. For details, see
     http://code.google.com/appengine/docs/java/config/appconfig.html#Enabling_Sessions
-  -->
+  --><static-files>
+	<exclude path="WEB-INF/lib/postgresql-8.4-701.jdbc4.jar"></exclude></static-files>
 </appengine-web-app>

@@ -1,5 +1,7 @@
 package org.dbwiki.web.server;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.Connection;
@@ -24,9 +26,14 @@ import org.dbwiki.user.User;
 import org.dbwiki.web.html.FatalExceptionPage;
 import org.dbwiki.web.html.RedirectPage;
 import org.dbwiki.web.request.Exchange;
+import org.dbwiki.web.request.HttpRequest;
 import org.dbwiki.web.request.RequestURL;
 import org.dbwiki.web.request.parameter.RequestParameter;
 import org.dbwiki.web.security.WikiServletAuthenticator;
+import org.dbwiki.web.ui.HtmlContentGenerator;
+import org.dbwiki.web.ui.HtmlTemplateDecorator;
+import org.dbwiki.web.ui.ServerResponseHandler;
+import org.dbwiki.web.ui.printer.server.DatabaseAccessDeniedPrinter;
 
 import com.google.appengine.api.users.UserServiceFactory;
 
@@ -48,7 +55,7 @@ public class WikiServerServlet extends WikiServer {
 	
 	public WikiServerServlet(String prefix, Properties properties) throws org.dbwiki.exception.WikiException {
 		super(prefix, properties);
-		_authenticator = new WikiServletAuthenticator(_authenticationMode, _users);
+		_authenticator = new WikiServletAuthenticator(_authenticationMode, "/",  _users, _authorizationListing);
 	}
 	
 	/** 
@@ -76,7 +83,7 @@ public class WikiServerServlet extends WikiServer {
 			}
 			int autoSchemaChanges = rs.getInt(RelDatabaseColAutoSchemaChanges);
 			ConfigSetting setting = new ConfigSetting(layoutVersion, templateVersion, styleSheetVersion, urlDecodingVersion);
-			WikiServletAuthenticator authenticator = new WikiServletAuthenticator(rs.getInt(RelDatabaseColAuthentication), _users);
+			WikiServletAuthenticator authenticator = new WikiServletAuthenticator(rs.getInt(RelDatabaseColAuthentication), "/" + name, _users, _authorizationListing);
 			_wikiListing.add(new DatabaseWikiServlet(id, name, title, autoSchemaChanges, authenticator, setting, _connector, this));
 		}
 		rs.close();
@@ -140,7 +147,7 @@ public class WikiServerServlet extends WikiServer {
 			
 			wikiID = r.createDatabase(con, versionIndex);
 			con.commit();
-			WikiServletAuthenticator authenticator = new WikiServletAuthenticator(authenticationMode, _users);
+			WikiServletAuthenticator authenticator = new WikiServletAuthenticator(authenticationMode, "/" + name, _users, _authorizationListing);
 			DatabaseWikiServlet wiki = new DatabaseWikiServlet(wikiID, name, title, autoSchemaChanges, authenticator, _connector, this,
 									con, versionIndex);
 			_wikiListing.add(wiki);
@@ -189,7 +196,9 @@ public class WikiServerServlet extends WikiServer {
 				if(_authenticator.authenticate(request)) {
 					this.respondTo(exchange);
 				} else {
-					response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Login required to access this page");
+					ServerResponseHandler responseHandler = new ServerResponseHandler(new HttpRequest(new RequestURL(exchange, ""), users()), "Access Denied");
+					responseHandler.put(HtmlContentGenerator.ContentContent, new DatabaseAccessDeniedPrinter());
+					exchange.send(HtmlTemplateDecorator.decorate(new BufferedReader(new FileReader(_formTemplate)), responseHandler));
 				}
 			} else if ((path.startsWith(SpecialFolderDatabaseWikiStyle + "/")) && (path.endsWith(".css"))) {
 				this.sendCSSFile(path.substring(SpecialFolderDatabaseWikiStyle.length() + 1, path.length() - 4), exchange);
@@ -224,7 +233,5 @@ public class WikiServerServlet extends WikiServer {
 		}
 	}
 
-		
-	
 
 }

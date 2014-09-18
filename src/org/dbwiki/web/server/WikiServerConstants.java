@@ -93,9 +93,21 @@ public interface WikiServerConstants {
 	public static final String RelationUser = "_user";
 
 	public static final String RelUserColID = "id";
-	public static final String RelUserColLevel = "level";
 	public static final String RelUserColFullName = "full_name";
 	public static final String RelUserColLogin = "login";
 	public static final String RelUserColPassword = "password";
+	public static final String RelUserColIsAdmin = "is_admin";
+	
+	
+	//
+	// Authorization Listing
+	//
+	public static final String RelationAuthorization = "_authorization";
+	public static final String RelAuthenticationColDatabaseName = "database_name";
+	public static final String RelAuthenticationColUserID = "user_id";
+	public static final String RelAuthenticationColRead = "a_read";
+	public static final String RelAuthenticationColInsert = "a_insert";
+	public static final String RelAuthenticationColDelete = "a_delete";
+	public static final String RelAuthenticationColUpdate = "a_update";
 	
 }

@@ -81,8 +81,12 @@ public class RequestType {
 	private static final byte requestTypeURLDecoding = 22;
 	// ?json[?version]
 	private static final byte requestTypeExportJSON = 23;
-	
-	
+	//?users
+	private static final byte requestTypeAllUsers = 24;
+	//?security
+	private static final byte requestTypeAuthorization = 25;
+	//?entry_authorization
+	private static final byte requestTypeEntryAuthorization = 26;
 	
 	/*
 	 * Private Variables
@@ -135,6 +139,14 @@ public class RequestType {
 			} else if (parameters.hasParameter(RequestParameter.ParameterCreate)) {
 				//?new[=...]
 				_type = requestTypeCreate;
+				//?all_users
+			} else if (parameters.hasParameter(RequestParameter.ParameterAllUsers)) {
+				_type = requestTypeAllUsers;
+				//?authentication
+			} else if (parameters.hasParameter(RequestParameter.ParameterAuthorization)) {
+				_type = requestTypeAuthorization;
+			} else if (parameters.hasParameter(RequestParameter.ParameterEntryAuthorization)) {
+				_type = requestTypeEntryAuthorization;
 			} else if (parameters.hasParameter(RequestParameter.ParameterCreateSchemaNode)) {
 				//?new_schema_node
 				_type = requestTypeCreateSchemaNode;
@@ -345,6 +357,17 @@ public class RequestType {
 		return (_type == requestTypeURLDecoding);
 	}
 	
+	public boolean isAllUsers() {
+		return (_type == requestTypeAllUsers);
+	}
+	
+	public boolean isAuthorization() {
+		return (_type == requestTypeAuthorization);
+	}
+	
+	public boolean isEntryAuthorization() {
+		return (_type ==requestTypeEntryAuthorization);
+	}
 	public String toString() {
 		return String.valueOf(_type);
 	}

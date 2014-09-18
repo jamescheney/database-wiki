@@ -22,7 +22,7 @@
 package org.dbwiki.web.request.parameter;
 
 
-public class RequestParameterActionUpdate extends RequestParameterAction {
+public class RequestParameterActionUpdateUsers extends RequestParameterAction {
 	/*
 	 * Public Methods
 	 */
@@ -44,15 +44,15 @@ public class RequestParameterActionUpdate extends RequestParameterAction {
 	}
 
 	public boolean actionUpdate() {
-		return true;
+		return false;
 	}
 	
 	public boolean actionUpdateUsers() {
-		return false;
+		return true;
 	}
 
 	public String toURLString() {
-		return RequestParameter.ParameterAction + "=" + RequestParameterAction.ActionUpdate;
+		return RequestParameter.ParameterAction + "=" + RequestParameterAction.ActionUpdateUsers;
 	}
 
 	@Override

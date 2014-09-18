@@ -14,5 +14,5 @@ WIKI_TITLE=Edinburgh Database Wiki
 
 # Database parameters
 RDBMS_TYPE=CLOUDSQL
-JDBC_URL=jdbc:google:mysql://database-wiki-cloudsql:test/guestbook
+JDBC_URL=jdbc:google:mysql://database-wiki-cloudsql:test/test
 JDBC_USER=root

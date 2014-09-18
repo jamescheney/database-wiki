@@ -16,4 +16,4 @@ WIKI_TITLE=Edinburgh Database Wiki
 RDBMS_TYPE=MYSQL
 JDBC_USER=root
 JDBC_PASSWORD=test
-JDBC_URL=jdbc:mysql://173.194.250.42/guestbook
+JDBC_URL=jdbc:mysql://173.194.253.240/test

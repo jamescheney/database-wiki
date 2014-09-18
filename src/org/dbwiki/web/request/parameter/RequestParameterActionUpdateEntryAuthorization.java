@@ -22,7 +22,7 @@
 package org.dbwiki.web.request.parameter;
 
 
-public class RequestParameterActionUpdate extends RequestParameterAction {
+public class RequestParameterActionUpdateEntryAuthorization extends RequestParameterAction {
 	/*
 	 * Public Methods
 	 */
@@ -44,7 +44,7 @@ public class RequestParameterActionUpdate extends RequestParameterAction {
 	}
 
 	public boolean actionUpdate() {
-		return true;
+		return false;
 	}
 	
 	public boolean actionUpdateUsers() {
@@ -52,7 +52,7 @@ public class RequestParameterActionUpdate extends RequestParameterAction {
 	}
 
 	public String toURLString() {
-		return RequestParameter.ParameterAction + "=" + RequestParameterAction.ActionUpdate;
+		return RequestParameter.ParameterAction + "=" + RequestParameterAction.ActionUpdateEntryAuthorization;
 	}
 
 	@Override
@@ -70,7 +70,7 @@ public class RequestParameterActionUpdate extends RequestParameterAction {
 	@Override
 	public boolean actionUpdateEntryAuthorization() {
 		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	@Override

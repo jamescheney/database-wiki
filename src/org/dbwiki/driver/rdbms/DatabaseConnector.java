@@ -38,7 +38,6 @@ import org.dbwiki.data.schema.SchemaNode;
 import org.dbwiki.data.time.Version;
 import org.dbwiki.exception.WikiException;
 import org.dbwiki.exception.WikiFatalException;
-import org.dbwiki.user.RegularUser;
 import org.dbwiki.user.User;
 import org.dbwiki.web.server.WikiServerConstants;
 
@@ -96,6 +95,7 @@ public abstract class DatabaseConnector implements DatabaseConstants, WikiServer
 			createVersionTable(con, dbName);
 			createTimestampTable(con, dbName);
 			createPagesTable(con, dbName);
+			createPolicyTable(con, dbName);
 			createSchemaIndexView(con, dbName);
 			
 			// store the schema, generating a version number and timestamp for the root
@@ -105,7 +105,7 @@ public abstract class DatabaseConnector implements DatabaseConstants, WikiServer
 		}
 	}
 
-	public void createDatabase(Connection con, String dbName, RegularUser user) throws org.dbwiki.exception.WikiException {
+	public void createDatabase(Connection con, String dbName, User user) throws org.dbwiki.exception.WikiException {
 		createDatabase(con, dbName, null, user, null);
 	}
 	
@@ -171,8 +171,20 @@ public abstract class DatabaseConnector implements DatabaseConstants, WikiServer
 					autoIncrementColumn(RelUserColID) + ", " +
 					RelUserColLogin + " varchar(80) NOT NULL UNIQUE, " +
 					RelUserColFullName + " varchar(80) NOT NULL, " +
-					RelUserColPassword + " varchar(80) NOT NULL, " +
+					RelUserColPassword + " varchar(80), " +
+					RelUserColIsAdmin + " boolean NOT NULL DEFAULT true, " +
 					"PRIMARY KEY (" + RelUserColID + "))");
+			
+			stmt.execute("CREATE TABLE " + RelationAuthorization + " (" +
+					RelAuthenticationColDatabaseName + " varchar(16) NOT NULL, " +
+					RelAuthenticationColUserID + " int NOT NULL, " +
+					RelAuthenticationColRead + " boolean NOT NULL DEFAULT true, " +
+					RelAuthenticationColInsert + " boolean NOT NULL DEFAULT true, " +
+					RelAuthenticationColDelete + " boolean NOT NULL DEFAULT true, " +
+					RelAuthenticationColUpdate + " boolean NOT NULL DEFAULT true, " +
+					" PRIMARY KEY (" + RelAuthenticationColDatabaseName + ", " + RelAuthenticationColUserID + ")," + 
+					" FOREIGN KEY (" + RelAuthenticationColDatabaseName + ") REFERENCES " + RelationDatabase + "(" + RelDatabaseColName +")," +
+					" FOREIGN KEY (" + RelAuthenticationColUserID + ") REFERENCES " + RelationUser + "(" + RelUserColID +"))");
 			
 			stmt.close();
 
@@ -181,10 +193,12 @@ public abstract class DatabaseConnector implements DatabaseConstants, WikiServer
 						"INSERT INTO " + RelationUser + "(" +
 						RelUserColLogin + ", " +
 						RelUserColFullName + ", " +
-						RelUserColPassword + ") VALUES(?,?,?)");
-				insert.setString(1,user.login());
-				insert.setString(2,((RegularUser) user).fullName());
-				insert.setString(3,((RegularUser) user).password());
+						RelUserColPassword + ", " +
+						RelUserColIsAdmin + ") VALUES(?,?,?,?)");
+				insert.setString(1, user.login());
+				insert.setString(2, user.fullName());
+				insert.setString(3, user.password());
+				insert.setBoolean(4, user.is_admin());
 				insert.execute();
 			}
 			
@@ -320,7 +334,7 @@ public abstract class DatabaseConnector implements DatabaseConstants, WikiServer
 		// For now we use the number of milliseconds since
 		// 1970/01/01
 		String timestamp = Long.toString(new Date().getTime());
-		int uid = RegularUser.UnknownUserID;
+		int uid = User.UnknownUserID;
 		
 		stmt.execute("INSERT INTO " + relName + "(" +
 				RelPagesColName +", " +
@@ -380,7 +394,7 @@ public abstract class DatabaseConnector implements DatabaseConstants, WikiServer
 				if (user != null) {
 					newNode = newNode + user.id() + ")";
 				} else {
-					newNode = newNode + RegularUser.UnknownUserID + ")";
+					newNode = newNode + User.UnknownUserID + ")";
 				}
 				statement.execute(newNode);
 			}
@@ -446,6 +460,19 @@ public abstract class DatabaseConnector implements DatabaseConstants, WikiServer
 				RelVersionColNode + " int NOT NULL, " +
 				"PRIMARY KEY (" + RelVersionColNumber + "))");
 		
+		stmt.close();
+	}
+	
+	protected void createPolicyTable(Connection con, String dbName) throws java.sql.SQLException {
+		Statement stmt = con.createStatement();
+		stmt.execute("CREATE TABLE " + dbName + RelationPolicy + " (" +
+				RelPolicyEntry + " int NOT NULL, " +
+				RelPolicyUserID + " int NOT NULL, " +
+				RelPolicyRead + " boolean NOT NULL, " +
+				RelPolicyInsert + " boolean NOT NULL, " +
+				RelPolicyDelete + " boolean NOT NULL, " +
+				RelPolicyUpdate + " boolean NOT NULL, " +
+				"PRIMARY KEY (" + RelPolicyEntry + ", " + RelPolicyUserID + "))");
 		stmt.close();
 	}
 	
