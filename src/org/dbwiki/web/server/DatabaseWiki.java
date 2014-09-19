@@ -136,6 +136,7 @@ public abstract class DatabaseWiki implements Comparable<DatabaseWiki> {
 	protected int _autoSchemaChanges;
 	protected Database _database;
 	protected int _id;
+	protected int _owner;
 	protected DatabaseLayouter _layouter = null;
 	protected String _name;
 	//protected WikiServer _server;
@@ -252,6 +253,10 @@ public abstract class DatabaseWiki implements Comparable<DatabaseWiki> {
 	
 	public int id() {
 		return _id;
+	}
+	
+	public int owner() {
+		return _owner;
 	}
 	
 	public DatabaseIdentifier identifier() {

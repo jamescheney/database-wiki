@@ -102,9 +102,7 @@ public class DatabaseWikiEntryAuthorizationPrinter extends HtmlContentPrinter {
 			//
 			printer.openTR();
 			printer.openTD(CSS.CSSFormText);
-			printer.openCENTER();
 			printer.text(entry_value);
-			printer.closeCENTER();
 			printer.closeTD();
 			
 			boolean flag = false;

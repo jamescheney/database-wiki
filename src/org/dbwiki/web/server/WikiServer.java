@@ -650,7 +650,8 @@ public abstract class WikiServer  implements WikiServerConstants {
 		if(rs.next()) uid = rs.getInt(1);
 		rs.close();
 		stmt.close();
-		_users.add(new User(uid, user, user, null, false));
+		int shorten = user.indexOf('@');
+		_users.add(new User(uid, user, (shorten > 0 ? user.substring(0, shorten) : user), null, false));
 		/*for (int iWiki = 0; iWiki < this.size(); iWiki++) {
 			insert = con.prepareStatement("INSERT INTO "
 				+ RelationAuthorization + "("
@@ -673,6 +674,17 @@ public abstract class WikiServer  implements WikiServerConstants {
 		con.close();
 	}
 	
+	public boolean hasTopLevelAuthorization(int uid, String dbwiki) {
+		for(Authorization a : _authorizationListing) {
+			if(a.user_id() == uid && a.database_name().equals(dbwiki)) {
+				if(a.is_read()) {
+					return true;
+				}
+				else break;
+			}
+		}
+		return false;
+	}
 	
 	/*
 	 * Private Methods
@@ -683,9 +695,10 @@ public abstract class WikiServer  implements WikiServerConstants {
 	 */
 	protected ServerResponseHandler getHomepageResponseHandler(HttpRequest request) {
 		ServerResponseHandler responseHandler = new ServerResponseHandler(request, _wikiTitle);
-		responseHandler.put(HtmlContentGenerator.ContentMenu, new ServerMenuPrinter(this));
-		responseHandler.put(HtmlContentGenerator.ContentContent, new DatabaseWikiListingPrinter(this));
-
+		if(request.user() != null) {
+			responseHandler.put(HtmlContentGenerator.ContentMenu, new ServerMenuPrinter(this, request));
+			responseHandler.put(HtmlContentGenerator.ContentContent, new DatabaseWikiListingPrinter(this, request));
+		}
 		return responseHandler;
 	}
 
@@ -1121,8 +1134,10 @@ public abstract class WikiServer  implements WikiServerConstants {
 				first_para=1;
 			}
 		for (int para_index = first_para, user_index = 1; para_index <= request.parameters()
-				.size() - 3; para_index += 4, user_index++) {
+				.size() - 3; para_index += 4) {
 			String wiki_name = wiki.name();
+			String user_param = request.parameters().get(para_index).name();
+			user_index = _users.get(user_param.substring(0, user_param.length() - WikiServer.propertyReadPermission.length())).id();
 			boolean is_read = false;
 			boolean is_insert = false;
 			boolean is_delete = false;
@@ -1478,46 +1493,32 @@ public abstract class WikiServer  implements WikiServerConstants {
 			}
 
 		} else if (request.type().isAuthorization()) {
-			if (request.user() != null && request.user().is_admin()) {
-				DatabaseWiki wiki = getRequestWiki(request, RequestParameter.ParameterAuthorization);
-				responseHandler = new ServerResponseHandler(request, _wikiTitle
-						+ " - Manage Authorization");
-				responseHandler
-						.put(HtmlContentGenerator.ContentContent,
-								new DatabaseWikiAuthorizationPrinter(
-										"Manage Authorization",
-										RequestParameterAction.ActionUpdateAuthorization,
-										new DatabaseWikiProperties(wiki),
-										_users, _authorizationListing));
-			} else {
-				responseHandler = new ServerResponseHandler(request,
-						"Access Denied");
-				responseHandler.put(HtmlContentGenerator.ContentContent,
-						new DatabaseAccessDeniedPrinter());
-			}
+			DatabaseWiki wiki = getRequestWiki(request, RequestParameter.ParameterAuthorization);
+			responseHandler = new ServerResponseHandler(request, _wikiTitle
+					+ " - Manage Authorization");
+			responseHandler
+			.put(HtmlContentGenerator.ContentContent,
+					new DatabaseWikiAuthorizationPrinter(
+							"Manage Authorization",
+							RequestParameterAction.ActionUpdateAuthorization,
+							new DatabaseWikiProperties(wiki),
+							_users, _authorizationListing));
 		} else if (request.getRequestURI().toString().contains(RequestParameter.ParameterEntryAuthorization)) {
-			if (request.user() != null && request.user().is_admin()) {
-				RequestParameter parameter = request.parameters().get(RequestParameter.ParameterEntryAuthorization);
-				int user_id=1;
-				if(parameter.hasValue()){
-					user_id = Integer.parseInt(parameter.value());
-				}
-				String wiki_name = getRequestWiki(request, RequestParameter.ParameterAuthorization).name();
-				Map<Integer,Entry> entryListing = getEntryListing(wiki_name);
-				Map<Integer,Map<Integer,DBPolicy>> policyLising = getDBPolicyListing(wiki_name, user_id);
-				responseHandler = new ServerResponseHandler(request, _wikiTitle
-						+ " - Manage Authorization Mode By Entries");
-				responseHandler
-						.put(HtmlContentGenerator.ContentContent,
-								new DatabaseWikiEntryAuthorizationPrinter(
-										"Manage Authorization Mode By Entries",
-										RequestParameterAction.ActionUpdateEntryAuthorization,_users,wiki_name,user_id,entryListing,policyLising));
-			} else {
-				responseHandler = new ServerResponseHandler(request,
-						"Access Denied");
-				responseHandler.put(HtmlContentGenerator.ContentContent,
-						new DatabaseAccessDeniedPrinter());
+			RequestParameter parameter = request.parameters().get(RequestParameter.ParameterEntryAuthorization);
+			int user_id=1;
+			if(parameter.hasValue()){
+				user_id = Integer.parseInt(parameter.value());
 			}
+			String wiki_name = getRequestWiki(request, RequestParameter.ParameterAuthorization).name();
+			Map<Integer,Entry> entryListing = getEntryListing(wiki_name);
+			Map<Integer,Map<Integer,DBPolicy>> policyLising = getDBPolicyListing(wiki_name, user_id);
+			responseHandler = new ServerResponseHandler(request, _wikiTitle
+					+ " - Manage Authorization Mode By Entries");
+			responseHandler
+			.put(HtmlContentGenerator.ContentContent,
+					new DatabaseWikiEntryAuthorizationPrinter(
+							"Manage Authorization Mode By Entries",
+							RequestParameterAction.ActionUpdateEntryAuthorization,_users,wiki_name,user_id,entryListing,policyLising));
 		} else if (request.type().isAction()) {
 			RequestParameterAction action = RequestParameter.actionParameter(request.parameters().get(RequestParameter.ParameterAction));
 			if (action.actionInsert()) {
@@ -1552,7 +1553,7 @@ public abstract class WikiServer  implements WikiServerConstants {
 		// a call to getHomepageResponseHandler() we rely on the fact that only getHomepageResponseHandler()
 		// adds content handler for Menu and Content.
 		//
-		if (responseHandler.contains(HtmlContentGenerator.ContentMenu) && responseHandler.contains(HtmlContentGenerator.ContentContent)) {
+		if (request.type().isIndex() || (responseHandler.contains(HtmlContentGenerator.ContentMenu) && responseHandler.contains(HtmlContentGenerator.ContentContent))) {
 			template = _homepageTemplate;
 		} else {
 			template = _formTemplate;

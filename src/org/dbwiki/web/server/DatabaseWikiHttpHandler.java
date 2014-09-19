@@ -37,7 +37,7 @@ public class DatabaseWikiHttpHandler extends DatabaseWiki implements
 	 * WikiServer.getWikiListing.
 	 * 
 	 */
-	public DatabaseWikiHttpHandler(int id, String name, String title,
+	public DatabaseWikiHttpHandler(int id, int owner, String name, String title,
 			WikiAuthenticator authenticator, int autoSchemaChanges,
 			ConfigSetting setting, DatabaseConnector connector,
 			WikiServerHttpHandler server)
@@ -45,6 +45,7 @@ public class DatabaseWikiHttpHandler extends DatabaseWiki implements
 		_authenticator = authenticator;
 		_autoSchemaChanges = autoSchemaChanges;
 		_id = id;
+		_owner = owner;
 		_server = server;
 		_name = name;
 		_title = title;
@@ -60,7 +61,7 @@ public class DatabaseWikiHttpHandler extends DatabaseWiki implements
 
 	// HACK: pass in and use an existing connection and version index.
 	// Used only in WikiServer.RegisterDatabase to create a new database.
-	public DatabaseWikiHttpHandler(int id, String name, String title,
+	public DatabaseWikiHttpHandler(int id, int owner, String name, String title,
 			WikiAuthenticator authenticator, int autoSchemaChanges,
 			DatabaseConnector connector, WikiServerHttpHandler server,
 			Connection con, SQLVersionIndex versionIndex)
@@ -68,6 +69,7 @@ public class DatabaseWikiHttpHandler extends DatabaseWiki implements
 		_authenticator = authenticator;
 		_autoSchemaChanges = autoSchemaChanges;
 		_id = id;
+		_owner = owner;
 		_server = server;
 		_name = name;
 		_title = title;

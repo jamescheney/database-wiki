@@ -25,6 +25,8 @@ import org.dbwiki.web.request.Exchange;
 import org.dbwiki.web.request.RequestURL;
 import org.dbwiki.web.request.parameter.RequestParameter;
 import org.dbwiki.web.security.WikiAuthenticator;
+import org.dbwiki.web.server.DatabaseWikiServlet;
+
 import com.sun.net.httpserver.HttpContext;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -34,7 +36,7 @@ public class WikiServerHttpHandler extends WikiServer implements HttpHandler {
 
 
 
-	private Vector<DatabaseWikiHttpHandler> _wikiListing;
+	private static Vector<DatabaseWikiHttpHandler> _wikiListing;
 	protected HttpServer _webServer = null;
 	protected int _port;
 	protected int _threadCount;
@@ -67,6 +69,7 @@ public class WikiServerHttpHandler extends WikiServer implements HttpHandler {
 				"ORDER BY " + RelDatabaseColTitle);
 		while (rs.next()) {
 			int id = rs.getInt(RelDatabaseColID);
+			int owner = rs.getInt(RelDatabaseColUser);
 			String name = rs.getString(RelDatabaseColName);
 			String title = rs.getString(RelDatabaseColTitle);
 			int layoutVersion = rs.getInt(RelDatabaseColLayout);
@@ -80,7 +83,7 @@ public class WikiServerHttpHandler extends WikiServer implements HttpHandler {
 				_users, _authorizationListing, _formTemplate);
 			int autoSchemaChanges = rs.getInt(RelDatabaseColAutoSchemaChanges);
 			ConfigSetting setting = new ConfigSetting(layoutVersion, templateVersion, styleSheetVersion, urlDecodingVersion);
-			_wikiListing.add(new DatabaseWikiHttpHandler(id, name, title, authenticator, autoSchemaChanges, setting, _connector, this));
+			_wikiListing.add(new DatabaseWikiHttpHandler(id, owner, name, title, authenticator, autoSchemaChanges, setting, _connector, this));
 		}
 		rs.close();
 		stmt.close();
@@ -162,7 +165,7 @@ public class WikiServerHttpHandler extends WikiServer implements HttpHandler {
 
 			WikiAuthenticator authenticator = new WikiAuthenticator("/" + name, authenticationMode, 
 				_users, _authorizationListing, _formTemplate);
-			DatabaseWikiHttpHandler wiki = new DatabaseWikiHttpHandler(wikiID, name, title, authenticator, 
+			DatabaseWikiHttpHandler wiki = new DatabaseWikiHttpHandler(wikiID, user.id(), name, title, authenticator, 
 				autoSchemaChanges, _connector, this, con, versionIndex);
 
 			// this should now only be called when starting a web server
@@ -244,9 +247,24 @@ public class WikiServerHttpHandler extends WikiServer implements HttpHandler {
 		}
 	}
 	
+	public static int ownerOfWiki(int id)
+	{
+		for(DatabaseWikiHttpHandler wiki : _wikiListing) {
+			if(id == wiki.id()) {
+				return wiki.owner();
+			}
+		}
+		return -1;
+	}
 	
-
+	public static int ownerOfWiki(String name)
+	{
+		for(DatabaseWikiHttpHandler wiki : _wikiListing) {
+			if(name.equals(wiki.name())) {
+				return wiki.owner();
+			}
+		}
+		return -1;
+	}
 	
-
-			
 }

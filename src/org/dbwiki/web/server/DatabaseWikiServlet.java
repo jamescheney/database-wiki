@@ -37,13 +37,14 @@ public class DatabaseWikiServlet extends DatabaseWiki {
 	 * WikiServer.getWikiListing.
 	 * 
 	 */
-	public DatabaseWikiServlet(int id, String name, String title,
+	public DatabaseWikiServlet(int id, int owner, String name, String title,
 			int autoSchemaChanges, WikiServletAuthenticator authenticator,
 			ConfigSetting setting, DatabaseConnector connector,
 			WikiServerServlet server)
 			throws org.dbwiki.exception.WikiException {
 		_authenticator = authenticator;
 		_id = id;
+		_owner = owner;
 		_server = server;
 		_name = name;
 		_title = title;
@@ -59,7 +60,7 @@ public class DatabaseWikiServlet extends DatabaseWiki {
 
 	// HACK: pass in and use an existing connection and version index.
 	// Used only in WikiServer.RegisterDatabase to create a new database.
-	public DatabaseWikiServlet(int id, String name, String title,
+	public DatabaseWikiServlet(int id, int owner, String name, String title,
 			int autoSchemaChanges, WikiServletAuthenticator authenticator,
 			DatabaseConnector connector, WikiServerServlet server,
 			Connection con, SQLVersionIndex versionIndex)
@@ -67,6 +68,7 @@ public class DatabaseWikiServlet extends DatabaseWiki {
 		_authenticator = authenticator;
 		_autoSchemaChanges = autoSchemaChanges;
 		_id = id;
+		_owner = owner;
 		_server = server;
 		_name = name;
 		_title = title;

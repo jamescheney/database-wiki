@@ -23,6 +23,7 @@ public class DatabaseWikiProperties {
 	
 	private int _authentication;
 	private int _autoSchemaChanges;
+	private int _owner;
 	private String _name;
 	private String _resource;
 	private String _schema;
@@ -82,6 +83,7 @@ public class DatabaseWikiProperties {
 		_schema = wiki.database().schema().printSchemaHTML();
 		_schemaPath = "";
 		_title = wiki.getTitle();
+		_owner = wiki.owner();
 	}
 	
 	public DatabaseWikiProperties() {
@@ -130,5 +132,10 @@ public class DatabaseWikiProperties {
 	
 	public void setSchema(String schema) {
 		_schema = schema;
+	}
+	
+	public int getOwner()
+	{
+		return _owner;
 	}
 }

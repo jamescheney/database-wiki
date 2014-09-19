@@ -79,7 +79,7 @@ public class User {
 					String fullName = tokens.nextToken();
 					String password = tokens.nextToken();
 					String is_admin = tokens.nextToken();
-					users.add(new User(UnknownUserID, login, fullName, password, is_admin.equals("true") ? true : false));
+					users.add(new User(UnknownUserID, login, fullName, password.equals("null") ? null : password, is_admin.equals("true") ? true : false));
 				}
 			}
 			in.close();

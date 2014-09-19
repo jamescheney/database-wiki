@@ -41,6 +41,7 @@ public class DatabaseWikiAuthorizationPrinter extends HtmlContentPrinter {
 	
 	public void print(HtmlLinePrinter printer) throws WikiException {
 		
+		_headline += "\t-\t" + _properties.getTitle();
 		printer.paragraph(_headline, CSS.CSSHeadline);
 
 		printer.openFORM("manageAuthenticationMode", "POST", "/");
@@ -99,13 +100,12 @@ public class DatabaseWikiAuthorizationPrinter extends HtmlContentPrinter {
 			//
 			printer.openTR();
 			printer.openTD(CSS.CSSFormText);
-			printer.text(login);;
+			printer.text(login);
 			printer.closeTD();
 			
 			boolean flag = false;
 			int j = 0;
 			for(j = 0; j<_authorizationListing.size();j++){
-				//String user_login = _authorizationListing.get(j).user_login();
 				int user_id= _authorizationListing.get(j).user_id();
 				String database_name = _authorizationListing.get(j).database_name();
 				if(user_id == id && database_name.equals(_properties.getName())){
@@ -114,7 +114,49 @@ public class DatabaseWikiAuthorizationPrinter extends HtmlContentPrinter {
 				}
 			}
 			
-			if(flag){
+			if(_user_listing.get(i).id() == _properties.getOwner()) {
+				//read permission
+				printer.openTD(CSS.CSSFormControl);
+				printer.text("Yes");
+				printer.closeTD();
+				//insert permission
+				printer.openTD(CSS.CSSFormControl);
+				printer.text("Yes");
+				printer.closeTD();
+				//delete permission
+				printer.openTD(CSS.CSSFormControl);
+				printer.text("Yes");
+				printer.closeTD();
+				//update permission
+				printer.openTD(CSS.CSSFormControl);
+				printer.text("Yes");
+				printer.closeTD();
+				//manage by entry
+				printer.openTD(CSS.CSSFormControl);
+				printer.text("<i>Owner</i>");
+				printer.closeTD();
+			} else if(_user_listing.get(i).is_admin()) {
+				//read permission
+				printer.openTD(CSS.CSSFormControl);
+				printer.text("Yes");
+				printer.closeTD();
+				//insert permission
+				printer.openTD(CSS.CSSFormControl);
+				printer.text("Yes");
+				printer.closeTD();
+				//delete permission
+				printer.openTD(CSS.CSSFormControl);
+				printer.text("Yes");
+				printer.closeTD();
+				//update permission
+				printer.openTD(CSS.CSSFormControl);
+				printer.text("Yes");
+				printer.closeTD();
+				//manage by entry
+				printer.openTD(CSS.CSSFormControl);
+				printer.text("<i>Administrator</i>");
+				printer.closeTD();
+			} else if(flag) {
 				//read permission
 				printer.openTD(CSS.CSSFormControl);
 				printer.addRADIOBUTTON("Yes", login+WikiServer.propertyReadPermission, "HoldPermission", (_authorizationListing.get(j).is_read() == DatabaseWikiProperties.HoldPermission));
@@ -144,7 +186,7 @@ public class DatabaseWikiAuthorizationPrinter extends HtmlContentPrinter {
 				printer.link("?"+RequestParameter.ParameterEntryAuthorization + "=" + id + "&"+ RequestParameter.ParameterAuthorization + "=" + _properties.getName(), ">>>");
 				printer.closeTD();
 				
-			}else{
+			} else {
 				//read permission
 				printer.openTD(CSS.CSSFormControl);
 				printer.addRADIOBUTTON("Yes", login+WikiServer.propertyReadPermission, "HoldPermission", false);
@@ -171,7 +213,7 @@ public class DatabaseWikiAuthorizationPrinter extends HtmlContentPrinter {
 				printer.closeTD();
 				//manage by entry
 				printer.openTD(CSS.CSSFormControl);
-				printer.link("?"+RequestParameter.ParameterEntryAuthorization + "=" + id + "&&" + RequestParameter.ParameterAuthorization + "=" +_properties.getName(), ">>>");
+				printer.link("?"+RequestParameter.ParameterEntryAuthorization + "=" + id + "&" + RequestParameter.ParameterAuthorization + "=" +_properties.getName(), ">>>");
 				printer.closeTD();
 			}
 			

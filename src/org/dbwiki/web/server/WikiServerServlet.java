@@ -46,7 +46,7 @@ import com.google.appengine.api.users.UserServiceFactory;
 
 public class WikiServerServlet extends WikiServer {
 
-	private Vector<DatabaseWikiServlet> _wikiListing;
+	private static Vector<DatabaseWikiServlet> _wikiListing;
 	private WikiServletAuthenticator _authenticator;
 	
 	/*
@@ -77,6 +77,7 @@ public class WikiServerServlet extends WikiServer {
 			int layoutVersion = rs.getInt(RelDatabaseColLayout);
 			int templateVersion = rs.getInt(RelDatabaseColTemplate);
 			int styleSheetVersion = rs.getInt(RelDatabaseColCSS);
+			int owner = rs.getInt(RelDatabaseColUser);
 			int urlDecodingVersion = RelConfigFileColFileVersionValUnknown;
 			if (org.dbwiki.lib.JDBC.hasColumn(rs, RelDatabaseColURLDecoding)) {
 				urlDecodingVersion = rs.getInt(RelDatabaseColURLDecoding);
@@ -84,7 +85,7 @@ public class WikiServerServlet extends WikiServer {
 			int autoSchemaChanges = rs.getInt(RelDatabaseColAutoSchemaChanges);
 			ConfigSetting setting = new ConfigSetting(layoutVersion, templateVersion, styleSheetVersion, urlDecodingVersion);
 			WikiServletAuthenticator authenticator = new WikiServletAuthenticator(rs.getInt(RelDatabaseColAuthentication), "/" + name, _users, _authorizationListing);
-			_wikiListing.add(new DatabaseWikiServlet(id, name, title, autoSchemaChanges, authenticator, setting, _connector, this));
+			_wikiListing.add(new DatabaseWikiServlet(id, owner, name, title, autoSchemaChanges, authenticator, setting, _connector, this));
 		}
 		rs.close();
 		stmt.close();
@@ -148,7 +149,7 @@ public class WikiServerServlet extends WikiServer {
 			wikiID = r.createDatabase(con, versionIndex);
 			con.commit();
 			WikiServletAuthenticator authenticator = new WikiServletAuthenticator(authenticationMode, "/" + name, _users, _authorizationListing);
-			DatabaseWikiServlet wiki = new DatabaseWikiServlet(wikiID, name, title, autoSchemaChanges, authenticator, _connector, this,
+			DatabaseWikiServlet wiki = new DatabaseWikiServlet(wikiID, user.id(), name, title, autoSchemaChanges, authenticator, _connector, this,
 									con, versionIndex);
 			_wikiListing.add(wiki);
 			Collections.sort(_wikiListing);
@@ -233,5 +234,24 @@ public class WikiServerServlet extends WikiServer {
 		}
 	}
 
+	public static int ownerOfWiki(int id)
+	{
+		for(DatabaseWikiServlet wiki : _wikiListing) {
+			if(id == wiki.id()) {
+				return wiki.owner();
+			}
+		}
+		return -1;
+	}
+	
+	public static int ownerOfWiki(String name)
+	{
+		for(DatabaseWikiServlet wiki : _wikiListing) {
+			if(name.equals(wiki.name())) {
+				return wiki.owner();
+			}
+		}
+		return -1;
+	}
 
 }

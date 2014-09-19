@@ -1,16 +1,13 @@
 package org.dbwiki.web.security;
 
-import java.sql.SQLException;
 import java.util.Collections;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.dbwiki.exception.WikiException;
 import org.dbwiki.user.UserListing;
 import org.dbwiki.web.request.parameter.RequestParameter;
 import org.dbwiki.web.server.Authorization;
@@ -18,6 +15,7 @@ import org.dbwiki.web.server.DBPolicy;
 import org.dbwiki.web.server.DatabaseWikiProperties;
 import org.dbwiki.web.server.Entry;
 import org.dbwiki.web.server.WikiServer;
+import org.dbwiki.web.server.WikiServerServlet;
 
 
 
@@ -70,8 +68,10 @@ public class WikiServletAuthenticator {
 			// check if user is administrator
 			if(_users.get(uname).is_admin()) {
 				return true;
+			} else if(isOwner(request)) {
+				return true;
 			} else {
-				Map<Integer, Map<Integer,DBPolicy>> policyListing = new HashMap<Integer, Map<Integer,DBPolicy>>();
+				Map<Integer, Map<Integer,DBPolicy>> policyListing;
 				for(int i = 0; i<_authorizationListing.size(); i++) {
 					int user_id = _authorizationListing.get(i).user_id();
 					String database_name = _authorizationListing.get(i).database_name();
@@ -139,9 +139,54 @@ public class WikiServletAuthenticator {
 		}
 	}
 	
+	/** Allow actions for database owners
+	 * 
+	 * @param request
+	 * @return
+	 */
+	private boolean isOwner(HttpServletRequest request) {
+		int uid = _users.get(request.getUserPrincipal().getName()).id();
+		if(_realm.equals("/") && "GET".equalsIgnoreCase(request.getMethod())) {
+			List<?> parameters = Collections.list((Enumeration<?>)request.getParameterNames());
+			if (parameters != null) {
+				if (parameters.contains(RequestParameter.ParameterCreate)) {
+					return true;
+				} else if (parameters.contains(RequestParameter.ParameterEdit)) {
+					try {
+						int wiki_id = Integer.parseInt(request.getParameter(RequestParameter.ParameterEdit));
+						if(uid == WikiServerServlet.ownerOfWiki(wiki_id))
+						{
+							return true;
+						}
+					} catch (Exception e) {
+						return false;
+					}
+				} else if (parameters.contains(RequestParameter.ParameterReset)) {
+					try {
+						int wiki_id = Integer.parseInt(request.getParameter(RequestParameter.ParameterReset));
+						if(uid == WikiServerServlet.ownerOfWiki(wiki_id))
+						{
+							return true;
+						}
+					} catch (Exception e) {
+						return false;
+					}
+				} else if (parameters.contains(RequestParameter.ParameterAuthorization)) {
+					if(WikiServerServlet.ownerOfWiki(request.getParameter(RequestParameter.ParameterAuthorization)) == uid) {
+						return true;
+					}
+				}
+			}
+		} else if (WikiServerServlet.ownerOfWiki(_realm.substring(1)) == uid) {
+			return true;
+		}
+		return false;
+	}
+	
 	/** Checks whether we have entry-level policies for the specific request 
 	 * 
-	 * @param exchange HttpExchange
+	 * @param listing Map<Integer, Map<Integer,DBPolicy>>
+	 * @param userId int
 	 * @return boolean
 	 */
 	private boolean havePolicies(Map<Integer, Map<Integer,DBPolicy>> listing, int userId) {
@@ -157,7 +202,7 @@ public class WikiServletAuthenticator {
 	
 	/** Checks whether a request accesses a protected resource 
 	 * 
-	 * @param exchange HttpExchange
+	 * @param request HttpServletRequest
 	 * @return boolean
 	 */
 	private boolean isProtectedRequest(HttpServletRequest request) {
@@ -228,10 +273,8 @@ public class WikiServletAuthenticator {
 	
 	/** Checks whether a request is an entry-level request
 	 * 
-	 * @param uri the request uri
+	 * @param request HttpServletRequest
 	 * @return boolean
-	 * @throws SQLException
-	 * @throws WikiException
 	 */
 	private boolean isEntryLevelRequest(HttpServletRequest request) {
 		String uri = request.getRequestURI();

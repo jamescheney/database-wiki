@@ -24,6 +24,7 @@ package org.dbwiki.web.ui.printer.server;
 
 import org.dbwiki.exception.WikiException;
 import org.dbwiki.web.html.HtmlLinePrinter;
+import org.dbwiki.web.request.HttpRequest;
 import org.dbwiki.web.server.DatabaseWiki;
 import org.dbwiki.web.server.WikiServer;
 import org.dbwiki.web.ui.CSS;
@@ -39,17 +40,16 @@ public class DatabaseWikiListingPrinter extends HtmlContentPrinter {
 	 * Private Variables
 	 */
 	
-	//private List<DatabaseWikiProperties> _wikilist;
 	private WikiServer _server;
-	
+	private HttpRequest _request;
 	
 	/*
 	 * Constructors
 	 */
 	
-	public DatabaseWikiListingPrinter(WikiServer server) {
+	public DatabaseWikiListingPrinter(WikiServer server, HttpRequest request) {
 		_server = server;
-		
+		_request = request;
 	}
 	
 	
@@ -63,11 +63,21 @@ public class DatabaseWikiListingPrinter extends HtmlContentPrinter {
 		
 		for (int iWiki = 0; iWiki < _server.size(); iWiki++) {
 			DatabaseWiki wiki = _server.get(iWiki);
-			printer.listITEM(wiki.database().identifier().databaseHomepage(), wiki.getTitle(), CSS.CSSDatabase);
+			if(_request.user() != null) {
+				if(hasPermission(wiki)) {
+					printer.listITEM(wiki.database().identifier().databaseHomepage(), wiki.getTitle(), CSS.CSSDatabase);
+				}
+			}
 		}
 		
-		
-		
 		printer.closeLIST();
+	}
+	
+	public boolean hasPermission(DatabaseWiki wiki) {
+		int uid = _request.user().id();
+		if(_server.hasTopLevelAuthorization(uid, wiki.name()) || wiki.owner() == uid || _request.user().is_admin()) {
+			return true;
+		}
+		return false;
 	}
 }

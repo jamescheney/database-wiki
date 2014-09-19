@@ -29,9 +29,14 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.sql.SQLException;
+import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Vector;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.dbwiki.exception.WikiException;
 import org.dbwiki.exception.WikiFatalException;
@@ -48,6 +53,7 @@ import org.dbwiki.web.server.Entry;
 import org.dbwiki.web.server.HtmlSender;
 import org.dbwiki.web.server.HttpExchangeWrapper;
 import org.dbwiki.web.server.WikiServer;
+import org.dbwiki.web.server.WikiServerHttpHandler;
 import org.dbwiki.web.ui.HtmlContentGenerator;
 import org.dbwiki.web.ui.HtmlTemplateDecorator;
 import org.dbwiki.web.ui.ServerResponseHandler;
@@ -166,7 +172,9 @@ public class WikiAuthenticator extends Authenticator {
 				if (checkCredentials(uname, pass)) {
 					if(isAdmin){
 						return new Authenticator.Success(new HttpPrincipal(uname, _realm));
-					}else{
+					} else if(isOwner(uname, exchange)) {
+						return new Authenticator.Success(new HttpPrincipal(uname, _realm));
+					} else {
 						if(exchange.getRequestURI().getPath().equals(WikiServer.SpecialFolderLogin)){
 							return new Authenticator.Success(new HttpPrincipal(uname, _realm));
 						}
@@ -322,13 +330,63 @@ public class WikiAuthenticator extends Authenticator {
 	private boolean checkCredentials(String username, String password) {
 		if (!_users.isEmpty()) {
 			if (_users.contains(username)) {
-				return _users.get(username).password().equals(password);
-			} else {
-				return false;
+				if (_users.get(username).password() != null) {
+					return _users.get(username).password().equals(password);
+				}
 			}
+			return false;
 		} else {
 			return true;
 		}
+	}
+	
+	/** Allow actions for database owners
+	 * 
+	 * @param request
+	 * @return
+	 */
+	private boolean isOwner(String user, HttpExchange exchange) {
+		int uid = _users.get(user).id();
+		if(_realm.equals("/") && exchange.getRequestMethod().equalsIgnoreCase("GET")) {
+			RequestParameterList parameters = null;
+			try {
+				parameters = new RequestParameterList(exchange.getRequestURI().getRawQuery());
+			} catch (WikiFatalException e) {
+				return true;
+			} 
+			if (parameters != null) {
+				if (parameters.hasParameter(RequestParameter.ParameterCreate)) {
+					return true;
+				} else if (parameters.hasParameter(RequestParameter.ParameterEdit)) {
+					try {
+						int wiki_id = Integer.parseInt(parameters.get(RequestParameter.ParameterEdit).value());
+						if(uid == WikiServerHttpHandler.ownerOfWiki(wiki_id))
+						{
+							return true;
+						}
+					} catch (Exception e) {
+						return false;
+					}
+				} else if (parameters.hasParameter(RequestParameter.ParameterReset)) {
+					try {
+						int wiki_id = Integer.parseInt(parameters.get(RequestParameter.ParameterReset).value());
+						if(uid == WikiServerHttpHandler.ownerOfWiki(wiki_id))
+						{
+							return true;
+						}
+					} catch (Exception e) {
+						return false;
+					}
+				} else if (parameters.hasParameter(RequestParameter.ParameterAuthorization)) {
+					if(WikiServerHttpHandler.ownerOfWiki(parameters.get(RequestParameter.ParameterAuthorization).value()) == uid) {
+						return true;
+					}
+				}
+			}
+		} else if (WikiServerHttpHandler.ownerOfWiki(_realm.substring(1)) == uid) {
+			return true;
+		}
+		return false;
 	}
 	
 	/** Checks whether we have entry-level policies for the specific request 
