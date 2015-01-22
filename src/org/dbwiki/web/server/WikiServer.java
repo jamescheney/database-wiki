@@ -327,6 +327,7 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 					.getBoolean(RelAuthenticationColDelete), rs
 					.getBoolean(RelAuthenticationColUpdate)));
 		}
+		
 		rs.close();
 		stmt.close();
 
@@ -411,6 +412,28 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 		rs.close();
 		stmt.close();
 		return entryListing;
+	}
+	
+	/**
+	 * Get the entry id of a data node
+	 * @param id the id of the data node
+	 * @param wiki_name the unique short name of a wiki
+	 * @return entry Id
+	 * @throws WikiException
+	 * @throws SQLException
+	 */
+	public static int getEntry(int id, String wiki_name) throws WikiException, SQLException{
+		Connection con = _connector.getConnection();
+		con.setAutoCommit(false);
+		Statement stmt = con.createStatement();
+		int entryId = 0;
+		ResultSet rs = stmt.executeQuery("SELECT "+ DatabaseConstants.RelDataColEntry +
+				" FROM " + wiki_name + DatabaseConstants.RelationData +
+				" WHERE " + DatabaseConstants.RelDataColID + " = " + id);
+		while(rs.next()){
+				entryId = rs.getInt(DatabaseConstants.RelDataColEntry);
+		}
+		return entryId;
 	}
 
 	/**
@@ -1479,7 +1502,7 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 		
 		con.commit();
 		getAuthorizationListing(con);
-		getWikiListing(con);
+		//getWikiListing(con);
 		wiki.authenticator().updateAuthorizationListing(_authorizationListing);
 		con.close();
 		

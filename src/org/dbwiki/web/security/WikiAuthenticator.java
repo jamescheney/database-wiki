@@ -174,7 +174,6 @@ public class WikiAuthenticator extends Authenticator {
 									//insert request
 									if(isInsertRequest == true && isInsert == true){
 										if(isEntryLevelRequest==true){
-											System.out.print("wikiauthenticator "+database_name);
 											policyListing = WikiServer.getDBPolicyListing(database_name, user_id);
 											if(policyListing.get(user_id).get(entryId).isInsert()==true){
 												return new Authenticator.Success(new HttpPrincipal(uname, _realm));
@@ -206,14 +205,18 @@ public class WikiAuthenticator extends Authenticator {
 									}else if(isUpdateRequest == true && isUpdate == true){
 										if(isEntryLevelRequest==true){
 											policyListing = WikiServer.getDBPolicyListing(database_name, user_id);
-											if(policyListing.get(user_id).get(entryId).isUpdate()==true){
+											Map<Integer, DBPolicy> map = policyListing.get(user_id);
+											DBPolicy policy = map.get(entryId);
+											if(policy.isUpdate()==true){
 												return new Authenticator.Success(new HttpPrincipal(uname, _realm));
 											}else{
-												try {
-													HtmlSender.send(new NoAccessPermissionPage(), exchange);
-												} catch (IOException e) {
-													e.printStackTrace();
-												}
+												
+													try {
+														HtmlSender.send(new NoAccessPermissionPage(), exchange);
+													} catch (IOException e) {
+														e.printStackTrace();
+													}
+												
 											}
 										}
 										return new Authenticator.Success(new HttpPrincipal(uname, _realm));
@@ -345,13 +348,20 @@ public class WikiAuthenticator extends Authenticator {
 					System.out.println("database-level request");
 					return false;
 				} else {
-					System.out.println("entry-level request");
-					this.entryId = Integer.parseInt(items[2].split("\\?")[0],16);
+					Map<Integer, Entry> entryListing = WikiServer.getEntryListing(_realm.substring(1));
+					int id = Integer.parseInt(items[2].split("\\?")[0],16);
+					int entry = WikiServer.getEntry(id, items[1]);
+					if(entryListing.get(entry)!=null){
+						System.out.println("entry-level request");
+						this.entryId = entry;
+						return true;
+					}
 					return true;
 				}
 			}else{
 				Map<Integer, Entry> entryListing = WikiServer.getEntryListing(_realm.substring(1));
-				int entry = Integer.parseInt(items[2],16);
+				int id = Integer.parseInt(items[2],16);
+				int entry = WikiServer.getEntry(id, items[1]);
 				if(entryListing.get(entry)!=null){
 					System.out.println("entry-level request");
 					this.entryId = entry;
@@ -468,7 +478,7 @@ public class WikiAuthenticator extends Authenticator {
 	}
 
 
-	public void updateAuthorizationListing(Vector<Authorization> authorizationListing) {
+	public synchronized void updateAuthorizationListing(Vector<Authorization> authorizationListing) {
 		this._authorizationListing = authorizationListing;
 	}
 }
