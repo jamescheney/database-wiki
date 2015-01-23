@@ -1,7 +1,7 @@
 /* 
     BEGIN LICENSE BLOCK
-    Copyright 2010-2011, Heiko Mueller, Sam Lindley, James Cheney and
-    University of Edinburgh
+    Copyright 2010-2014, Heiko Mueller, Sam Lindley, James Cheney, 
+    Ondrej Cierny, Mingjun Han, and University of Edinburgh
 
     This file is part of Database Wiki.
 
@@ -41,7 +41,6 @@ import org.dbwiki.web.server.WikiServerServlet;
 public class ServletInterface extends HttpServlet {
 	
 	private WikiServerServlet _server;
-	
 	/*
 	 * Public Methods
 	 */

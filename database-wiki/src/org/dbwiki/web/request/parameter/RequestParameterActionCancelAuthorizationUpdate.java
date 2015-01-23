@@ -1,6 +1,7 @@
-/* 
+/*
     BEGIN LICENSE BLOCK
-    Copyright 2010-2011, Heiko Mueller, Sam Lindley, James Cheney and
+    Copyright 2010-2014, Heiko Mueller, Sam Lindley, James Cheney, 
+    Ondrej Cierny, Mingjun Han, and
     University of Edinburgh
 
     This file is part of Database Wiki.
@@ -22,7 +23,7 @@
 package org.dbwiki.web.request.parameter;
 
 
-public class RequestParameterActionUpdate extends RequestParameterAction {
+public class RequestParameterActionCancelAuthorizationUpdate extends RequestParameterAction {
 	/*
 	 * Public Methods
 	 */
@@ -44,7 +45,7 @@ public class RequestParameterActionUpdate extends RequestParameterAction {
 	}
 
 	public boolean actionUpdate() {
-		return true;
+		return false;
 	}
 	
 	public boolean actionUpdateUsers() {
@@ -52,7 +53,7 @@ public class RequestParameterActionUpdate extends RequestParameterAction {
 	}
 
 	public String toURLString() {
-		return RequestParameter.ParameterAction + "=" + RequestParameterAction.ActionUpdate;
+		return RequestParameter.ParameterAction + "=" + RequestParameterAction.ActionCancelAuthorizationUpdate;
 	}
 
 	@Override
@@ -64,7 +65,7 @@ public class RequestParameterActionUpdate extends RequestParameterAction {
 	@Override
 	public boolean actionCancelAuthorizationUpdate() {
 		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	@Override

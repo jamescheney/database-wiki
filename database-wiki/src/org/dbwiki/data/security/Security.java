@@ -33,8 +33,9 @@ import java.io.File;
  * whether an operation is allowed.  Checks are based on matching URLs to policy rules,
  * which no longer works in the current DBWiki system.
  * @author jcheney
- *
+ * TODO: #security This is outdated; replace with current security system * 
  */
+@Deprecated
 public class Security {
 	private Policy policy = new Policy();
 

@@ -27,12 +27,14 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.StringWriter;
-
 import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 
+
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.Properties;
@@ -44,11 +46,9 @@ import org.dbwiki.data.database.DatabaseElementNode;
 import org.dbwiki.data.database.DatabaseTextNode;
 import org.dbwiki.data.database.NodeUpdate;
 import org.dbwiki.data.database.Update;
-
 import org.dbwiki.data.document.DocumentAttributeNode;
 import org.dbwiki.data.document.DocumentGroupNode;
 import org.dbwiki.data.document.DocumentNode;
-
 import org.dbwiki.data.index.DatabaseContent;
 import org.dbwiki.data.io.CopyPasteInputHandler;
 import org.dbwiki.data.io.CopyPasteNodeWriter;
@@ -56,23 +56,21 @@ import org.dbwiki.data.io.ExportJSONNodeWriter;
 import org.dbwiki.data.io.ExportNodeWriter;
 import org.dbwiki.data.io.NodeWriter;
 import org.dbwiki.data.io.SAXCallbackInputHandler;
-
 import org.dbwiki.data.resource.DatabaseIdentifier;
 import org.dbwiki.data.resource.PageIdentifier;
 import org.dbwiki.data.schema.AttributeSchemaNode;
 import org.dbwiki.data.schema.SchemaNode;
 import org.dbwiki.data.schema.GroupSchemaNode;
-
 import org.dbwiki.data.wiki.Wiki;
+
 import org.dbwiki.exception.WikiFatalException;
-
 import org.dbwiki.exception.web.WikiRequestException;
-
 import org.dbwiki.user.UserListing;
-
 import org.dbwiki.web.html.HtmlPage;
 import org.dbwiki.web.html.RedirectPage;
+
 import org.dbwiki.web.request.Exchange;
+
 import org.dbwiki.web.request.HttpRequest;
 import org.dbwiki.web.request.URLDecodingRules;
 import org.dbwiki.web.request.WikiDataRequest;
@@ -84,10 +82,10 @@ import org.dbwiki.web.request.parameter.RequestParameterAction;
 import org.dbwiki.web.request.parameter.RequestParameterActionCancel;
 import org.dbwiki.web.request.parameter.RequestParameterVersion;
 import org.dbwiki.web.request.parameter.RequestParameterVersionSingle;
+
 import org.dbwiki.web.ui.DatabaseWikiContentGenerator;
 import org.dbwiki.web.ui.HtmlTemplateDecorator;
 import org.dbwiki.web.ui.layout.DatabaseLayouter;
-
 import org.dbwiki.web.ui.printer.CSSLinePrinter;
 import org.dbwiki.web.ui.printer.FileEditor;
 import org.dbwiki.web.ui.printer.LayoutEditor;
@@ -112,7 +110,9 @@ import org.dbwiki.web.ui.printer.page.PageContentPrinter;
 import org.dbwiki.web.ui.printer.page.PageHistoryPrinter;
 import org.dbwiki.web.ui.printer.page.PageMenuPrinter;
 import org.dbwiki.web.ui.printer.page.PageUpdateFormPrinter;
+
 import org.dbwiki.web.ui.printer.schema.SchemaMenuPrinter;
+
 import org.dbwiki.web.ui.printer.schema.SchemaNodePrinter;
 import org.dbwiki.web.ui.printer.schema.SchemaPathPrinter;
 import org.dbwiki.web.server.DatabaseWikiProperties;
@@ -156,6 +156,7 @@ public abstract class DatabaseWiki implements Comparable<DatabaseWiki> {
 	private int _layoutVersion;
 	private int _urlDecodingVersion;
 	private URLDecodingRules _urlDecoder;
+	// needed?  private Map<Integer,Entry> entryListing;
 	
 	/*
 	 * Constructors
@@ -326,6 +327,7 @@ public abstract class DatabaseWiki implements Comparable<DatabaseWiki> {
 	}
 	
 
+	public abstract void updateAuthorizationListing(Vector<Authorization> authorizationListing);
 	
 	/*
 	 * Private Methods
@@ -557,6 +559,7 @@ public abstract class DatabaseWiki implements Comparable<DatabaseWiki> {
 	 * @param request
 	 * @throws java.io.IOException
 	 * @throws org.dbwiki.exception.WikiException
+	 * @throws SQLException 
 	 */
 	protected void respondToDataRequest(WikiDataRequest request, 
 			Exchange<?> exchange) throws java.io.IOException,
@@ -724,67 +727,27 @@ public abstract class DatabaseWiki implements Comparable<DatabaseWiki> {
 		if (page == null) {
 			DatabaseWikiContentGenerator contentGenerator = new DatabaseWikiContentGenerator(
 					request, this.getTitle(), this.cssLinePrinter());
-			if ((isGetRequest) || (request.type().isCopy())) {// This is the
-																// default case
-																// where no
-																// action has
-																// been
-																// performed and
-																// no special
-																// content is
-																// requested
-				contentGenerator.put(
-						DatabaseWikiContentGenerator.ContentTimemachine,
-						new TimemachinePrinter(request));
-				contentGenerator.put(DatabaseWikiContentGenerator.ContentMenu,
-						new DataMenuPrinter(request, _layouter));
-				contentGenerator.put(
-						DatabaseWikiContentGenerator.ContentObjectLink,
-						new NodePathPrinter(request, _layouter));
-				contentGenerator.put(
-						DatabaseWikiContentGenerator.ContentAnnotation,
-						new ObjectAnnotationPrinter(request));
-				// contentGenerator.put(DatabaseWikiContentGenerator.ContentProvenance,
-				// new VersionIndexPrinter(request));
-				contentGenerator.put(
-						DatabaseWikiContentGenerator.ContentProvenance,
-						new ObjectProvenancePrinter(request, _layouter));
-				contentGenerator.put(
-						DatabaseWikiContentGenerator.ContentContent,
-						new DataNodePrinter(request, _layouter));
-			} else if (isIndexRequest) { // The case for the root of the
-											// DatabaseWiki
-				contentGenerator.put(
-						DatabaseWikiContentGenerator.ContentTimemachine,
-						new TimemachinePrinter(request));
-				contentGenerator.put(DatabaseWikiContentGenerator.ContentMenu,
-						new DataMenuPrinter(request, _layouter));
-				// TODO: This could be simplified by storing the mapping in a
-				// Map<String,IndexContentPrinter>
-				if (DatabaseLayouter.IndexAZMultiPage.equals(_layouter
-						.indexType())) {
-					contentGenerator.put(
-							DatabaseWikiContentGenerator.ContentContent,
-							new AZMultiPageIndexPrinter(request, database()
-									.content()));
-				} else if (DatabaseLayouter.IndexAZSinglePage.equals(_layouter
-						.indexType())) {
-					contentGenerator.put(
-							DatabaseWikiContentGenerator.ContentContent,
-							new AZSinglePageIndexPrinter(request, database()
-									.content()));
-				} else if (DatabaseLayouter.IndexMultiColumn.equals(_layouter
-						.indexType())) {
-					contentGenerator.put(
-							DatabaseWikiContentGenerator.ContentContent,
-							new MultiColumnIndexPrinter(request, database()
-									.content()));
-				} else if (DatabaseLayouter.IndexPartialList.equals(_layouter
-						.indexType())) {
-					contentGenerator.put(
-							DatabaseWikiContentGenerator.ContentContent,
-							new PartialIndexPrinter(request, database()
-									.content()));
+			if ((isGetRequest) || (request.type().isCopy())) {// This is the default case where no action has been performed and no special content is requested
+
+				contentGenerator.put(DatabaseWikiContentGenerator.ContentTimemachine, new TimemachinePrinter(request));
+				contentGenerator.put(DatabaseWikiContentGenerator.ContentMenu, new DataMenuPrinter(request, _layouter));
+				contentGenerator.put(DatabaseWikiContentGenerator.ContentObjectLink, new NodePathPrinter(request, _layouter));
+				contentGenerator.put(DatabaseWikiContentGenerator.ContentAnnotation, new ObjectAnnotationPrinter(request));
+				//contentGenerator.put(DatabaseWikiContentGenerator.ContentProvenance, new VersionIndexPrinter(request));
+				contentGenerator.put(DatabaseWikiContentGenerator.ContentProvenance, new ObjectProvenancePrinter(request, _layouter));
+				contentGenerator.put(DatabaseWikiContentGenerator.ContentContent, new DataNodePrinter(request, _layouter));
+			} else if (isIndexRequest) { // The case for the root of the DatabaseWiki
+				contentGenerator.put(DatabaseWikiContentGenerator.ContentTimemachine, new TimemachinePrinter(request));
+				contentGenerator.put(DatabaseWikiContentGenerator.ContentMenu, new DataMenuPrinter(request, _layouter));
+				// TODO: This could be simplified by storing the mapping in a Map<String,IndexContentPrinter>
+				if (DatabaseLayouter.IndexAZMultiPage.equals(_layouter.indexType())) {
+					contentGenerator.put(DatabaseWikiContentGenerator.ContentContent, new AZMultiPageIndexPrinter(request, database().content()));
+				} else if (DatabaseLayouter.IndexAZSinglePage.equals(_layouter.indexType())) {
+					contentGenerator.put(DatabaseWikiContentGenerator.ContentContent, new AZSinglePageIndexPrinter(request, database().content()));
+				} else if (DatabaseLayouter.IndexMultiColumn.equals(_layouter.indexType())) {
+					contentGenerator.put(DatabaseWikiContentGenerator.ContentContent, new MultiColumnIndexPrinter(request, database().content()));
+				} else if (DatabaseLayouter.IndexPartialList.equals(_layouter.indexType())) {
+					contentGenerator.put(DatabaseWikiContentGenerator.ContentContent, new PartialIndexPrinter(request, database().content()));
 				} else {
 					contentGenerator
 							.put(DatabaseWikiContentGenerator.ContentContent,
@@ -801,38 +764,18 @@ public abstract class DatabaseWiki implements Comparable<DatabaseWiki> {
 				} else {
 					content = database().content();
 				}
-				contentGenerator.put(
-						DatabaseWikiContentGenerator.ContentTimemachine,
-						new TimemachinePrinter(request));
-				contentGenerator.put(DatabaseWikiContentGenerator.ContentMenu,
-						new DataMenuPrinter(request, _layouter));
-				contentGenerator.put(
-						DatabaseWikiContentGenerator.ContentContent,
-						new SearchResultPrinter(request, content));
-			} else if ((request.type().isCreate()) || (request.type().isEdit())) { // The
-																					// case
-																					// for
-																					// a
-																					// create
-																					// or
-																					// edit
-																					// request
-				contentGenerator.put(
-						DatabaseWikiContentGenerator.ContentObjectLink,
-						new NodePathPrinter(request, _layouter));
-				contentGenerator.put(
-						DatabaseWikiContentGenerator.ContentContent,
-						new DataUpdateFormPrinter(request, _layouter));
-			} else if (request.type().isCreateSchemaNode()) { // Creating a new
-																// schema node.
-				contentGenerator.put(
-						DatabaseWikiContentGenerator.ContentObjectLink,
-						new NodePathPrinter(request, _layouter));
-				contentGenerator.put(
-						DatabaseWikiContentGenerator.ContentContent,
-						new CreateSchemaNodeFormPrinter(request));
-			} else if ((request.type().isTimemachineChanges())
-					|| ((request.type().isTimemachinePrevious()))) {
+
+				contentGenerator.put(DatabaseWikiContentGenerator.ContentTimemachine, new TimemachinePrinter(request));
+				contentGenerator.put(DatabaseWikiContentGenerator.ContentMenu, new DataMenuPrinter(request, _layouter));
+				contentGenerator.put(DatabaseWikiContentGenerator.ContentContent, new SearchResultPrinter(request, content));
+			} else if ((request.type().isCreate()) || (request.type().isEdit())) { // The case for a create or edit request
+				
+				contentGenerator.put(DatabaseWikiContentGenerator.ContentObjectLink, new NodePathPrinter(request, _layouter));
+				contentGenerator.put(DatabaseWikiContentGenerator.ContentContent, new DataUpdateFormPrinter(request, _layouter));
+			} else if (request.type().isCreateSchemaNode()) { // Creating a new schema node.
+				contentGenerator.put(DatabaseWikiContentGenerator.ContentObjectLink, new NodePathPrinter(request, _layouter));
+				contentGenerator.put(DatabaseWikiContentGenerator.ContentContent, new CreateSchemaNodeFormPrinter(request));
+			} else if ((request.type().isTimemachineChanges()) || ((request.type().isTimemachinePrevious()))) {
 				if (request.node() != null) { // Showing version index
 					contentGenerator.put(
 							DatabaseWikiContentGenerator.ContentObjectLink,
@@ -1212,6 +1155,8 @@ public abstract class DatabaseWiki implements Comparable<DatabaseWiki> {
 			_urlDecodingVersion = server().updateConfigFile(wikiID, fileType, value, request.user());
 		}
 	}
+	
+
 	
 
 }

@@ -36,7 +36,9 @@ import org.w3c.dom.NodeList;
  * A policy contains a default semantics, conflict resolution and a list of rules
  * This class contains a policy and checks whether a user's URL request matches the policy.
  * @author Tom
+ * TODO: #security This is outdated; replace with current security system
  */
+@Deprecated
 public class Policy   
 {   
 	

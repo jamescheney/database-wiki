@@ -14,6 +14,7 @@ import com.sun.net.httpserver.Headers;
  *
  */
 @SuppressWarnings("restriction") 
+@Deprecated
 public class HtmlSender {
 	public static void send(HtmlPage page, HttpExchange exchange) throws java.io.IOException {
 		send(page, exchange, HttpURLConnection.HTTP_OK);

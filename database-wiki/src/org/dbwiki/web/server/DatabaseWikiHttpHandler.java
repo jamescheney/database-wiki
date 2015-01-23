@@ -1,9 +1,33 @@
+/*
+    BEGIN LICENSE BLOCK
+    Copyright 2010-2014, Heiko Mueller, Sam Lindley, James Cheney, 
+    Ondrej Cierny, Mingjun Han, and
+    University of Edinburgh
+
+    This file is part of Database Wiki.
+
+    Database Wiki is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Database Wiki is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Database Wiki.  If not, see <http://www.gnu.org/licenses/>.
+    END LICENSE BLOCK
+*/
+
 package org.dbwiki.web.server;
 
 import java.net.URLEncoder;
 import java.sql.Connection;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Vector;
 
 import org.dbwiki.data.annotation.Annotation;
 import org.dbwiki.data.database.DatabaseElementNode;
@@ -66,6 +90,7 @@ import com.sun.net.httpserver.HttpHandler;
  * @author jcheney
  * 
  */
+@SuppressWarnings("unused")
 public class DatabaseWikiHttpHandler extends DatabaseWiki implements
 		HttpHandler {
 
@@ -197,6 +222,12 @@ public class DatabaseWikiHttpHandler extends DatabaseWiki implements
 	@Override
 	public WikiServer server() {
 		return _server;
+	}
+
+	@Override
+	public void updateAuthorizationListing(
+			Vector<Authorization> authorizationListing) {
+		_authenticator.updateAuthorizationListing(authorizationListing);
 	}
 
 }

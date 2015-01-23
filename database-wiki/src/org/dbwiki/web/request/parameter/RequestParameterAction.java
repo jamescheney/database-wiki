@@ -1,6 +1,7 @@
-/* 
+/*
     BEGIN LICENSE BLOCK
-    Copyright 2010-2011, Heiko Mueller, Sam Lindley, James Cheney and
+    Copyright 2010-2014, Heiko Mueller, Sam Lindley, James Cheney, 
+    Ondrej Cierny, Mingjun Han, and
     University of Edinburgh
 
     This file is part of Database Wiki.
@@ -27,12 +28,16 @@ public abstract class RequestParameterAction {
 	 * Public Constants
 	 */
 	
-	public static final String ActionAnnotate   = "annotate";
-	public static final String ActionCancel     = "cancel";
-	public static final String ActionSchemaNode = "schema_node";
-	public static final String ActionInsert     = "insert";
-	public static final String ActionUpdate     = "update";
-	
+	public static final String ActionAnnotate    = "annotate";
+	public static final String ActionCancel      = "cancel";
+	public static final String ActionSchemaNode  = "schema_node";
+	public static final String ActionInsert      = "insert";
+	public static final String ActionUpdate      = "update";
+	public static final String ActionUpdateUsers = "update_users";
+	public static final String ActionUpdateAuthorization = "update_authorization";
+	public static final String ActionCancelAuthorizationUpdate = "cancel_authorization_update";
+	public static final String ActionUpdateEntryAuthorization = "update_entry_authorization";
+	public static final String ActionCancelEntryAuthorizationUpdate = "cancel_entry_authorization_update";
 	
 	/*
 	 * Abstract Methods
@@ -43,4 +48,9 @@ public abstract class RequestParameterAction {
 	public abstract boolean actionSchemaNode();
 	public abstract boolean actionInsert();
 	public abstract boolean actionUpdate();
+	public abstract boolean actionUpdateUsers();
+	public abstract boolean actionUpdateAuthorization();
+	public abstract boolean actionCancelAuthorizationUpdate();
+	public abstract boolean actionUpdateEntryAuthorization();
+	public abstract boolean actionCancelEntryAuthorizationUpdate();
 }

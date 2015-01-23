@@ -1,6 +1,7 @@
-/* 
+/*
     BEGIN LICENSE BLOCK
-    Copyright 2010-2011, Heiko Mueller, Sam Lindley, James Cheney and
+    Copyright 2010-2014, Heiko Mueller, Sam Lindley, James Cheney, 
+    Ondrej Cierny, Mingjun Han, and
     University of Edinburgh
 
     This file is part of Database Wiki.
@@ -46,8 +47,36 @@ public class RequestParameterActionInsert extends RequestParameterAction {
 	public boolean actionUpdate() {
 		return false;
 	}
+	
+	public boolean actionUpdateUsers() {
+		return false;
+	}
 
 	public String toURLString() {
 		return RequestParameter.ParameterAction + "=" + RequestParameterAction.ActionInsert;
+	}
+
+	@Override
+	public boolean actionUpdateAuthorization() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean actionCancelAuthorizationUpdate() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean actionUpdateEntryAuthorization() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean actionCancelEntryAuthorizationUpdate() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

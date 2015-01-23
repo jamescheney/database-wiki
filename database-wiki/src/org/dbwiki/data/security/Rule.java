@@ -30,7 +30,8 @@ import java.util.regex.*;
  * A Rule is a struct containing an id, user, path, action and sign (positive or negative).
  * This information grants or denies user the right to perform action to data located at path.
  * @author Tom
- */
+ * TODO: #security This is outdated; replace with current security system */
+@Deprecated
 public class Rule {
 	private String id;
 	private String user;

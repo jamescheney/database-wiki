@@ -1,5 +1,30 @@
+/*
+    BEGIN LICENSE BLOCK
+    Copyright 2010-2014, Heiko Mueller, Sam Lindley, James Cheney, 
+    Ondrej Cierny, Mingjun Han, and
+    University of Edinburgh
+
+    This file is part of Database Wiki.
+
+    Database Wiki is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Database Wiki is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Database Wiki.  If not, see <http://www.gnu.org/licenses/>.
+    END LICENSE BLOCK
+*/
+
 package org.dbwiki.web.server;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.Connection;
@@ -24,9 +49,14 @@ import org.dbwiki.user.User;
 import org.dbwiki.web.html.FatalExceptionPage;
 import org.dbwiki.web.html.RedirectPage;
 import org.dbwiki.web.request.Exchange;
+import org.dbwiki.web.request.HttpRequest;
 import org.dbwiki.web.request.RequestURL;
 import org.dbwiki.web.request.parameter.RequestParameter;
 import org.dbwiki.web.security.WikiServletAuthenticator;
+import org.dbwiki.web.ui.HtmlContentGenerator;
+import org.dbwiki.web.ui.HtmlTemplateDecorator;
+import org.dbwiki.web.ui.ServerResponseHandler;
+import org.dbwiki.web.ui.printer.server.DatabaseAccessDeniedPrinter;
 
 /**
  * Root WikiServer class with a servlet interface
@@ -46,7 +76,7 @@ public class WikiServerServlet extends WikiServer {
 	
 	public WikiServerServlet(String prefix, Properties properties) throws org.dbwiki.exception.WikiException {
 		super(prefix, properties);
-		_authenticator = new WikiServletAuthenticator(_authenticationMode, _users);
+		_authenticator = new WikiServletAuthenticator(_authenticationMode, "/", _users, _authorizationListing);
 	}
 	
 	/** 
@@ -74,7 +104,7 @@ public class WikiServerServlet extends WikiServer {
 			}
 			int autoSchemaChanges = rs.getInt(RelDatabaseColAutoSchemaChanges);
 			ConfigSetting setting = new ConfigSetting(layoutVersion, templateVersion, styleSheetVersion, urlDecodingVersion);
-			WikiServletAuthenticator authenticator = new WikiServletAuthenticator(rs.getInt(RelDatabaseColAuthentication), _users);
+			WikiServletAuthenticator authenticator = new WikiServletAuthenticator(rs.getInt(RelDatabaseColAuthentication), "/"+name, _users, _authorizationListing);
 			_wikiListing.add(new DatabaseWikiServlet(id, name, title, autoSchemaChanges, authenticator, setting, _connector, this));
 		}
 		rs.close();
@@ -138,7 +168,7 @@ public class WikiServerServlet extends WikiServer {
 			
 			wikiID = r.createDatabase(con, versionIndex);
 			con.commit();
-			WikiServletAuthenticator authenticator = new WikiServletAuthenticator(authenticationMode, _users);
+			WikiServletAuthenticator authenticator = new WikiServletAuthenticator(authenticationMode, "/" + name, _users, _authorizationListing);
 			DatabaseWikiServlet wiki = new DatabaseWikiServlet(wikiID, name, title, autoSchemaChanges, authenticator, _connector, this,
 									con, versionIndex);
 			_wikiListing.add(wiki);
@@ -187,8 +217,12 @@ public class WikiServerServlet extends WikiServer {
 				if(_authenticator.authenticate(request)) {
 					this.respondTo(exchange);
 				} else {
-					response.setHeader("WWW-Authenticate", "Basic realm=\"/\"");
-					response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "");
+					// OLD
+					//response.setHeader("WWW-Authenticate", "Basic realm=\"/\"");
+					//response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "");
+					ServerResponseHandler responseHandler = new ServerResponseHandler(new HttpRequest(new RequestURL(exchange, ""), users()), "Access Denied");
+					responseHandler.put(HtmlContentGenerator.ContentContent, new DatabaseAccessDeniedPrinter());
+					exchange.send(HtmlTemplateDecorator.decorate(new BufferedReader(new FileReader(_formTemplate)), responseHandler));
 				}
 			} else if ((path.startsWith(SpecialFolderDatabaseWikiStyle + "/")) && (path.endsWith(".css"))) {
 				this.sendCSSFile(path.substring(SpecialFolderDatabaseWikiStyle.length() + 1, path.length() - 4), exchange);

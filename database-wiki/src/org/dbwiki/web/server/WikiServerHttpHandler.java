@@ -1,3 +1,26 @@
+/*
+    BEGIN LICENSE BLOCK
+    Copyright 2010-2014, Heiko Mueller, Sam Lindley, James Cheney, 
+    Ondrej Cierny, Mingjun Han, and
+    University of Edinburgh
+
+    This file is part of Database Wiki.
+
+    Database Wiki is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Database Wiki is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Database Wiki.  If not, see <http://www.gnu.org/licenses/>.
+    END LICENSE BLOCK
+*/
+
 package org.dbwiki.web.server;
 
 import java.net.InetSocketAddress;
@@ -76,7 +99,7 @@ public class WikiServerHttpHandler extends WikiServer implements HttpHandler {
 			if (org.dbwiki.lib.JDBC.hasColumn(rs, RelDatabaseColURLDecoding)) {
 				urlDecodingVersion = rs.getInt(RelDatabaseColURLDecoding);
 			}
-			WikiAuthenticator authenticator = new WikiAuthenticator("/" + name, rs.getInt(RelDatabaseColAuthentication), _users);
+			WikiAuthenticator authenticator = new WikiAuthenticator("/" + name, rs.getInt(RelDatabaseColAuthentication), _users,_authorizationListing, _formTemplate);
 			int autoSchemaChanges = rs.getInt(RelDatabaseColAutoSchemaChanges);
 			ConfigSetting setting = new ConfigSetting(layoutVersion, templateVersion, styleSheetVersion, urlDecodingVersion);
 			_wikiListing.add(new DatabaseWikiHttpHandler(id, name, title, authenticator, autoSchemaChanges, setting, _connector, this));
@@ -109,12 +132,14 @@ public class WikiServerHttpHandler extends WikiServer implements HttpHandler {
 	  * 
 	  * @throws java.io.IOException
 	  */
+	
+	
 	public void start() throws java.io.IOException {
 		_webServer = HttpServer.create(new InetSocketAddress(_port), _backlog);
 		_webServer.setExecutor(Executors.newFixedThreadPool(_threadCount));
 
 		HttpContext context = _webServer.createContext("/", this);
-		context.setAuthenticator(new WikiAuthenticator("/", _authenticationMode, _users));
+		context.setAuthenticator(new WikiAuthenticator("/", _authenticationMode, _users,_authorizationListing, _formTemplate));
 
 		for (int iWiki = 0; iWiki < _wikiListing.size(); iWiki++) {
 			DatabaseWikiHttpHandler wiki = _wikiListing.get(iWiki);
@@ -158,12 +183,11 @@ public class WikiServerHttpHandler extends WikiServer implements HttpHandler {
 			wikiID = r.createDatabase(con, versionIndex);
 			con.commit();
 
-			WikiAuthenticator authenticator = new WikiAuthenticator("/" + name, authenticationMode, _users);
+			WikiAuthenticator authenticator = new WikiAuthenticator("/" + name, authenticationMode, _users,_authorizationListing, _formTemplate);
 			DatabaseWikiHttpHandler wiki = new DatabaseWikiHttpHandler(wikiID, name, title, authenticator, autoSchemaChanges, _connector, this,
 									con, versionIndex);
 
 			// this should now only be called when starting a web server
-			assert(_webServer != null); 
 
 			String realm = wiki.database().identifier().databaseHomepage();
 			HttpContext context = _webServer.createContext(realm, wiki);
