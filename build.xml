@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project basedir="." default="compile" name="appengine">
-  <property name="sdk.dir" location="${user.home}/.eclipse/org.eclipse.platform_3.8_155965261/plugins/com.google.appengine.eclipse.sdkbundle_1.9.7/appengine-java-sdk-1.9.7/" />
+  <property name="sdk.dir" location="/Applications/eclipse/plugins/com.google.appengine.eclipse.sdkbundle_1.9.17/appengine-java-sdk-1.9.17/" />
 
   <import file="${sdk.dir}/config/user/ant-macros.xml" optional="true"/>
 

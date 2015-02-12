@@ -354,7 +354,7 @@ public abstract class DatabaseConnector implements DatabaseConstants, WikiServer
 		String relName = dbName + RelationSchema;
 		
 		statement.execute("CREATE TABLE " + relName + " (" +
-				RelSchemaColID + " int NOT NULL, " +
+				autoIncrementColumn(RelSchemaColID) + " int NOT NULL, " +
 				RelSchemaColType + " int NOT NULL, " +
 				RelSchemaColLabel + " varchar(255) NOT NULL, " +
 				RelSchemaColParent + " int NOT NULL, " +
