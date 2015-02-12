@@ -1,6 +1,8 @@
 package org.dbwiki.web.ui.printer.admin;
 
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Map;
 import org.dbwiki.exception.WikiException;
 import org.dbwiki.user.UserListing;
@@ -72,30 +74,28 @@ public class DatabaseWikiEntryAuthorizationPrinter extends HtmlContentPrinter {
 		//read permission
 		printer.openTH(CSS.CSSFormLabel);
 		printer.text("Read Permission");
-		printer.closeTD();
 		printer.closeTH();
 		
 		//insert permission
 		printer.openTH(CSS.CSSFormLabel);
 		printer.text("Insert Permission");
-		printer.closeTD();
 		printer.closeTH();
 		
 		//delete permission
 		printer.openTH(CSS.CSSFormLabel);
 		printer.text("Delete Permission");
-		printer.closeTD();
 		printer.closeTH();
 		
 		//update permission
 		printer.openTH(CSS.CSSFormLabel);
 		printer.text("Update Permission");
-		printer.closeTD();
 		printer.closeTH();
-		
+		printer.closeTR();
 		//contents
-		
-		for(Integer i:_entryListing.keySet()){
+		// Sorting key set helps align form with update code, see WikiServer.getUpdateEntryAuthorizationResponseHandler
+		ArrayList<Integer> keys = new ArrayList<Integer>(_entryListing.keySet());
+		Collections.sort(keys);
+		for(Integer i:keys){
 			String entry_value = _entryListing.get(i).entry_value();
 			int entry_id = _entryListing.get(i).entry_id();
 			
@@ -176,6 +176,7 @@ public class DatabaseWikiEntryAuthorizationPrinter extends HtmlContentPrinter {
 				printer.closeTD();
 				
 			}
+			printer.closeTR();
 		}
 		
 		printer.closeTABLE();

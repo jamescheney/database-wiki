@@ -158,7 +158,7 @@ public class WikiAuthenticator extends Authenticator {
             int colon = userpass.indexOf(':');
             String uname = userpass.substring(0, colon);
             String pass = userpass.substring(colon + 1);
-            Boolean isAdmin = isAdmin(uname);
+            Boolean isAdmin = _users.get(uname).is_admin();
             if ((_mode == AuthenticateAlways)
                     || ((_mode == AuthenticateWriteOnly) && (isProtectedRequest))
                     || (exchange.getRequestURI().getPath().equals(WikiServer.SpecialFolderLogin))) {
@@ -351,8 +351,11 @@ public class WikiAuthenticator extends Authenticator {
      * @param username login name of user
      * @return boolean
      */
+    @Deprecated
     private boolean isAdmin(String username){
-        int i = 1;
+        return _users.get(username).is_admin();
+    	
+    	/*int i = 1;
         while(_users.get(i)!=null){
             String uname = _users.get(i).login();
             boolean isAdmin = _users.get(i).is_admin();
@@ -363,6 +366,7 @@ public class WikiAuthenticator extends Authenticator {
             }
         }
         return false;
+        */
     }
        
     /** Checks whether a request is an entry-level request

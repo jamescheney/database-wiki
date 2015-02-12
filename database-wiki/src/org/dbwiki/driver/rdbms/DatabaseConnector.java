@@ -410,7 +410,7 @@ public abstract class DatabaseConnector implements DatabaseConstants, WikiServer
                     "INSERT INTO " + dbName + RelationTimesequence + "(" +
                             RelTimesequenceColStart + ", " +
                             RelTimesequenceColStop + ") VALUES(" + version.number() + " , -1)";
-            statement.execute(makeTimestamp, Statement.RETURN_GENERATED_KEYS);
+            statement.executeUpdate(makeTimestamp, Statement.RETURN_GENERATED_KEYS);
             ResultSet rs = statement.getGeneratedKeys();
             if (rs.next()) {
                 timestamp = rs.getInt(1);

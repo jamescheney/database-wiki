@@ -69,32 +69,28 @@ public class DatabaseWikiAuthorizationPrinter extends HtmlContentPrinter {
 		//read permission
 		printer.openTH(CSS.CSSFormLabel);
 		printer.text("Read Permission");
-		printer.closeTD();
 		printer.closeTH();
 		
 		//insert permission
 		printer.openTH(CSS.CSSFormLabel);
 		printer.text("Insert Permission");
-		printer.closeTD();
 		printer.closeTH();
 		
 		//delete permission
 		printer.openTH(CSS.CSSFormLabel);
 		printer.text("Delete Permission");
-		printer.closeTD();
 		printer.closeTH();
 		
 		//update permission
 		printer.openTH(CSS.CSSFormLabel);
 		printer.text("Update Permission");
-		printer.closeTD();
 		printer.closeTH();
 		
 		//Manage by each entry
 		printer.openTH(CSS.CSSFormLabel);
 		printer.text("Manage By Entries");
-		printer.closeTD();
 		printer.closeTH();
+		printer.closeTR();
 		
 		//content
 		int i=1;
@@ -183,6 +179,7 @@ public class DatabaseWikiAuthorizationPrinter extends HtmlContentPrinter {
 				printer.link("?"+RequestParameter.ParameterEntryAuthorization + "=" + id + "&&" + RequestParameter.ParameterAuthorization + "=" +_properties.getName(), ">>>");
 				printer.closeTD();
 			}
+			printer.closeTR();
 			i++;
 		}
 		

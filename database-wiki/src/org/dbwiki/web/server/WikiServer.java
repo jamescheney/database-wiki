@@ -163,7 +163,6 @@ public abstract class WikiServer  implements WikiServerConstants {
 	protected String _wikiTitle = "Database Wiki";
 	protected int _authenticationMode;
 	
-	// FIXME: Make this non-static!
 	protected static DatabaseConnector _connector;
 	protected File _formTemplate = null;
 	protected File _homepageTemplate = null;
@@ -819,8 +818,9 @@ public abstract class WikiServer  implements WikiServerConstants {
 	
 
 	/**
-	 * Creates appropriate response handler for new DatabaseWiki request. FIXME
-	 * #import: Make path into a parameter that can be passed into the form and
+	 * Creates appropriate response handler for new DatabaseWiki request. 
+	 * 
+	 * FIXME #import: Make path into a parameter that can be passed into the form and
 	 * infer a "good" path.
 	 * 
 	 * @param request
@@ -1023,7 +1023,7 @@ public abstract class WikiServer  implements WikiServerConstants {
 			} else {
 				pStmt.setInt(5, User.UnknownUserID);
 			}
-			pStmt.execute();
+			pStmt.executeUpdate();
 			ResultSet rs = pStmt.getGeneratedKeys();
 			if (rs.next()) {
 				wikiID = rs.getInt(1);
@@ -1357,6 +1357,7 @@ public abstract class WikiServer  implements WikiServerConstants {
 	
 	/**
 	 * Constructs a response handler for a entry-level setting page.
+	 * FIXME: Make alignment with the form generation more robust (avoid fragile dependency on keys being sorted)
 	 * @param request
 	 * @return
 	 * @throws org.dbwiki.exception.WikiException
