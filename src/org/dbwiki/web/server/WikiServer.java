@@ -923,8 +923,9 @@ public class WikiServer extends FileServer implements WikiServerConstants {
 	
 
 	/**
-	 * Creates appropriate response handler for new DatabaseWiki request. FIXME
-	 * #import: Make path into a parameter that can be passed into the form and
+	 * Creates appropriate response handler for new DatabaseWiki request. 
+	 * 
+	 * FIXME #import: Make path into a parameter that can be passed into the form and
 	 * infer a "good" path.
 	 * 
 	 * @param request

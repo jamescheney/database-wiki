@@ -126,7 +126,6 @@ import com.sun.net.httpserver.HttpHandler;
  * @author jcheney
  *
  */
-@SuppressWarnings("restriction")
 public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 	/*
 	 * Public Constants

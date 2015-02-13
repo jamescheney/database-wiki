@@ -95,7 +95,7 @@ public class DatabasePackageImport {
 			char[] buf = new char[(int)inputFile.length()];
 			reader.read(buf);
 			String contents = new String(buf);
-			
+			reader.close();
 			_server.updateConfigFile(_wiki.id(), type.getNumber(), contents, user);
 		} else {
 			System.out.println("File not found: " + filename);
