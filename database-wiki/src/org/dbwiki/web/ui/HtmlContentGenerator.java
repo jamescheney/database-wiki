@@ -102,22 +102,7 @@ public abstract class HtmlContentGenerator {
 	public void print(String key, Vector<String> args, HtmlPage page, String indention) throws org.dbwiki.exception.WikiException {
 
 		if (_contentPrinter.containsKey(key)) {
-			_contentPrinter.get(key).print(new HtmlLinePrinter(page, indention),args);
-/* old stuff - TODO delete
-  	if (key.equals(ContentLogin)) {
- 		if (_request != null) {
-			try {
-				if (_request.user() != null) {
-					page.add(indention + "<p CLASS=\"" + CSS.CSSLogin + "\">You are currently logged in as <span CLASS=\"" + CSS.CSSLogin + "\">" + _request.user().fullName() + "</span></p>");
-					//String loginRedirectLink = WikiServer.SpecialFolderLogout + "?" + RequestParameter.ParameterResource + "=" + URLEncoder.encode(_request.getRequestURI().toASCIIString(), "UTF-8");
-					//page.add(indention + "<p CLASS=\"" + CSS.CSSLogin + "\"><a CLASS=\"" + CSS.CSSLogin + "\" HREF=\"" + loginRedirectLink + "\">Logout</a></p>");
-				} else {
-					String loginRedirectLink = WikiServer.SpecialFolderLogin + "?" + RequestParameter.ParameterResource + "=" + URLEncoder.encode(_request.getRequestURI().toASCIIString(), "UTF-8");
-					page.add(indention + "<p CLASS=\"" + CSS.CSSLogin + "\"><a CLASS=\"" + CSS.CSSLogin + "\" HREF=\"" + loginRedirectLink + "\">Login</a></p>");
-				}
-			} catch (java.io.UnsupportedEncodingException uee) {
-			}
-*/		
+			_contentPrinter.get(key).print(new HtmlLinePrinter(page, indention),args);	
 		}
 	}
 }

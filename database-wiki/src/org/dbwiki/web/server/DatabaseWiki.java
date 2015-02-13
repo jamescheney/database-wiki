@@ -32,11 +32,16 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 
 
+import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.SimpleDateFormat;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Vector;
 
@@ -62,7 +67,10 @@ import org.dbwiki.data.schema.AttributeSchemaNode;
 import org.dbwiki.data.schema.SchemaNode;
 import org.dbwiki.data.schema.GroupSchemaNode;
 import org.dbwiki.data.wiki.Wiki;
+import org.dbwiki.driver.rdbms.DatabaseConnector;
+import org.dbwiki.driver.rdbms.DatabaseConstants;
 
+import org.dbwiki.exception.WikiException;
 import org.dbwiki.exception.WikiFatalException;
 import org.dbwiki.exception.web.WikiRequestException;
 import org.dbwiki.user.UserListing;
@@ -144,11 +152,12 @@ public abstract class DatabaseWiki implements Comparable<DatabaseWiki> {
 	protected int _id;
 	protected DatabaseLayouter _layouter = null;
 	protected String _name;
-	//protected WikiServer _server;
 	protected String _template = null;
 	protected String _title;
 	protected Wiki _wiki;
 	protected int _authenticationMode;
+	// FIXME: Remove?
+	protected DatabaseConnector _connector;
 	
 	private CSSLinePrinter _cssLinePrinter;
 	private int _cssVersion;
@@ -156,7 +165,6 @@ public abstract class DatabaseWiki implements Comparable<DatabaseWiki> {
 	private int _layoutVersion;
 	private int _urlDecodingVersion;
 	private URLDecodingRules _urlDecoder;
-	// needed?  private Map<Integer,Entry> entryListing;
 	
 	/*
 	 * Constructors
@@ -1156,7 +1164,96 @@ public abstract class DatabaseWiki implements Comparable<DatabaseWiki> {
 		}
 	}
 	
-
 	
+	/**
+	 * Get entry permissions of a user to a database DB from DB_policy table
+	 * @param user_id the id of a user
+	 * @return Map<Integer, Map<Integer,DBPolicy>>
+	 */
+	public Map<Integer,Map<Integer,DBPolicy>> getDBPolicyListing(int user_id) {
+		
+		Map<Integer,Map<Integer,DBPolicy>> policyListing = new HashMap<Integer,Map<Integer,DBPolicy>>();
+		try{
+		Connection con = _connector.getConnection();
+		con.setAutoCommit(false);
+		Statement stmt = con.createStatement();
+		ResultSet rs = stmt.executeQuery("SELECT * FROM "
+				+ _name + DatabaseConstants.RelationPolicy
+				+" WHERE " + DatabaseConstants.RelPolicyUserID + " = "+user_id);
+		System.out.println("SELECT * FROM "
+				+ _name + DatabaseConstants.RelationPolicy
+				+" WHERE " + DatabaseConstants.RelPolicyUserID + " = "+user_id);
+		while (rs.next()) {
+			if(policyListing.get(rs.getInt(DatabaseConstants.RelPolicyUserID))==null){
+				Map<Integer,DBPolicy> map = new HashMap<Integer,DBPolicy>();
+				map.put(rs.getInt(DatabaseConstants.RelPolicyEntry), new DBPolicy(rs
+					.getInt(DatabaseConstants.RelPolicyUserID), rs
+					.getInt(DatabaseConstants.RelPolicyEntry), rs
+					.getBoolean(DatabaseConstants.RelPolicyRead), rs
+					.getBoolean(DatabaseConstants.RelPolicyInsert), rs
+					.getBoolean(DatabaseConstants.RelPolicyDelete), rs
+					.getBoolean(DatabaseConstants.RelPolicyUpdate)));
+				policyListing.put(rs.getInt(DatabaseConstants.RelPolicyUserID), map);
+			} else {
+				policyListing.get(rs.getInt(DatabaseConstants.RelPolicyUserID)).put(rs.getInt(DatabaseConstants.RelPolicyEntry), new DBPolicy(rs
+					.getInt(DatabaseConstants.RelPolicyUserID), rs
+					.getInt(DatabaseConstants.RelPolicyEntry), rs
+					.getBoolean(DatabaseConstants.RelPolicyRead), rs
+					.getBoolean(DatabaseConstants.RelPolicyInsert), rs
+					.getBoolean(DatabaseConstants.RelPolicyDelete), rs
+					.getBoolean(DatabaseConstants.RelPolicyUpdate)));
+			}
+		}
+		rs.close();
+		stmt.close();
+		} catch(Exception e){
+			e.printStackTrace();
+		}
+		return policyListing;
+	}
+
+	/**
+	 * Get entry listing of a specific database in DBWiki
+	 * @return Map<Integer, Entry>
+	 * @throws SQLException
+	 * @throws WikiException
+	 * FIXME: make non-static / make method of DatabaseWiki 
+	 */
+	public Map<Integer, Entry> getEntryListing()
+			throws SQLException, WikiException {
+		Map<Integer, Entry> entryListing = new HashMap<Integer, Entry>();
+		Connection con = _connector.getConnection();
+		con.setAutoCommit(false);
+		Statement stmt = con.createStatement();
+		ResultSet rs = stmt.executeQuery("SELECT DISTINCT ss." + DatabaseConstants.RelDataColEntry + ", ss." + DatabaseConstants.RelDataColValue +
+				" FROM " + _name + DatabaseConstants.RelationData + " ss "+
+				" JOIN " + _name + DatabaseConstants.RelationData + " s "+
+				" ON ss." + DatabaseConstants.RelDataColParent + " = s." + DatabaseConstants.RelDataColID +
+				" JOIN " + _name + DatabaseConstants.RelationData + " p "+
+				" ON s." + DatabaseConstants.RelDataColParent + " = p." + DatabaseConstants.RelDataColID +
+				" WHERE p." + DatabaseConstants.RelSchemaColParent + " = -1" +
+				" AND s." + DatabaseConstants.RelDataColTimesequence + " = -1" +
+				" ORDER BY ss." + DatabaseConstants.RelDataColValue + " ASC");
+		System.out.println("SELECT DISTINCT ss." + DatabaseConstants.RelDataColEntry + ", ss." + DatabaseConstants.RelDataColValue +
+				" FROM " + _name + DatabaseConstants.RelationData + " ss "+
+				" JOIN " + _name + DatabaseConstants.RelationData + " s "+
+				" ON ss." + DatabaseConstants.RelDataColParent + " = s." + DatabaseConstants.RelDataColID +
+				" JOIN " + _name + DatabaseConstants.RelationData + " p "+
+				" ON s." + DatabaseConstants.RelDataColParent + " = p." + DatabaseConstants.RelDataColID +
+				" WHERE p." + DatabaseConstants.RelSchemaColParent + " = -1" +
+				" AND s." + DatabaseConstants.RelDataColTimesequence + " = -1" +
+				" ORDER BY ss." + DatabaseConstants.RelDataColValue + " ASC");
+		while (rs.next()) {
+			if(rs.getString(DatabaseConstants.RelDataColValue)!= null){
+			Entry entry = new Entry(rs.getInt(DatabaseConstants.RelDataColEntry), rs.getString(DatabaseConstants.RelDataColValue));
+			entryListing.put(entry.entry_id(),entry);
+			}else{
+				break;
+			}
+		}
+		rs.close();
+		stmt.close();
+		return entryListing;
+	}
 
 }

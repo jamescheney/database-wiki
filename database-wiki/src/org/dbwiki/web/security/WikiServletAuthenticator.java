@@ -62,12 +62,15 @@ public class WikiServletAuthenticator {
     private boolean isUpdateRequest;
     private boolean isEntryLevelRequest;
     private int entryId;
-       
-    public WikiServletAuthenticator(int mode, String realm, UserListing users, Vector<Authorization> authorizationListing) {
+    // TODO: Get rid of this?
+    private WikiServer _server;
+    
+    public WikiServletAuthenticator(int mode, String realm, UserListing users, Vector<Authorization> authorizationListing, WikiServer server) {
         _mode = mode;
         _users = users;
         _realm = realm;
         _authorizationListing = authorizationListing;
+        _server = server;
     }
        
     public boolean authenticate(HttpServletRequest request) {
@@ -111,7 +114,7 @@ public class WikiServletAuthenticator {
                             // insert request
                             if(isInsertRequest == true && isInsert == true) {
                                 if(isEntryLevelRequest == true) {
-                                    policyListing = WikiServer.getDBPolicyListing(database_name, user_id);
+                                    policyListing = _server.getDBPolicyListing(database_name, user_id);
                                     if(havePolicies(policyListing, user_id)) {
                                         return policyListing.get(user_id).get(entryId).isInsert();
                                     }
@@ -120,7 +123,7 @@ public class WikiServletAuthenticator {
                             // delete request
                             } else if(isDeleteRequest == true && isDelete == true) {
                                 if(isEntryLevelRequest == true) {
-                                    policyListing = WikiServer.getDBPolicyListing(database_name, user_id);
+                                    policyListing = _server.getDBPolicyListing(database_name, user_id);
                                     if(havePolicies(policyListing, user_id)) {
                                         return policyListing.get(user_id).get(entryId).isDelete();
                                     }
@@ -129,7 +132,7 @@ public class WikiServletAuthenticator {
                             // update request
                             } else if(isUpdateRequest == true && isUpdate == true){
                                 if(isEntryLevelRequest == true) {
-                                    policyListing = WikiServer.getDBPolicyListing(database_name, user_id);
+                                    policyListing = _server.getDBPolicyListing(database_name, user_id);
                                     if(havePolicies(policyListing, user_id)) {
                                         return policyListing.get(user_id).get(entryId).isUpdate();
                                     }
@@ -143,7 +146,7 @@ public class WikiServletAuthenticator {
                             isReadRequest = true;
                             if(isReadRequest == true && isRead == true) {
                                 if(isEntryLevelRequest(request)) {
-                                    policyListing = WikiServer.getDBPolicyListing(database_name, user_id);
+                                    policyListing = _server.getDBPolicyListing(database_name, user_id);
                                     if(havePolicies(policyListing, user_id)) {
                                         return policyListing.get(user_id).get(entryId).isRead();
                                     }
@@ -276,7 +279,7 @@ public class WikiServletAuthenticator {
                 }
             } else {
                 try {
-                    Map<Integer, Entry> entryListing = WikiServer.getEntryListing(_realm.substring(1));
+                    Map<Integer, Entry> entryListing = _server.getEntryListing(_realm.substring(1));
                     try {
                         int entry = Integer.parseInt(items[2],16);
                         if(entryListing.get(entry)!=null) {

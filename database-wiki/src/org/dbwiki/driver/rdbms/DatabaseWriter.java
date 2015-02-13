@@ -30,6 +30,7 @@ import java.sql.Statement;
 
 import org.dbwiki.data.annotation.Annotation;
 
+import org.dbwiki.data.database.Database;
 import org.dbwiki.data.database.DatabaseElementNode;
 import org.dbwiki.data.database.DatabaseNode;
 import org.dbwiki.data.database.DatabaseTextNode;
@@ -69,9 +70,9 @@ import org.dbwiki.user.User;
  */
 public class DatabaseWriter implements DatabaseConstants {
 	private Connection _con;
-	private RDBMSDatabase _database;
+	private Database _database;
 	
-	public DatabaseWriter(Connection con, RDBMSDatabase database) {
+	public DatabaseWriter(Connection con, Database database) {
 		this._con = con;
 		this._database = database;
 	}

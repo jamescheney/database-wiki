@@ -28,6 +28,7 @@ import org.dbwiki.web.ui.printer.TitlePrinter;
 /** Handles server responses.  Called from WikiServer.
  * @jcheney
  * */
+
 public class ServerResponseHandler extends HtmlContentGenerator {
 
 	/*

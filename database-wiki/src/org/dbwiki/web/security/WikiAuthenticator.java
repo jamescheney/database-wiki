@@ -98,17 +98,20 @@ public class WikiAuthenticator extends Authenticator {
     private boolean isUpdateRequest;
     private boolean isEntryLevelRequest;
     private int entryId;
-       
+    // TODO: Get rid of this?
+    private WikiServer _server;
+    
     /*
      * Constructors
      */
        
-    public WikiAuthenticator(String realm, int mode, UserListing users, Vector<Authorization> authorizationListing, File template) {
-    _mode = mode;
-    _realm = realm;
-    _users = users;
-    _authorizationListing = authorizationListing;
-    _formTemplate = template;
+    public WikiAuthenticator(String realm, int mode, UserListing users, Vector<Authorization> authorizationListing, File template, WikiServer server) {
+	    _mode = mode;
+	    _realm = realm;
+	    _users = users;
+	    _authorizationListing = authorizationListing;
+	    _formTemplate = template;
+	    _server = server;
     }
        
        
@@ -186,7 +189,7 @@ public class WikiAuthenticator extends Authenticator {
                                     //insert request
                                     if(isInsertRequest == true && isInsert == true){
                                         if(isEntryLevelRequest==true){
-                                            policyListing = WikiServer.getDBPolicyListing(database_name, user_id);
+                                            policyListing = _server.getDBPolicyListing(database_name, user_id);
                                             if(havePolicies(policyListing, user_id)) {
                                                 if(policyListing.get(user_id).get(entryId).isInsert()==true){
                                                     return new Authenticator.Success(new HttpPrincipal(uname, _realm));
@@ -203,7 +206,7 @@ public class WikiAuthenticator extends Authenticator {
                                     //delete request
                                     }else if(isDeleteRequest == true && isDelete == true){
                                         if(isEntryLevelRequest==true){
-                                            policyListing = WikiServer.getDBPolicyListing(database_name, user_id);
+                                            policyListing = _server.getDBPolicyListing(database_name, user_id);
                                             if(havePolicies(policyListing, user_id)) {
                                                 if(policyListing.get(user_id).get(entryId).isDelete()==true){
                                                     return new Authenticator.Success(new HttpPrincipal(uname, _realm));
@@ -220,7 +223,7 @@ public class WikiAuthenticator extends Authenticator {
                                     //update request
                                     }else if(isUpdateRequest == true && isUpdate == true){
                                         if(isEntryLevelRequest==true){
-                                            policyListing = WikiServer.getDBPolicyListing(database_name, user_id);
+                                            policyListing = _server.getDBPolicyListing(database_name, user_id);
                                             if(havePolicies(policyListing, user_id)) {
                                                 if(policyListing.get(user_id).get(entryId).isUpdate()==true){
                                                     return new Authenticator.Success(new HttpPrincipal(uname, _realm));
@@ -248,7 +251,7 @@ public class WikiAuthenticator extends Authenticator {
                                         String uri = exchange.getRequestURI().toString();
                                         try {
                                             if(IsEntryLevelRequest(uri)){
-                                                policyListing = WikiServer.getDBPolicyListing(database_name, user_id);
+                                                policyListing = _server.getDBPolicyListing(database_name, user_id);
                                                 if(havePolicies(policyListing, user_id)) {
                                                     if(policyListing.get(user_id).get(entryId).isRead()==true){
                                                         return new Authenticator.Success(new HttpPrincipal(uname, _realm));
@@ -346,28 +349,7 @@ public class WikiAuthenticator extends Authenticator {
         return false;
     }
        
-    /** Checks whether a user is an administrator or not
-     *
-     * @param username login name of user
-     * @return boolean
-     */
-    @Deprecated
-    private boolean isAdmin(String username){
-        return _users.get(username).is_admin();
-    	
-    	/*int i = 1;
-        while(_users.get(i)!=null){
-            String uname = _users.get(i).login();
-            boolean isAdmin = _users.get(i).is_admin();
-            if(uname.equals(username)&&isAdmin){
-                return true;
-            }else{
-                return false;
-            }
-        }
-        return false;
-        */
-    }
+    
        
     /** Checks whether a request is an entry-level request
      *
@@ -393,7 +375,7 @@ public class WikiAuthenticator extends Authenticator {
                     return true;
                 }
             }else{
-                Map<Integer, Entry> entryListing = WikiServer.getEntryListing(_realm.substring(1));
+                Map<Integer, Entry> entryListing = _server.getEntryListing(_realm.substring(1));
                 try {
                     int entry = Integer.parseInt(items[2],16);
                     if(entryListing.get(entry)!=null) {
@@ -513,13 +495,7 @@ public class WikiAuthenticator extends Authenticator {
         return false;
     }
        
-    // TODO remove
-    /*private void status() {
-        System.out.println("Read = " + (isReadRequest ? "Ya" : "Nah") + "; Insert = " +
-            (isInsertRequest ? "Ya" : "Nah") + "; Update = " + (isUpdateRequest ? "Ya" : "Nah") +
-                "; Delete = " + (isDeleteRequest ? "Ya" : "Nah") + "; Deep = " + (isEntryLevelRequest ? "Ya" : "Nah"));
-    }*/
-       
+  
     private void sendAccessDenied(HttpExchange ex) throws FileNotFoundException, IOException, WikiException
     {
         Exchange<HttpExchange> exchange = new HttpExchangeWrapper(ex);

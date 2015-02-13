@@ -54,7 +54,6 @@ import org.dbwiki.data.document.PasteTextNode;
 import org.dbwiki.data.index.DatabaseContent;
 import org.dbwiki.data.index.VectorDatabaseListing;
 
-import org.dbwiki.data.io.ImportHandler;
 import org.dbwiki.data.io.NodeWriter;
 
 import org.dbwiki.data.provenance.ProvenanceActivate;
@@ -909,10 +908,6 @@ public class RDBMSDatabase implements Database, DatabaseConstants {
 		condition.listValues(parameters);
 	}
 
-	@Override
-	public ImportHandler createImportHandler(Connection con) {
-		
-		return new DatabaseImportHandler(con,this);
-	}
+
 }
 

@@ -37,7 +37,7 @@ import org.dbwiki.data.database.DatabaseTextNode;
 import org.dbwiki.exception.WikiFatalException;
 import org.dbwiki.exception.data.WikiTimeException;
 
-/** A a version index, listing the versions of an object 
+/** A version index, listing the versions of an object 
  * @author jcheney
  *
  */

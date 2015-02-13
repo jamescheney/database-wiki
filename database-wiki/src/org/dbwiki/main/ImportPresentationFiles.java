@@ -28,10 +28,10 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.util.Properties;
 
-import org.dbwiki.data.database.Database;
 import org.dbwiki.driver.rdbms.DatabaseConnector;
 import org.dbwiki.driver.rdbms.DatabaseConnectorFactory;
 import org.dbwiki.exception.WikiException;
+import org.dbwiki.user.User;
 import org.dbwiki.web.server.DatabaseWiki;
 import org.dbwiki.web.server.WikiServer;
 import org.dbwiki.web.server.WikiServerStandalone;
@@ -71,16 +71,14 @@ public class ImportPresentationFiles {
 
 	private WikiServer _server;
 	private DatabaseWiki _wiki;
-	private Database _database;
 	private String _username;
 	
 	/*
 	 * Public Methods
 	 */
-	public ImportPresentationFiles(WikiServer server, DatabaseWiki wiki, Database database, String username) {
+	public ImportPresentationFiles(WikiServer server, DatabaseWiki wiki, String username) {
 		_server = server;
 		_wiki = wiki;
-		_database = database;
 		_username = username;
 	}
 		
@@ -92,8 +90,8 @@ public class ImportPresentationFiles {
 			char[] buf = new char[(int)inputFile.length()];
 			reader.read(buf);
 			String contents = new String(buf);
-			
-			_server.updateConfigFile(_wiki.id(), type.getNumber(), contents, _database.users().get(_username));
+			User user = _server.users().get(_username);
+			_server.updateConfigFile(_wiki.id(), type.getNumber(), contents, user);
 			reader.close();
 		} else {
 			System.out.println("File not found: " + filename);
@@ -128,13 +126,11 @@ public class ImportPresentationFiles {
 			
 			// [wiki] should never be null
 			assert(wiki != null);
-			
-			Database database = wiki.database();
-						
+									
 			Connection con = connector.getConnection();
 			con.setAutoCommit(false);
 
-			ImportPresentationFiles p = new ImportPresentationFiles(server, wiki, database, username);
+			ImportPresentationFiles p = new ImportPresentationFiles(server, wiki, username);
 			p.loadPresentationFile(path + wikiName + ".css", PresentationFileType.CSS);
 			p.loadPresentationFile(path + wikiName + ".layout", PresentationFileType.Layout);
 			p.loadPresentationFile(path + wikiName + ".template", PresentationFileType.Template);

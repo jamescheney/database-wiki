@@ -21,8 +21,6 @@
 */
 package org.dbwiki.data.database;
 
-import java.sql.Connection;
-
 import org.dbwiki.data.annotation.Annotation;
 
 import org.dbwiki.data.document.DocumentNode;
@@ -30,7 +28,6 @@ import org.dbwiki.data.document.PasteNode;
 
 import org.dbwiki.data.index.DatabaseContent;
 
-import org.dbwiki.data.io.ImportHandler;
 import org.dbwiki.data.io.NodeWriter;
 
 import org.dbwiki.data.schema.DatabaseSchema;
@@ -50,7 +47,8 @@ import org.dbwiki.user.UserListing;
 import org.dbwiki.web.request.RequestURL;
 
 /** Interface wrapping up all of the operations we can perform on the database.
- * 
+ * FIXME: #query Split this into global and local (collection) stuff.
+ * User listing and query are global, the rest are collection-level
  * @author jcheney
  *
  */
@@ -128,7 +126,4 @@ public interface Database {
 	public void deleteSchemaNode(ResourceIdentifier identifier, User user) throws org.dbwiki.exception.WikiException;
 	public void insertSchemaNode(GroupSchemaNode parent, String name, byte type, User user) throws org.dbwiki.exception.WikiException;
 
-/* ImportHandler */
-	// FIXME: Do we really need dependence on Connection?
-	public ImportHandler createImportHandler(Connection con);
 }

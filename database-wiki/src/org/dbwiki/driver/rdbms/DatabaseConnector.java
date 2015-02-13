@@ -87,7 +87,7 @@ public abstract class DatabaseConnector implements DatabaseConstants, WikiServer
     }
        
        
-    public void createDatabase(Connection con, String dbName, DatabaseSchema schema, User user, SQLVersionIndex versionIndex) throws org.dbwiki.exception.WikiException {
+    public void createCollection(Connection con, String dbName, DatabaseSchema schema, User user, SQLVersionIndex versionIndex) throws org.dbwiki.exception.WikiException {
         try {
             createSchemaTable(con, dbName);
             createDataTable(con, dbName);
@@ -105,8 +105,8 @@ public abstract class DatabaseConnector implements DatabaseConstants, WikiServer
         }
     }
 
-    public void createDatabase(Connection con, String dbName, User user) throws org.dbwiki.exception.WikiException {
-        createDatabase(con, dbName, null, user, null);
+    public void createCollection(Connection con, String dbName, User user) throws org.dbwiki.exception.WikiException {
+        createCollection(con, dbName, null, user, null);
     }
        
 

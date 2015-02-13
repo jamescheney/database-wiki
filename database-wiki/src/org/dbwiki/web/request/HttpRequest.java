@@ -51,6 +51,7 @@ public class HttpRequest {
 	/*
 	 * Constructors
 	 */
+	// FIXME: Avoid unnecessary dependence on UserListing, just take the User as a parameter here
 	
 	public HttpRequest(RequestURL url, UserListing users) {
 		_type = new RequestType(url);

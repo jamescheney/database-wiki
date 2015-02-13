@@ -83,10 +83,6 @@ import org.dbwiki.web.server.DatabaseWikiProperties;
 import org.dbwiki.web.ui.printer.server.ServerMenuPrinter;
 
 
-//import org.pegdown.ExtendedPegDownProcessor;
-//import org.pegdown.ExtendedPegDownProcessor;
-
-
 
 
 
@@ -163,10 +159,11 @@ public abstract class WikiServer  implements WikiServerConstants {
 	protected String _wikiTitle = "Database Wiki";
 	protected int _authenticationMode;
 	
-	protected static DatabaseConnector _connector;
+	protected DatabaseConnector _connector;
 	protected File _formTemplate = null;
 	protected File _homepageTemplate = null;
 	protected ServerLog _serverLog = null;
+	// FIXME #query: move UserListing into new global Database interface/class
 	protected UserListing _users;
 	protected File _directory;
 	protected Vector<Authorization> _authorizationListing;
@@ -325,13 +322,17 @@ public abstract class WikiServer  implements WikiServerConstants {
 
 	/**
 	 * Get entry permissions of a user to a database DB from DB_policy table
+	 * TODO: Get rid of this?
 	 * @param wiki_name the short name of a wiki
 	 * @param user_id the id of a user
 	 * @return Map<Integer, Map<Integer,DBPolicy>>
 	 */
-	public static Map<Integer,Map<Integer,DBPolicy>> getDBPolicyListing(String wiki_name, int user_id) {
-		
-		Map<Integer,Map<Integer,DBPolicy>> policyListing = new HashMap<Integer,Map<Integer,DBPolicy>>();
+	
+	@Deprecated
+	public Map<Integer,Map<Integer,DBPolicy>> getDBPolicyListing(String wiki_name, int user_id) {
+
+		return get(wiki_name).getDBPolicyListing(user_id);
+		/*Map<Integer,Map<Integer,DBPolicy>> policyListing = new HashMap<Integer,Map<Integer,DBPolicy>>();
 		try{
 		Connection con = _connector.getConnection();
 		con.setAutoCommit(false);
@@ -367,7 +368,9 @@ public abstract class WikiServer  implements WikiServerConstants {
 			e.printStackTrace();
 		}
 		return policyListing;
+		*/
 	}
+
 	
 	/**
 	 * Get entry listing of a specific database in DBWiki
@@ -375,11 +378,14 @@ public abstract class WikiServer  implements WikiServerConstants {
 	 * @return Map<Integer, Entry>
 	 * @throws SQLException
 	 * @throws WikiException
-	 * FIXME: make non-static / make method of DatabaseWiki 
+	 * FIXME: get rid of this?
 	 */
-	public static Map<Integer, Entry> getEntryListing(String wiki_name)
+	@Deprecated
+	public  Map<Integer, Entry> getEntryListing(String wiki_name)
 			throws SQLException, WikiException {
-		Map<Integer, Entry> entryListing = new HashMap<Integer, Entry>();
+		return get(wiki_name).getEntryListing();
+		/*Map<Integer, Entry> entryListing = new HashMap<Integer, Entry>();
+
 		Connection con = _connector.getConnection();
 		con.setAutoCommit(false);
 		Statement stmt = con.createStatement();
@@ -403,6 +409,7 @@ public abstract class WikiServer  implements WikiServerConstants {
 		rs.close();
 		stmt.close();
 		return entryListing;
+		*/
 	}
 	
 	/**
@@ -718,7 +725,7 @@ public abstract class WikiServer  implements WikiServerConstants {
 		return _users;
 	}
 
-	
+	/* Currently unused */
 	public void addUser(String user) throws WikiException, SQLException {
         Connection con = _connector.getConnection();
         PreparedStatement insert = con.prepareStatement(
@@ -782,7 +789,7 @@ public abstract class WikiServer  implements WikiServerConstants {
 	 * Creates appropriate response handler for database top-level setting page
 	 * 
 	 */
-	private ServerResponseHandler getEditResponseHandler(
+	protected ServerResponseHandler getEditResponseHandler(
 			HttpRequest request) throws WikiException {
 
 		//DatabaseWiki wiki = get(wiki_name);
@@ -800,7 +807,7 @@ public abstract class WikiServer  implements WikiServerConstants {
 	 * Creates appropriate response handler for database-level permission setting page
 	 * 
 	 */
-	private ServerResponseHandler getEditAuthorizationResponseHandler(
+	protected ServerResponseHandler getEditAuthorizationResponseHandler(
 			HttpRequest request) throws WikiException {
 
 		DatabaseWiki wiki = this.getRequestWiki(request, ParameterName);
@@ -985,7 +992,7 @@ public abstract class WikiServer  implements WikiServerConstants {
 
 	// FIXME: This inner class should be used for other database creation forms/tools 
 	// Unify with DatabaseWikiProperties???
-	class CreateDatabaseRecord {
+	class CreateCollectionRecord {
 		public String name;
 		public String title;
 		public int authenticationMode;
@@ -993,7 +1000,7 @@ public abstract class WikiServer  implements WikiServerConstants {
 		DatabaseSchema databaseSchema;
 		User user;
 		
-		CreateDatabaseRecord(String _name, String _title,int _auth, int _auto, DatabaseSchema _databaseSchema, User _user) {
+		CreateCollectionRecord(String _name, String _title,int _auth, int _auto, DatabaseSchema _databaseSchema, User _user) {
 			name = _name;
 			title = _title;
 			authenticationMode = _auth;
@@ -1002,11 +1009,11 @@ public abstract class WikiServer  implements WikiServerConstants {
 		}
 		
 	
-		public int createDatabase(Connection con,SQLVersionIndex versionIndex) 
+		public int createCollection(Connection con,SQLVersionIndex versionIndex) 
 			throws WikiException, SQLException {
 			int wikiID;
 			
-			_connector.createDatabase(con, name, databaseSchema, user,
+			_connector.createCollection(con, name, databaseSchema, user,
 					versionIndex);
 	
 			PreparedStatement pStmt = con.prepareStatement(
@@ -1150,7 +1157,7 @@ public abstract class WikiServer  implements WikiServerConstants {
 	 * @return
 	 * @throws org.dbwiki.exception.WikiException
 	 */
-	private ServerResponseHandler getUpdateUsersResponseHandler(
+	protected ServerResponseHandler getUpdateUsersResponseHandler(
 			HttpRequest request) throws org.dbwiki.exception.WikiException {
 		// TODO: Simplify validation/control flow.
 		try {
@@ -1245,7 +1252,7 @@ public abstract class WikiServer  implements WikiServerConstants {
 	 * @throws org.dbwiki.exception.WikiException
 	 * @throws IOException
 	 */
-	private ServerResponseHandler getUpdateAuthorizationResponseHandler(
+	protected ServerResponseHandler getUpdateAuthorizationResponseHandler(
 			HttpRequest request)
 			throws org.dbwiki.exception.WikiException, IOException {
 		
@@ -1363,7 +1370,7 @@ public abstract class WikiServer  implements WikiServerConstants {
 	 * @throws org.dbwiki.exception.WikiException
 	 * @throws IOException
 	 */
-	private ServerResponseHandler getUpdateEntryAuthorizationResponseHandler(
+	protected ServerResponseHandler getUpdateEntryAuthorizationResponseHandler(
 			HttpRequest request)
 			throws org.dbwiki.exception.WikiException, IOException {
 		
@@ -1553,7 +1560,7 @@ public abstract class WikiServer  implements WikiServerConstants {
 	 * @return
 	 * @throws org.dbwiki.exception.WikiException
 	 */
-	public String readConfigFile(int wikiID, int fileType, int fileVersion)
+	private String readConfigFile(int wikiID, int fileType, int fileVersion)
 			throws org.dbwiki.exception.WikiException {
 		String value = null;
 		try {

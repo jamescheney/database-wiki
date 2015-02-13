@@ -31,6 +31,7 @@ import java.util.Hashtable;
 
 import org.dbwiki.data.annotation.Annotation;
 
+import org.dbwiki.data.database.Database;
 import org.dbwiki.data.database.DatabaseElementNode;
 import org.dbwiki.data.database.DatabaseNode;
 import org.dbwiki.data.database.DatabaseTextNode;
@@ -61,7 +62,7 @@ public class DatabaseReader implements DatabaseConstants {
 	/**
 	 * Load in the list of IDs of a given schema node.
 	 */
-	public static ArrayList<NodeIdentifier> getNodesOfSchemaNode(Connection con, RDBMSDatabase database, SchemaNodeIdentifier identifier)
+	public static ArrayList<NodeIdentifier> getNodesOfSchemaNode(Connection con, Database database, SchemaNodeIdentifier identifier)
 		throws SQLException {
 		
 		ArrayList<NodeIdentifier> nodes = new ArrayList<NodeIdentifier>();
@@ -91,7 +92,7 @@ public class DatabaseReader implements DatabaseConstants {
 	
 		
 	
-	public static DatabaseNode get(Connection con, RDBMSDatabase database, NodeIdentifier identifier) throws org.dbwiki.exception.WikiException {
+	public static DatabaseNode get(Connection con, Database database, NodeIdentifier identifier) throws org.dbwiki.exception.WikiException {
 		Hashtable<Integer, DatabaseNode> nodeIndex = new Hashtable<Integer, DatabaseNode>();
 		
 		try {			
@@ -219,7 +220,7 @@ public class DatabaseReader implements DatabaseConstants {
 	}
 	
 	@Deprecated // Old version of get that does not use indexing.  Included for comparison purposes.
-	public static DatabaseNode getold(Connection con, RDBMSDatabase database, NodeIdentifier identifier) throws org.dbwiki.exception.WikiException {
+	public static DatabaseNode getold(Connection con, Database database, NodeIdentifier identifier) throws org.dbwiki.exception.WikiException {
 			Hashtable<Integer, DatabaseNode> nodeIndex = new Hashtable<Integer, DatabaseNode>();
 			
 			try {
@@ -337,7 +338,7 @@ public class DatabaseReader implements DatabaseConstants {
 	/** Look for id that have multiple timestamps with the same start or overlapping intervals 
 	 * 
 	 */
-	public static void validateTimestamps(Connection con, RDBMSDatabase database) throws org.dbwiki.exception.WikiException {
+	public static void validateTimestamps(Connection con, Database database) throws org.dbwiki.exception.WikiException {
 		System.out.println("Validating " + database.name() + RelationTimesequence);
 		try {
 			

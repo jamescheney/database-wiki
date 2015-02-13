@@ -24,6 +24,7 @@ package org.dbwiki.driver.rdbms;
 import java.sql.Connection;
 
 
+import org.dbwiki.data.database.Database;
 import org.dbwiki.data.document.DocumentGroupNode;
 import org.dbwiki.data.io.ImportHandler;
 
@@ -46,7 +47,7 @@ public class DatabaseImportHandler implements ImportHandler {
 	 */
 	
 	private Connection _con;
-	private RDBMSDatabase _database;
+	private Database _database;
 	private Version _importVersion;
 	
 	
@@ -54,7 +55,7 @@ public class DatabaseImportHandler implements ImportHandler {
 	 * Constructors
 	 */
 	
-	public DatabaseImportHandler(Connection con, RDBMSDatabase database) {
+	public DatabaseImportHandler(Connection con, Database database) {
 		_con = con;
 		_database = database;
 	}

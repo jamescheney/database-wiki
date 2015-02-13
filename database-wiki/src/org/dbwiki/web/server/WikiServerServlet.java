@@ -42,6 +42,7 @@ import org.dbwiki.data.database.Database;
 import org.dbwiki.data.io.ImportHandler;
 import org.dbwiki.data.io.XMLDocumentImportReader;
 import org.dbwiki.data.schema.DatabaseSchema;
+import org.dbwiki.driver.rdbms.DatabaseImportHandler;
 import org.dbwiki.driver.rdbms.SQLVersionIndex;
 import org.dbwiki.exception.WikiException;
 import org.dbwiki.exception.WikiFatalException;
@@ -76,7 +77,7 @@ public class WikiServerServlet extends WikiServer {
 	
 	public WikiServerServlet(String prefix, Properties properties) throws org.dbwiki.exception.WikiException {
 		super(prefix, properties);
-		_authenticator = new WikiServletAuthenticator(_authenticationMode, "/", _users, _authorizationListing);
+		_authenticator = new WikiServletAuthenticator(_authenticationMode, "/", _users, _authorizationListing,this);
 	}
 	
 	/** 
@@ -104,7 +105,7 @@ public class WikiServerServlet extends WikiServer {
 			}
 			int autoSchemaChanges = rs.getInt(RelDatabaseColAutoSchemaChanges);
 			ConfigSetting setting = new ConfigSetting(layoutVersion, templateVersion, styleSheetVersion, urlDecodingVersion);
-			WikiServletAuthenticator authenticator = new WikiServletAuthenticator(rs.getInt(RelDatabaseColAuthentication), "/"+name, _users, _authorizationListing);
+			WikiServletAuthenticator authenticator = new WikiServletAuthenticator(rs.getInt(RelDatabaseColAuthentication), "/"+name, _users, _authorizationListing,this);
 			_wikiListing.add(new DatabaseWikiServlet(id, name, title, autoSchemaChanges, authenticator, setting, _connector, this));
 		}
 		rs.close();
@@ -161,14 +162,14 @@ public class WikiServerServlet extends WikiServer {
 		Connection con = _connector.getConnection();
 		int wikiID = -1;
 		SQLVersionIndex versionIndex = new SQLVersionIndex(con, name, users(), true);
-		CreateDatabaseRecord r = new CreateDatabaseRecord(name, title, authenticationMode, autoSchemaChanges, databaseSchema, user);
+		CreateCollectionRecord r = new CreateCollectionRecord(name, title, authenticationMode, autoSchemaChanges, databaseSchema, user);
 		con.setAutoCommit(false);
 		con.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 		try {
 			
-			wikiID = r.createDatabase(con, versionIndex);
+			wikiID = r.createCollection(con, versionIndex);
 			con.commit();
-			WikiServletAuthenticator authenticator = new WikiServletAuthenticator(authenticationMode, "/" + name, _users, _authorizationListing);
+			WikiServletAuthenticator authenticator = new WikiServletAuthenticator(authenticationMode, "/" + name, _users, _authorizationListing,this);
 			DatabaseWikiServlet wiki = new DatabaseWikiServlet(wikiID, name, title, autoSchemaChanges, authenticator, _connector, this,
 									con, versionIndex);
 			_wikiListing.add(wiki);
@@ -184,7 +185,7 @@ public class WikiServerServlet extends WikiServer {
 				XMLDocumentImportReader reader = new XMLDocumentImportReader(resource, 
 														database.schema(),
 														path, user, false, false);
-				ImportHandler importHandler = database.createImportHandler(con);
+				ImportHandler importHandler = new DatabaseImportHandler(con,database);
 				reader.setImportHandler(importHandler);
 				reader.start();
 			}

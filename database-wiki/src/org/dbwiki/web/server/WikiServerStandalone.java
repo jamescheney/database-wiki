@@ -35,6 +35,7 @@ import org.dbwiki.data.database.Database;
 import org.dbwiki.data.io.ImportHandler;
 import org.dbwiki.data.io.XMLDocumentImportReader;
 import org.dbwiki.data.schema.DatabaseSchema;
+import org.dbwiki.driver.rdbms.DatabaseImportHandler;
 import org.dbwiki.driver.rdbms.SQLVersionIndex;
 import org.dbwiki.exception.WikiException;
 import org.dbwiki.exception.WikiFatalException;
@@ -131,11 +132,11 @@ public class WikiServerStandalone extends WikiServer {
 		Connection con = _connector.getConnection();
 		int wikiID = -1;
 		SQLVersionIndex versionIndex = new SQLVersionIndex(con, name, users(), true);
-		CreateDatabaseRecord r = new CreateDatabaseRecord(name,title,authenticationMode,autoSchemaChanges,databaseSchema,user);
+		CreateCollectionRecord r = new CreateCollectionRecord(name,title,authenticationMode,autoSchemaChanges,databaseSchema,user);
 		con.setAutoCommit(false);
 		con.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 		try {
-			wikiID = r.createDatabase(con, versionIndex);
+			wikiID = r.createCollection(con, versionIndex);
 			con.commit();
 			
 			DatabaseWikiStandalone wiki = new DatabaseWikiStandalone(wikiID, name, title, autoSchemaChanges, authenticationMode,_connector, this,
@@ -154,7 +155,7 @@ public class WikiServerStandalone extends WikiServer {
 				XMLDocumentImportReader reader = new XMLDocumentImportReader(resource, 
 														database.schema(),
 														path, user, false, false);
-				ImportHandler importHandler = database.createImportHandler(con);
+				ImportHandler importHandler = new DatabaseImportHandler(con,database);
 				reader.setImportHandler(importHandler);
 				reader.start();
 			}

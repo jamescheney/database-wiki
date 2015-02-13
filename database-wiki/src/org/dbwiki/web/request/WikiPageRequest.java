@@ -30,17 +30,20 @@ import org.dbwiki.data.resource.WRI;
 import org.dbwiki.data.time.VersionIndex;
 
 import org.dbwiki.data.wiki.DatabaseWikiPage;
+import org.dbwiki.data.wiki.Wiki;
 
 import org.dbwiki.exception.data.WikiNodeException;
 
 import org.dbwiki.web.request.parameter.RequestParameter;
 import org.dbwiki.web.server.DatabaseWiki;
 
+// TODO: Hoist this to subclass of HttpRequest with no dependency on WikiRequest
 public class WikiPageRequest extends WikiRequest  {
 	/*
 	 * Private Variables
 	 */
 	
+	private Wiki _wiki;
 	private DatabaseWikiPage _page = null;
 	private WRI _wri;
 	
@@ -51,6 +54,8 @@ public class WikiPageRequest extends WikiRequest  {
 	
 	public WikiPageRequest(DatabaseWiki wiki, RequestURL url) throws org.dbwiki.exception.WikiException {
 		super(wiki, url);
+		
+		_wiki = wiki.wiki();
 		
 		DatabaseIdentifier wikiIdentifier = new DatabaseIdentifier(wiki.identifier().databaseHomepage() + "/" + RequestURL.WikiPageRequestPrefix);
 		if (url.size() == 0) {
@@ -75,7 +80,7 @@ public class WikiPageRequest extends WikiRequest  {
 	
 	public DatabaseWikiPage page() throws org.dbwiki.exception.WikiException {
     	if ((_page == null) && (_wri.resourceIdentifier() != null)) {
-    		_page = this.wiki().wiki().get(_wri.resourceIdentifier());
+    		_page = _wiki.get(_wri.resourceIdentifier());
     	}
     	return _page;
 	}
@@ -95,7 +100,7 @@ public class WikiPageRequest extends WikiRequest  {
 	}
 
 	public List<DatabaseWikiPage> versions() throws org.dbwiki.exception.WikiException {
-		return this.wiki().wiki().versions(_wri.resourceIdentifier());
+		return _wiki.versions(_wri.resourceIdentifier());
 	}
 	
 	public VersionIndex versionIndex() {

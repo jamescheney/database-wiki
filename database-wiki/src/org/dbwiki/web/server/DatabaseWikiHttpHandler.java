@@ -117,7 +117,8 @@ public class DatabaseWikiHttpHandler extends DatabaseWiki implements
 		reset(setting.getLayoutVersion(), setting.getTemplateVersion(),
 				setting.getStyleSheetVersion(),
 				setting.getURLDecodingRulesVersion());
-
+		
+		_connector = connector;
 		_database = new RDBMSDatabase(this, connector);
 		_database.validate();
 		_wiki = new SimpleWiki(name, connector, server.users());

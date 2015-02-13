@@ -38,6 +38,7 @@ import org.dbwiki.data.database.Database;
 import org.dbwiki.data.io.ImportHandler;
 import org.dbwiki.data.io.XMLDocumentImportReader;
 import org.dbwiki.data.schema.DatabaseSchema;
+import org.dbwiki.driver.rdbms.DatabaseImportHandler;
 import org.dbwiki.driver.rdbms.SQLVersionIndex;
 import org.dbwiki.exception.WikiException;
 import org.dbwiki.exception.WikiFatalException;
@@ -99,7 +100,7 @@ public class WikiServerHttpHandler extends WikiServer implements HttpHandler {
 			if (org.dbwiki.lib.JDBC.hasColumn(rs, RelDatabaseColURLDecoding)) {
 				urlDecodingVersion = rs.getInt(RelDatabaseColURLDecoding);
 			}
-			WikiAuthenticator authenticator = new WikiAuthenticator("/" + name, rs.getInt(RelDatabaseColAuthentication), _users,_authorizationListing, _formTemplate);
+			WikiAuthenticator authenticator = new WikiAuthenticator("/" + name, rs.getInt(RelDatabaseColAuthentication), _users,_authorizationListing, _formTemplate,this);
 			int autoSchemaChanges = rs.getInt(RelDatabaseColAutoSchemaChanges);
 			ConfigSetting setting = new ConfigSetting(layoutVersion, templateVersion, styleSheetVersion, urlDecodingVersion);
 			_wikiListing.add(new DatabaseWikiHttpHandler(id, name, title, authenticator, autoSchemaChanges, setting, _connector, this));
@@ -139,7 +140,7 @@ public class WikiServerHttpHandler extends WikiServer implements HttpHandler {
 		_webServer.setExecutor(Executors.newFixedThreadPool(_threadCount));
 
 		HttpContext context = _webServer.createContext("/", this);
-		context.setAuthenticator(new WikiAuthenticator("/", _authenticationMode, _users,_authorizationListing, _formTemplate));
+		context.setAuthenticator(new WikiAuthenticator("/", _authenticationMode, _users,_authorizationListing, _formTemplate,this));
 
 		for (int iWiki = 0; iWiki < _wikiListing.size(); iWiki++) {
 			DatabaseWikiHttpHandler wiki = _wikiListing.get(iWiki);
@@ -175,15 +176,15 @@ public class WikiServerHttpHandler extends WikiServer implements HttpHandler {
 		Connection con = _connector.getConnection();
 		int wikiID = -1;
 		SQLVersionIndex versionIndex = new SQLVersionIndex(con, name, users(), true);
-		CreateDatabaseRecord r = new CreateDatabaseRecord(name,title,authenticationMode,autoSchemaChanges,databaseSchema,user);
+		CreateCollectionRecord r = new CreateCollectionRecord(name,title,authenticationMode,autoSchemaChanges,databaseSchema,user);
 		con.setAutoCommit(false);
 		con.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 		try {
 			
-			wikiID = r.createDatabase(con, versionIndex);
+			wikiID = r.createCollection(con, versionIndex);
 			con.commit();
 
-			WikiAuthenticator authenticator = new WikiAuthenticator("/" + name, authenticationMode, _users,_authorizationListing, _formTemplate);
+			WikiAuthenticator authenticator = new WikiAuthenticator("/" + name, authenticationMode, _users,_authorizationListing, _formTemplate,this);
 			DatabaseWikiHttpHandler wiki = new DatabaseWikiHttpHandler(wikiID, name, title, authenticator, autoSchemaChanges, _connector, this,
 									con, versionIndex);
 
@@ -206,7 +207,7 @@ public class WikiServerHttpHandler extends WikiServer implements HttpHandler {
 				XMLDocumentImportReader reader = new XMLDocumentImportReader(resource, 
 														database.schema(),
 														path, user, false, false);
-				ImportHandler importHandler = database.createImportHandler(con);
+				ImportHandler importHandler = new DatabaseImportHandler(con,database);
 				reader.setImportHandler(importHandler);
 				reader.start();
 			}

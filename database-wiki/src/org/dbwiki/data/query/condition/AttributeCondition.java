@@ -25,8 +25,6 @@ package org.dbwiki.data.query.condition;
  * conditions is currently used to generate the SQL query statement to retrieve the
  * candidate entries in query evaluation. 
  * 
- * FIXME Should be related only to the RDBMS implementation of the Database Wiki.
- * When using XArch to maintain the data the sqlProparedStatement is not needed.
  * 
  * @author hmueller
  *
