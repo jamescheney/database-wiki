@@ -22,8 +22,18 @@
 package org.dbwiki.driver.rdbms;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.Vector;
+
+import org.dbwiki.data.provenance.ProvenanceCreate;
+import org.dbwiki.data.schema.DatabaseSchema;
+import org.dbwiki.data.schema.GroupSchemaNode;
+import org.dbwiki.data.schema.SchemaNode;
+import org.dbwiki.data.time.Version;
+import org.dbwiki.exception.WikiException;
+import org.dbwiki.exception.WikiFatalException;
+import org.dbwiki.user.User;
 
 /** Subclass of DatabaseConnector to provide MySQL specific functionality */
 
@@ -65,7 +75,6 @@ public class MySQLDatabaseConnector extends DatabaseConnector {
 	/*
 	 * Protected Methods
 	 */
-	
 	protected String autoIncrementColumn(String name) {
 		return name + " int NOT NULL AUTO_INCREMENT";
 	}
@@ -86,19 +95,20 @@ public class MySQLDatabaseConnector extends DatabaseConnector {
 		stmt.close();
 	}
 	
+	/* Note: Auto-increment has to start at 0 for code tha tinserts the schema to work. This is fragile! */
 	protected void createSchemaTable(Connection con, String dbName) throws java.sql.SQLException {
 		Statement statement = con.createStatement();
 		String relName = dbName + RelationSchema;
 		
 		statement.execute("CREATE TABLE " + relName + " (" +
-				autoIncrementColumn(RelSchemaColID) + " int NOT NULL, " +
+				autoIncrementColumn(RelSchemaColID) + ", " +
 				RelSchemaColType + " int NOT NULL, " +
 				RelSchemaColLabel + " varchar(255) NOT NULL, " +
 				RelSchemaColParent + " int NOT NULL, " +
 				RelSchemaColUser + " int NOT NULL, " +
 				RelSchemaColTimesequence + " int NOT NULL DEFAULT -1, " +
 				"PRIMARY KEY (" + RelSchemaColID + "), " +
-				"UNIQUE(" + RelSchemaColLabel + ", " + RelSchemaColParent + "))");
+				"UNIQUE(" + RelSchemaColLabel + ", " + RelSchemaColParent + ")) AUTO_INCREMENT = 0");
 
 		statement.close();
 	}
@@ -156,4 +166,5 @@ public class MySQLDatabaseConnector extends DatabaseConnector {
 		
 		stmt.close();
 	}
+	
 }

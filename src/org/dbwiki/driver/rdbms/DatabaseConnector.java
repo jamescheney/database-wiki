@@ -38,8 +38,10 @@ import org.dbwiki.data.schema.SchemaNode;
 import org.dbwiki.data.time.Version;
 import org.dbwiki.exception.WikiException;
 import org.dbwiki.exception.WikiFatalException;
+import org.dbwiki.main.ServletInterface;
 import org.dbwiki.user.User;
 import org.dbwiki.web.server.WikiServerConstants;
+import java.util.logging.Logger;
 
 /** A connection to a database, representing the basic tables of a DatabaseWiki 
  * 
@@ -52,6 +54,7 @@ public abstract class DatabaseConnector implements DatabaseConstants, WikiServer
 	private String _url;
 	private String _user;
 	
+	public static final Logger log = Logger.getLogger(ServletInterface.class.getName());
 	/*
 	 * Constructors
 	 */
@@ -216,7 +219,6 @@ public abstract class DatabaseConnector implements DatabaseConstants, WikiServer
 			dropView(stmt, dbName + ViewSchemaIndex);
 			
 			dropTable(stmt, dbName + RelationAnnotation);
-			dropTable(stmt, dbName + RelationAnnotation);
 			dropTable(stmt, dbName + RelationData);
 			dropTable(stmt, dbName + RelationPages);
 			dropTable(stmt, dbName + RelationSchema);
@@ -354,7 +356,7 @@ public abstract class DatabaseConnector implements DatabaseConstants, WikiServer
 		String relName = dbName + RelationSchema;
 		
 		statement.execute("CREATE TABLE " + relName + " (" +
-				autoIncrementColumn(RelSchemaColID) + " int NOT NULL, " +
+				autoIncrementColumn(RelSchemaColID) + ", " +
 				RelSchemaColType + " int NOT NULL, " +
 				RelSchemaColLabel + " varchar(255) NOT NULL, " +
 				RelSchemaColParent + " int NOT NULL, " +
@@ -379,7 +381,8 @@ public abstract class DatabaseConnector implements DatabaseConstants, WikiServer
 					RelSchemaColLabel + ", " +
 					RelSchemaColParent + ", " +
 					RelSchemaColUser + ") VALUES(";
-				newNode = newNode + node.id() + ", ";
+				// HACK: Avoid setting 0 due to special treatment of 0 in MySQL AUTO_INCREMENT 
+				newNode = newNode + (node.id()+1) + ", ";
 				if (node.isAttribute()) {
 					newNode = newNode + RelSchemaColTypeValAttribute + ", ";
 				} else {
@@ -396,8 +399,15 @@ public abstract class DatabaseConnector implements DatabaseConstants, WikiServer
 				} else {
 					newNode = newNode + User.UnknownUserID + ")";
 				}
+				log.info(newNode);
 				statement.execute(newNode);
 			}
+			
+			String decrementIDs=
+					"UPDATE " + schemaTable + " " +
+						"SET " + RelSchemaColID + " = " + RelSchemaColID + "-1";
+			log.info(decrementIDs);
+			statement.execute(decrementIDs);
 			
 			// generate a version number for the schema root
 			Version version = versionIndex.getNextVersion(new ProvenanceCreate(user));
@@ -410,6 +420,7 @@ public abstract class DatabaseConnector implements DatabaseConstants, WikiServer
 					"INSERT INTO " + dbName + RelationTimesequence + "(" +
 							RelTimesequenceColStart + ", " +
 							RelTimesequenceColStop + ") VALUES(" + version.number() + " , -1)";
+			log.info(makeTimestamp);
 			statement.execute(makeTimestamp, Statement.RETURN_GENERATED_KEYS);
 			ResultSet rs = statement.getGeneratedKeys();
 			if (rs.next()) {
@@ -425,6 +436,7 @@ public abstract class DatabaseConnector implements DatabaseConstants, WikiServer
 					"UPDATE " + schemaTable + " " +
 						"SET " + RelSchemaColTimesequence + " = " + timestamp +
 						" WHERE " + RelSchemaColID + " = " + root.id();
+			log.info(updateTimestamp);
 			statement.execute(updateTimestamp);
 		}
 		

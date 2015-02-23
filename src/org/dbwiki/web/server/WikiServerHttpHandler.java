@@ -25,7 +25,6 @@ import org.dbwiki.web.request.Exchange;
 import org.dbwiki.web.request.RequestURL;
 import org.dbwiki.web.request.parameter.RequestParameter;
 import org.dbwiki.web.security.WikiAuthenticator;
-import org.dbwiki.web.server.DatabaseWikiServlet;
 
 import com.sun.net.httpserver.HttpContext;
 import com.sun.net.httpserver.HttpExchange;

@@ -27,16 +27,11 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.net.HttpURLConnection;
 import java.sql.SQLException;
-import java.util.Collections;
-import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
-import javax.servlet.http.HttpServletRequest;
 
 import org.dbwiki.exception.WikiException;
 import org.dbwiki.exception.WikiFatalException;
@@ -50,7 +45,6 @@ import org.dbwiki.web.request.parameter.RequestParameterList;
 import org.dbwiki.web.server.Authorization;
 import org.dbwiki.web.server.DBPolicy;
 import org.dbwiki.web.server.Entry;
-import org.dbwiki.web.server.HtmlSender;
 import org.dbwiki.web.server.HttpExchangeWrapper;
 import org.dbwiki.web.server.WikiServer;
 import org.dbwiki.web.server.WikiServerHttpHandler;
@@ -568,11 +562,13 @@ public class WikiAuthenticator extends Authenticator {
 	    return false;
 	}
 	
+	/*
 	private void status() {
 		System.out.println("Read = " + (isReadRequest ? "Ya" : "Nah") + "; Insert = " +
 			(isInsertRequest ? "Ya" : "Nah") + "; Update = " + (isUpdateRequest ? "Ya" : "Nah") +
 				"; Delete = " + (isDeleteRequest ? "Ya" : "Nah") + "; Deep = " + (isEntryLevelRequest ? "Ya" : "Nah"));
 	}
+	*/
 	
 	private void sendAccessDenied(HttpExchange ex) throws FileNotFoundException, IOException, WikiException
 	{
