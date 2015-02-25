@@ -27,6 +27,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Vector;
 
@@ -118,7 +119,7 @@ public class RDBMSDatabase implements Database, DatabaseConstants {
 	private SQLDatabaseSchema _schema;
 	private SQLVersionIndex _versionIndex;
 	private DatabaseWiki _wiki;
-	
+	private HashMap<String,QueryResultSet> _cache;
 	/*
 	 * Constructors
 	 */
@@ -127,7 +128,9 @@ public class RDBMSDatabase implements Database, DatabaseConstants {
 		_wiki = wiki;
 		
 		_identifier = new DatabaseIdentifier(wiki.name());
-
+		
+		_cache = new HashMap<String,QueryResultSet>();
+		
 		try {
 			Connection con = connector.getConnection();
 			_versionIndex = new SQLVersionIndex(con, wiki.name(), wiki.users(), false);
@@ -147,6 +150,9 @@ public class RDBMSDatabase implements Database, DatabaseConstants {
 		_wiki = wiki;
 		
 		_identifier = new DatabaseIdentifier(wiki.name());
+		
+		_cache = new HashMap<String,QueryResultSet>();
+		
 		try {
 			//con = connector.getConnection();
 			_versionIndex = versionIndex;
@@ -184,6 +190,8 @@ public class RDBMSDatabase implements Database, DatabaseConstants {
 		} catch (java.sql.SQLException sqlException) {
 			throw new WikiFatalException(sqlException);
 		}
+		invalidateCache();
+		
 	}
 
 	public synchronized void annotate(ResourceIdentifier identifier, Annotation annotation) throws org.dbwiki.exception.WikiException {
@@ -223,6 +231,8 @@ public class RDBMSDatabase implements Database, DatabaseConstants {
 		} catch (java.sql.SQLException sqlException) {
 			throw new WikiFatalException(sqlException);
 		}
+		invalidateCache();
+
 	}
 	
 	public synchronized void deleteSchemaNode(ResourceIdentifier identifier, User user) throws org.dbwiki.exception.WikiException {
@@ -257,6 +267,8 @@ public class RDBMSDatabase implements Database, DatabaseConstants {
 		} catch (java.sql.SQLException sqlException) {
 			throw new WikiFatalException(sqlException);
 		}
+		invalidateCache();
+
 	}
 	
 	public void export(ResourceIdentifier identifier, int version, NodeWriter out) throws org.dbwiki.exception.WikiException {
@@ -402,6 +414,8 @@ public class RDBMSDatabase implements Database, DatabaseConstants {
 		} catch (java.sql.SQLException sqlException) {
 			throw new WikiFatalException(sqlException);
 		}
+		invalidateCache();
+
 		return nodeIdentifier;
 	}
 	
@@ -436,6 +450,8 @@ public class RDBMSDatabase implements Database, DatabaseConstants {
 			throw new WikiFatalException(sqlException);
 		}
 		_schema.add(schema);
+		invalidateCache();
+
 	}
 
 	public String name() {
@@ -521,12 +537,22 @@ public class RDBMSDatabase implements Database, DatabaseConstants {
 			update.add(new NodeUpdate(targetElement.identifier(), ((PasteTextNode)pasteNode).getValue()));
 			updateNodeWrapped(targetElement, update, _versionIndex.getNextVersion(new ProvenanceCopy(user, targetElement.identifier(), sourceURL)));
 		}
+		invalidateCache();
+
 	}
 
 	/** Evaluates a wiki query with respect to the database */
 	public QueryResultSet query(String query) throws org.dbwiki.exception.WikiException {
-
-		return QueryStatement.createStatement(this,query).execute();
+		// HACK: Simple caching to speed things up.  
+		if (_cache.containsKey(query)) {
+			System.out.println("Reusing cached value for query " + query);
+			return _cache.get(query);
+		} else {
+			QueryResultSet result = QueryStatement.createStatement(this,query).execute();
+			System.out.println("Caching query " + query);
+			_cache.put(query, result);
+			return result;
+		}
 
 	}
 
@@ -566,6 +592,7 @@ public class RDBMSDatabase implements Database, DatabaseConstants {
 
 	public synchronized void update(ResourceIdentifier identifier, Update update, User user) throws org.dbwiki.exception.WikiException {
 		updateNodeWrapped(get(identifier), update, _versionIndex.getNextVersion(new ProvenanceUpdate(user, identifier)));
+		invalidateCache();
 	}
 
 	public UserListing users() {
@@ -908,6 +935,11 @@ public class RDBMSDatabase implements Database, DatabaseConstants {
 		condition.listValues(parameters);
 	}
 
+	// naive invalidation - throw everything out whenever anything is updated
+	// TODO: Be smarter about this, only clear queries that are "affected" by an update...
+	private void invalidateCache() {
+		_cache.clear();
+	}
 
 }
 
