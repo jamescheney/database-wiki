@@ -15,7 +15,10 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Properties;
 
+import org.dbwiki.data.database.Database;
+import org.dbwiki.data.database.DatabaseAttributeNode;
 import org.dbwiki.data.database.DatabaseElementNode;
+import org.dbwiki.data.database.DatabaseGroupNode;
 import org.dbwiki.data.database.DatabaseNode;
 import org.dbwiki.data.database.DatabaseTextNode;
 import org.dbwiki.data.database.NodeUpdate;
@@ -43,43 +46,44 @@ import org.xml.sax.SAXException;
 public class SynchronizeDatabaseWiki {
 
 	/*
-	 * Private Constants
+	 * Constants
 	 */
 
-	private DatabaseWiki wiki;
-	private User user;
-	private boolean isRootRequest = false;
-	private boolean remoteAdded;
-	private boolean remoteDeleted;
-	private boolean remoteChanged;
-	private boolean localAdded;
-	private boolean localDeleted;
-	private boolean localChanged;
-	private boolean changedChanged;
-	private boolean deletedChanged;
-	private boolean changedDeleted;
-	private boolean addedAdded;
-	private HashMap<Integer, Integer> idMap = new HashMap<Integer, Integer>();
-	
+	DatabaseWiki wiki;
+	User user;
+	boolean isRootRequest = false;
+	boolean remoteAdded;
+	boolean remoteDeleted;
+	boolean remoteChanged;
+	boolean localAdded;
+	boolean localDeleted;
+	boolean localChanged;
+	boolean changedChanged;
+	boolean deletedChanged;
+	boolean changedDeleted;
+	boolean addedAdded;
+	HashMap<Integer, Integer> idMap = new HashMap<Integer, Integer>();
+	StringBuffer syncReport;
+
 	//data structures storing the differences and conflicts after synchronization
-	private List<ConflictPair> localAddedNodes = new ArrayList<ConflictPair>();
-	private List<DatabaseNode> localDeletedNodes = new ArrayList<DatabaseNode>();
-	private List<NodePair> localChangedNodes = new ArrayList<NodePair>();
-	private List<ConflictPair> remoteAddedNodes = new ArrayList<ConflictPair>();
-	private List<DatabaseNode> remoteDeletedNodes = new ArrayList<DatabaseNode>();
-	private List<NodePair> remoteChangedNodes = new ArrayList<NodePair>();
-	private List<NodePair> changedChangedNodes = new ArrayList<NodePair>();
-	private List<DeleteandChange> deletedChangedNodes = new ArrayList<DeleteandChange>();
-	private List<DeleteandChange> changedDeletedNodes = new ArrayList<DeleteandChange>();
-	private List<NodePair> differentNodes = new ArrayList<NodePair>();
-	
+	List<ConflictPair> localAddedNodes = new ArrayList<ConflictPair>();
+	List<DatabaseNode> localDeletedNodes = new ArrayList<DatabaseNode>();
+	List<NodePair> localChangedNodes = new ArrayList<NodePair>();
+	List<ConflictPair> remoteAddedNodes = new ArrayList<ConflictPair>();
+	List<DatabaseNode> remoteDeletedNodes = new ArrayList<DatabaseNode>();
+	List<NodePair> remoteChangedNodes = new ArrayList<NodePair>();
+	List<NodePair> changedChangedNodes = new ArrayList<NodePair>();
+	List<DeleteandChange> deletedChangedNodes = new ArrayList<DeleteandChange>();
+	List<DeleteandChange> changedDeletedNodes = new ArrayList<DeleteandChange>();
+	List<NodePair> differentNodes = new ArrayList<NodePair>();
+
 	//node matching list
-	private List<NodePair> nodeMatch = new ArrayList<NodePair>();
-	
+	List<NodePair> nodeMatch = new ArrayList<NodePair>();
+
 	//version numbers of local and remote entries in last synchronization
-	private int localPreviousVersionNumber;
-	private int remotePreviousVersionNumber;
-	
+	int localPreviousVersionNumber;
+	int remotePreviousVersionNumber;
+
 	public static String SyncInfoRemoteURL = "remoteURL";
 	public static String SyncInfoDatabaseName = "database";
 	public static String SyncInfoRemoteEntry = "remoteEntry";
@@ -94,9 +98,9 @@ public class SynchronizeDatabaseWiki {
 	public static String SyncInfoLocalAdded = "localAdded";
 	public static String SyncInfoLocalChanged = "localChanged";
 	public static String SyncInfoLocalDeleted = "localDeleted";
-	
+
 	//get the id of the remote node that is mapped to the local node with id localID
-	private int getRemoteMapID(int localID){
+	int getRemoteMapID(int localID){
 		if(idMap.containsKey(localID)){
 			return idMap.get(localID);
 		}
@@ -104,9 +108,9 @@ public class SynchronizeDatabaseWiki {
 			return localID;
 		}
 	}
-	
+
 	//get the id of the local node that is mapped to the remote node with id remoteID
-	private int getLocalMapID(int remoteID){
+	int getLocalMapID(int remoteID){
 		for(Entry<Integer, Integer> entry: idMap.entrySet()){
 			if(entry.getValue() == remoteID){
 				return entry.getKey();
@@ -114,9 +118,9 @@ public class SynchronizeDatabaseWiki {
 		}
 		return remoteID;
 	}
-	
+
 	//given a local group node and a remote group node, return a list of matched nodes
-	private List<NodePair> match(RDBMSDatabaseGroupNode localNode, RDBMSDatabaseGroupNode remoteNode) throws WikiException{
+	List<NodePair> match(RDBMSDatabaseGroupNode localNode, RDBMSDatabaseGroupNode remoteNode) throws WikiException{
 		List<NodePair> tempNodeMatch = new ArrayList<NodePair>();
 		int remoteChildNum = 0;
 		if(localNode != null && remoteNode != null){
@@ -157,7 +161,7 @@ public class SynchronizeDatabaseWiki {
 								}
 							}
 						}
-						
+
 					}
 					if(remoteChildNum < remoteGroupNode.children().size()){
 						for(int i = remoteChildNum; i < remoteGroupNode.children().size(); i++){
@@ -188,9 +192,9 @@ public class SynchronizeDatabaseWiki {
 		nodeMatch.addAll(tempNodeMatch);
 		return tempNodeMatch;
 	}
-	
+
 	//compare two DatabaseNode
-	private void compare(DatabaseNode localNode, DatabaseNode remoteNode) throws WikiException{
+	void compare(DatabaseNode localNode, DatabaseNode remoteNode) throws WikiException{
 		if(localNode != null && remoteNode != null){
 			if(localNode.getTimestamp().isCurrent()){
 				if(localNode.isElement() && remoteNode.isElement()){
@@ -253,9 +257,9 @@ public class SynchronizeDatabaseWiki {
 			}
 		}
 	}
-	
+
 	//compare two text nodes
-	private void compareTextNodes(RDBMSDatabaseTextNode localTextNode, RDBMSDatabaseTextNode remoteTextNode){
+	void compareTextNodes(RDBMSDatabaseTextNode localTextNode, RDBMSDatabaseTextNode remoteTextNode){
 		if(!localTextNode.value().equals(remoteTextNode.value())){
 			boolean localChanged = localTextNode.getTimestamp().changedSince(localPreviousVersionNumber);
 			boolean remoteChanged = remoteTextNode.getTimestamp().changedSince(remotePreviousVersionNumber);
@@ -275,27 +279,27 @@ public class SynchronizeDatabaseWiki {
 	}
 
 	//compare two attribute nodes
-	private void compareAttributeNodes(RDBMSDatabaseAttributeNode localAttributeNode, RDBMSDatabaseAttributeNode remoteAttributeNode) throws WikiException{
+	void compareAttributeNodes(RDBMSDatabaseAttributeNode localAttributeNode, RDBMSDatabaseAttributeNode remoteAttributeNode) throws WikiException{
 		RDBMSDatabaseTextNode lt = (RDBMSDatabaseTextNode)localAttributeNode.value().getMostRecent();
 		RDBMSDatabaseTextNode rt = (RDBMSDatabaseTextNode)remoteAttributeNode.value().getMostRecent();
 		this.compare(lt, rt);
 	}
-	
+
 	//compare two group nodes
-	private void compareGroupNodes(RDBMSDatabaseGroupNode localGroupNode, RDBMSDatabaseGroupNode remoteGroupNode) throws WikiException{
+	void compareGroupNodes(RDBMSDatabaseGroupNode localGroupNode, RDBMSDatabaseGroupNode remoteGroupNode) throws WikiException{
 		List<NodePair> nodePairs = this.match(localGroupNode, remoteGroupNode);
 		for(NodePair np: nodePairs){
 			this.compare(np.get_localNode(), np.get_remoteNode());
 		}
 	}
-	
+
 	public SynchronizeDatabaseWiki(){}
-	
+
 	public SynchronizeDatabaseWiki(DatabaseWiki wiki, User user){
 		this.wiki = wiki;
 		this.user = user;
 	}
-	
+
 	//the interface that responses to the synchronization request from the command line
 	public void responseToSynchronizeRequest(File configFile, File syncFile) throws WikiException{
 		WikiServer server;
@@ -306,18 +310,18 @@ public class SynchronizeDatabaseWiki {
 			String database = syncProperties.getProperty(SyncInfoDatabaseName);
 			String remoteCollection = syncProperties.getProperty(SyncInfoRemoteEntry);
 			String localCollection = syncProperties.getProperty(SyncInfoLocalEntry);
-			this.remoteAdded = Boolean.parseBoolean(syncProperties.getProperty(this.SyncInfoRemoteAdded));
-			this.remoteChanged = Boolean.parseBoolean(syncProperties.getProperty(this.SyncInfoRemoteChanged));
-			this.remoteDeleted = Boolean.parseBoolean(syncProperties.getProperty(this.SyncInfoRemoteDeleted));
-			this.deletedChanged = Boolean.parseBoolean(syncProperties.getProperty(this.SyncInfoDeletedChanged));
-			this.changedDeleted = Boolean.parseBoolean(syncProperties.getProperty(this.SyncInfoChangedDeleted));
-			this.changedChanged = Boolean.parseBoolean(syncProperties.getProperty(this.SyncInfoChangedChanged));
-			this.addedAdded = Boolean.parseBoolean(syncProperties.getProperty(this.SyncInfoAddedAdded, "false"));
-			this.localAdded = Boolean.parseBoolean(syncProperties.getProperty(this.SyncInfoLocalAdded, "false"));
-			this.localChanged = Boolean.parseBoolean(syncProperties.getProperty(this.SyncInfoLocalChanged, "false"));
-			this.localDeleted = Boolean.parseBoolean(syncProperties.getProperty(this.SyncInfoLocalDeleted, "false"));
+			this.remoteAdded = Boolean.parseBoolean(syncProperties.getProperty(SyncInfoRemoteAdded));
+			this.remoteChanged = Boolean.parseBoolean(syncProperties.getProperty(SyncInfoRemoteChanged));
+			this.remoteDeleted = Boolean.parseBoolean(syncProperties.getProperty(SyncInfoRemoteDeleted));
+			this.deletedChanged = Boolean.parseBoolean(syncProperties.getProperty(SyncInfoDeletedChanged));
+			this.changedDeleted = Boolean.parseBoolean(syncProperties.getProperty(SyncInfoChangedDeleted));
+			this.changedChanged = Boolean.parseBoolean(syncProperties.getProperty(SyncInfoChangedChanged));
+			this.addedAdded = Boolean.parseBoolean(syncProperties.getProperty(SyncInfoAddedAdded, "false"));
+			this.localAdded = Boolean.parseBoolean(syncProperties.getProperty(SyncInfoLocalAdded, "false"));
+			this.localChanged = Boolean.parseBoolean(syncProperties.getProperty(SyncInfoLocalChanged, "false"));
+			this.localDeleted = Boolean.parseBoolean(syncProperties.getProperty(SyncInfoLocalDeleted, "false"));
 
-		
+
 			String url = remoteURL + database + DatabaseIdentifier.PathSeparator;
 			server = new WikiServer(properties);
 			wiki = server.get(database);
@@ -335,9 +339,9 @@ public class SynchronizeDatabaseWiki {
 			throw new WikiFatalException(e);
 		} catch (IOException e) {
 			throw new WikiFatalException(e);
-		} 
+		}
 	}
-	
+
 	//the interface that responses to the synchronization request from the web page
 	public void responseToSynchronizeRequest(String url, int localID, boolean isRootRequest) throws WikiException{
 		responseToSynchronizeRequest(url, localID, isRootRequest, RequestParameter.ParameterSynchronizeExport, null);
@@ -345,24 +349,25 @@ public class SynchronizeDatabaseWiki {
 
 	//the interface that responses to the synchronization request from the web page
 	public void responseToSynchronizeRequest(String url, int localID, boolean isRootRequest, String xmlRequestType, String port) throws WikiException{
+		syncReport = new StringBuffer();
 		try {
 			//read the id maps from the alignment log file
 			File alignFile = new File("align_log");
 			if(alignFile.exists()){
 				BufferedReader br = new BufferedReader(new FileReader(alignFile));
 				String tmp = br.readLine();
-				while(tmp != null && tmp.indexOf(",") != -1){
+				while(tmp != null && tmp.contains(",")){
 					idMap.put(Integer.valueOf(tmp.split(",")[0]), Integer.valueOf(tmp.split(",")[1]));
 					tmp = br.readLine();
 				}
 				br.close();
 			}
-			
+
 			//request and parse the remote entry/entries
 			this.isRootRequest = isRootRequest;
 			String sourceURL;
 			if (url.contains("?")) {
-				sourceURL = url.substring(0, url.lastIndexOf("?"));	
+				sourceURL = url.substring(0, url.lastIndexOf("?"));
 			} else {
 				sourceURL = url;
 			}
@@ -377,18 +382,18 @@ public class SynchronizeDatabaseWiki {
 			if (url.contains("?")) {
 				sourceURL += url.substring(url.lastIndexOf("?"));
 			}
-			
+
 			//get the version information when the synchronization happens
 			int new_remoteVersion = 0;
 			int new_localVersion = 0;
-			
+
 			//obtain version information of last synchronization from the version log file
-			//if the version log file does not exist or is emtpy, then the version of last synchronization is set to be -1
+			//if the version log file does not exist or is empty, then the version of last synchronization is set to be -1
 			File syncFile = new File("synchronize_log");
 			if(!syncFile.exists()){
 				syncFile.createNewFile();
 			}
-			
+
 			extractVersionNumbers(syncFile);
 			//compare entries from two DBWiki instances that is to be synchronized
 			if(!isRootRequest){
@@ -396,22 +401,22 @@ public class SynchronizeDatabaseWiki {
 				SynchronizationInputHandler ioHandler = new SynchronizationInputHandler();
 				ioHandler.setIsRootRequest(isRootRequest);
 				new SAXCallbackInputHandler(ioHandler, false).parse(new URL(sourceURL).openStream(), false, false);
-		
+
 				//get the version information when the synchronization happens
 				new_remoteVersion = ioHandler.getVersionNumber();
-				new_localVersion = wiki.database().versionIndex().getLastVersion().number();
+				new_localVersion = getDatabase().versionIndex().getLastVersion().number();
 				DatabaseNode remoteNode = ioHandler.getSynchronizeDatabaseNode();
-				DatabaseNode localNode = wiki.database().get(new NodeIdentifier(localID));
+				DatabaseNode localNode = getDatabase().get(new NodeIdentifier(localID));
 				this.compare(localNode, remoteNode);
 			}
 			else{
 				//List<DatabaseNode> nodeList = ioHandler.getSynchronizeDatabaseNodeList();
-				RDBMSDatabaseListing entries = ((RDBMSDatabase)wiki.database()).content();
+				RDBMSDatabaseListing entries = ((RDBMSDatabase)getDatabase()).content();
 				for(int i = 0; i < entries.size(); i++){
 					String newurl;
 					SynchronizationInputHandler ioHandler = new SynchronizationInputHandler();
 					ioHandler.setIsRootRequest(false);
-					
+
 					if(idMap.containsKey(entries.get(i).identifier().nodeID())){
 						newurl = sourceURL + Integer.toHexString(idMap.get(entries.get(i).identifier().nodeID()));
 					}
@@ -420,15 +425,15 @@ public class SynchronizeDatabaseWiki {
 					}
 					newurl = invertAndAddParameters(newurl, xmlRequestType, port);
 					new SAXCallbackInputHandler(ioHandler, false).parse(new URL(newurl).openStream(), false, false);
-					
+
 					new_remoteVersion = ioHandler.getVersionNumber();
-					new_localVersion = wiki.database().versionIndex().getLastVersion().number();
-					DatabaseNode localNode = wiki.database().get(entries.get(i).identifier());
+					new_localVersion = getDatabase().versionIndex().getLastVersion().number();
+					DatabaseNode localNode = getDatabase().get(entries.get(i).identifier());
 					DatabaseNode remoteNode = ioHandler.getSynchronizeDatabaseNode();
 					this.compare(localNode, remoteNode);
 				}
 			}
-			
+
 			// reconcile the differences and conflicts
 			this.handleDifferences();
 			this.handleConflicts();
@@ -440,7 +445,7 @@ public class SynchronizeDatabaseWiki {
 			versionLog.writeln("LOCALVERSION=" + new_localVersion);
 			versionLog.writeln("REMOTEVERSION=" + new_remoteVersion);
 			versionLog.closeLog();
-			
+
 			// write new id map information into the alignment log file
 			ServerLog matchLog = new FileServerLog(alignFile);
 			matchLog.openLog();
@@ -448,6 +453,15 @@ public class SynchronizeDatabaseWiki {
 				matchLog.writeln(entry.getKey() + "," + entry.getValue());
 			}
 			matchLog.closeLog();
+			// Write report log to file
+			File file = new File(String.format("sync_log_v%d.txt", new_localVersion));
+			if(!file.exists()){
+				file.createNewFile();
+			}
+			ServerLog servLog = new FileServerLog(file);
+			servLog.openLog();
+			servLog.writeln(syncReport.toString());
+			servLog.closeLog();
 		} catch (WikiException e) {
 			// TODO Auto-generated catch block
 			throw new WikiFatalException(e);
@@ -463,7 +477,7 @@ public class SynchronizeDatabaseWiki {
 		}
 	}
 
-	private String addLocalPortParameter(String sourceURL, String port) {
+	String addLocalPortParameter(String sourceURL, String port) {
 		try {
 			sourceURL += "&localport=" + URLEncoder.encode(port, "UTF-8");
 		} catch (UnsupportedEncodingException e) {
@@ -476,11 +490,11 @@ public class SynchronizeDatabaseWiki {
 	 * @param syncFile
 	 * @throws IOException
 	 */
-	private void extractVersionNumbers(File syncFile) throws IOException {
+	void extractVersionNumbers(File syncFile) throws IOException {
 		Properties pros = org.dbwiki.lib.IO.loadProperties(syncFile);
 		String lv = pros.getProperty("LOCALVERSION");
 		String rv = pros.getProperty("REMOTEVERSION");
-		
+
 		if(lv != null){
 			localPreviousVersionNumber = Integer.parseInt(lv);
 			if(localPreviousVersionNumber < 2){
@@ -504,8 +518,8 @@ public class SynchronizeDatabaseWiki {
 		System.out.println("remotePrevVerNr:" + remotePreviousVersionNumber);
 		System.out.println("localPrevVerNr:" + localPreviousVersionNumber);
 	}
-	
-	private String invertAndAddParameters(String sourceURL, String xmlRequestType, String port) {
+
+	String invertAndAddParameters(String sourceURL, String xmlRequestType, String port) {
 		if (xmlRequestType.equals(RequestParameter.ParameterSynchronizeThenExport2)) {
 			sourceURL += "&";
 		} else {
@@ -540,52 +554,57 @@ public class SynchronizeDatabaseWiki {
 		sourceURL += "&" + RequestParameter.parameterchangedDeleted + "=" + !this.changedDeleted;
 		sourceURL += "&" + RequestParameter.parameterdeletedChanged + "=" + !this.deletedChanged;
 		System.out.println(sourceURL);
-		return sourceURL;		
+		return sourceURL;
 	}
 
 	//handle the conflicts in the synchronization results
-	private void handleConflicts() throws WikiException{
+	void handleConflicts() throws WikiException{
 		if(!changedChangedNodes.isEmpty() && changedChanged){
 			for(NodePair nodePair: changedChangedNodes){
 				Update update = new Update();
 				NodeUpdate nodeupdate = new NodeUpdate(((RDBMSDatabaseTextNode)nodePair.get_localNode()).identifier(), ((RDBMSDatabaseTextNode)nodePair._remoteNode).value());
 				update.add(nodeupdate);
-				wiki.database().update(nodePair.get_localNode().identifier(), update, user);
+				getDatabase().update(nodePair.get_localNode().identifier(), update, user);
 			}
 		}
 		if(!deletedChangedNodes.isEmpty() && deletedChanged){
 			for(DeleteandChange pair: deletedChangedNodes){
 				if(pair.getList() == null){
-					wiki.database().activate(pair.getDeletedChangedNode().get_localNode().identifier(), user);
+					getDatabase().activate(pair.getDeletedChangedNode().get_localNode().identifier(), user);
 					Update update = new Update();
 					NodeUpdate nodeupdate = new NodeUpdate(pair.getDeletedChangedNode().get_localNode().identifier(), ((RDBMSDatabaseTextNode)pair.getDeletedChangedNode().get_remoteNode()).getValue());
 					update.add(nodeupdate);
-					wiki.database().update(pair.getDeletedChangedNode().get_localNode().identifier(), update, user);
+					getDatabase().update(pair.getDeletedChangedNode().get_localNode().identifier(), update, user);
 				}
 				else{
-					wiki.database().activate(pair.getDeletedChangedNode().get_localNode().identifier(), user);
+					getDatabase().activate(pair.getDeletedChangedNode().get_localNode().identifier(), user);
 					for(int i = 0; i < pair.getList().size(); i++){
 						Update update = new Update();
 						NodeUpdate nodeupdate = new NodeUpdate(new NodeIdentifier(idMap.get(((NodeIdentifier)pair.getList().get(i).identifier()).nodeID())), pair.getList().get(i).getValue());
 						update.add(nodeupdate);
-						wiki.database().update(new NodeIdentifier(idMap.get(((NodeIdentifier)pair.getList().get(i).identifier()).nodeID())), update, user);
+						getDatabase().update(new NodeIdentifier(idMap.get(((NodeIdentifier)pair.getList().get(i).identifier()).nodeID())), update, user);
 					}
 				}
-				
+
 			}
 		}
 		if(!changedDeletedNodes.isEmpty() && changedDeleted){
 			for(DeleteandChange pair: deletedChangedNodes){
-				wiki.database().delete(pair.getDeletedChangedNode().get_localNode().identifier(), user);
+				getDatabase().delete(pair.getDeletedChangedNode().get_localNode().identifier(), user);
 			}
 		}
 	}
-	
+
 	//handle the differences in the synchronization results
-	private void handleDifferences() throws WikiException{
+	void handleDifferences() throws WikiException{
 		System.out.println("Number of remote added nodes: " + remoteAddedNodes.size());
 		System.out.println("Number of local added nodes: " + localAddedNodes.size());
-		if(!remoteAddedNodes.isEmpty() && remoteAdded){
+		syncReport.append("####### REMOTE-ADDED NODES ######\n");
+		if (remoteAddedNodes.isEmpty()) {
+			syncReport.append(" -- there were no new nodes added to the remote server\n");
+		} else  if (!remoteAdded) {
+			syncReport.append(" -- you chose not to copy new nodes from the remote server\n");
+		} else if(!remoteAddedNodes.isEmpty() && remoteAdded){
 			for(ConflictPair pair: remoteAddedNodes){
 				boolean skip = false;
 				int insertNodeID;
@@ -604,10 +623,10 @@ public class SynchronizeDatabaseWiki {
 								if(!local.identifier().equals(remote.identifier())) {
 									this.map(local, remote);
 								}
-							} 
+							}
 						}else if (local.isText() && remote.isText()) {
 							// Can be attribute node
-							
+
 							DatabaseTextNode localText = (DatabaseTextNode) local;
 							DatabaseTextNode remoteText = (DatabaseTextNode) remote;
 							if (localText.getValue().equals(remoteText.getValue())) {
@@ -622,27 +641,35 @@ public class SynchronizeDatabaseWiki {
 				/*********/
 				if (skip) {
 					System.out.println("Not adding node " + pair.getExistNode().identifier().toString());
-				}
-				if(!skip && pair.getExistNode().isElement()){
+					syncReport.append(String.format("Skipped adding node %s\n", pair.getExistNode().identifier().toString()));
+				} else if(pair.getExistNode().isElement()){
 					if(isRootRequest){
 						if(pair.getNodeID() == -1){
-							insertNodeID = ((NodeIdentifier)wiki.database().insertNode(new NodeIdentifier(), ((DatabaseElementNode)pair.getExistNode()).toDocumentNode(), user)).nodeID();
+							insertNodeID = ((NodeIdentifier)getDatabase().insertNode(new NodeIdentifier(), ((DatabaseElementNode)pair.getExistNode()).toDocumentNode(), user)).nodeID();
 						}
 						else{
-							insertNodeID = ((NodeIdentifier)wiki.database().insertNode(new NodeIdentifier(pair.getNodeID()), ((DatabaseElementNode)pair.getExistNode()).toDocumentNode(), user)).nodeID();
+							insertNodeID = ((NodeIdentifier)getDatabase().insertNode(new NodeIdentifier(pair.getNodeID()), ((DatabaseElementNode)pair.getExistNode()).toDocumentNode(), user)).nodeID();
 						}
 					}
 					else{
-						insertNodeID = ((NodeIdentifier)wiki.database().insertNode(new NodeIdentifier(pair.getNodeID()), ((DatabaseElementNode)pair.getExistNode()).toDocumentNode(), user)).nodeID();
+						insertNodeID = ((NodeIdentifier)getDatabase().insertNode(new NodeIdentifier(pair.getNodeID()), ((DatabaseElementNode)pair.getExistNode()).toDocumentNode(), user)).nodeID();
 					}
-					DatabaseNode insertedNode = wiki.database().get(new NodeIdentifier(insertNodeID));
+					DatabaseNode insertedNode = getDatabase().get(new NodeIdentifier(insertNodeID));
 					this.map(insertedNode, pair.getExistNode());
 					System.out.println("Just added node " + insertNodeID);
+					syncReport.append(String.format("Added node remote node%s; local ID:  %d\n",
+							pair.getExistNode().identifier().toString(),
+							insertNodeID));
 				}
-				
+
 			}
 		}
-		if(!remoteChangedNodes.isEmpty() && remoteChanged){
+		syncReport.append("\n###### REMOTE-CHANGED NODES ######\n");
+		if (!remoteChanged) {
+			syncReport.append(" -- you chose to not update changed nodes\n");
+		} else if (remoteChangedNodes.isEmpty()) {
+			syncReport.append(" -- no nodes have been updated\n");
+		} else if (!remoteChangedNodes.isEmpty() && remoteChanged){
 			for(NodePair nodePair: remoteChangedNodes){
 				System.out.println(((RDBMSDatabaseTextNode)nodePair.get_localNode()).identifier().nodeID() + ", " + ((RDBMSDatabaseTextNode)nodePair.get_remoteNode()).identifier().nodeID());
 			}
@@ -650,18 +677,36 @@ public class SynchronizeDatabaseWiki {
 				Update update = new Update();
 				NodeUpdate nodeupdate = new NodeUpdate(((RDBMSDatabaseTextNode)nodePair.get_localNode()).identifier(), ((RDBMSDatabaseTextNode)nodePair.get_remoteNode()).value());
 				update.add(nodeupdate);
-				wiki.database().update(nodePair.get_localNode().identifier(), update, user);
+				getDatabase().update(nodePair.get_localNode().identifier(), update, user);
+				syncReport.append(String.format("Updated node %d from \"%s\" to \"%s\"\n",
+						nodePair.get_localNode().identifier(),
+						"",
+						update.toString()));
 			}
 		}
-		if(!remoteDeletedNodes.isEmpty() && remoteDeleted){
+		syncReport.append("\n###### REMOTE-DELETED NODES ######\n");
+		if (!remoteDeleted) {
+			syncReport.append(" -- you chose to not remove remote deleted nodes\n");
+		} else if (remoteDeletedNodes.isEmpty()) {
+			syncReport.append(" -- there were no nodes removed from the remote server\n");
+		} else if (!remoteDeletedNodes.isEmpty() && remoteDeleted) {
 			for(DatabaseNode node: remoteDeletedNodes){
-				wiki.database().delete(node.identifier(), user);
+				getDatabase().delete(node.identifier(), user);
+				syncReport.append(String.format("node %s has been deleted\n", node.identifier()));
 			}
 		}
+		System.out.println(syncReport.toString());
 	}
-	
-	//map the localNode to the remoteNode 
-	private void map(DatabaseNode localNode, DatabaseNode remoteNode){
+
+	/**
+	 * Using a getter for the database. This allows to mock the database during testing.
+	 */
+	Database getDatabase() {
+		return wiki.database();
+	}
+
+	//map the localNode to the remoteNode
+	void map(DatabaseNode localNode, DatabaseNode remoteNode){
 		if(((NodeIdentifier)localNode.identifier()).nodeID() != ((NodeIdentifier)remoteNode.identifier()).nodeID()){
 			idMap.put(((NodeIdentifier)localNode.identifier()).nodeID(), ((NodeIdentifier)remoteNode.identifier()).nodeID());
 		}
@@ -694,24 +739,25 @@ public class SynchronizeDatabaseWiki {
 			}
 		}
 	}
-	
+
 	//check whether the node is changed since the given version
-	private List<DatabaseTextNode> isChanged(DatabaseNode node, int version){
+	static List<DatabaseTextNode> isChanged(DatabaseNode node, int version){
 		List<DatabaseTextNode> list = new ArrayList<DatabaseTextNode>();
 		if(node.isElement()){
 			DatabaseElementNode element = (DatabaseElementNode)node;
 			if(element.isGroup()){
-				RDBMSDatabaseGroupNode group = (RDBMSDatabaseGroupNode)element;
+				DatabaseGroupNode group = (DatabaseGroupNode)element;
 				for(int i = 0; i < group.children().size(); i++){
-					List<DatabaseTextNode> sublist = this.isChanged(group.children().get(i), version);
+					List<DatabaseTextNode> sublist = isChanged(group.children().get(i), version);
 					if(sublist != null && !sublist.isEmpty()){
 						list.addAll(sublist);
 					}
 				}
 			}
 			else{
-				RDBMSDatabaseAttributeNode attribute = (RDBMSDatabaseAttributeNode)element;
+				DatabaseAttributeNode attribute = (DatabaseAttributeNode) element;
 				DatabaseTextNode text = attribute.value().getCurrent();
+				System.out.println(text);
 				if(text != null){
 					if(text.getTimestamp().changedSince(version)){
 						list.add(text);
@@ -727,8 +773,8 @@ public class SynchronizeDatabaseWiki {
 		}
 		return list;
 	}
-	
-	private class NodePair{
+
+	class NodePair{
 		DatabaseNode _localNode;
 		DatabaseNode _remoteNode;
 		public NodePair(DatabaseNode localNode, DatabaseNode remoteNode){
@@ -741,10 +787,10 @@ public class SynchronizeDatabaseWiki {
 		public DatabaseNode get_remoteNode() {
 			return _remoteNode;
 		}
-		
+
 	}
-	
-	private class ConflictPair{
+
+	class ConflictPair{
 		int nodeID;
 		DatabaseNode existNode;
 		public ConflictPair(int nodeID, DatabaseNode existNode){
@@ -758,8 +804,8 @@ public class SynchronizeDatabaseWiki {
 			return existNode;
 		}
 	}
-	
-	private class DeleteandChange{
+
+	class DeleteandChange{
 		NodePair deletedChangedNode;
 		List<DatabaseTextNode> list;
 		public DeleteandChange(NodePair deletedChangedNode, List<DatabaseTextNode> list){
@@ -773,22 +819,22 @@ public class SynchronizeDatabaseWiki {
 			return list;
 		}
 	}
-	
-	
+
+
 	public int getRemotePreviousVersionNumber(){
 		return remotePreviousVersionNumber;
 	}
-	
+
 	public int getLocalPreviousVersionNumber(){
 		return localPreviousVersionNumber;
 	}
-	
+
 	public void setSynchronizeParameters(boolean remoteAdded, boolean remoteDeleted, boolean remoteChanged,
 			boolean changedChanged, boolean deletedChanged, boolean changedDeleted, boolean addedAdded){
 		setSynchronizeParameters(remoteAdded, remoteDeleted, remoteChanged, changedChanged, deletedChanged,
 				changedDeleted, addedAdded, false, false, false);
 	}
-	
+
 	public void setSynchronizeParameters(boolean remoteAdded, boolean remoteDeleted, boolean remoteChanged,
 			boolean changedChanged, boolean deletedChanged, boolean changedDeleted, boolean addedAdded,
 			boolean localAdded, boolean localChanged, boolean localDeleted){
@@ -803,7 +849,7 @@ public class SynchronizeDatabaseWiki {
 		this.localAdded = localAdded;
 		this.localDeleted = localDeleted;
 	}
-	
+
 	public static void main(String args[]) throws org.dbwiki.exception.WikiException{
 		String commandLine = "SynchronizeDatabaseWiki <config-file> <synchronize config-file>";
 		if(args.length == 2){
@@ -823,13 +869,53 @@ public class SynchronizeDatabaseWiki {
 			System.out.println(commandLine);
 		}
 	}
-	
-	private boolean sameParent(DatabaseNode local, DatabaseNode remote) {
+
+	boolean sameParent(DatabaseNode local, DatabaseNode remote) {
 		if (!(local.getparent() == DatabaseConstants.RelDataColParentValUnknown)
 				&& !(remote.getparent() == DatabaseConstants.RelDataColParentValUnknown)
 				&& idMap.containsKey(local.getparent())) {
 			return idMap.get(local.getparent()) == remote.getparent();
 		}
 		return local.getparent() == remote.getparent();
+	}
+
+	//
+	// METHOD USED FOR TESTING CODE
+	//
+
+	List<ConflictPair> getRemoteAddedNodes() {
+		return remoteAddedNodes;
+	}
+
+	List<ConflictPair> getLocalAddedNodes() {
+		return localAddedNodes;
+	}
+
+	List<DatabaseNode> getRemoteDeletedNodes() {
+		return remoteDeletedNodes;
+	}
+
+	List<DatabaseNode> getLocalDeletedNodes() {
+		return localDeletedNodes;
+	}
+
+	List<NodePair> getRemoteChangedNodes() {
+		return remoteChangedNodes;
+	}
+
+	List<NodePair> getLocalChangedNodes() {
+		return localChangedNodes;
+	}
+
+	List<NodePair> getChangedChangedNodes() {
+		return changedChangedNodes;
+	}
+
+	List<DeleteandChange> getChangedDeletedNodes() {
+		return changedDeletedNodes;
+	}
+
+	List<DeleteandChange> getDeletedChangedNodes() {
+		return deletedChangedNodes;
 	}
 }

@@ -1,4 +1,4 @@
-/* 
+/*
     BEGIN LICENSE BLOCK
     Copyright 2010-2011, Heiko Mueller, Sam Lindley, James Cheney and
     University of Edinburgh
@@ -128,8 +128,8 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
 
-/** Implements the DatabaseWiki functionality for a given database. 
- * 
+/** Implements the DatabaseWiki functionality for a given database.
+ *
  * @author jcheney
  *
  */
@@ -138,20 +138,20 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 	/*
 	 * Public Constants
 	 */
-	
+
 	// Parameter values that indicate whether automatic schema
 	// changes are allowed when importing (copy/paste, merge)
 	// data
 	public static final int AutoSchemaChangesAllow  = 0;
 	public static final int AutoSchemaChangesIgnore = 1;
 	public static final int AutoSchemaChangesNever  = 2;
-	
+
 	public static final String IndexAZMultiPage     = "AZ_MULTI_PAGE";
 	public static final String IndexAZSinglePage    = "AZ_SINGLE_PAGE";
 	public static final String IndexFullList        = "FULL_LIST";
 	public static final String IndexMultiColumn     = "MULTI_COLUMN";
 	public static final String IndexPartialList     = "PARTIAL_LIST";
-	
+
 	public static final String ParameterSchemaNodeName = "schema_node_name";
 	public static final String ParameterSchemaNodeType = "schema_node_type";
 	public static final String ParameterFileContent    = "file_content";
@@ -164,7 +164,7 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 	 */
 	public static final String WikiPageRequestPrefix = "wiki";
 	public static final String SchemaRequestPrefix = "schema";
-	
+
 	/*
 	 * Private Variables
 	 */
@@ -184,13 +184,13 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 	private int _urlDecodingVersion;
 	private URLDecodingRules _urlDecoder;
 	private Wiki _wiki;
-	
+
 	/*
 	 * Constructors
 	 */
-	
+
 	/** Create new DatabaseWiki from given data.  Used in WikiServer.getWikiListing.
-	 * 
+	 *
 	 */
 	public DatabaseWiki(int id, String name, String title, WikiAuthenticator authenticator, int autoSchemaChanges, ConfigSetting setting, DatabaseConnector connector, WikiServer server) throws org.dbwiki.exception.WikiException {
 		_authenticator = authenticator;
@@ -199,13 +199,13 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 		_server = server;
 		_name = name;
 		_title = title;
-		
+
 		reset(setting.getLayoutVersion(), setting.getTemplateVersion(), setting.getStyleSheetVersion(), setting.getURLDecodingRulesVersion());
-		
+
 		_database = new RDBMSDatabase(this, connector);
 		_wiki = new SimpleWiki(name, connector, server.users());
 	}
-	
+
 	// HACK: pass in and use an existing connection and version index.
 	// Used only in WikiServer.RegisterDatabase to create a new database.
 	public DatabaseWiki(int id, String name, String title, WikiAuthenticator authenticator, int autoSchemaChanges, DatabaseConnector connector,
@@ -217,65 +217,65 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 		_server = server;
 		_name = name;
 		_title = title;
-		
+
 		ConfigSetting setting = new ConfigSetting();
-		
+
 		reset(setting.getLayoutVersion(), setting.getTemplateVersion(), setting.getStyleSheetVersion(), setting.getURLDecodingRulesVersion());
-		
+
 		_database = new RDBMSDatabase(this, connector, con, versionIndex);
 		_wiki = new SimpleWiki(name, connector, server.users());
 	}
-	
-	
+
+
 	/*
 	 * Public Methods
 	 */
 
 	/** Comparator.  Compare database wikis by title, to sort list of wikis.
-	 * 
+	 *
 	 */
  	@Override
 	public int compareTo(DatabaseWiki wiki) {
 	 	return this.getTitle().compareTo(wiki.getTitle());
 	}
-	
-	
-	/* 
+
+
+	/*
 	 * Getters
 	 */
 
 	public WikiAuthenticator authenticator() {
 		return _authenticator;
 	}
-	
+
 	public int getAutoSchemaChanges() {
 		return _autoSchemaChanges;
 	}
-	
+
 	public CSSLinePrinter cssLinePrinter() {
 		return _cssLinePrinter;
 	}
-	
+
 	public URLDecodingRules urlDecoder() throws org.dbwiki.exception.WikiException {
 		if (_urlDecoder == null) {
 			_urlDecoder = new URLDecodingRules(_database.schema(), _server.getURLDecoding(this, _urlDecodingVersion));
 		}
 		return _urlDecoder;
 	}
-	
+
 
 	public Database database() {
 		return _database;
 	}
-	
-	
+
+
 	@Deprecated
 	public AttributeSchemaNode displaySchemaNode(DatabaseSchema schema) {
 		return _layouter.displaySchemaNode(schema);
 	}
-	
+
 	/** Gets the string value of a template or stylesheet, for use in the editor form.
-	 * 
+	 *
 	 * @param fileType
 	 * @return
 	 * @throws org.dbwiki.exception.WikiException
@@ -291,23 +291,23 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 			throw new WikiFatalException("Unknown configuration file type");
 		}
 	}
-	
+
 	public String getTitle() {
 		return _title;
 	}
-	
+
 	public UserListing users() {
 		return _server.users();
 	}
-	
+
 	public Wiki wiki() {
 		return _wiki;
 	}
-	
+
 	public WikiServer server() {
 		return _server;
 	}
-	
+
 	/**
 	 * The list of all previous display settings for this wiki. Contains only
      * the file version numbers, not the actual data.
@@ -315,30 +315,30 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 	 * @throws org.dbwiki.exception.WikiException
 	 */
 	public Vector<ConfigSetting> listSettings() throws org.dbwiki.exception.WikiException {
-		
+
 		return _server.listSettings(this);
 	}
-	
+
 	public String name() {
 		return _name;
 	}
-	
+
 	public int id() {
 		return _id;
 	}
-	
+
 	public DatabaseIdentifier identifier() {
 		return _database.identifier();
 	}
-	
+
 	public DatabaseLayouter layouter() {
 		return _layouter;
 	}
-	
+
 	/*
 	 * Setters
 	 */
-	
+
 	/** Sets the auto schema changes policy.
 	 */
 	public void setAutoSchemaChanges(int autoSchemaChanges) {
@@ -349,15 +349,15 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 	public void setTitle(String value) {
 		_title = value;
 	}
-	
-	/* 
+
+	/*
 	 * Actions
 	 */
-	
+
 	/**
 	 * Reset configuration to the specified file versions.
 	 */
-	
+
 	public void reset(int layoutVersion, int templateVersion, int styleSheetVersion, int urlDecodingVersion) throws org.dbwiki.exception.WikiException {
 		_cssVersion = styleSheetVersion;
 		_layoutVersion = layoutVersion;
@@ -368,23 +368,23 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 		_urlDecoder = null;
 		_layouter = new DatabaseLayouter(_server.getLayout(this, _layoutVersion));
 	}
-	
+
 	public int getLayoutVersion() {
 		return _layoutVersion;
 	}
-	
+
 	public int getTemplateVersion() {
 		return _templateVersion;
 	}
-	
+
 	public int getCSSVersion() {
 		return _cssVersion;
 	}
-	
+
 	public int getURLDecodingVersion() {
 		return _urlDecodingVersion;
 	}
-	
+
 	/** Dispatches HTTP interactions based on the type of the request.
 	 * Data requests are handled by respondToDataRequest
 	 * Wiki Page requests are handled by respondToPageRequest
@@ -411,7 +411,7 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 			HtmlSender.send(new FatalExceptionPage(exception),exchange);
 		}
 	}
-	
+
 	private void handleFunctionality(HttpExchange exchange) throws IOException, WikiException {
 		String filename = exchange.getRequestURI().getPath();
 		int pos = filename.lastIndexOf('.');
@@ -423,7 +423,7 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 			}
 			RequestURL<HttpExchange> url = new RequestURL<HttpExchange>(new HttpExchangeWrapper(exchange), _database.identifier().linkPrefix());
 			if (url.isDataRequest()) {
-				String s = ""; 
+				String s = "";
 				for (java.util.Map.Entry<String, List<String>> entry : exchange.getResponseHeaders().entrySet()) {
 					s = s + entry.getKey();
 					for (String a : entry.getValue()) {
@@ -439,14 +439,14 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 			}
 		}
 	}
-	
+
 	/*
 	 * Private Methods
 	 */
-	
-	
+
+
 	/** Gets the document node associated with an insert POST request.
-	 * 
+	 *
 	 * @param request
 	 * @return
 	 * @throws org.dbwiki.exception.WikiException
@@ -483,18 +483,18 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 			return root;
 		}
 	}
-	
-	
+
+
 
 	/** Collects the node updates associated with the text fields of a POST request generated by a data edit form
-	 *  
+	 *
 	 * @param request
 	 * @return
 	 * @throws org.dbwiki.exception.WikiException
 	 */
 	private Update getNodeUpdates(WikiDataRequest<?>  request) throws org.dbwiki.exception.WikiException {
 		Update updates = new Update();
-		
+
 		for (int iParameter = 0; iParameter < request.parameters().size(); iParameter++) {
 			RequestParameter parameter = request.parameters().get(iParameter);
 			if (parameter.name().startsWith(RequestParameter.TextFieldIndicator)) {
@@ -508,9 +508,9 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 
 		return updates;
 	}
-	
+
 	/** Handle a paste action
-	 * 
+	 *
 	 * @param request
 	 * @param url
 	 * @throws org.dbwiki.exception.WikiException
@@ -539,11 +539,11 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 			throw new WikiRequestException(WikiRequestException.InvalidUrl, "(null)");
 		}
 	}
-	
+
 	/** Handle a paste action
-	 * 
+	 *
 	 * @param request
-	 * @param port 
+	 * @param port
 	 * @param url
 	 * @throws org.dbwiki.exception.WikiException
 	 */
@@ -596,10 +596,10 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 		} else {
 			synchronize.setSynchronizeParameters(remoteAdded, remoteDeleted, remoteChanged, changedChanged, deletedChanged, changedDeleted, addedAdded);
 		}
-		
+		System.out.println("HEREHEREHEREHEREHEREHEREHRE");
 		synchronize.responseToSynchronizeRequest(sourceURL, localID, isRootRequest, parameter, port);
 	}
-	
+
 	private boolean getParameter(String parameter,
 			WikiDataRequest<?> request) {
 		if (request.type().isSynchronize1()) {
@@ -627,16 +627,16 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 		return false;
 	}
 
-	/** Reset the configuration.  
+	/** Reset the configuration.
 	 * The value is the parameter value of a ?reset=value request. The format
 	 * currently is expected to be <int>_<int>_<int> and these <int>'s are
 	 * layout file version, template file version, and style sheet file version.
-	 * 
+	 *
 	 * @param value String
 	 * @throws org.dbwiki.exception.WikiException
 	 */
 	private synchronized void resetConfiguration(String value) throws org.dbwiki.exception.WikiException {
-		
+
 		ConfigSetting setting = null;
 		try {
 			setting = new ConfigSetting(value);
@@ -645,12 +645,12 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 		}
 		_server.resetWikiConfiguration(this, setting.getLayoutVersion(), setting.getTemplateVersion(), setting.getStyleSheetVersion(), setting.getURLDecodingRulesVersion());
 	}
-	
+
 	private void respondToExportXMLRequest(WikiDataRequest<HttpExchange> request, NodeWriter writer) throws org.dbwiki.exception.WikiException {
 		respondToExportXMLRequest(request, writer, null);
 	}
 	/** Handles data export requests (generating XML)
-	 * 
+	 *
 	 * @param request
 	 * @param writer
 	 * @throws org.dbwiki.exception.WikiException
@@ -662,7 +662,7 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 		} else if( version != null) {
 			versionNumber = version;
 		}
-		
+
 		try {
 			// if the request is for all the data in a DatabaseWiki, create a temporary file.
 			//  Otherwise, do it in memory (ASSUMES each entry is small!).
@@ -687,9 +687,9 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 			throw new WikiFatalException(ioException);
 		}
 	}
-	
+
 	/** Handles data export requests (generating JSON)
-	 * 
+	 *
 	 * @param request
 	 * @param writer
 	 * @throws org.dbwiki.exception.WikiException
@@ -699,7 +699,7 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 		if (request.parameters().hasParameter(RequestParameter.ParameterVersion)) {
 			versionNumber = ((RequestParameterVersionSingle)RequestParameter.versionParameter(request.parameters().get(RequestParameter.ParameterVersion))).versionNumber();
 		}
-		
+
 		try {
 			// if the request is for all the data in a DatabaseWiki, create a temporary file.
 			//  Otherwise, do it in memory (ASSUMES each entry is small!).
@@ -725,13 +725,13 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 		}
 	}
 
-	/** 
-	 * Handles a request for a data node.  
+	/**
+	 * Handles a request for a data node.
 	 * First check authentication.
-	 * Next determine whether it's a GET request, or an action.  
+	 * Next determine whether it's a GET request, or an action.
 	 * If it's an action, perform the action and redirect.
-	 * If it's a GET request, there are many cases depending on the particular content being 
-	 * requested (e.g. the current version, past versions, xml, search, file editor, etc.) 
+	 * If it's a GET request, there are many cases depending on the particular content being
+	 * requested (e.g. the current version, past versions, xml, search, file editor, etc.)
 	 * In each case, build appropriate content generator and plug into the template.
 	 * @param request
 	 * @throws java.io.IOException
@@ -748,13 +748,13 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 				throw new WikiFatalException("User login required to perform requested operation");
 			}
 		}
-		
+
 		// All requests of type .isAction() have to result in .isGet() or .isIndex() requests
 		// which is not recognized/distinguished by the RequestType class. Thus, this
 		// decision has to be taken below (thats why the following variables are needed).
 		boolean isGetRequest = (request.type().isGet() || request.type().isActivate());
 		boolean isIndexRequest = request.type().isIndex();
-		
+
 		// This is where all the action happens. Note that .isAction() requests result from
 		// HTTP POST request. The class RequestType currently does not distinguish these
 		// requests further, thus it has to be done here.
@@ -924,7 +924,7 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 			isGetRequest = !request.isRootRequest();
 			isIndexRequest = !isGetRequest;
 		}
-		
+
 		// If the request is not redirected (in case of INSERT or DELETE) then assemble appropriate
 		// HtmlContentGenerator.
 		if (page == null) {
@@ -1008,7 +1008,7 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 			}
 			page = HtmlTemplateDecorator.decorate(_template, contentGenerator);
 		}
-		
+
 		// Send the resulting page to the user.
 		HtmlSender.send(page,request.exchange());
 	}
@@ -1024,7 +1024,7 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 		// for .isAction() requests (see above).
 		boolean isGetRequest = request.type().isGet();
 		boolean isIndexRequest = request.type().isIndex();
-		
+
 		RequestParameterAction action = new RequestParameterActionCancel();
 		if (request.type().isDelete()) {
 			wiki().delete((PageIdentifier)request.wri().resourceIdentifier());
@@ -1046,9 +1046,9 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 				}
 			}
 		}
-		
+
 		DatabaseWikiContentGenerator contentGenerator = new DatabaseWikiContentGenerator(this, request);
-		
+
 		if (isGetRequest) {
 			contentGenerator.put(HtmlContentGenerator.ContentMenu, new PageMenuPrinter(request));
 			contentGenerator.put(HtmlContentGenerator.ContentContent, new PageContentPrinter(request, _layouter));
@@ -1085,11 +1085,11 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 		}
 		HtmlSender.send(HtmlTemplateDecorator.decorate(_template, contentGenerator),request.exchange());
 	}
-		
+
 	/** Respond to request for a schema node
 	 * Like respondToDataRequest, this first checks the operation is a GET or POST.
 	 * If POST, then the action is performed and the response redirects.
-	 * If GET, then an appropriate ContentGenerator is constructed and 
+	 * If GET, then an appropriate ContentGenerator is constructed and
 	 * used to render the schema node.
 	 * @param request
 	 * @throws java.io.IOException
@@ -1097,17 +1097,17 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 	 */
 	private void respondToSchemaRequest(WikiSchemaRequest<HttpExchange> request) throws java.io.IOException, org.dbwiki.exception.WikiException {
 		// TODO: fill in and tidy up
-		// 
+		//
 		// Most of the code here is copied and pasted from above.
-		
+
 		// Again, we need to further distinguish the request type
 		// for .isAction() requests (see above).
 		boolean isGetRequest = request.type().isGet();
 		boolean isIndexRequest = request.type().isIndex();
-		
+
 		if (request.type().isDelete()) {
 			database().deleteSchemaNode(request.wri().resourceIdentifier(), request.user());
-			
+
 			if (request.schema().parent() != null) {
 				HtmlSender.send(new RedirectPage(request, request.schema().parent().identifier()),request.exchange());
 				return;
@@ -1115,7 +1115,7 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 				isIndexRequest = true;
 			}
 		}
-		
+
 		// This is where all the action happens. Note that .isAction() requests result from
 		// HTTP POST request. The class RequestType currently does not distinguish these
 		// requests further, thus it has to be done here.
@@ -1130,7 +1130,7 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 				isIndexRequest = !isGetRequest;
 			}
 		}
-		
+
 //		RequestParameterAction action = new RequestParameterActionCancel();
 //		if (request.type().isDelete()) {
 //			wiki().delete((PageIdentifier)request.wri().resourceIdentifier());
@@ -1152,9 +1152,9 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 //				}
 //			}
 //		}
-//		
+//
 		DatabaseWikiContentGenerator contentGenerator = new DatabaseWikiContentGenerator(this, request);
-		
+
 		if (isGetRequest) {
 			contentGenerator.put(HtmlContentGenerator.ContentTimemachine, new TimemachinePrinter(request));
 			contentGenerator.put(HtmlContentGenerator.ContentMenu, new SchemaMenuPrinter(request));
@@ -1198,22 +1198,22 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
 //		} else {
 //			throw new WikiRequestException(WikiRequestException.InvalidRequest, request.exchange().getRequestURI().toASCIIString());
 //		}
-		
+
 		HtmlSender.send(HtmlTemplateDecorator.decorate(_template, contentGenerator), request.exchange());
 	}
-	
+
 	/** Handles POST requests that provide a new version of a config file.
-	 * 
+	 *
 	 * @param request
 	 * @throws org.dbwiki.exception.WikiException
 	 */
-	  
+
 	private synchronized void updateConfigurationFile(WikiRequest<?>  request) throws org.dbwiki.exception.WikiException {
 		int wikiID = Integer.valueOf(request.parameters().get(ParameterDatabaseID).value());
 		int fileType = Integer.valueOf(request.parameters().get(ParameterFileType).value());
-		
+
 		String value = null;
-		
+
 		if (fileType == WikiServerConstants.RelConfigFileColFileTypeValLayout) {
 			Properties properties = new Properties();
 			for (int iParameter = 0; iParameter < request.parameters().size(); iParameter++) {

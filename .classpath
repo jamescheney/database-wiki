@@ -1,10 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="tests"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry kind="lib" path="lib/postgresql-8.4-701.jdbc4.jar"/>
 	<classpathentry kind="lib" path="lib/xercesImpl.jar"/>
 	<classpathentry kind="lib" path="lib/mysql-connector-java-5.1.13-bin.jar"/>
 	<classpathentry kind="lib" path="lib/parboiled4j-0.9.9.0.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry kind="lib" path="/home/cata/dbwiki/catalina/lib/easymock-3.2/easymock-3.2.jar"/>
+	<classpathentry kind="lib" path="/home/cata/dbwiki/catalina/lib/easymock-3.2/easymock-3.2-javadoc.jar"/>
+	<classpathentry kind="lib" path="/home/cata/dbwiki/catalina/lib/easymock-3.2/easymock-3.2-samples.jar"/>
+	<classpathentry kind="lib" path="/home/cata/dbwiki/catalina/lib/easymock-3.2/easymock-3.2-sources.jar"/>
+	<classpathentry kind="lib" path="/home/cata/dbwiki/catalina/lib/easymock-3.2/easymock-3.2-tests.jar"/>
+	<classpathentry kind="lib" path="/home/cata/dbwiki/catalina/lib/cglib-nodep-3.1.jar"/>
+	<classpathentry kind="lib" path="/home/cata/dbwiki/catalina/lib/objenesis-tck-2.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

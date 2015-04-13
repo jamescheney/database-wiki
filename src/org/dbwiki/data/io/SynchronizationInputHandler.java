@@ -90,7 +90,8 @@ public class SynchronizationInputHandler implements InputHandler {
 	@Override
 	public void startElement(String label) throws WikiException {
 		// TODO Auto-generated method stub
-		throw new WikiFatalException("Invalid method call: " + this.getClass().getName() + ".startElement(" + label + ")");
+		throw new WikiFatalException(String.format("Invalid method call: %s.startElement(%s)",
+				this.getClass().getName(), label));
 	}
 	
 	@Override
