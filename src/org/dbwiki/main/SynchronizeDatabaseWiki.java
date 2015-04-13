@@ -3,13 +3,9 @@ package org.dbwiki.main;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -46,8 +42,8 @@ import org.dbwiki.web.log.ServerLog;
 import org.dbwiki.web.request.parameter.RequestParameter;
 import org.dbwiki.web.server.DatabaseWiki;
 import org.dbwiki.web.server.WikiServer;
+import org.dbwiki.web.ui.printer.data.ConflictResolutionFormPrinter;
 import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
 
 public class SynchronizeDatabaseWiki {
 
@@ -411,18 +407,13 @@ public class SynchronizeDatabaseWiki {
 
             extractVersionNumbers(syncFile);
             //compare entries from two DBWiki instances that is to be synchronized
+            SynchronizationInputHandler ioHandler = new SynchronizationInputHandler();
+            SAXCallbackInputHandler saxCallbackInputHandler = new SAXCallbackInputHandler(ioHandler, false);
             if(!isRootRequest){
                 sourceURL = invertAndAddParameters(sourceURL, xmlRequestType, port);
-                SynchronizationInputHandler ioHandler = new SynchronizationInputHandler();
                 ioHandler.setIsRootRequest(isRootRequest);
                 InputStream inputStreamFromRemote = new URL(sourceURL).openStream();
-                InputStream inputFromTempFile = printToFileThenGetInputStream(inputStreamFromRemote);
-                try {
-                new SAXCallbackInputHandler(ioHandler, false).parse(inputFromTempFile, false, false);
-                } catch (SAXParseException e) {
-                    System.out.println("PARSING THE XML FALED!!!!!!!!!!!!!!!!!!!!");
-                    e.printStackTrace();
-                }
+                saxCallbackInputHandler.parse(inputStreamFromRemote, false, false);
 
                 //get the version information when the synchronization happens
                 //ioHandler;
@@ -437,7 +428,6 @@ public class SynchronizeDatabaseWiki {
                 RDBMSDatabaseListing entries = ((RDBMSDatabase)getDatabase()).content();
                 for(int i = 0; i < entries.size(); i++){
                     String newurl;
-                    SynchronizationInputHandler ioHandler = new SynchronizationInputHandler();
                     ioHandler.setIsRootRequest(false);
 
                     if(idMap.containsKey(entries.get(i).identifier().nodeID())){
@@ -448,8 +438,7 @@ public class SynchronizeDatabaseWiki {
                     }
                     newurl = invertAndAddParameters(newurl, xmlRequestType, port);
                     InputStream inputStreamFromRemote = new URL(newurl).openStream();
-                    InputStream inputFromTempFile = printToFileThenGetInputStream(inputStreamFromRemote);
-                    new SAXCallbackInputHandler(ioHandler, false).parse(inputFromTempFile, false, false);
+                    saxCallbackInputHandler.parse(inputStreamFromRemote, false, false);
 
                     new_remoteVersion = ioHandler.getVersionNumber();
                     new_localVersion = getDatabase().versionIndex().getLastVersion().number();
@@ -458,10 +447,14 @@ public class SynchronizeDatabaseWiki {
                     this.compare(localNode, remoteNode);
                 }
             }
+            if (xmlRequestType == RequestParameter.ParameterSynchronizeThenExport) {
+                syncReport = cleanRemoteServerReport(saxCallbackInputHandler.getReport());
 
+            }
             // reconcile the differences and conflicts
             this.handleDifferences();
-            this.handleConflicts();
+//            this.handleConflicts();
+            this.reportConflicts();
             //System.out.println("reconcile time: " + (System.currentTimeMillis()-begin));
 
             // write new version information of this synchronization into the version log file
@@ -479,7 +472,7 @@ public class SynchronizeDatabaseWiki {
             }
             matchLog.closeLog();
             // Write report log to file
-            File reportFile = new File(String.format("sync_log_v%d.txt", new_localVersion));
+            File reportFile = new File(String.format("%d_sync_log_v%d.txt", localID, new_localVersion));
             if(!reportFile.exists()){
                 reportFile.createNewFile();
             }
@@ -503,20 +496,35 @@ public class SynchronizeDatabaseWiki {
         }
     }
 
-    private InputStream printToFileThenGetInputStream(
-            InputStream inputStreamFromRemote) throws IOException {
-        File targetFile = new File("targetFile.xml");
-        OutputStream outStream = new FileOutputStream(targetFile);
-        while(inputStreamFromRemote.available() > 0) {
-            byte[] buffer = new byte[inputStreamFromRemote.available()];
-            inputStreamFromRemote.read(buffer);
-            outStream.write(buffer);
+    /**
+     * Takes one-sided report arrived from remote-server, updates it's labels and swaps
+     * node IDs of the updates described. This is done to maintain consistency with the
+     * expected format of naming nodes in the sync reports(i.e. localID + "-" + remoteID)
+     */
+    static StringBuffer cleanRemoteServerReport(String report) {
+        if(report.length() > 1 && report.charAt(0) == '\n') {
+            report = report.substring(1);
         }
-        outStream.flush();
-        outStream.close();
-        File tempFile = new File("targetFile.xml");
-        System.out.printf("s1006617 >> Using file %s for inputting xml from remote\n", targetFile.getAbsolutePath());
-        return new FileInputStream(tempFile);
+        StringBuffer cleanReport = new StringBuffer();
+        report = report.replaceFirst("LOCAL-ADDED", "REMOTE-ADDED")
+                .replaceFirst("LOCAL-CHANGED", "REMOTE-CHANGED")
+                .replaceFirst("LOCAL-DELETED", "REMOTE-DELETED");
+        String[] lines = report.split("\n");
+        // we only care about differences handled
+        for (int j = 0; j < Math.min(3, lines.length); j++) {
+            String[] idPairs = lines[j].split("#");
+            if(idPairs[0].equals("ADDED-ADDED")) {
+                // Added-added nodes will be identified again locally.
+                continue;
+            }
+            cleanReport.append(idPairs[0]);	// line tag
+            for (int i = 1; i < idPairs.length; i++) {
+                String[] ids = idPairs[i].split("-");
+                cleanReport.append('#').append(ids[1]).append('-').append(ids[0]);
+            }
+            cleanReport.append('\n');
+        }
+        return cleanReport.deleteCharAt(cleanReport.length() - 1);
     }
 
     String addLocalPortParameter(String sourceURL, String port) {
@@ -606,7 +614,7 @@ public class SynchronizeDatabaseWiki {
                 Update update = new Update();
                 NodeUpdate nodeupdate = new NodeUpdate(((RDBMSDatabaseTextNode)nodePair.get_localNode()).identifier(), ((RDBMSDatabaseTextNode)nodePair._remoteNode).value());
                 update.add(nodeupdate);
-                getDatabase().update(nodePair.get_localNode().identifier(), update, user);
+                    this.getDatabase().update(nodePair.get_localNode().identifier(), update, user);
             }
         }
         if(!deletedChangedNodes.isEmpty() && deletedChanged){
@@ -637,18 +645,40 @@ public class SynchronizeDatabaseWiki {
         }
     }
 
+    void reportConflicts() {
+        syncReport.append("\nCHANGED-CHANGED");
+        for (NodePair pair : changedChangedNodes) {
+            syncReport.append(String.format("#%s-%s", ((NodeIdentifier) pair.get_localNode().identifier()).nodeID(),
+                    ((NodeIdentifier) pair.get_remoteNode().identifier()).nodeID()));
+        }
+        syncReport.append("\nCHANGED-DELETED");
+        for (DeleteandChange cdPair : changedDeletedNodes) {
+            NodePair pair = cdPair.deletedChangedNode;
+            syncReport.append(String.format("#%s-%s", ((NodeIdentifier) pair.get_localNode().identifier()).nodeID(),
+                    ((NodeIdentifier) pair.get_remoteNode().identifier()).nodeID()));
+        }
+        syncReport.append("\nDELETED-CHANGED");
+        for (DeleteandChange dcPair : deletedChangedNodes) {
+            NodePair pair = dcPair.deletedChangedNode;
+            syncReport.append(String.format("#%s-%s", ((NodeIdentifier) pair.get_localNode().identifier()).nodeID(),
+                    ((NodeIdentifier) pair.get_remoteNode().identifier()).nodeID()));
+        }
+    }
+
     //handle the differences in the synchronization results
     void handleDifferences() throws WikiException{
         System.out.println("Number of remote added nodes: " + remoteAddedNodes.size());
         System.out.println("Number of local added nodes: " + localAddedNodes.size());
-        syncReport.append("####### REMOTE-ADDED NODES ######\n");
+        StringBuffer addedAddedReportBuffer = new StringBuffer();
+        syncReport.append("\nLOCAL-ADDED");
         if (remoteAddedNodes.isEmpty()) {
-            syncReport.append(" -- there were no new nodes added to the remote server\n");
+            // do nothing
         } else  if (!remoteAdded) {
-            syncReport.append(" -- you chose not to copy new nodes from the remote server\n");
+            syncReport.append(" -- you chose not to copy new nodes from the remote server");
         } else if(!remoteAddedNodes.isEmpty() && remoteAdded){
             for(ConflictPair pair: remoteAddedNodes){
                 boolean skip = false;
+                String localEquvalentId = null;
                 int insertNodeID;
                 // Checking if remote added node already exists.
                 for(ConflictPair localPair: localAddedNodes) {
@@ -662,17 +692,18 @@ public class SynchronizeDatabaseWiki {
                             DatabaseElementNode remoteElement = (DatabaseElementNode) remote;
                             if (localElement.isSimilarTo(remoteElement)) {
                                 skip = true;
+                                localEquvalentId = localElement.identifier().toParameterString();
                                 if(!local.identifier().equals(remote.identifier())) {
                                     this.map(local, remote);
                                 }
                             }
                         }else if (local.isText() && remote.isText()) {
                             // Can be attribute node
-
                             DatabaseTextNode localText = (DatabaseTextNode) local;
                             DatabaseTextNode remoteText = (DatabaseTextNode) remote;
                             if (localText.getValue().equals(remoteText.getValue())) {
                                 skip = true;
+                                localEquvalentId = localText.identifier().toParameterString();
                                 if(!local.identifier().equals(remote.identifier())) {
                                     this.map(local, remote);
                                 }
@@ -682,8 +713,8 @@ public class SynchronizeDatabaseWiki {
                 }
                 /*********/
                 if (skip) {
-                    System.out.println("Not adding node " + pair.getExistNode().identifier().toString());
-                    syncReport.append(String.format("Skipped adding node %s\n", pair.getExistNode().identifier().toString()));
+                    System.out.println("Not adding node " + pair.getNodeID());
+                    addedAddedReportBuffer.append(String.format("#%s-%s", localEquvalentId, pair.getNodeID()));
                 } else if(pair.getExistNode().isElement()){
                     if(isRootRequest){
                         if(pair.getNodeID() == -1){
@@ -694,46 +725,46 @@ public class SynchronizeDatabaseWiki {
                         }
                     }
                     else{
-                        insertNodeID = ((NodeIdentifier)getDatabase().insertNode(new NodeIdentifier(pair.getNodeID()), ((DatabaseElementNode)pair.getExistNode()).toDocumentNode(), user)).nodeID();
+                        insertNodeID = ((NodeIdentifier)getDatabase().insertNode(new NodeIdentifier(pair.getNodeID()),
+                                ((DatabaseElementNode)pair.getExistNode()).toDocumentNode(), user)).nodeID();
                     }
                     DatabaseNode insertedNode = getDatabase().get(new NodeIdentifier(insertNodeID));
                     this.map(insertedNode, pair.getExistNode());
-                    syncReport.append(String.format("Added node remote node%s; local ID:  %d\n",
-                            pair.getExistNode().identifier().toString(),
-                            insertNodeID));
+                    syncReport.append(String.format("#%s-%s", insertNodeID,
+                            pair.getNodeID()));
                 }
-
             }
         }
-        syncReport.append("\n###### REMOTE-CHANGED NODES ######\n");
+        syncReport.append("\nLOCAL-CHANGED");
         if (!remoteChanged) {
-            syncReport.append(" -- you chose to not update changed nodes\n");
+            syncReport.append(" -- you chose to not update changed nodes");
         } else if (remoteChangedNodes.isEmpty()) {
-            syncReport.append(" -- no nodes have been updated\n");
+            // do nothing
         } else if (!remoteChangedNodes.isEmpty() && remoteChanged){
             for(NodePair nodePair: remoteChangedNodes){
                 Update update = new Update();
-                NodeUpdate nodeupdate = new NodeUpdate(((RDBMSDatabaseTextNode)nodePair.get_localNode()).identifier(), ((RDBMSDatabaseTextNode)nodePair.get_remoteNode()).value());
+                NodeUpdate nodeupdate = new NodeUpdate(((RDBMSDatabaseTextNode)nodePair.get_localNode()).identifier(),
+                        ((RDBMSDatabaseTextNode)nodePair.get_remoteNode()).value());
                 update.add(nodeupdate);
                 getDatabase().update(nodePair.get_localNode().identifier(), update, user);
-                syncReport.append(String.format("Updated node %d from \"%s\" to \"%s\"\n",
-                        nodePair.get_localNode().identifier(),
-                        "",
-                        update.toString()));
+                syncReport.append(String.format("#%s-%s",((NodeIdentifier) nodePair.get_localNode().identifier()).nodeID(),
+                        ((NodeIdentifier) nodePair.get_remoteNode().identifier()).nodeID()));
             }
         }
-        syncReport.append("\n###### REMOTE-DELETED NODES ######\n");
+        syncReport.append("\nLOCAL-DELETED");
         if (!remoteDeleted) {
-            syncReport.append(" -- you chose to not remove remote deleted nodes\n");
+            syncReport.append(" -- you chose to not remove remote deleted nodes");
         } else if (remoteDeletedNodes.isEmpty()) {
-            syncReport.append(" -- there were no nodes removed from the remote server\n");
+            // do nothing
         } else if (!remoteDeletedNodes.isEmpty() && remoteDeleted) {
             for(DatabaseNode node: remoteDeletedNodes){
                 getDatabase().delete(node.identifier(), user);
-                syncReport.append(String.format("node %s has been deleted\n", node.identifier()));
+                syncReport.append(String.format("#%s-%s",((NodeIdentifier) node.identifier()).nodeID(),
+                        this.getRemoteMapID(((NodeIdentifier) node.identifier()).nodeID())));
             }
         }
-        System.out.println(syncReport.toString());
+        syncReport.append("\nADDED-ADDED" + addedAddedReportBuffer.toString());
+        System.out.println("Reporting differences:\n" + syncReport.toString());
     }
 
     /**
@@ -811,7 +842,7 @@ public class SynchronizeDatabaseWiki {
         return list;
     }
 
-    class NodePair{
+    public class NodePair{
         DatabaseNode _localNode;
         DatabaseNode _remoteNode;
         public NodePair(DatabaseNode localNode, DatabaseNode remoteNode){
@@ -914,6 +945,10 @@ public class SynchronizeDatabaseWiki {
             return idMap.get(local.getparent()) == remote.getparent();
         }
         return local.getparent() == remote.getparent();
+    }
+
+    public ConflictResolutionFormPrinter getConflictResolutionFormPrinter() {
+        return new ConflictResolutionFormPrinter(this.changedChangedNodes);
     }
 
     //

@@ -22,6 +22,7 @@
 package org.dbwiki.data.io;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -51,6 +52,7 @@ public class SAXCallbackInputHandler extends DefaultHandler2 {
     private boolean _hadAttributes;
     private boolean _nestTextNodes;
     private InputHandler _nodeHandler;
+    private ArrayList<String> comments = new ArrayList<String>();
 
 
     /*
@@ -66,12 +68,17 @@ public class SAXCallbackInputHandler extends DefaultHandler2 {
     /*
      * Public Methods
      */
+
     @Override
+    /**
+     * Handles comments parsed. Please note that we expect the first comment we encounter to be the synchronisation report.
+     */
     public void comment(char[] ch,
             int start,
             int length)
      throws org.xml.sax.SAXException {
-        System.out.println("Got a comment >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" + String.copyValueOf(ch, start, length));
+        System.out.println("Got a comment: " + String.copyValueOf(ch, start, length));
+        comments.add(String.copyValueOf(ch, start, length));
 
     }
 
@@ -219,6 +226,14 @@ public class SAXCallbackInputHandler extends DefaultHandler2 {
         } else {
             this.startDocument();
             this.endDocument();
+        }
+    }
+
+    public String getReport(){
+        try {
+            return comments.get(0);
+        } catch (IndexOutOfBoundsException e) {
+            return null;
         }
     }
 }

@@ -71,6 +71,7 @@ import org.dbwiki.exception.WikiException;
 import org.dbwiki.exception.WikiFatalException;
 import org.dbwiki.exception.web.WikiRequestException;
 import org.dbwiki.main.SynchronizeDatabaseWiki;
+import org.dbwiki.main.SynchronizeDatabaseWiki.NodePair;
 import org.dbwiki.user.UserListing;
 import org.dbwiki.web.html.FatalExceptionPage;
 import org.dbwiki.web.html.HtmlPage;
@@ -100,6 +101,7 @@ import org.dbwiki.web.ui.printer.ObjectProvenancePrinter;
 import org.dbwiki.web.ui.printer.SettingsListingPrinter;
 import org.dbwiki.web.ui.printer.TimemachinePrinter;
 import org.dbwiki.web.ui.printer.VersionIndexPrinter;
+import org.dbwiki.web.ui.printer.data.ConflictResolutionFormPrinter;
 import org.dbwiki.web.ui.printer.data.CreateSchemaNodeFormPrinter;
 import org.dbwiki.web.ui.printer.data.DataMenuPrinter;
 import org.dbwiki.web.ui.printer.data.DataNodePrinter;
@@ -185,6 +187,7 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
     private int _urlDecodingVersion;
     private URLDecodingRules _urlDecoder;
     private Wiki _wiki;
+    private ConflictResolutionFormPrinter conflictResolutionFormPrinter;
 
     /*
      * Constructors
@@ -597,7 +600,9 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
         } else {
             synchronize.setSynchronizeParameters(remoteAdded, remoteDeleted, remoteChanged, changedChanged, deletedChanged, changedDeleted, addedAdded);
         }
-        return synchronize.responseToSynchronizeRequest(sourceURL, localID, isRootRequest, parameter, port);
+        String report =  synchronize.responseToSynchronizeRequest(sourceURL, localID, isRootRequest, parameter, port);
+        this.conflictResolutionFormPrinter = synchronize.getConflictResolutionFormPrinter();
+        return report;
     }
 
     private boolean getParameter(String parameter,
@@ -673,7 +678,6 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
                 File tmpFile = File.createTempFile("dbwiki", "xml");
                 BufferedWriter out = new BufferedWriter(new FileWriter(tmpFile));
                 writer.init(out);
-                // TODO: send report via export()
                 database().export(request.wri().resourceIdentifier(), versionNumber, writer, report);
                 out.close();
                 _server.sendXML(request.exchange(), new FileInputStream(tmpFile));
@@ -769,6 +773,7 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
         boolean isGetRequest = (request.type().isGet() || request.type().isActivate());
         boolean isIndexRequest = request.type().isIndex();
 
+        boolean issuingConflictResolutionForm = false;
         // This is where all the action happens. Note that .isAction() requests result from
         // HTTP POST request. The class RequestType currently does not distinguish these
         // requests further, thus it has to be done here.
@@ -930,8 +935,11 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
         }
         else if(request.type().isSynchronize())  {
             this.synchronizeURL(request, RequestParameter.ParameterSynchronizeThenExport);
-            isGetRequest = !request.isRootRequest();
-            isIndexRequest = !isGetRequest;
+//            isGetRequest = !request.isRootRequest();
+//            isIndexRequest = !isGetRequest;
+            issuingConflictResolutionForm  = true; //TODO: should check if necessary
+            this.conflictResolutionFormPrinter.setRequest(request);
+
         }
         else if(request.type().isSynchronize1())  {
             this.synchronizeURL(request, RequestParameter.ParameterSynchronizeThenExport1);
@@ -948,6 +956,9 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
         // HtmlContentGenerator.
         if (page == null) {
             DatabaseWikiContentGenerator contentGenerator = new DatabaseWikiContentGenerator(this, request);
+            if (issuingConflictResolutionForm) {
+                contentGenerator.put(HtmlContentGenerator.ContentContent, this.conflictResolutionFormPrinter);
+            } else
             if ((isGetRequest) || (request.type().isCopy())) {// This is the default case where no action has been performed and no special content is requested
                 contentGenerator.put(HtmlContentGenerator.ContentTimemachine, new TimemachinePrinter(request));
                 contentGenerator.put(HtmlContentGenerator.ContentMenu, new DataMenuPrinter(request, _layouter));
@@ -1027,7 +1038,7 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
             }
             page = HtmlTemplateDecorator.decorate(_template, contentGenerator);
         }
-
+        // TODO: this.conflictResolutionFormPrinter = null;
         // Send the resulting page to the user.
         HtmlSender.send(page,request.exchange());
     }
