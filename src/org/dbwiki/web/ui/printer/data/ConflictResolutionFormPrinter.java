@@ -2,8 +2,6 @@ package org.dbwiki.web.ui.printer.data;
 
 import java.util.List;
 
-import org.dbwiki.data.database.DatabaseAttributeNode;
-import org.dbwiki.data.database.DatabaseElementNode;
 import org.dbwiki.data.database.DatabaseNode;
 import org.dbwiki.data.database.DatabaseTextNode;
 import org.dbwiki.main.SynchronizeDatabaseWiki.NodePair;
@@ -19,10 +17,7 @@ public class ConflictResolutionFormPrinter implements HtmlContentPrinter {
      */
 
     private String _actionParameterName;
-    private String _command;
-    private String _inputParameterName;
     private WikiDataRequest<?> _request;
-    private String _localPort;
     private List<NodePair> changedChangedNodes;
 
 
@@ -30,7 +25,9 @@ public class ConflictResolutionFormPrinter implements HtmlContentPrinter {
      * Constructors
      */
 
-    public ConflictResolutionFormPrinter(List<NodePair> changedChangedNodes) {
+    public ConflictResolutionFormPrinter(List<NodePair> changedChangedNodes,
+            List<NodePair> changedDeletedNodes,
+            List<NodePair> deletedChangedNodes) {
         this.changedChangedNodes = changedChangedNodes;
     }
 
@@ -52,8 +49,10 @@ public class ConflictResolutionFormPrinter implements HtmlContentPrinter {
         body.addBR();
         body.addBR();
 
-        body.openFORM("frmInput", "POST", _request.wri().getURL());
-        body.addHIDDEN(_actionParameterName, "");
+        String url = _request.wri().getURL();
+        body.openFORM("frmInput", "POST", url);
+        body.addHIDDEN("nodeBeingSynced", url.substring(url.lastIndexOf('/')));
+        body.addHIDDEN("resolution", "LOCAL"); // only local prints this form
 
         body.openCENTER();
         body.openTABLE(CSS.CSSInputForm);
@@ -71,9 +70,9 @@ public class ConflictResolutionFormPrinter implements HtmlContentPrinter {
             body.text(String.format("Node %s has been changed on both servers. Choose which version you want to keep.", getPathLabels(pair)));
             body.closePARAGRAPH();
             String name = pair.get_localNode().identifier().toURLString() + "-" + pair.get_localNode().identifier().toURLString();
-            body.addRADIOBUTTON("Local value: " + ((DatabaseTextNode) pair.get_localNode()).getValue(), name, ((DatabaseTextNode) pair.get_localNode()).getValue(), true);
+            body.addRADIOBUTTON("Local value: " + ((DatabaseTextNode) pair.get_localNode()).getValue(), name, "REMOTE:" +((DatabaseTextNode) pair.get_localNode()).getValue(), true);
             body.addBR();
-            body.addRADIOBUTTON("Remote value: " + ((DatabaseTextNode) pair.get_remoteNode()).getValue(), name, ((DatabaseTextNode) pair.get_remoteNode()).getValue(), false);
+            body.addRADIOBUTTON("Remote value: " + ((DatabaseTextNode) pair.get_remoteNode()).getValue(), name, "LOCAL:" + ((DatabaseTextNode) pair.get_remoteNode()).getValue(), false);
             body.closeTD();
             body.closeTR();
         }

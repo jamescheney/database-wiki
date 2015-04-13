@@ -1,4 +1,4 @@
-/* 
+/*
     BEGIN LICENSE BLOCK
     Copyright 2010-2011, Heiko Mueller, Sam Lindley, James Cheney and
     University of Edinburgh
@@ -22,8 +22,6 @@
 package org.dbwiki.data.resource;
 
 import org.dbwiki.exception.web.WikiRequestException;
-
-
 import org.dbwiki.web.request.RequestURL;
 
 /** NodeIdentifier identifies a database node.
@@ -32,92 +30,98 @@ import org.dbwiki.web.request.RequestURL;
  *
  */
 public class NodeIdentifier implements ResourceIdentifier {
-	/*
-	 * Private Variables
-	 */
-	
-	private int _nodeID;
-	
-	
-	/*
-	 * Constructors
-	 */
-	/** Creates a root node identifier
-	 * 
-	 */
-	public NodeIdentifier() {
-		_nodeID = -1;
-	}
-	
-	/** Creates a node identifier for a given node id
-	 * 
-	 */
-	public NodeIdentifier(int nodeID) {
-		_nodeID = nodeID;
-	}
-	
-	public NodeIdentifier(RequestURL<?> url) throws org.dbwiki.exception.WikiException {
-		if (url.size() == 0) {
-			_nodeID = -1;
-		} else if (url.size() == 1) {
-			try {
-				_nodeID = Integer.decode("0x" + url.get(0).decodedText());
-			} catch (java.lang.NumberFormatException exception) {
-				throw new WikiRequestException(WikiRequestException.InvalidUrl, url.toString());
-			}
-		} else {
-			throw new WikiRequestException(WikiRequestException.InvalidUrl, url.toString());
-		}
-	}
-	
-	
-	/*
-	 * Public Methods
-	 */
-	
-	/**
-	 * Returns 0 if other ResourceIdentifier is the same.
-	 */
-	@Override
-	public int compareTo(ResourceIdentifier identifier) {
-		return (nodeID() - ((NodeIdentifier)identifier).nodeID());
-	}
-	
-	@Override
-	public boolean equals(ResourceIdentifier identifier) {
-		return (nodeID() == ((NodeIdentifier)identifier).nodeID());
-	}
+    /*
+     * Private Variables
+     */
 
-	@Override
-	public boolean isRootIdentifier() {
-		return (_nodeID == -1);
-	}
-	
-	public int nodeID() {
-		return _nodeID;
-	}
-	
-	@Override
-	public String toParameterString() {
-		return String.valueOf(_nodeID);
-	}
-	
-	@Override
-	public String toURLString() {
-		if (_nodeID == -1) {
-			return "/";
-		} else {
-			return "/" + Integer.toHexString(_nodeID).toUpperCase();
-		}
-	}
+    private int _nodeID;
 
-	@Override
-	public boolean equals(Object object) {
-		if (object == null
-				|| !(object instanceof NodeIdentifier)) {
-			return false;
-		}
-		NodeIdentifier other = (NodeIdentifier) object;
-		return 0 == this.compareTo(other);
-	}
+
+    /*
+     * Constructors
+     */
+    /** Creates a root node identifier
+     *
+     */
+    public NodeIdentifier() {
+        _nodeID = -1;
+    }
+
+    /** Creates a node identifier for a given node id
+     *
+     */
+    public NodeIdentifier(int nodeID) {
+        _nodeID = nodeID;
+    }
+
+    public NodeIdentifier(RequestURL<?> url) throws org.dbwiki.exception.WikiException {
+        if (url.size() == 0) {
+            _nodeID = -1;
+        } else if (url.size() == 1) {
+            try {
+                _nodeID = Integer.decode("0x" + url.get(0).decodedText());
+            } catch (java.lang.NumberFormatException exception) {
+                throw new WikiRequestException(WikiRequestException.InvalidUrl, url.toString());
+            }
+        } else {
+            throw new WikiRequestException(WikiRequestException.InvalidUrl, url.toString());
+        }
+    }
+
+    public NodeIdentifier(String URLstring) {
+        if (URLstring == null || !URLstring.startsWith("/")){
+            throw new IllegalArgumentException("Bad URLstring given to NodeIdentifier constructor");
+        }
+        _nodeID = Integer.parseInt(URLstring.substring(1), 16);
+    }
+
+    /*
+     * Public Methods
+     */
+
+    /**
+     * Returns 0 if other ResourceIdentifier is the same.
+     */
+    @Override
+    public int compareTo(ResourceIdentifier identifier) {
+        return (nodeID() - ((NodeIdentifier)identifier).nodeID());
+    }
+
+    @Override
+    public boolean equals(ResourceIdentifier identifier) {
+        return (nodeID() == ((NodeIdentifier)identifier).nodeID());
+    }
+
+    @Override
+    public boolean isRootIdentifier() {
+        return (_nodeID == -1);
+    }
+
+    public int nodeID() {
+        return _nodeID;
+    }
+
+    @Override
+    public String toParameterString() {
+        return String.valueOf(_nodeID);
+    }
+
+    @Override
+    public String toURLString() {
+        if (_nodeID == -1) {
+            return "/";
+        } else {
+            return "/" + Integer.toHexString(_nodeID).toUpperCase();
+        }
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == null
+                || !(object instanceof NodeIdentifier)) {
+            return false;
+        }
+        NodeIdentifier other = (NodeIdentifier) object;
+        return 0 == this.compareTo(other);
+    }
 }

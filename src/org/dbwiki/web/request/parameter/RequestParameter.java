@@ -27,183 +27,183 @@ import java.net.URLEncoder;
 import org.dbwiki.exception.web.WikiRequestException;
 
 public class RequestParameter {
-	/*
-	 * Public Constants
-	 */
+    /*
+     * Public Constants
+     */
 
-	public static final String ParameterAction           = "action";
-	public static final String ParameterActivate         = "activate";
-	public static final String ParameterChangesSince     = "changes";
-	public static final String ParameterCopy             = "copy";
-	public static final String ParameterCopyPasteExport  = "cpxml";
-	public static final String ParameterCreate           = "new";
-	public static final String ParameterCreateSchemaNode = "new_schema_node";
-	public static final String ParameterDelete           = "delete";
-	public static final String ParameterEdit             = "edit";
-	public static final String ParameterExportXML        = "xml";
-	public static final String ParameterExportJSON       = "json";
-	public static final String ParameterHistory          = "history";
-	public static final String ParameterIndexPosition    = "idxpos";
-	public static final String ParameterLayout           = "layout";
-	public static final String ParameterPaste            = "paste";
-	public static final String ParameterPasteForm        = "paste_form";
-	public static final String ParameterPreviousVersion  = "previous";
-	public static final String ParameterSearch           = "search";
-	public static final String ParameterSynchronizeForm  = "synchronize_form";
-	public static final String ParameterSynchronize      = "synchronize";
-	public static final String ParameterPushToRemote	 = "pushtoremote";
-	public static final String ParameterLocalPort		 = "localport";
-	public static final String ParameterRemoteAddr		 = "remoteaddr";
-	public static final String parameterRemoteAdded		 = "remoteAdded";
-	public static final String parameterRemoteChanged	 = "remoteChanged";
-	public static final String parameterRemoteDeleted	 = "remoteDeleted";
-	public static final String parameterLocalAdded		 = "localAdded";
-	public static final String parameterLocalChanged	 = "localChanged";
-	public static final String parameterLocalDeleted	 = "localDeleted";
-	public static final String parameterchangedChanged	 = "changedChanged";
-	public static final String parameterdeletedChanged	 = "deletedChanged";
-	public static final String parameterchangedDeleted	 = "changedDeleted";
-	public static final String ParameterSynchronizeExport = "synxml";
-	public static final String ParameterSynchronizeThenExport = "synthenxml";
-	public static final String ParameterSynchronizeThenExport1 = "synthenxml1";
-	public static final String ParameterSynchronizeThenExport2 = "synthenxml2";
-	public static final String ParameterReset            = "reset";
-	public static final String ParameterResource         = "resource";
-	public static final String ParameterSettings         = "settings";
-	public static final String ParameterStyleSheet       = "style_sheet";
-	public static final String ParameterTemplate         = "html_template";
-	public static final String ParameterURL              = "url";
-	public static final String ParameterURLDecoding      = "url_decoding";
-	public static final String ParameterVersion          = "version";
+    public static final String ParameterAction           = "action";
+    public static final String ParameterActivate         = "activate";
+    public static final String ParameterChangesSince     = "changes";
+    public static final String ParameterCopy             = "copy";
+    public static final String ParameterCopyPasteExport  = "cpxml";
+    public static final String ParameterCreate           = "new";
+    public static final String ParameterCreateSchemaNode = "new_schema_node";
+    public static final String ParameterDelete           = "delete";
+    public static final String ParameterEdit             = "edit";
+    public static final String ParameterExportXML        = "xml";
+    public static final String ParameterExportJSON       = "json";
+    public static final String ParameterHistory          = "history";
+    public static final String ParameterIndexPosition    = "idxpos";
+    public static final String ParameterLayout           = "layout";
+    public static final String ParameterPaste            = "paste";
+    public static final String ParameterPasteForm        = "paste_form";
+    public static final String ParameterPreviousVersion  = "previous";
+    public static final String ParameterSearch           = "search";
+    public static final String ParameterSynchronizeForm  = "synchronize_form";
+    public static final String ParameterSynchronize      = "synchronize";
+    public static final String ParameterPushToRemote	 = "pushtoremote";
+    public static final String ParameterLocalPort		 = "localport";
+    public static final String ParameterRemoteAddr		 = "remoteaddr";
+    public static final String parameterRemoteAdded		 = "remoteAdded";
+    public static final String parameterRemoteChanged	 = "remoteChanged";
+    public static final String parameterRemoteDeleted	 = "remoteDeleted";
+    public static final String parameterLocalAdded		 = "localAdded";
+    public static final String parameterLocalChanged	 = "localChanged";
+    public static final String parameterLocalDeleted	 = "localDeleted";
+    public static final String parameterchangedChanged	 = "changedChanged";
+    public static final String parameterdeletedChanged	 = "deletedChanged";
+    public static final String parameterchangedDeleted	 = "changedDeleted";
+    public static final String ParameterSynchronizeExport = "synxml";
+    public static final String ParameterSynchronizeThenExport = "synthenxml";
+    public static final String ParameterSynchronizeThenExport1 = "synthenxml1";
+    public static final String ParameterSynchronizeThenExport2 = "synthenxml2";
+    public static final String ParameterReset            = "reset";
+    public static final String ParameterResource         = "resource";
+    public static final String ParameterSettings         = "settings";
+    public static final String ParameterStyleSheet       = "style_sheet";
+    public static final String ParameterTemplate         = "html_template";
+    public static final String ParameterURL              = "url";
+    public static final String ParameterURLDecoding      = "url_decoding";
+    public static final String ParameterVersion          = "version";
 
-	public static final String ActionValueAnnotation      = "annotation";
-	public static final String ActionValueSchemaNode      = "schema_node";
-	public static final String ActionValuePageID          = "page_id";
-	public static final String ActionValuePageTitle       = "page_title";
-	public static final String ActionValuePageValue       = "page_value";
+    public static final String ActionValueAnnotation      = "annotation";
+    public static final String ActionValueSchemaNode      = "schema_node";
+    public static final String ActionValuePageID          = "page_id";
+    public static final String ActionValuePageTitle       = "page_title";
+    public static final String ActionValuePageValue       = "page_value";
 
-	public static final String TextFieldIndicator       = "txt_";
-	public static final String ParameterSynchronizeFormApproach1 = "synchronize_form1";
-	public static final String ParameterSynchronizeFormApproach2 = "synchronize_form2";
-	public static final String parameterAddedAdded		  = "addedAdded";
-	public static final String ParameterSynchronize1 = "synchronize1";
-	public static final String ParameterSynchronize2 = "synchronize2";
-	public static final String SyncReport = "syncreport";
-
-
-	/*
-	 * Static Methods
-	 */
-
-	public static RequestParameterAction actionParameter(RequestParameter parameter) throws org.dbwiki.exception.WikiException {
-		String value = parameter.value();
-		if (value != null) {
-			if (value.equals(RequestParameterAction.ActionAnnotate)) {
-				return new RequestParameterActionAnnotate();
-			} else if (value.equals(RequestParameterAction.ActionCancel)) {
-				return new RequestParameterActionCancel();
-			} else if (value.equals(RequestParameterAction.ActionSchemaNode)) {
-				return new RequestParameterActionSchemaNode();
-			} else if (value.equals(RequestParameterAction.ActionInsert)) {
-				return new RequestParameterActionInsert();
-			} else if (value.equals(RequestParameterAction.ActionUpdate)) {
-				return new RequestParameterActionUpdate();
-			} else {
-				throw new WikiRequestException(WikiRequestException.InvalidParameterValue, parameter.toString());
-			}
-		} else {
-			throw new WikiRequestException(WikiRequestException.MissingParameterValue, parameter.toString());
-		}
-	}
-
-	public static RequestParameterVersion versionParameter(RequestParameter parameter) throws org.dbwiki.exception.WikiException {
-		if (parameter != null) {
-			String value = parameter.value();
-			if (value != null) {
-				if (value.equals(RequestParameterVersion.VersionCurrent)) {
-					return new RequestParameterVersionCurrent();
-				} else if (value.equals(RequestParameterVersion.VersionAll)) {
-					return new RequestParameterVersionAll();
-				} else if (value.startsWith(RequestParameterVersion.VersionChanges)) {
-					try {
-						return new RequestParameterVersionChanges(Integer.parseInt(value.substring(RequestParameterVersion.VersionChanges.length())));
-					} catch (NumberFormatException e) {
-						throw new WikiRequestException(WikiRequestException.InvalidParameterValue, parameter.toString());
-					}
-				} else {
-					try {
-						return new RequestParameterVersionSingle(Integer.parseInt(value));
-					} catch (NumberFormatException e) {
-						throw new WikiRequestException(WikiRequestException.InvalidParameterValue, parameter.toString());
-					}
-				}
-			} else {
-				throw new WikiRequestException(WikiRequestException.MissingParameterValue, parameter.toString());
-			}
-		} else {
-			return new RequestParameterVersionCurrent();
-		}
-	}
+    public static final String TextFieldIndicator       = "txt_";
+    public static final String ParameterSynchronizeFormApproach1 = "synchronize_form1";
+    public static final String ParameterSynchronizeFormApproach2 = "synchronize_form2";
+    public static final String parameterAddedAdded		  = "addedAdded";
+    public static final String ParameterSynchronize1 = "synchronize1";
+    public static final String ParameterSynchronize2 = "synchronize2";
+    public static final String ParameterResolution = "resolution";
 
 
-	/*
-	 * Private Variables
-	 */
+    /*
+     * Static Methods
+     */
 
-	private String _name;
-	private String _value;
+    public static RequestParameterAction actionParameter(RequestParameter parameter) throws org.dbwiki.exception.WikiException {
+        String value = parameter.value();
+        if (value != null) {
+            if (value.equals(RequestParameterAction.ActionAnnotate)) {
+                return new RequestParameterActionAnnotate();
+            } else if (value.equals(RequestParameterAction.ActionCancel)) {
+                return new RequestParameterActionCancel();
+            } else if (value.equals(RequestParameterAction.ActionSchemaNode)) {
+                return new RequestParameterActionSchemaNode();
+            } else if (value.equals(RequestParameterAction.ActionInsert)) {
+                return new RequestParameterActionInsert();
+            } else if (value.equals(RequestParameterAction.ActionUpdate)) {
+                return new RequestParameterActionUpdate();
+            } else {
+                throw new WikiRequestException(WikiRequestException.InvalidParameterValue, parameter.toString());
+            }
+        } else {
+            throw new WikiRequestException(WikiRequestException.MissingParameterValue, parameter.toString());
+        }
+    }
+
+    public static RequestParameterVersion versionParameter(RequestParameter parameter) throws org.dbwiki.exception.WikiException {
+        if (parameter != null) {
+            String value = parameter.value();
+            if (value != null) {
+                if (value.equals(RequestParameterVersion.VersionCurrent)) {
+                    return new RequestParameterVersionCurrent();
+                } else if (value.equals(RequestParameterVersion.VersionAll)) {
+                    return new RequestParameterVersionAll();
+                } else if (value.startsWith(RequestParameterVersion.VersionChanges)) {
+                    try {
+                        return new RequestParameterVersionChanges(Integer.parseInt(value.substring(RequestParameterVersion.VersionChanges.length())));
+                    } catch (NumberFormatException e) {
+                        throw new WikiRequestException(WikiRequestException.InvalidParameterValue, parameter.toString());
+                    }
+                } else {
+                    try {
+                        return new RequestParameterVersionSingle(Integer.parseInt(value));
+                    } catch (NumberFormatException e) {
+                        throw new WikiRequestException(WikiRequestException.InvalidParameterValue, parameter.toString());
+                    }
+                }
+            } else {
+                throw new WikiRequestException(WikiRequestException.MissingParameterValue, parameter.toString());
+            }
+        } else {
+            return new RequestParameterVersionCurrent();
+        }
+    }
 
 
-	/*
-	 * Constructors
-	 */
+    /*
+     * Private Variables
+     */
 
-	public RequestParameter(String text) {
-		int pos = text.indexOf("=");
-		if (pos != -1) {
-			_name = text.substring(0, pos);
-			_value = text.substring(pos + 1);
-		} else {
-			_name = text;
-			_value = null;
-		}
-	}
+    private String _name;
+    private String _value;
 
 
-	/*
-	 * Public Methods
-	 */
+    /*
+     * Constructors
+     */
 
-	public boolean hasValue() {
-		return (_value != null);
-	}
+    public RequestParameter(String text) {
+        int pos = text.indexOf("=");
+        if (pos != -1) {
+            _name = text.substring(0, pos);
+            _value = text.substring(pos + 1);
+        } else {
+            _name = text;
+            _value = null;
+        }
+    }
 
-	public String name() {
-		return _name;
-	}
 
-	@Override
-	public String toString() {
-		if (_value != null) {
-			return _name + "=" + _value;
-		} else {
-			return _name;
-		}
-	}
+    /*
+     * Public Methods
+     */
 
-	public String toURLString() {
-		if (_value != null) {
-			try {
-				return _name + "=" + URLEncoder.encode(_value, "UTF-8");
-			} catch (UnsupportedEncodingException e) {
-				return _name + "=" + _value;
-			}
-		} else {
-			return _name;
-		}
-	}
+    public boolean hasValue() {
+        return (_value != null);
+    }
 
-	public String value() {
-		return _value;
-	}
+    public String name() {
+        return _name;
+    }
+
+    @Override
+    public String toString() {
+        if (_value != null) {
+            return _name + "=" + _value;
+        } else {
+            return _name;
+        }
+    }
+
+    public String toURLString() {
+        if (_value != null) {
+            try {
+                return _name + "=" + URLEncoder.encode(_value, "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                return _name + "=" + _value;
+            }
+        } else {
+            return _name;
+        }
+    }
+
+    public String value() {
+        return _value;
+    }
 }

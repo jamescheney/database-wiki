@@ -563,10 +563,6 @@ public class SynchronizeDatabaseWiki {
         else{
             remotePreviousVersionNumber = 2;
         }
-        System.out.println("rv:" + rv);
-        System.out.println("lv:" + lv);
-        System.out.println("remotePrevVerNr:" + remotePreviousVersionNumber);
-        System.out.println("localPrevVerNr:" + localPreviousVersionNumber);
     }
 
     String invertAndAddParameters(String sourceURL, String xmlRequestType, String port) {
@@ -583,9 +579,9 @@ public class SynchronizeDatabaseWiki {
             sourceURL = addLocalPortParameter(sourceURL, port);
         }
         if (xmlRequestType == RequestParameter.ParameterSynchronizeThenExport) {
-            sourceURL += "&" + RequestParameter.parameterRemoteAdded + "=" + !this.remoteAdded;
-            sourceURL += "&" + RequestParameter.parameterRemoteChanged + "=" + !this.remoteChanged;
-            sourceURL += "&" + RequestParameter.parameterRemoteDeleted + "=" + !this.remoteDeleted;
+            sourceURL += String.format("&%s=%b", RequestParameter.parameterRemoteAdded, !this.remoteAdded);
+            sourceURL += String.format("&%s=%b", RequestParameter.parameterRemoteChanged, !this.remoteChanged);
+            sourceURL += String.format("&%s=%b", RequestParameter.parameterRemoteDeleted, !this.remoteDeleted);
         }
         if (xmlRequestType == RequestParameter.ParameterSynchronizeThenExport1) {
             sourceURL += "&" + RequestParameter.parameterRemoteAdded + "=" + true;
@@ -948,7 +944,7 @@ public class SynchronizeDatabaseWiki {
     }
 
     public ConflictResolutionFormPrinter getConflictResolutionFormPrinter() {
-        return new ConflictResolutionFormPrinter(this.changedChangedNodes);
+        return new ConflictResolutionFormPrinter(this.changedChangedNodes, changedChangedNodes, changedChangedNodes);
     }
 
     //

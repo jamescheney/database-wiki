@@ -86,6 +86,7 @@ import org.dbwiki.web.request.WikiSchemaRequest;
 import org.dbwiki.web.request.parameter.RequestParameter;
 import org.dbwiki.web.request.parameter.RequestParameterAction;
 import org.dbwiki.web.request.parameter.RequestParameterActionCancel;
+import org.dbwiki.web.request.parameter.RequestParameterList;
 import org.dbwiki.web.request.parameter.RequestParameterVersion;
 import org.dbwiki.web.request.parameter.RequestParameterVersionSingle;
 import org.dbwiki.web.security.WikiAuthenticator;
@@ -695,16 +696,16 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
         }
     }
 
-    private void respondToSyncReportRequest(WikiDataRequest<HttpExchange> request, int version) {
-        File syncReport = new File("sync_log_v" + version + ".txt");
-        try {
-            _server.sendData(request.exchange(), "text", new FileInputStream(syncReport));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+//    private void respondToSyncReportRequest(WikiDataRequest<HttpExchange> request, int version) {
+//        File syncReport = new File("sync_log_v" + version + ".txt");
+//        try {
+//            _server.sendData(request.exchange(), "text", new FileInputStream(syncReport));
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     /** Handles data export requests (generating JSON)
      *
@@ -867,11 +868,11 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
             this.respondToExportXMLRequest(request, new SynchronizeNodeWriter(), null);
             return;
         }
-        else if (request.type().isRequestSyncReport()) {
-            this.respondToSyncReportRequest(request,
-                    Integer.parseInt(request.parameters().get(RequestParameter.SyncReport).value()));
-            return;
-        }
+//        else if (request.type().isRequestSyncReport()) {
+//            this.respondToSyncReportRequest(request,
+//                    Integer.parseInt(request.parameters().get(RequestParameter.SyncReport).value()));
+//            return;
+//        }
         else if (request.type().isSynchronizeThenExport()) {
             // synchronising with other server before exporting
             String url = null;
@@ -924,8 +925,8 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
             String report = this.synchronizeURL(request, RequestParameter.ParameterSynchronizeExport);
             isGetRequest = !request.isRootRequest();
             isIndexRequest = !isGetRequest;
-            System.out.printf("synchronised version %d with %s.. allegedly.. (now at version %d)... now exporting XML\nREPORT:\n%s\n-----EOR-----\n",
-                    versionB4Sync, sourceURL, this.database().versionIndex().getLastVersion().number(), report);
+            System.out.printf("synchronised version %d with %s.. allegedly.. (now at version %d)... now exporting XML\nREPORT:\n-----EOR-----\n",
+                    versionB4Sync, sourceURL, this.database().versionIndex().getLastVersion().number());
             if (versionB4Sync != this.database().versionIndex().getLastVersion().number()) {
                 this.respondToExportXMLRequest(request, new SynchronizeNodeWriter(), versionB4Sync, report);
             } else {
@@ -950,6 +951,37 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
             this.synchronizeURL(request, RequestParameter.ParameterSynchronizeThenExport2);
             isGetRequest = !request.isRootRequest();
             isIndexRequest = !isGetRequest;
+        }
+        else if(request.type().isResolution()) {
+            System.out.println("GOT RESOLUTION FORM");
+            Update update = new Update();
+            RequestParameterList params = request.parameters();
+            String server = params.get(RequestParameter.ParameterResolution).value().toUpperCase();
+            Integer paramCount = params.size();
+            for (int i = 0; i < paramCount; i++) {
+                if (!params.get(i).name().equals(RequestParameter.ParameterResolution) && params.get(i).hasValue() && params.get(i).value().startsWith(server)) {
+                    String newValue = params.get(i).value().substring(server.length() + 1);
+                    String nodeID;
+                    if (server.equals("LOCAL")) {
+                        nodeID = params.get(i).name().split("-")[0];
+                    } else {
+                        nodeID = params.get(i).name().split("-")[1];
+                    }
+                    update.add(new NodeUpdate(new NodeIdentifier(nodeID), newValue));
+                    System.out.printf("Must now put value %s into node %s on %s\n", newValue, nodeID, server);
+                }
+            }
+            if (update.size() > 0) {
+                database().update(request.wri().resourceIdentifier(), update, request.user());
+//                if (request.node().isText()) {
+                    page = new RedirectPage(request, new NodeIdentifier(params.get("nodeBeingSynced").value()));
+//                }
+            }
+            isGetRequest = true;
+
+//            WikiDataRequest<T> wikiDataRequest = new WikiDataRequest<T>(_wiki, url);
+//            return;
+            // TODO handle resolution request
         }
 
         // If the request is not redirected (in case of INSERT or DELETE) then assemble appropriate
@@ -1034,6 +1066,7 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
                 port = port.substring(port.lastIndexOf(':') + 1);
                 contentGenerator.put(HtmlContentGenerator.ContentContent, new PushToRemotePrinter(request, "Push changes to remote", "Insert remote URL (Example: http://127.0.0.1:8080)", RequestParameter.ParameterSynchronize, RequestParameter.ParameterURL, port));
             } else {
+                System.out.println("Request type: " +request.type().toString());
                 throw new WikiRequestException(WikiRequestException.InvalidRequest, request.exchange().getRequestURI().toASCIIString());
             }
             page = HtmlTemplateDecorator.decorate(_template, contentGenerator);
