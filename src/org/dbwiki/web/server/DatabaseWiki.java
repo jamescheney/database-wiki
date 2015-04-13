@@ -25,10 +25,11 @@ import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.StringWriter;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.sql.Connection;
 import java.text.SimpleDateFormat;
@@ -36,6 +37,7 @@ import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Properties;
+import java.util.Scanner;
 import java.util.Vector;
 
 import org.dbwiki.data.annotation.Annotation;
@@ -71,7 +73,6 @@ import org.dbwiki.exception.WikiException;
 import org.dbwiki.exception.WikiFatalException;
 import org.dbwiki.exception.web.WikiRequestException;
 import org.dbwiki.main.SynchronizeDatabaseWiki;
-import org.dbwiki.main.SynchronizeDatabaseWiki.NodePair;
 import org.dbwiki.user.UserListing;
 import org.dbwiki.web.html.FatalExceptionPage;
 import org.dbwiki.web.html.HtmlPage;
@@ -563,7 +564,6 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
             // Assuming protocol is always http
             url = "http://" + exchange.getRemoteAddress().getHostName() + ":" + request.parameters().get("localport").value();
         }
-        System.out.println("s1006617>> synchronizing with  url = " + url);
         boolean remoteAdded = getParameter(RequestParameter.parameterRemoteAdded, request);
         boolean remoteChanged = getParameter(RequestParameter.parameterRemoteChanged, request);
         boolean remoteDeleted = getParameter(RequestParameter.parameterRemoteDeleted, request);
@@ -602,7 +602,8 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
             synchronize.setSynchronizeParameters(remoteAdded, remoteDeleted, remoteChanged, changedChanged, deletedChanged, changedDeleted, addedAdded);
         }
         String report =  synchronize.responseToSynchronizeRequest(sourceURL, localID, isRootRequest, parameter, port);
-        this.conflictResolutionFormPrinter = synchronize.getConflictResolutionFormPrinter();
+        // TODO: not sure it it's a good idea to use the remote URL stored in Synchronize databse wiki
+        this.conflictResolutionFormPrinter = synchronize.getConflictResolutionFormPrinter(sourceURL);
         return report;
     }
 
@@ -953,35 +954,76 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
             isIndexRequest = !isGetRequest;
         }
         else if(request.type().isResolution()) {
-            System.out.println("GOT RESOLUTION FORM");
+            System.out.println("============ Resolution form submitted ==========");
+            int localCount = 0;
+            int remoteCount = 0;
+            StringBuffer requestBody = new StringBuffer();
+            URL remoteURL = new URL("http://127.0.0.1/");
             Update update = new Update();
             RequestParameterList params = request.parameters();
             String server = params.get(RequestParameter.ParameterResolution).value().toUpperCase();
+            if (server.equals("LOCAL")) {
+                requestBody.append(RequestParameter.ParameterResolution + "=REMOTE");
+                requestBody.append("&nodeBeingSynced=" + params.get("nodeBeingSynced").value());
+                remoteURL = new URL(params.get(RequestParameter.ParameterRemoteAddr).value() + params.get("nodeBeingSynced").value().substring(1));
+                System.out.println("RemoteURL for resolution form: " + remoteURL);
+            }
             Integer paramCount = params.size();
             for (int i = 0; i < paramCount; i++) {
                 if (!params.get(i).name().equals(RequestParameter.ParameterResolution) && params.get(i).hasValue() && params.get(i).value().startsWith(server)) {
                     String newValue = params.get(i).value().substring(server.length() + 1);
                     String nodeID;
                     if (server.equals("LOCAL")) {
+                        localCount++;
                         nodeID = params.get(i).name().split("-")[0];
                     } else {
+                        remoteCount++;
                         nodeID = params.get(i).name().split("-")[1];
                     }
                     update.add(new NodeUpdate(new NodeIdentifier(nodeID), newValue));
-                    System.out.printf("Must now put value %s into node %s on %s\n", newValue, nodeID, server);
+                }
+                if (!params.get(i).name().equals(RequestParameter.ParameterResolution)
+                        && (params.get(i).value().startsWith("LOCAL") || params.get(i).value().startsWith("REMOTE"))) {
+                    requestBody.append(String.format("&%s=%s", params.get(i).name(), params.get(i).value()));
                 }
             }
+            System.out.println(requestBody.toString());
+
             if (update.size() > 0) {
                 database().update(request.wri().resourceIdentifier(), update, request.user());
-//                if (request.node().isText()) {
-                    page = new RedirectPage(request, new NodeIdentifier(params.get("nodeBeingSynced").value()));
-//                }
+                page = new RedirectPage(request, new NodeIdentifier(params.get("nodeBeingSynced").value()));
             }
             isGetRequest = true;
+            // TODO pass on form to remote server
+            if (server.equals("REMOTE")) {
+                // TODO: return "ok"
+                Headers responseHeaders = request.exchange().getResponseHeaders();
+                responseHeaders.set("Content-Type", "text/html");
+                request.exchange().sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
+                BufferedWriter out = new BufferedWriter(new OutputStreamWriter(request.exchange().getResponseBody()));
+                out.write("ok");
+                out.close();
+                return;
+            } else {
+                // TODO: pass form to remote, wait for ok, then continueURL serverUrl =
+                HttpURLConnection urlConnection = (HttpURLConnection)remoteURL.openConnection();
+                // Indicate that we want to write to the HTTP request body
+                urlConnection.setDoOutput(true);
+                urlConnection.setRequestMethod("POST");
 
-//            WikiDataRequest<T> wikiDataRequest = new WikiDataRequest<T>(_wiki, url);
-//            return;
-            // TODO handle resolution request
+                // Writing the post data to the HTTP request body
+                BufferedWriter httpRequestBodyWriter = new BufferedWriter(new OutputStreamWriter(urlConnection.getOutputStream()));
+                httpRequestBodyWriter.write(requestBody.toString());
+                httpRequestBodyWriter.close();
+
+                Scanner httpResponseScanner = new Scanner(urlConnection.getInputStream());
+                while(httpResponseScanner.hasNextLine()) {
+                    System.out.println(httpResponseScanner.nextLine());
+                }
+                httpResponseScanner.close();
+            }
+            // update synchronize_log
+
         }
 
         // If the request is not redirected (in case of INSERT or DELETE) then assemble appropriate

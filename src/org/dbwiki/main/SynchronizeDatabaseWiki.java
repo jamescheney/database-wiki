@@ -100,6 +100,7 @@ public class SynchronizeDatabaseWiki {
     public static String SyncInfoLocalAdded = "localAdded";
     public static String SyncInfoLocalChanged = "localChanged";
     public static String SyncInfoLocalDeleted = "localDeleted";
+    private String remoteServerURL;
 
     //get the id of the remote node that is mapped to the local node with id localID
     int getRemoteMapID(int localID){
@@ -316,7 +317,7 @@ public class SynchronizeDatabaseWiki {
         try {
             Properties syncProperties = org.dbwiki.lib.IO.loadProperties(syncFile);
             Properties properties = org.dbwiki.lib.IO.loadProperties(configFile);
-            String remoteURL = syncProperties.getProperty(SyncInfoRemoteURL);
+            remoteServerURL = syncProperties.getProperty(SyncInfoRemoteURL);
             String database = syncProperties.getProperty(SyncInfoDatabaseName);
             String remoteCollection = syncProperties.getProperty(SyncInfoRemoteEntry);
             String localCollection = syncProperties.getProperty(SyncInfoLocalEntry);
@@ -332,7 +333,7 @@ public class SynchronizeDatabaseWiki {
             this.localDeleted = Boolean.parseBoolean(syncProperties.getProperty(SyncInfoLocalDeleted, "false"));
 
 
-            String url = remoteURL + database + DatabaseIdentifier.PathSeparator;
+            String url = remoteServerURL + database + DatabaseIdentifier.PathSeparator;
             server = new WikiServer(properties);
             wiki = server.get(database);
             int localID = 0;
@@ -460,8 +461,6 @@ public class SynchronizeDatabaseWiki {
             // write new version information of this synchronization into the version log file
             ServerLog versionLog = new FileServerLog(syncFile);
             versionLog.openLog();
-            versionLog.writeln("LOCALVERSION=" + new_localVersion);
-            versionLog.writeln("REMOTEVERSION=" + new_remoteVersion);
             versionLog.closeLog();
 
             // write new id map information into the alignment log file
@@ -472,14 +471,14 @@ public class SynchronizeDatabaseWiki {
             }
             matchLog.closeLog();
             // Write report log to file
-            File reportFile = new File(String.format("%d_sync_log_v%d.txt", localID, new_localVersion));
+            /*File reportFile = new File(String.format("%d_sync_log_v%d.txt", localID, new_localVersion));
             if(!reportFile.exists()){
                 reportFile.createNewFile();
             }
             ServerLog servLog = new FileServerLog(reportFile);
             servLog.openLog();
             servLog.writeln(syncReport.toString());
-            servLog.closeLog();
+            servLog.closeLog();*/
             return syncReport.toString();
         } catch (WikiException e) {
             // TODO Auto-generated catch block
@@ -943,12 +942,12 @@ public class SynchronizeDatabaseWiki {
         return local.getparent() == remote.getparent();
     }
 
-    public ConflictResolutionFormPrinter getConflictResolutionFormPrinter() {
-        return new ConflictResolutionFormPrinter(this.changedChangedNodes, changedChangedNodes, changedChangedNodes);
+    public ConflictResolutionFormPrinter getConflictResolutionFormPrinter(String remoteServerURL) {
+        return new ConflictResolutionFormPrinter(this.changedChangedNodes, changedChangedNodes, changedChangedNodes, remoteServerURL);
     }
 
     //
-    // METHOD USED FOR TESTING CODE
+    // METHODS USED FOR TESTING CODE
     //
 
     List<ConflictPair> getRemoteAddedNodes() {

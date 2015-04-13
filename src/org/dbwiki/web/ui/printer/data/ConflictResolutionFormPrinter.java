@@ -7,6 +7,7 @@ import org.dbwiki.data.database.DatabaseTextNode;
 import org.dbwiki.main.SynchronizeDatabaseWiki.NodePair;
 import org.dbwiki.web.html.HtmlLinePrinter;
 import org.dbwiki.web.request.WikiDataRequest;
+import org.dbwiki.web.request.parameter.RequestParameter;
 import org.dbwiki.web.request.parameter.RequestParameterAction;
 import org.dbwiki.web.ui.CSS;
 import org.dbwiki.web.ui.printer.HtmlContentPrinter;
@@ -19,6 +20,7 @@ public class ConflictResolutionFormPrinter implements HtmlContentPrinter {
     private String _actionParameterName;
     private WikiDataRequest<?> _request;
     private List<NodePair> changedChangedNodes;
+    private String remoteUrl;
 
 
     /*
@@ -27,8 +29,10 @@ public class ConflictResolutionFormPrinter implements HtmlContentPrinter {
 
     public ConflictResolutionFormPrinter(List<NodePair> changedChangedNodes,
             List<NodePair> changedDeletedNodes,
-            List<NodePair> deletedChangedNodes) {
+            List<NodePair> deletedChangedNodes,
+            String remoteURL) {
         this.changedChangedNodes = changedChangedNodes;
+        this.remoteUrl = remoteURL;
     }
 
     public void setRequest(WikiDataRequest<?> request) {
@@ -53,6 +57,8 @@ public class ConflictResolutionFormPrinter implements HtmlContentPrinter {
         body.openFORM("frmInput", "POST", url);
         body.addHIDDEN("nodeBeingSynced", url.substring(url.lastIndexOf('/')));
         body.addHIDDEN("resolution", "LOCAL"); // only local prints this form
+        body.addHIDDEN(RequestParameter.ParameterRemoteAddr, remoteUrl);
+        System.out.println(remoteUrl);
 
         body.openCENTER();
         body.openTABLE(CSS.CSSInputForm);
