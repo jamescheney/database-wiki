@@ -47,6 +47,7 @@ import org.dbwiki.web.request.parameter.RequestParameter;
 import org.dbwiki.web.server.DatabaseWiki;
 import org.dbwiki.web.server.WikiServer;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
 public class SynchronizeDatabaseWiki {
 
@@ -361,7 +362,7 @@ public class SynchronizeDatabaseWiki {
     }
 
     //the interface that responses to the synchronization request from the web page
-    public void responseToSynchronizeRequest(String url, int localID, boolean isRootRequest,
+    public String responseToSynchronizeRequest(String url, int localID, boolean isRootRequest,
             String xmlRequestType, String port) throws WikiException {
         syncReport = new StringBuffer();
         try {
@@ -416,7 +417,12 @@ public class SynchronizeDatabaseWiki {
                 ioHandler.setIsRootRequest(isRootRequest);
                 InputStream inputStreamFromRemote = new URL(sourceURL).openStream();
                 InputStream inputFromTempFile = printToFileThenGetInputStream(inputStreamFromRemote);
+                try {
                 new SAXCallbackInputHandler(ioHandler, false).parse(inputFromTempFile, false, false);
+                } catch (SAXParseException e) {
+                    System.out.println("PARSING THE XML FALED!!!!!!!!!!!!!!!!!!!!");
+                    e.printStackTrace();
+                }
 
                 //get the version information when the synchronization happens
                 //ioHandler;
@@ -481,6 +487,7 @@ public class SynchronizeDatabaseWiki {
             servLog.openLog();
             servLog.writeln(syncReport.toString());
             servLog.closeLog();
+            return syncReport.toString();
         } catch (WikiException e) {
             // TODO Auto-generated catch block
             throw new WikiFatalException(e);
@@ -503,7 +510,6 @@ public class SynchronizeDatabaseWiki {
         while(inputStreamFromRemote.available() > 0) {
             byte[] buffer = new byte[inputStreamFromRemote.available()];
             inputStreamFromRemote.read(buffer);
-            System.out.printf("Buffer:\n %s\n", new String(buffer, "UTF-8"));
             outStream.write(buffer);
         }
         outStream.flush();
@@ -692,7 +698,6 @@ public class SynchronizeDatabaseWiki {
                     }
                     DatabaseNode insertedNode = getDatabase().get(new NodeIdentifier(insertNodeID));
                     this.map(insertedNode, pair.getExistNode());
-                    System.out.println("Just added node " + insertNodeID);
                     syncReport.append(String.format("Added node remote node%s; local ID:  %d\n",
                             pair.getExistNode().identifier().toString(),
                             insertNodeID));
@@ -706,9 +711,6 @@ public class SynchronizeDatabaseWiki {
         } else if (remoteChangedNodes.isEmpty()) {
             syncReport.append(" -- no nodes have been updated\n");
         } else if (!remoteChangedNodes.isEmpty() && remoteChanged){
-            for(NodePair nodePair: remoteChangedNodes){
-                System.out.println(((RDBMSDatabaseTextNode)nodePair.get_localNode()).identifier().nodeID() + ", " + ((RDBMSDatabaseTextNode)nodePair.get_remoteNode()).identifier().nodeID());
-            }
             for(NodePair nodePair: remoteChangedNodes){
                 Update update = new Update();
                 NodeUpdate nodeupdate = new NodeUpdate(((RDBMSDatabaseTextNode)nodePair.get_localNode()).identifier(), ((RDBMSDatabaseTextNode)nodePair.get_remoteNode()).value());
@@ -793,7 +795,6 @@ public class SynchronizeDatabaseWiki {
             else{
                 DatabaseAttributeNode attribute = (DatabaseAttributeNode) element;
                 DatabaseTextNode text = attribute.value().getCurrent();
-                System.out.println(text);
                 if(text != null){
                     if(text.getTimestamp().changedSince(version)){
                         list.add(text);

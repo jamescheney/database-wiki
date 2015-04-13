@@ -546,9 +546,10 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
      * @param request
      * @param port
      * @param url
+     * @return
      * @throws org.dbwiki.exception.WikiException
      */
-    private void synchronizeURL(WikiDataRequest<?>  request, String parameter) throws org.dbwiki.exception.WikiException {
+    private String synchronizeURL(WikiDataRequest<?>  request, String parameter) throws org.dbwiki.exception.WikiException {
         String url = null;
         // Get source url
         if (request.parameters().hasParameter(RequestParameter.ParameterURL)) {
@@ -596,7 +597,7 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
         } else {
             synchronize.setSynchronizeParameters(remoteAdded, remoteDeleted, remoteChanged, changedChanged, deletedChanged, changedDeleted, addedAdded);
         }
-        synchronize.responseToSynchronizeRequest(sourceURL, localID, isRootRequest, parameter, port);
+        return synchronize.responseToSynchronizeRequest(sourceURL, localID, isRootRequest, parameter, port);
     }
 
     private boolean getParameter(String parameter,
@@ -672,10 +673,8 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
                 File tmpFile = File.createTempFile("dbwiki", "xml");
                 BufferedWriter out = new BufferedWriter(new FileWriter(tmpFile));
                 writer.init(out);
-                if (report != null) {
-                    writer.writeln("<!--\n" + report + "\n-->");
-                }
-                database().export(request.wri().resourceIdentifier(), versionNumber, writer);
+                // TODO: send report via export()
+                database().export(request.wri().resourceIdentifier(), versionNumber, writer, report);
                 out.close();
                 _server.sendXML(request.exchange(), new FileInputStream(tmpFile));
                 tmpFile.delete();
@@ -683,10 +682,7 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
                 StringWriter buf = new StringWriter();
                 BufferedWriter out = new BufferedWriter(buf);
                 writer.init(out);
-                if (report != null) {
-                    writer.writeln("<!--\n" + report + "\n-->");
-                }
-                database().export(request.wri().resourceIdentifier(), versionNumber, writer);
+                database().export(request.wri().resourceIdentifier(), versionNumber, writer, report);
                 out.close();
                 _server.sendXML(request.exchange(), new ByteArrayInputStream(buf.toString().getBytes("UTF-8")));
             }
@@ -890,15 +886,15 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
                 sourceURL = url + database + DatabaseIdentifier.PathSeparator;
             }
             int versionB4Sync = this.database().versionIndex().getLastVersion().number();
-            this.synchronizeURL(request, RequestParameter.ParameterSynchronizeExport);
+            String report = this.synchronizeURL(request, RequestParameter.ParameterSynchronizeExport);
             isGetRequest = !request.isRootRequest();
             isIndexRequest = !isGetRequest;
-            System.out.println("synchronised version " + versionB4Sync + " with " + sourceURL
-                    + ".. allegedly.. (now at version " + this.database().versionIndex().getLastVersion().number() + ")... now exporting XML");
+            System.out.printf("synchronised version %d with %s.. allegedly.. (now at version %d)... now exporting XML\nREPORT:\n%s\n-----EOR-----\n",
+                    versionB4Sync, sourceURL, this.database().versionIndex().getLastVersion().number(), report);
             if (versionB4Sync != this.database().versionIndex().getLastVersion().number()) {
-                this.respondToExportXMLRequest(request, new SynchronizeNodeWriter(), versionB4Sync, "report");
+                this.respondToExportXMLRequest(request, new SynchronizeNodeWriter(), versionB4Sync, report);
             } else {
-                this.respondToExportXMLRequest(request, new SynchronizeNodeWriter(), "report");
+                this.respondToExportXMLRequest(request, new SynchronizeNodeWriter(), report);
             }
             return;
         }
@@ -920,15 +916,15 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
                 sourceURL = url + database + DatabaseIdentifier.PathSeparator;
             }
             int versionB4Sync = this.database().versionIndex().getLastVersion().number();
-            this.synchronizeURL(request, RequestParameter.ParameterSynchronizeExport);
+            String report = this.synchronizeURL(request, RequestParameter.ParameterSynchronizeExport);
             isGetRequest = !request.isRootRequest();
             isIndexRequest = !isGetRequest;
-            System.out.println("synchronised version " + versionB4Sync + " with " + sourceURL
-                    + ".. allegedly.. (now at version " + this.database().versionIndex().getLastVersion().number() + ")... now exporting XML");
+            System.out.printf("synchronised version %d with %s.. allegedly.. (now at version %d)... now exporting XML\nREPORT:\n%s\n-----EOR-----\n",
+                    versionB4Sync, sourceURL, this.database().versionIndex().getLastVersion().number(), report);
             if (versionB4Sync != this.database().versionIndex().getLastVersion().number()) {
-                this.respondToExportXMLRequest(request, new SynchronizeNodeWriter(), versionB4Sync, "report");
+                this.respondToExportXMLRequest(request, new SynchronizeNodeWriter(), versionB4Sync, report);
             } else {
-                this.respondToExportXMLRequest(request, new SynchronizeNodeWriter(), "report");
+                this.respondToExportXMLRequest(request, new SynchronizeNodeWriter(), report);
             }
             return;
         }

@@ -71,7 +71,8 @@ public class SAXCallbackInputHandler extends DefaultHandler2 {
             int start,
             int length)
      throws org.xml.sax.SAXException {
-        System.out.println("Got a comment >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+        System.out.println("Got a comment >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" + String.copyValueOf(ch, start, length));
+
     }
 
     @Override
@@ -209,6 +210,7 @@ public class SAXCallbackInputHandler extends DefaultHandler2 {
             XMLReader parser = XMLReaderFactory.createXMLReader("org.apache.xerces.parsers.SAXParser");
             parser.setFeature("http://xml.org/sax/features/validation", validating);
             parser.setFeature("http://apache.org/xml/features/validation/schema", xmlSchema);
+            parser.setProperty ("http://xml.org/sax/properties/lexical-handler", this);
             parser.setContentHandler(this);
             parser.setErrorHandler(this);
             InputSource inputSource = new InputSource(inputStream);
