@@ -1,4 +1,4 @@
-/* 
+/*
     BEGIN LICENSE BLOCK
     Copyright 2010-2011, Heiko Mueller, Sam Lindley, James Cheney and
     University of Edinburgh
@@ -30,7 +30,7 @@ public class RequestParameter {
 	/*
 	 * Public Constants
 	 */
-	
+
 	public static final String ParameterAction           = "action";
 	public static final String ParameterActivate         = "activate";
 	public static final String ParameterChangesSince     = "changes";
@@ -75,7 +75,7 @@ public class RequestParameter {
 	public static final String ParameterURL              = "url";
 	public static final String ParameterURLDecoding      = "url_decoding";
 	public static final String ParameterVersion          = "version";
-	
+
 	public static final String ActionValueAnnotation      = "annotation";
 	public static final String ActionValueSchemaNode      = "schema_node";
 	public static final String ActionValuePageID          = "page_id";
@@ -88,12 +88,13 @@ public class RequestParameter {
 	public static final String parameterAddedAdded		  = "addedAdded";
 	public static final String ParameterSynchronize1 = "synchronize1";
 	public static final String ParameterSynchronize2 = "synchronize2";
-	
-	
+	public static final String SyncReport = "syncreport";
+
+
 	/*
 	 * Static Methods
 	 */
-	
+
 	public static RequestParameterAction actionParameter(RequestParameter parameter) throws org.dbwiki.exception.WikiException {
 		String value = parameter.value();
 		if (value != null) {
@@ -114,7 +115,7 @@ public class RequestParameter {
 			throw new WikiRequestException(WikiRequestException.MissingParameterValue, parameter.toString());
 		}
 	}
-	
+
 	public static RequestParameterVersion versionParameter(RequestParameter parameter) throws org.dbwiki.exception.WikiException {
 		if (parameter != null) {
 			String value = parameter.value();
@@ -144,19 +145,19 @@ public class RequestParameter {
 		}
 	}
 
-	
+
 	/*
 	 * Private Variables
 	 */
-	
+
 	private String _name;
 	private String _value;
-	
-	
+
+
 	/*
 	 * Constructors
 	 */
-	
+
 	public RequestParameter(String text) {
 		int pos = text.indexOf("=");
 		if (pos != -1) {
@@ -167,20 +168,20 @@ public class RequestParameter {
 			_value = null;
 		}
 	}
-	
-	
+
+
 	/*
 	 * Public Methods
 	 */
-	
+
 	public boolean hasValue() {
 		return (_value != null);
 	}
-	
+
 	public String name() {
 		return _name;
 	}
-	
+
 	@Override
 	public String toString() {
 		if (_value != null) {
@@ -189,7 +190,7 @@ public class RequestParameter {
 			return _name;
 		}
 	}
-	
+
 	public String toURLString() {
 		if (_value != null) {
 			try {
@@ -201,7 +202,7 @@ public class RequestParameter {
 			return _name;
 		}
 	}
-	
+
 	public String value() {
 		return _value;
 	}

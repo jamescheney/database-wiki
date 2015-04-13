@@ -1,4 +1,4 @@
-/* 
+/*
     BEGIN LICENSE BLOCK
     Copyright 2010-2011, Heiko Mueller, Sam Lindley, James Cheney and
     University of Edinburgh
@@ -30,7 +30,7 @@ public class RequestType {
 	/*
 	 * Private Constants
 	 */
-	
+
 	private static final byte requestTypeUnknown = -1;
 
 	//?action=insert, annotate, update ...
@@ -49,7 +49,7 @@ public class RequestType {
 	private static final byte requestTypeDelete = 6;
 	//?edit[=...]
 	private static final byte requestTypeEdit = 7;
-	// path != / && (?action=cancel ... || <null> || ?version=...) 
+	// path != / && (?action=cancel ... || <null> || ?version=...)
 	private static final byte requestTypeGet = 8;
 	// / [index_pos=...] [version=...]
 	private static final byte requestTypeIndex = 9;
@@ -103,33 +103,36 @@ public class RequestType {
 	private static final byte requestTypeURLDecoding = 22;
 	// ?json[?version]
 	private static final byte requestTypeExportJSON = 23;
-	
-	
-	
+
+	// ?syncreport&&version=
+	private static final byte requestSyncReport = 35;
+
+
+
 	/*
 	 * Private Variables
 	 */
-	
+
 	private byte _type;
 
-	
+
 	/*
 	 * Constructors
 	 */
-	
+
 	public RequestType(RequestURL<?> url) {
 		RequestParameterList parameters = url.parameters();
-		
+
 		_type = requestTypeUnknown;
-		
+
 		if (parameters.hasParameter(RequestParameter.ParameterAction)) {
 			// Note that the number of parameters for action may differ.
 			if (parameters.get(RequestParameter.ParameterAction).value().equals(RequestParameterAction.ActionCancel)) {
 				if (url.isRoot()) {
-					// path = / && (?action=cancel ... || <null> || ?version=...) 
+					// path = / && (?action=cancel ... || <null> || ?version=...)
 					_type = requestTypeIndex;
 				} else {
-					// path != / && (?action=cancel ... || <null> || ?version=...) 
+					// path != / && (?action=cancel ... || <null> || ?version=...)
 					_type = requestTypeGet;
 				}
 			} else {
@@ -141,7 +144,7 @@ public class RequestType {
 				// / [index_pos=...] [version=...]
 				_type = requestTypeIndex;
 			} else {
-				// path != / && (?action=cancel ... || <null> || ?version=...) 
+				// path != / && (?action=cancel ... || <null> || ?version=...)
 				_type = requestTypeGet;
 			}
 		} else if (parameters.size() == 1) {
@@ -231,9 +234,9 @@ public class RequestType {
 				}
 			} else {
 				if (parameters.hasParameter(RequestParameter.ParameterVersion)) {
-					// path != / && (?action=cancel ... || <null> || ?version=...) 
+					// path != / && (?action=cancel ... || <null> || ?version=...)
 					_type = requestTypeGet;
-				}	
+				}
 			}
 		} else if (parameters.size() == 2) {
 			if ((parameters.hasParameter(RequestParameter.ParameterCopy))  && (parameters.hasParameter(RequestParameter.ParameterVersion))) {
@@ -257,7 +260,7 @@ public class RequestType {
 			} else if ((parameters.hasParameter(RequestParameter.ParameterURLDecoding)) && (parameters.hasParameter(RequestParameter.ParameterResource))) {
 				//?url_decoding resource=...
 				_type = requestTypeURLDecoding;
-				
+
 			} else if ((parameters.hasParameter(RequestParameter.ParameterReset)) && (parameters.hasParameter(RequestParameter.ParameterResource))) {
 				// / [index_pos=...] [version=...]
 				if ((parameters.hasParameter(RequestParameter.ParameterVersion)) && (parameters.hasParameter(RequestParameter.ParameterIndexPosition))) {
@@ -285,6 +288,9 @@ public class RequestType {
 					// silently ignore wiki exceptions
 					// FIXME #requestparsing: is this really the behaviour we want?
 				}
+			} else if ((parameters.hasParameter(RequestParameter.SyncReport))  && (parameters.hasParameter(RequestParameter.ParameterVersion))) {
+				//?cpxml{&version=...]
+				_type = requestSyncReport;
 			}
 		}
 		else if(parameters.size() == 7){
@@ -353,104 +359,104 @@ public class RequestType {
 			}
 		}
 	}
-	
-	
+
+
 	/*
 	 * Public Methods
 	 */
-	
+
 	public boolean isAction() {
 		return (_type == requestTypeAction);
 	}
-	
+
 	public boolean isActivate() {
 		return (_type == requestTypeActivate);
 	}
-	
+
 	public boolean isCopy() {
 		return (_type == requestTypeCopy);
 	}
-	
+
 	public boolean isCopyPasteExport() {
 		return (_type == requestTypeCopyPasteExport);
 	}
-	
+
 	public boolean isCreate() {
 		return (_type == requestTypeCreate);
 	}
-	
+
 	public boolean isCreateSchemaNode() {
 		return (_type == requestTypeCreateSchemaNode);
 	}
-	
+
 	public boolean isDelete() {
 		return (_type == requestTypeDelete);
 	}
-	
+
 	public boolean isEdit() {
 		return (_type == requestTypeEdit);
 	}
-	
+
 	public boolean isExportXML() {
 		return (_type == requestTypeExportXML);
 	}
-	
+
 	public boolean isExportJSON() {
 		return (_type == requestTypeExportJSON);
 	}
-	
+
 	public boolean isGet() {
 		return (_type == requestTypeGet);
 	}
-	
+
 	public boolean isIndex() {
 		return (_type == requestTypeIndex);
 	}
-	
+
 	public boolean isLayout() {
 		return (_type == requestTypeLayout);
 	}
-	
+
 	public boolean isPaste() {
 		return (_type == requestTypePaste);
 	}
-	
+
 	public boolean isPasteForm() {
 		return (_type == requestTypePasteForm);
 	}
-	
+
 	public boolean isReset() {
 		return (_type == requestTypeReset);
 	}
-	
+
 	public boolean isSearch() {
 		return (_type == requestTypeSearch);
 	}
-	
+
 	public boolean isSynchronizeExport() {
 		return (_type == requestTypeSynchronizeExport);
 	}
-	
+
 	public boolean isSynchronizeThenExport() {
 		return (_type == requestTypeSynchronizeThenExport);
 	}
-	
+
 	public boolean isSynchronizeThenExport1() {
 		return (_type == requestTypeSynchronizeThenExport1);
 	}
-	
+
 	public boolean isSynchronizeThenExport2() {
 		return (_type == requestTypeSynchronizeThenExport2);
 	}
-	
+
 	public boolean isSynchronizeForm() {
 		return (_type == requestTypeSynchronizeForm);
 	}
-	
+
 	public boolean isSynchronizeForm1() {
 		return (_type == requestTypeSynchronizeFormApproach1);
 	}
-	
+
 	public boolean isSynchronizeForm2() {
 		return (_type == requestTypeSynchronizeFormApproach2);
 	}
@@ -458,39 +464,43 @@ public class RequestType {
 	public boolean isPushToRemote() {
 		return (_type == requestTypePushToRemote);
 	}
-	
+
 	public boolean isSynchronize() {
 		return (_type == requestTypeSynchronize);
 	}
-	
+
 	public boolean isSettings() {
 		return (_type == requestTypeSettings);
 	}
-	
+
 	public boolean isStyleSheet() {
 		return (_type == requestTypeStyleSheet);
 	}
-	
+
 	public boolean isTemplate() {
 		return (_type == requestTypeTemplate);
 	}
-	
+
 	public boolean isTimemachinePrevious() {
 		return (_type == requestTypeTimemachinePrevious);
 	}
-	
+
 	public boolean isTimemachineChanges() {
 		return (_type == requestTypeTimemachineChanges);
 	}
-	
+
 	public boolean isPageHistory() {
 		return (_type == requestTypePageHistory);
 	}
-	
+
+	public boolean isRequestSyncReport() {
+		return (_type == requestSyncReport);
+	}
+
 	public boolean isUnknown() {
 		return (_type == requestTypeUnknown);
 	}
-	
+
 	public boolean isURLDecoding() {
 		return (_type == requestTypeURLDecoding);
 	}
@@ -502,9 +512,14 @@ public class RequestType {
 	public boolean isSynchronize2() {
 		return (_type == requestTypeSynchronize2);
 	}
-	
+
 	@Override
 	public String toString() {
 		return String.valueOf(_type);
+	}
+
+
+	public boolean isGetSyncReport() {
+		return (_type == requestSyncReport);
 	}
 }
