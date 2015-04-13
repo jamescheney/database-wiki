@@ -68,6 +68,7 @@ import org.dbwiki.data.wiki.SimpleWiki;
 import org.dbwiki.data.wiki.Wiki;
 import org.dbwiki.driver.rdbms.DatabaseConnector;
 import org.dbwiki.driver.rdbms.RDBMSDatabase;
+import org.dbwiki.driver.rdbms.RDBMSDatabaseTextNode;
 import org.dbwiki.driver.rdbms.SQLVersionIndex;
 import org.dbwiki.exception.WikiException;
 import org.dbwiki.exception.WikiFatalException;
@@ -77,6 +78,8 @@ import org.dbwiki.user.UserListing;
 import org.dbwiki.web.html.FatalExceptionPage;
 import org.dbwiki.web.html.HtmlPage;
 import org.dbwiki.web.html.RedirectPage;
+import org.dbwiki.web.log.FileServerLog;
+import org.dbwiki.web.log.ServerLog;
 import org.dbwiki.web.request.HttpRequest;
 import org.dbwiki.web.request.RequestURL;
 import org.dbwiki.web.request.URLDecodingRules;
@@ -970,8 +973,10 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
             }
             Integer paramCount = params.size();
             for (int i = 0; i < paramCount; i++) {
-                if (!params.get(i).name().equals(RequestParameter.ParameterResolution) && params.get(i).hasValue() && params.get(i).value().startsWith(server)) {
-                    String newValue = params.get(i).value().substring(server.length() + 1);
+                if (!params.get(i).name().equals(RequestParameter.ParameterResolution)
+                        && params.get(i).hasValue()
+                        && params.get(i).value().startsWith(server)) {
+                    String paramValue = params.get(i).value().substring(server.length() + 1);
                     String nodeID;
                     if (server.equals("LOCAL")) {
                         localCount++;
@@ -980,14 +985,47 @@ public class DatabaseWiki implements HttpHandler, Comparable<DatabaseWiki> {
                         remoteCount++;
                         nodeID = params.get(i).name().split("-")[1];
                     }
-                    update.add(new NodeUpdate(new NodeIdentifier(nodeID), newValue));
+                    NodeIdentifier nodeId = new NodeIdentifier(nodeID);
+                    if (paramValue.startsWith("REACTIVATE+CHANGE:")) {
+                        database().activate(nodeId, request.user());
+                        NodeUpdate nodeupdate = new NodeUpdate(nodeId, paramValue.substring(paramValue.indexOf(":") + 1));
+                        update.add(nodeupdate);
+                        database().update(nodeId, update, request.user());
+                    } else if (paramValue.startsWith("DELETE:")) {
+                        database().delete(nodeId, request.user());
+                    } else {
+                        update.add(new NodeUpdate(nodeId, paramValue));
+                    }
                 }
                 if (!params.get(i).name().equals(RequestParameter.ParameterResolution)
                         && (params.get(i).value().startsWith("LOCAL") || params.get(i).value().startsWith("REMOTE"))) {
                     requestBody.append(String.format("&%s=%s", params.get(i).name(), params.get(i).value()));
                 }
             }
-            System.out.println(requestBody.toString());
+            File syncFile = new File("synchronize_log");
+            if(!syncFile.exists()){
+                syncFile.createNewFile();
+            }
+            // get version numbers from last sync
+            int localPreviousVersionNumber = 2;
+            int remotePreviousVersionNumber = 2;
+            Properties pros = org.dbwiki.lib.IO.loadProperties(syncFile);
+            String lv = pros.getProperty("LOCALVERSION");
+            String rv = pros.getProperty("REMOTEVERSION");
+
+            if(lv != null && Integer.parseInt(lv) > 2){
+                localPreviousVersionNumber = Integer.parseInt(lv);
+            }
+            if(rv != null && Integer.parseInt(rv) > 2){
+                remotePreviousVersionNumber = Integer.parseInt(rv);
+            }
+
+            // TODO: should wait until finished update before updating the log
+            System.out.println(requestBody.toString());ServerLog versionLog = new FileServerLog(syncFile);
+            versionLog.openLog();
+            versionLog.writeln("LOCALVERSION=" + (localPreviousVersionNumber + localCount));
+            versionLog.writeln("REMOTEVERSION=" + (remotePreviousVersionNumber + remoteCount));
+            versionLog.closeLog();
 
             if (update.size() > 0) {
                 database().update(request.wri().resourceIdentifier(), update, request.user());

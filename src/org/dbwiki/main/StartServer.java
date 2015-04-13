@@ -1,4 +1,4 @@
-/* 
+/*
     BEGIN LICENSE BLOCK
     Copyright 2010-2011, Heiko Mueller, Sam Lindley, James Cheney and
     University of Edinburgh
@@ -26,46 +26,48 @@ import java.io.File;
 import org.dbwiki.web.server.WikiServer;
 
 /** Starts the server.
- * 
+ *
  * @author jcheney
  *
  */
 public class StartServer {
-	/*
-	 * Private Constants
-	 */
-	private static WikiServer server;
-	
-	private static final String commandLine = "StartServer <config-file>";
-	
-	private static String configFileName;
-	/*
-	 * Public Methods
-	 */
-	
-	public static void main(String[] args) {
-		if (args.length != 1) {
-			System.out.println("Usage: " + commandLine);
-			System.exit(0);
-		}
-		configFileName = args[0];
-		
-		try {
-			server = new WikiServer(org.dbwiki.lib.IO.loadProperties(new File(configFileName)));
-			server.start();
-		} catch (Exception exception) {
-			exception.printStackTrace();
-			System.exit(0);
-		}
-	}
-	
-	public static void restartServer() {
-		try {
-			server = new WikiServer(org.dbwiki.lib.IO.loadProperties(new File(configFileName)));
-			server.start();
-		} catch (Exception exception) {
-			exception.printStackTrace();
-			System.exit(0);
-		}
-	}
+    /*
+     * Private Constants
+     */
+    private static WikiServer server;
+
+    private static final String commandLine = "StartServer <config-file>";
+
+    private static String configFileName;
+    /*
+     * Public Methods
+     */
+
+    public static void main(String[] args) {
+        if (args.length != 1) {
+            System.out.println("Usage: " + commandLine);
+            System.exit(0);
+        }
+        configFileName = args[0];
+
+        try {
+            server = new WikiServer(org.dbwiki.lib.IO.loadProperties(new File(configFileName)));
+            server.start();
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            System.exit(0);
+        }
+    }
+
+    public static void restartServer() {
+        try {
+            server.stop();
+            Thread.sleep(2000);
+            server = new WikiServer(org.dbwiki.lib.IO.loadProperties(new File(configFileName)));
+            server.start();
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            System.exit(0);
+        }
+    }
 }

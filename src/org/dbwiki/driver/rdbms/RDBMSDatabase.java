@@ -834,7 +834,7 @@ public class RDBMSDatabase implements Database, DatabaseConstants {
             } catch (org.dbwiki.exception.WikiException wikiException) {
                 con.rollback();
                 con.close();
-                System.out.println("Restart here (2)");
+                System.out.println("restart server here (2)...");
                 StartServer.restartServer();
                 con = _connector.getConnection();
                 con.setAutoCommit(false);

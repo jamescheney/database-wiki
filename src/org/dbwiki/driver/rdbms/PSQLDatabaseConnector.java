@@ -1,4 +1,4 @@
-/* 
+/*
     BEGIN LICENSE BLOCK
     Copyright 2010-2011, Heiko Mueller, Sam Lindley, James Cheney and
     University of Edinburgh
@@ -27,36 +27,38 @@ import java.sql.Statement;
 
 /** Subclass of DatabaseConnector providing Postgres specific functionality */
 public class PSQLDatabaseConnector extends DatabaseConnector {
-	/*
-	 * Constructors
-	 */
-	
-	public PSQLDatabaseConnector(String url, String user, String password) {
-		super(url, user, password);
-	}
-	
-	
-	/*
-	 * Protected Methods
-	 */
-	
-	@Override
-	protected String autoIncrementColumn(String name) {
-		// jcheney: this should just be SERIAL
-		return name + " SERIAL";
-	}
+    /*
+     * Constructors
+     */
 
-	@Override
-	protected void createSchemaIndexView(Connection con, String name) throws java.sql.SQLException {
-		Statement stmt = con.createStatement();
-		
-		stmt.execute("CREATE VIEW " + name + ViewSchemaIndex + " AS " +
-				"SELECT " + RelDataColEntry + ", " + RelDataColSchema + ", MAX(cnt) " + ViewSchemaIndexColMaxCount + " " + 
-				"FROM (SELECT " + RelDataColEntry + ", " + RelDataColParent + ", " + RelDataColSchema + ", COUNT(*) cnt " +
-				"FROM " + name + RelationData + " " +
-				"WHERE " + RelDataColSchema + " >= 0 GROUP BY " + RelDataColEntry + ", " + RelDataColParent + ", " + RelDataColSchema + ") q " +
-				"GROUP BY " + RelDataColEntry + ", " + RelDataColSchema);
-		
-		stmt.close();
-	}
+    public PSQLDatabaseConnector(String url, String user, String password) {
+        super(url, user, password);
+    }
+
+
+    /*
+     * Protected Methods
+     */
+
+    @Override
+    protected String autoIncrementColumn(String name) {
+        // jcheney: this should just be SERIAL
+        return name + " SERIAL";
+    }
+
+    @Override
+    protected void createSchemaIndexView(Connection con, String name) throws java.sql.SQLException {
+        Statement stmt = con.createStatement();
+
+        String createViewStatement = "CREATE VIEW " + name + ViewSchemaIndex + " AS " +
+                "SELECT " + RelDataColEntry + ", " + RelDataColSchema + ", MAX(cnt) " + ViewSchemaIndexColMaxCount + " " +
+                "FROM (SELECT " + RelDataColEntry + ", " + RelDataColParent + ", " + RelDataColSchema + ", COUNT(*) cnt " +
+                "FROM " + name + RelationData + " " +
+                "WHERE " + RelDataColSchema + " >= 0 GROUP BY " + RelDataColEntry + ", " + RelDataColParent + ", " + RelDataColSchema + ") q " +
+                "GROUP BY " + RelDataColEntry + ", " + RelDataColSchema;
+        System.out.println("Creating view:\n" + createViewStatement);
+        stmt.execute(createViewStatement);
+
+        stmt.close();
+    }
 }

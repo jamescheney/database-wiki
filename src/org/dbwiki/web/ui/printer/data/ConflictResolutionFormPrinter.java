@@ -1,9 +1,15 @@
 package org.dbwiki.web.ui.printer.data;
 
+import java.util.HashMap;
 import java.util.List;
 
 import org.dbwiki.data.database.DatabaseNode;
 import org.dbwiki.data.database.DatabaseTextNode;
+import org.dbwiki.data.database.NodeUpdate;
+import org.dbwiki.data.database.Update;
+import org.dbwiki.data.resource.NodeIdentifier;
+import org.dbwiki.driver.rdbms.RDBMSDatabaseTextNode;
+import org.dbwiki.main.SynchronizeDatabaseWiki.DeleteandChange;
 import org.dbwiki.main.SynchronizeDatabaseWiki.NodePair;
 import org.dbwiki.web.html.HtmlLinePrinter;
 import org.dbwiki.web.request.WikiDataRequest;
@@ -20,7 +26,10 @@ public class ConflictResolutionFormPrinter implements HtmlContentPrinter {
     private String _actionParameterName;
     private WikiDataRequest<?> _request;
     private List<NodePair> changedChangedNodes;
+    private List<DeleteandChange> changedDeletedNodes;
+    private List<DeleteandChange> deletedChangedNodes;
     private String remoteUrl;
+    private HashMap<Integer, Integer> idMap;
 
 
     /*
@@ -28,10 +37,14 @@ public class ConflictResolutionFormPrinter implements HtmlContentPrinter {
      */
 
     public ConflictResolutionFormPrinter(List<NodePair> changedChangedNodes,
-            List<NodePair> changedDeletedNodes,
-            List<NodePair> deletedChangedNodes,
+            List<DeleteandChange> changedDeletedNodes2,
+            List<DeleteandChange> deletedChangedNodes2,
+            HashMap<Integer, Integer> idMap,
             String remoteURL) {
         this.changedChangedNodes = changedChangedNodes;
+        this.changedDeletedNodes = changedDeletedNodes2;
+        this.deletedChangedNodes = deletedChangedNodes2;
+        this.idMap = idMap;
         this.remoteUrl = remoteURL;
     }
 
@@ -58,7 +71,6 @@ public class ConflictResolutionFormPrinter implements HtmlContentPrinter {
         body.addHIDDEN("nodeBeingSynced", url.substring(url.lastIndexOf('/')));
         body.addHIDDEN("resolution", "LOCAL"); // only local prints this form
         body.addHIDDEN(RequestParameter.ParameterRemoteAddr, remoteUrl);
-        System.out.println(remoteUrl);
 
         body.openCENTER();
         body.openTABLE(CSS.CSSInputForm);
@@ -75,13 +87,70 @@ public class ConflictResolutionFormPrinter implements HtmlContentPrinter {
             body.openPARAGRAPH(CSS.CSSInputForm);
             body.text(String.format("Node %s has been changed on both servers. Choose which version you want to keep.", getPathLabels(pair)));
             body.closePARAGRAPH();
-            String name = pair.get_localNode().identifier().toURLString() + "-" + pair.get_localNode().identifier().toURLString();
+            String name = pair.get_localNode().identifier().toURLString() + "-" + pair.get_remoteNode().identifier().toURLString();
             body.addRADIOBUTTON("Local value: " + ((DatabaseTextNode) pair.get_localNode()).getValue(), name, "REMOTE:" +((DatabaseTextNode) pair.get_localNode()).getValue(), true);
             body.addBR();
             body.addRADIOBUTTON("Remote value: " + ((DatabaseTextNode) pair.get_remoteNode()).getValue(), name, "LOCAL:" + ((DatabaseTextNode) pair.get_remoteNode()).getValue(), false);
             body.closeTD();
             body.closeTR();
         }
+
+/*        for (DeleteandChange pair : this.deletedChangedNodes){
+            NodePair pair2 = pair.getDeletedChangedNode();
+            body.openTR();
+            body.openTD(CSS.CSSInputForm);
+            body.openPARAGRAPH(CSS.CSSInputForm);
+            body.text(String.format("Node %s has been deleted on local server and changed on the remote server. Choose which update to keep.", getPathLabels(pair2)));
+            body.closePARAGRAPH();
+            String name;
+            if (idMap.containsKey(((NodeIdentifier) pair2.get_localNode().identifier()).nodeID())) {
+                name = pair2.get_localNode().identifier().toURLString() + "-"
+                        + new NodeIdentifier(idMap.get(((NodeIdentifier) pair2.get_localNode().identifier()).nodeID())).toURLString();
+            } else {
+                name = pair2.get_localNode().identifier().toURLString() + "-" + pair2.get_localNode().identifier().toURLString();
+            }
+            if(pair.getList() == null){
+                body.addRADIOBUTTON("Local value: " + "deleted", name, "REMOTE:DELETE:", true);
+                body.addBR();
+                body.addRADIOBUTTON("Remote value: " + ((DatabaseTextNode) pair2.get_remoteNode()).getValue(), name, "LOCAL:REACTIVATE+CHANGE:" + ((DatabaseTextNode) pair2.get_remoteNode()).getValue(), false);
+            }
+            else{
+                for(int i = 0; i < pair.getList().size(); i++){
+                    NodeUpdate nodeupdate = new NodeUpdate(new NodeIdentifier(idMap.get(((NodeIdentifier)pair.getList().get(i).identifier()).nodeID())), pair.getList().get(i).getValue());
+                    body.addRADIOBUTTON("Local value: " + "deleted", name, "REMOTE:DELETE:", true);
+                    body.addBR();
+                    body.addRADIOBUTTON("Remote value: " + ((DatabaseTextNode) pair2.get_remoteNode()).getValue(), name, "LOCAL:REACTIVATE+CHANGE:" + ((DatabaseTextNode) pair2.get_remoteNode()).getValue(), false);
+
+                }
+            }
+            body.closeTD();
+            body.closeTR();
+        }*/
+
+/*        for (DeleteandChange wrappedPair : this.changedDeletedNodes){
+            NodePair pair = wrappedPair.getDeletedChangedNode();
+            body.openTR();
+            body.openTD(CSS.CSSInputForm);
+            body.openPARAGRAPH(CSS.CSSInputForm);
+            body.text(String.format("Node %s has been changed on local server and deleted on the remote server. Choose which update to keep.", getPathLabels(pair)));
+            body.closePARAGRAPH();
+            String name;
+            if (idMap.containsKey(((NodeIdentifier) pair.get_localNode().identifier()).nodeID())) {
+                name = pair.get_localNode().identifier().toURLString() + "-"
+                        + new NodeIdentifier(idMap.get(((NodeIdentifier) pair.get_localNode().identifier()).nodeID())).toURLString();
+            } else {
+                name = pair.get_localNode().identifier().toURLString() + "-" + pair.get_localNode().identifier().toURLString();
+            }
+            if (pair.get_localNode().isText()) {
+                body.addRADIOBUTTON("Local value: " + ((DatabaseTextNode) pair.get_localNode()).getValue(), name, "REMOTE:REACTIVATE+CHANGE:" +((DatabaseTextNode) pair.get_localNode()).getValue(), true);
+            } else {
+
+            }
+            body.addBR();
+            body.addRADIOBUTTON("Remote value: " + "deleted", name, "LOCAL:DELETE", false);
+            body.closeTD();
+            body.closeTR();
+        }*/
 
         body.closeTABLE();
         body.closeCENTER();

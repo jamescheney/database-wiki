@@ -217,6 +217,7 @@ public class SAXCallbackInputHandler extends DefaultHandler2 {
             XMLReader parser = XMLReaderFactory.createXMLReader("org.apache.xerces.parsers.SAXParser");
             parser.setFeature("http://xml.org/sax/features/validation", validating);
             parser.setFeature("http://apache.org/xml/features/validation/schema", xmlSchema);
+            //TODO: must include in master branch. Next line is necessary to also parse comments.
             parser.setProperty ("http://xml.org/sax/properties/lexical-handler", this);
             parser.setContentHandler(this);
             parser.setErrorHandler(this);
