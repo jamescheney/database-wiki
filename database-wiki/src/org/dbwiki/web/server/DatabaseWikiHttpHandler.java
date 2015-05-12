@@ -39,6 +39,7 @@ import org.dbwiki.data.io.CopyPasteNodeWriter;
 import org.dbwiki.data.io.ExportJSONNodeWriter;
 import org.dbwiki.data.io.ExportNodeWriter;
 import org.dbwiki.data.schema.GroupSchemaNode;
+import org.dbwiki.data.security.Authorization;
 import org.dbwiki.data.wiki.SimpleWiki;
 import org.dbwiki.driver.rdbms.DatabaseConnector;
 import org.dbwiki.driver.rdbms.RDBMSDatabase;

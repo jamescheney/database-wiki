@@ -28,6 +28,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.URI;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
@@ -42,8 +43,8 @@ import org.dbwiki.web.request.HttpRequest;
 import org.dbwiki.web.request.RequestURL;
 import org.dbwiki.web.request.parameter.RequestParameter;
 import org.dbwiki.web.request.parameter.RequestParameterList;
-import org.dbwiki.web.server.Authorization;
-import org.dbwiki.web.server.DBPolicy;
+import org.dbwiki.data.security.Authorization;
+import org.dbwiki.data.security.DBPolicy;
 import org.dbwiki.web.server.Entry;
 import org.dbwiki.web.server.HttpExchangeWrapper;
 import org.dbwiki.web.server.WikiServer;
@@ -101,6 +102,15 @@ public class WikiAuthenticator extends Authenticator {
     // TODO: Get rid of this?
     private WikiServer _server;
     
+    // Hardwired policy filtering file requests
+    private static String[] fileMatches = { 
+    		".*/html/.*\\.html",
+    		".*/html/style/.*\\.css",
+    		".*/js/.*\\.js",
+    		".*/.*\\.txt",
+    		".*/.*\\.ico",
+    		".*/pictures/.*\\.gif",
+    		};
     /*
      * Constructors
      */
@@ -118,17 +128,26 @@ public class WikiAuthenticator extends Authenticator {
     /*
      * Public Methods
      */
-       
-    private boolean allowedFileRequest(String path ) {
-        // If the request is for a file (currently indicated by
-        // a '.' in the request path), then no authorization is
+
+     
+    private boolean allowedFileRequest(String requestURI) {
+        // If the request is for a file (as specified by the 
+    	// regular expressions above), then no authorization is
         // required.
-        // FIXME #security: Security hole? Generalize the test for whether something is a file.
-        return path .indexOf('.') != -1;
+    	for (String m : fileMatches) {
+    		if (requestURI.matches(m)) 
+    			return true;
+    	}
+    	return false;
     }
        
+    
+    public synchronized Result authenticate(HttpExchange exchange) {
+    	return authenticate (new HttpExchangeWrapper(exchange));
+    
+    }
        
-    public synchronized Result authenticate(HttpExchange exchange){
+    public synchronized Result authenticate(Exchange<HttpExchange> exchange){
         // FIXME: #security: If the request is to log in then we should check the username and password no matter what!
         // Currently we don't if we happen to be at a page that doesn't require authentication.
            
@@ -136,16 +155,16 @@ public class WikiAuthenticator extends Authenticator {
             return new Authenticator.Success(new HttpPrincipal("", _realm));
         }
            
-        Headers rmap = exchange.getRequestHeaders();
+        Headers rmap = exchange.get().getRequestHeaders();
            
-        boolean isProtectedRequest = this.isProtectedRequest(exchange);
+        boolean isProtectedRequest = this.isProtectedRequest(exchange.get());
            
         String auth = rmap.getFirst("Authorization");
         if (auth == null) {
             if ((_mode == AuthenticateAlways)
                     || ((_mode == AuthenticateWriteOnly) && (isProtectedRequest))
                     || (exchange.getRequestURI().getPath().equals(WikiServer.SpecialFolderLogin))) {
-                Headers map = exchange.getResponseHeaders();
+                Headers map = exchange.get().getResponseHeaders();
                 map.set("WWW-Authenticate", "Basic realm=" + "\"" + _realm + "\"");
                 return new Authenticator.Retry(401);
             } else {
@@ -195,7 +214,7 @@ public class WikiAuthenticator extends Authenticator {
                                                     return new Authenticator.Success(new HttpPrincipal(uname, _realm));
                                                 }else{
                                                     try {
-                                                        sendAccessDenied(exchange);
+                                                        sendAccessDenied(exchange.get());
                                                     } catch (Exception e) {
                                                         e.printStackTrace();
                                                     }
@@ -212,7 +231,7 @@ public class WikiAuthenticator extends Authenticator {
                                                     return new Authenticator.Success(new HttpPrincipal(uname, _realm));
                                                 }else{
                                                     try {
-                                                        sendAccessDenied(exchange);
+                                                        sendAccessDenied(exchange.get());
                                                     } catch (Exception e) {
                                                         e.printStackTrace();
                                                     }
@@ -229,7 +248,7 @@ public class WikiAuthenticator extends Authenticator {
                                                     return new Authenticator.Success(new HttpPrincipal(uname, _realm));
                                                 }else{
                                                     try {
-                                                        sendAccessDenied(exchange);
+                                                        sendAccessDenied(exchange.get());
                                                     } catch (Exception e) {
                                                         e.printStackTrace();
                                                     }
@@ -239,7 +258,7 @@ public class WikiAuthenticator extends Authenticator {
                                         return new Authenticator.Success(new HttpPrincipal(uname, _realm));
                                     }else{
                                         try {
-                                            sendAccessDenied(exchange);
+                                            sendAccessDenied(exchange.get());
                                         } catch (Exception e) {
                                             e.printStackTrace();
                                         }
@@ -257,7 +276,7 @@ public class WikiAuthenticator extends Authenticator {
                                                         return new Authenticator.Success(new HttpPrincipal(uname, _realm));
                                                     }else{
                                                         try {
-                                                            sendAccessDenied(exchange);
+                                                            sendAccessDenied(exchange.get());
                                                         } catch (Exception e) {
                                                             e.printStackTrace();
                                                         }
@@ -272,7 +291,7 @@ public class WikiAuthenticator extends Authenticator {
                                         return new Authenticator.Success(new HttpPrincipal(uname, _realm));
                                     }else{
                                         try {
-                                            sendAccessDenied(exchange);
+                                            sendAccessDenied(exchange.get());
                                         } catch (Exception e) {
                                             e.printStackTrace();
                                         }
@@ -282,14 +301,14 @@ public class WikiAuthenticator extends Authenticator {
                         }
                     }
                     try {
-                        sendAccessDenied(exchange);
+                        sendAccessDenied(exchange.get());
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                     return new Authenticator.Success(new HttpPrincipal(uname, _realm));
 
                 } else {
-                        Headers map = exchange.getResponseHeaders();
+                        Headers map = exchange.get().getResponseHeaders();
                         map.set("WWW-Authenticate", "Basic realm=" + "\"" + _realm      + "\"");
                         return new Authenticator.Failure(401);
                 }

@@ -49,6 +49,8 @@ import org.dbwiki.data.io.SAXCallbackInputHandler;
 import org.dbwiki.data.io.StructureParser;
 import org.dbwiki.data.schema.DatabaseSchema;
 import org.dbwiki.data.schema.SchemaParser;
+import org.dbwiki.data.security.Authorization;
+import org.dbwiki.data.security.DBPolicy;
 import org.dbwiki.driver.rdbms.DatabaseConnector;
 import org.dbwiki.driver.rdbms.DatabaseConnectorFactory;
 

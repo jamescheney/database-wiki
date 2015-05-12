@@ -36,8 +36,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.dbwiki.exception.WikiException;
 import org.dbwiki.user.UserListing;
 import org.dbwiki.web.request.parameter.RequestParameter;
-import org.dbwiki.web.server.Authorization;
-import org.dbwiki.web.server.DBPolicy;
+import org.dbwiki.data.security.Authorization;
+import org.dbwiki.data.security.DBPolicy;
 import org.dbwiki.web.server.DatabaseWikiProperties;
 import org.dbwiki.web.server.Entry;
 import org.dbwiki.web.server.WikiServer;
@@ -64,6 +64,14 @@ public class WikiServletAuthenticator {
     private int entryId;
     // TODO: Get rid of this?
     private WikiServer _server;
+    private static String[] fileMatches = { 
+		".*/html/.*\\.html",
+		".*/html/style/.*\\.css",
+		".*/js/.*\\.js",
+		".*/.*\\.txt",
+		".*/.*\\.ico",
+		".*/pictures/.*\\.gif",
+		};
     
     public WikiServletAuthenticator(int mode, String realm, UserListing users, Vector<Authorization> authorizationListing, WikiServer server) {
         _mode = mode;
@@ -73,13 +81,23 @@ public class WikiServletAuthenticator {
         _server = server;
     }
        
+    
+    private boolean allowedFileRequest(String requestURI) {
+        // If the request is for a file (as specified by the 
+    	// regular expressions above), then no authorization is
+        // required.
+    	for (String m : fileMatches) {
+    		if (requestURI.matches(m)) 
+    			return true;
+    	}
+    	return false;
+    }
+
     public boolean authenticate(HttpServletRequest request) {
-        String path = request.getRequestURI();
-           
-        // File requests don't require authentication
-        if(path.indexOf('.') != -1) {
-            return true;
-        }
+        
+    	if (allowedFileRequest(request.getRequestURI())) {
+    		return true;
+    	}
            
         boolean needsAuth = this.isProtectedRequest(request);
         if(request.getUserPrincipal() == null) {

@@ -11,7 +11,7 @@ import org.dbwiki.web.html.HtmlLinePrinter;
 import org.dbwiki.web.request.parameter.RequestParameter;
 import org.dbwiki.web.request.parameter.RequestParameterAction;
 import org.dbwiki.web.security.WikiAuthenticator;
-import org.dbwiki.web.server.Authorization;
+import org.dbwiki.data.security.Authorization;
 import org.dbwiki.web.server.WikiServer;
 import org.dbwiki.web.ui.CSS;
 import org.dbwiki.web.ui.printer.HtmlContentPrinter;

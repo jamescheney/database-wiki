@@ -21,13 +21,12 @@
     END LICENSE BLOCK
 */
 
-package org.dbwiki.web.server;
+package org.dbwiki.data.security;
 
 /**
  * Entity class for entry-level access permission
  * 
  * @author mingjun
- * TODO: Move to security module
  */
 
 public class DBPolicy {
