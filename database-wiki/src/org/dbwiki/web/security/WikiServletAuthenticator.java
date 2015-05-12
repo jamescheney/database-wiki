@@ -23,6 +23,7 @@
 
 package org.dbwiki.web.security;
 
+import java.net.URI;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -34,12 +35,17 @@ import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 
 import org.dbwiki.exception.WikiException;
+import org.dbwiki.lib.None;
+import org.dbwiki.lib.Option;
+import org.dbwiki.lib.Some;
 import org.dbwiki.user.UserListing;
+import org.dbwiki.web.request.Exchange;
 import org.dbwiki.web.request.parameter.RequestParameter;
 import org.dbwiki.data.security.Authorization;
 import org.dbwiki.data.security.DBPolicy;
 import org.dbwiki.web.server.DatabaseWikiProperties;
 import org.dbwiki.web.server.Entry;
+import org.dbwiki.web.server.ServletExchangeWrapper;
 import org.dbwiki.web.server.WikiServer;
 
 
@@ -60,8 +66,7 @@ public class WikiServletAuthenticator {
     private boolean isInsertRequest;
     private boolean isDeleteRequest;
     private boolean isUpdateRequest;
-    private boolean isEntryLevelRequest;
-    private int entryId;
+    
     // TODO: Get rid of this?
     private WikiServer _server;
     private static String[] fileMatches = { 
@@ -99,7 +104,7 @@ public class WikiServletAuthenticator {
     		return true;
     	}
            
-        boolean needsAuth = this.isProtectedRequest(request);
+        boolean needsAuth = this.isProtectedRequest(new ServletExchangeWrapper(request,null));
         if(request.getUserPrincipal() == null) {
             if ((_mode == DatabaseWikiProperties.AuthenticateAlways) ||
                 (_mode == DatabaseWikiProperties.AuthenticateWriteOnly) && needsAuth) {
@@ -131,27 +136,33 @@ public class WikiServletAuthenticator {
                         if(needsAuth) {
                             // insert request
                             if(isInsertRequest == true && isInsert == true) {
-                                if(isEntryLevelRequest == true) {
+                            	Option<Integer> entryIdOpt = isEntryLevelRequest(URI.create(request.getRequestURI())); 
+                                if(entryIdOpt.exists()) {
+                                	int entryId = entryIdOpt.elt();    
                                     policyListing = _server.getDBPolicyListing(database_name, user_id);
-                                    if(havePolicies(policyListing, user_id)) {
+                                    if(havePolicies(policyListing, user_id,entryId)) {
                                         return policyListing.get(user_id).get(entryId).isInsert();
                                     }
                                 }
                                 return true;
                             // delete request
                             } else if(isDeleteRequest == true && isDelete == true) {
-                                if(isEntryLevelRequest == true) {
+                            	Option<Integer> entryIdOpt = isEntryLevelRequest(URI.create(request.getRequestURI())); 
+                                if(entryIdOpt.exists()) {
+                                	int entryId = entryIdOpt.elt();    
                                     policyListing = _server.getDBPolicyListing(database_name, user_id);
-                                    if(havePolicies(policyListing, user_id)) {
+                                    if(havePolicies(policyListing, user_id,entryId)) {
                                         return policyListing.get(user_id).get(entryId).isDelete();
                                     }
                                 }
                                 return true;
                             // update request
                             } else if(isUpdateRequest == true && isUpdate == true){
-                                if(isEntryLevelRequest == true) {
+                            	Option<Integer> entryIdOpt = isEntryLevelRequest(URI.create(request.getRequestURI())); 
+                                if(entryIdOpt.exists()) {
+                                	int entryId = entryIdOpt.elt();    
                                     policyListing = _server.getDBPolicyListing(database_name, user_id);
-                                    if(havePolicies(policyListing, user_id)) {
+                                    if(havePolicies(policyListing, user_id,entryId)) {
                                         return policyListing.get(user_id).get(entryId).isUpdate();
                                     }
                                 }
@@ -163,9 +174,11 @@ public class WikiServletAuthenticator {
                             // read request
                             isReadRequest = true;
                             if(isReadRequest == true && isRead == true) {
-                                if(isEntryLevelRequest(request)) {
+                            	Option<Integer> entryIdOpt = isEntryLevelRequest(URI.create(request.getRequestURI())); 
+                                if(entryIdOpt.exists()) {
+                                	int entryId = entryIdOpt.elt();    
                                     policyListing = _server.getDBPolicyListing(database_name, user_id);
-                                    if(havePolicies(policyListing, user_id)) {
+                                    if(havePolicies(policyListing, user_id,entryId)) {
                                         return policyListing.get(user_id).get(entryId).isRead();
                                     }
                                 }
@@ -188,7 +201,7 @@ public class WikiServletAuthenticator {
      * @param exchange HttpExchange
      * @return boolean
      */
-    private boolean havePolicies(Map<Integer, Map<Integer,DBPolicy>> listing, int userId) {
+    private boolean havePolicies(Map<Integer, Map<Integer,DBPolicy>> listing, int userId, int entryId) {
         if(listing != null) {
             if(listing.get(userId) != null) {
                 if(listing.get(userId).get(entryId) != null) {
@@ -204,9 +217,9 @@ public class WikiServletAuthenticator {
      * @param exchange HttpExchange
      * @return boolean
      */
-    private boolean isProtectedRequest(HttpServletRequest request) {
-        if ("GET".equalsIgnoreCase(request.getMethod())) {
-        List<?> parameters = Collections.list((Enumeration<?>)request.getParameterNames());
+    private boolean isProtectedRequest(Exchange<HttpServletRequest> request) {
+        if (request.isGet()) {
+        List<?> parameters = Collections.list((Enumeration<?>)request.get().getParameterNames());
             if (parameters != null) {
                 isReadRequest = true;
                 isInsertRequest = false;
@@ -218,39 +231,19 @@ public class WikiServletAuthenticator {
                     return true;
                 } else if (parameters.contains(RequestParameter.ParameterCreate)) {
                     isInsertRequest = true;
-                    if(isEntryLevelRequest(request)) {
-                        isEntryLevelRequest = true;
-                    } else {
-                        isEntryLevelRequest = false;
-                    }
-                    return true;
+                     return true;
                 } else if (parameters.contains(RequestParameter.ParameterAllUsers)) {
                     return true;
                 } else if (parameters.contains(RequestParameter.ParameterAuthorization)) {
                     return true;
                 } else if (parameters.contains(RequestParameter.ParameterCreateSchemaNode)) {
                     isInsertRequest = true;
-                    if(isEntryLevelRequest(request)) {
-                        isEntryLevelRequest = true;
-                    } else {
-                        isEntryLevelRequest = false;
-                    }
                     return true;
                 } else if (parameters.contains(RequestParameter.ParameterDelete)) {
                     isDeleteRequest = true;
-                    if(isEntryLevelRequest(request)) {
-                        isEntryLevelRequest = true;
-                    } else {
-                        isEntryLevelRequest = false;
-                    }
                     return true;
                 } else if (parameters.contains(RequestParameter.ParameterEdit)) {
                     isUpdateRequest = true;                
-                    if(isEntryLevelRequest(request)) {
-                        isEntryLevelRequest = true;
-                    } else {
-                        isEntryLevelRequest = false;
-                    }
                     return true;
                 } else if (parameters.contains(RequestParameter.ParameterLayout)) {
                     return true;
@@ -269,7 +262,8 @@ public class WikiServletAuthenticator {
         }
         return false;
     }
-       
+    
+    
     /** Checks whether a request is an entry-level request
      *
      * @param uri the request uri
@@ -277,23 +271,23 @@ public class WikiServletAuthenticator {
      * @throws SQLException
      * @throws WikiException
      */
-    private boolean isEntryLevelRequest(HttpServletRequest request) {
-        String uri = request.getRequestURI();
-        if (request.getQueryString() != null) {
-        uri = uri + "?" + request.getQueryString();
+    private Option<Integer> isEntryLevelRequest(URI uri) {
+    	String path = uri.getPath();
+        if (uri.getRawQuery() != null) {
+        path = path + "?" + uri.getRawQuery();
         }
-        String[] items = uri.split("/");
+        String[] items = path.split("/");
         if(items.length >= 3) {
             if(items[2].contains("?")) {
                 if(items[2].split("\\?")[0].length() == 0) {
-                    return false;
+                    return new None<Integer>();
                 } else {
                     try {
-                        this.entryId = Integer.parseInt(items[2].split("\\?")[0],16);
+                        return new Some<Integer>(Integer.parseInt(items[2].split("\\?")[0],16));
                     } catch (NumberFormatException e) {
-                        return false;
+                        return new None<Integer>();
                     }
-                    return true;
+                    
                 }
             } else {
                 try {
@@ -301,11 +295,10 @@ public class WikiServletAuthenticator {
                     try {
                         int entry = Integer.parseInt(items[2],16);
                         if(entryListing.get(entry)!=null) {
-                            this.entryId = entry;
-                            return true;
+                            return new Some<Integer>(entry);
                         }
                     } catch (NumberFormatException e) {
-                        return false;
+                        return new None<Integer>();
                     }
                 } catch (Exception e) {
                     // TODO Auto-generated catch block
@@ -313,7 +306,7 @@ public class WikiServletAuthenticator {
                 }
             }
         }
-        return false;
+        return new None<Integer>();
     }
        
     public int getAuthenticationMode() {

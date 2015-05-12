@@ -7,6 +7,7 @@ import org.dbwiki.web.html.HtmlPage;
  *
  */
 
+@Deprecated
 public class NoAccessPermissionPage extends HtmlPage{
 	
 	/*
