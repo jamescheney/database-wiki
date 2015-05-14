@@ -35,12 +35,14 @@ import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 
 import org.dbwiki.exception.WikiException;
+import org.dbwiki.exception.WikiFatalException;
 import org.dbwiki.lib.None;
 import org.dbwiki.lib.Option;
 import org.dbwiki.lib.Some;
 import org.dbwiki.user.UserListing;
 import org.dbwiki.web.request.Exchange;
 import org.dbwiki.web.request.parameter.RequestParameter;
+import org.dbwiki.web.request.parameter.RequestParameterList;
 import org.dbwiki.data.security.Authorization;
 import org.dbwiki.data.security.DBPolicy;
 import org.dbwiki.web.server.DatabaseWikiProperties;
@@ -62,10 +64,7 @@ public class WikiServletAuthenticator {
     private UserListing _users;
     private String _realm;
     private Vector<Authorization> _authorizationListing;
-    private boolean isReadRequest;
-    private boolean isInsertRequest;
-    private boolean isDeleteRequest;
-    private boolean isUpdateRequest;
+    
     
     // TODO: Get rid of this?
     private WikiServer _server;
@@ -103,8 +102,8 @@ public class WikiServletAuthenticator {
     	if (allowedFileRequest(request.getRequestURI())) {
     		return true;
     	}
-           
-        boolean needsAuth = this.isProtectedRequest(new ServletExchangeWrapper(request,null));
+        Exchange<HttpServletRequest> exchange = new ServletExchangeWrapper(request,null);
+        boolean needsAuth = this.isProtectedRequest(exchange);
         if(request.getUserPrincipal() == null) {
             if ((_mode == DatabaseWikiProperties.AuthenticateAlways) ||
                 (_mode == DatabaseWikiProperties.AuthenticateWriteOnly) && needsAuth) {
@@ -128,42 +127,39 @@ public class WikiServletAuthenticator {
                     String user_login = _users.get(user_id).login();
                     if(user_login.equals(uname) && dbname.equals(_realm)) {
                         //get the access permissions in the database
-                        boolean isRead = _authorizationListing.get(i).is_read();
-                        boolean isInsert = _authorizationListing.get(i).is_insert();
-                        boolean isDelete = _authorizationListing.get(i).is_delete();
-                        boolean isUpdate = _authorizationListing.get(i).is_update();
+                        boolean isRead = _authorizationListing.get(i).capability().isRead();
+                        boolean isInsert = _authorizationListing.get(i).capability().isInsert();
+                        boolean isDelete = _authorizationListing.get(i).capability().isDelete();
+                        boolean isUpdate = _authorizationListing.get(i).capability().isUpdate();
+ 
+                    	Option<Integer> entryIdOpt = isEntryLevelRequest(URI.create(request.getRequestURI())); 
+                        policyListing = _server.getDBPolicyListing(database_name, user_id);
                         // check what kind of request it is
                         if(needsAuth) {
                             // insert request
-                            if(isInsertRequest == true && isInsert == true) {
-                            	Option<Integer> entryIdOpt = isEntryLevelRequest(URI.create(request.getRequestURI())); 
+                            if(isInsertRequest(exchange) && isInsert == true) {
                                 if(entryIdOpt.exists()) {
                                 	int entryId = entryIdOpt.elt();    
-                                    policyListing = _server.getDBPolicyListing(database_name, user_id);
                                     if(havePolicies(policyListing, user_id,entryId)) {
-                                        return policyListing.get(user_id).get(entryId).isInsert();
+                                        return policyListing.get(user_id).get(entryId).capability().isInsert();
                                     }
                                 }
                                 return true;
                             // delete request
-                            } else if(isDeleteRequest == true && isDelete == true) {
-                            	Option<Integer> entryIdOpt = isEntryLevelRequest(URI.create(request.getRequestURI())); 
+                            } else if(isDeleteRequest(exchange) && isDelete == true) {
                                 if(entryIdOpt.exists()) {
                                 	int entryId = entryIdOpt.elt();    
-                                    policyListing = _server.getDBPolicyListing(database_name, user_id);
                                     if(havePolicies(policyListing, user_id,entryId)) {
-                                        return policyListing.get(user_id).get(entryId).isDelete();
+                                        return policyListing.get(user_id).get(entryId).capability().isDelete();
                                     }
                                 }
                                 return true;
                             // update request
-                            } else if(isUpdateRequest == true && isUpdate == true){
-                            	Option<Integer> entryIdOpt = isEntryLevelRequest(URI.create(request.getRequestURI())); 
+                            } else if(isUpdateRequest(exchange) && isUpdate == true){
                                 if(entryIdOpt.exists()) {
                                 	int entryId = entryIdOpt.elt();    
-                                    policyListing = _server.getDBPolicyListing(database_name, user_id);
                                     if(havePolicies(policyListing, user_id,entryId)) {
-                                        return policyListing.get(user_id).get(entryId).isUpdate();
+                                        return policyListing.get(user_id).get(entryId).capability().isUpdate();
                                     }
                                 }
                                 return true;
@@ -172,14 +168,11 @@ public class WikiServletAuthenticator {
                             }
                         } else {
                             // read request
-                            isReadRequest = true;
-                            if(isReadRequest == true && isRead == true) {
-                            	Option<Integer> entryIdOpt = isEntryLevelRequest(URI.create(request.getRequestURI())); 
+                            if(isRead == true) {
                                 if(entryIdOpt.exists()) {
                                 	int entryId = entryIdOpt.elt();    
-                                    policyListing = _server.getDBPolicyListing(database_name, user_id);
                                     if(havePolicies(policyListing, user_id,entryId)) {
-                                        return policyListing.get(user_id).get(entryId).isRead();
+                                        return policyListing.get(user_id).get(entryId).capability().isRead();
                                     }
                                 }
                                 return true;
@@ -217,52 +210,109 @@ public class WikiServletAuthenticator {
      * @param exchange HttpExchange
      * @return boolean
      */
-    private boolean isProtectedRequest(Exchange<HttpServletRequest> request) {
-        if (request.isGet()) {
-        List<?> parameters = Collections.list((Enumeration<?>)request.get().getParameterNames());
-            if (parameters != null) {
-                isReadRequest = true;
-                isInsertRequest = false;
-                isDeleteRequest = false;
-                isUpdateRequest = false;
-                if(parameters.size() == 0) {
-                    return false;
-                } else if (parameters.contains(RequestParameter.ParameterActivate)) {
+    private boolean isProtectedRequest(Exchange<?> exchange) {
+        if (exchange.isGet()) {
+            String rawQuery = exchange.getRequestURI().getRawQuery();
+            if (rawQuery != null) {
+                try {
+                    RequestParameterList parameters = new RequestParameterList(rawQuery);
+	                if (parameters.hasParameter(RequestParameter.ParameterActivate)) {
+	                    return true;
+	                } else if (parameters.hasParameter(RequestParameter.ParameterCreate)) {
+	                    return true;
+	                } else if(parameters.hasParameter(RequestParameter.ParameterAllUsers)){
+	                    return true;
+	                } else if(parameters.hasParameter(RequestParameter.ParameterAuthorization)){
+	                    return true;
+	                } else if (parameters.hasParameter(RequestParameter.ParameterCreateSchemaNode)) {
+	                    return true;
+	                } else if (parameters.hasParameter(RequestParameter.ParameterDelete)) {
+	                    return true;
+	                } else if (parameters.hasParameter(RequestParameter.ParameterEdit)) {
+	                    return true;
+	                } else if (parameters.hasParameter(RequestParameter.ParameterLayout)) {
+	                    return true;
+	                } else if (parameters.hasParameter(RequestParameter.ParameterPaste)) {
+	                    return true;
+	                } else if (parameters.hasParameter(RequestParameter.ParameterReset)) {
+	                    return true;
+	                } else if (parameters.hasParameter(RequestParameter.ParameterTemplate)) {
+	                    return true;
+	                } else if (parameters.hasParameter(RequestParameter.ParameterStyleSheet)) {
+	                    return true;
+	                } else {
+	                    return false;
+	                }
+                } catch (WikiFatalException e) {
+                    e.printStackTrace();
+                    // is this really what we want to do?
                     return true;
-                } else if (parameters.contains(RequestParameter.ParameterCreate)) {
-                    isInsertRequest = true;
-                     return true;
-                } else if (parameters.contains(RequestParameter.ParameterAllUsers)) {
-                    return true;
-                } else if (parameters.contains(RequestParameter.ParameterAuthorization)) {
-                    return true;
-                } else if (parameters.contains(RequestParameter.ParameterCreateSchemaNode)) {
-                    isInsertRequest = true;
-                    return true;
-                } else if (parameters.contains(RequestParameter.ParameterDelete)) {
-                    isDeleteRequest = true;
-                    return true;
-                } else if (parameters.contains(RequestParameter.ParameterEdit)) {
-                    isUpdateRequest = true;                
-                    return true;
-                } else if (parameters.contains(RequestParameter.ParameterLayout)) {
-                    return true;
-                } else if (parameters.contains(RequestParameter.ParameterPaste)) {
-                    return true;
-                } else if (parameters.contains(RequestParameter.ParameterReset)) {
-                    return true;
-                } else if (parameters.contains(RequestParameter.ParameterTemplate)) {
-                    return true;
-                } else if (parameters.contains(RequestParameter.ParameterStyleSheet)) {
-                    return true;
-                } else {
+                }
+                
+            }
+        }
+        return false;
+    }
+    
+    private boolean isInsertRequest(Exchange<?> exchange) {
+        if (exchange.isGet()) {
+            String rawQuery = exchange.getRequestURI().getRawQuery();
+            if (rawQuery != null) {
+                try {
+                	RequestParameterList parameters = new RequestParameterList(rawQuery);
+	                if (parameters.hasParameter(RequestParameter.ParameterCreate)) {
+	                    return true;
+	                } else if (parameters.hasParameter(RequestParameter.ParameterCreateSchemaNode)) {
+	                    return true;
+	                }
+                } catch (WikiFatalException e) {
+                    e.printStackTrace();
+                    // is this really what we want to do?
                     return false;
                 }
             }
         }
         return false;
     }
-    
+
+    private boolean isDeleteRequest(Exchange<?> exchange) {
+        if (exchange.isGet()) {
+            String rawQuery = exchange.getRequestURI().getRawQuery();
+            if (rawQuery != null) {
+                try {
+                	RequestParameterList parameters = new RequestParameterList(rawQuery);
+	                if (parameters.hasParameter(RequestParameter.ParameterDelete)) {
+	                    return true;
+	                } 
+                } catch (WikiFatalException e) {
+                    e.printStackTrace();
+                    // is this really what we want to do?
+                    return false;
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean isUpdateRequest(Exchange<?> exchange) {
+        if (exchange.isGet()) {
+            String rawQuery = exchange.getRequestURI().getRawQuery();
+            if (rawQuery != null) {
+                try {
+                	RequestParameterList parameters = new RequestParameterList(rawQuery);
+	                if (parameters.hasParameter(RequestParameter.ParameterEdit)) {
+	                    return true;
+	                } 
+                } catch (WikiFatalException e) {
+                    e.printStackTrace();
+                    // is this really what we want to do?
+                    return false;
+                }
+            }
+        }
+        return false;
+    }
+
     
     /** Checks whether a request is an entry-level request
      *

@@ -127,27 +127,27 @@ public class DatabaseWikiEntryAuthorizationPrinter extends HtmlContentPrinter {
 			if(flag){
 				//read permission
 				printer.openTD(CSS.CSSFormControl);
-				printer.addRADIOBUTTON("Yes", entry_id+WikiServer.propertyReadPermission, "HoldPermission", (_policyListing.get(policyKey).get(entry_id).isRead() == WikiAuthenticator.HoldPermission));
+				printer.addRADIOBUTTON("Yes", entry_id+WikiServer.propertyReadPermission, "HoldPermission", (_policyListing.get(policyKey).get(entry_id).capability().isRead() == WikiAuthenticator.HoldPermission));
 				printer.addBR();
-				printer.addRADIOBUTTON("No", entry_id+WikiServer.propertyReadPermission, "NoPermission", (_policyListing.get(policyKey).get(entry_id).isRead() != WikiAuthenticator.HoldPermission));
+				printer.addRADIOBUTTON("No", entry_id+WikiServer.propertyReadPermission, "NoPermission", (_policyListing.get(policyKey).get(entry_id).capability().isRead() != WikiAuthenticator.HoldPermission));
 				printer.closeTD();
 				//insert permission
 				printer.openTD(CSS.CSSFormControl);
-				printer.addRADIOBUTTON("Yes", entry_id+WikiServer.propertyInsertPermission, "HoldPermission", (_policyListing.get(policyKey).get(entry_id).isInsert() == WikiAuthenticator.HoldPermission));
+				printer.addRADIOBUTTON("Yes", entry_id+WikiServer.propertyInsertPermission, "HoldPermission", (_policyListing.get(policyKey).get(entry_id).capability().isInsert() == WikiAuthenticator.HoldPermission));
 				printer.addBR();
-				printer.addRADIOBUTTON("No", entry_id+WikiServer.propertyInsertPermission, "NoPermission", (_policyListing.get(policyKey).get(entry_id).isInsert() != WikiAuthenticator.HoldPermission));
+				printer.addRADIOBUTTON("No", entry_id+WikiServer.propertyInsertPermission, "NoPermission", (_policyListing.get(policyKey).get(entry_id).capability().isInsert() != WikiAuthenticator.HoldPermission));
 				printer.closeTD();
 				//delete permission
 				printer.openTD(CSS.CSSFormControl);
-				printer.addRADIOBUTTON("Yes", entry_id+WikiServer.propertyDeletePermission, "HoldPermission", (_policyListing.get(policyKey).get(entry_id).isDelete() == WikiAuthenticator.HoldPermission));
+				printer.addRADIOBUTTON("Yes", entry_id+WikiServer.propertyDeletePermission, "HoldPermission", (_policyListing.get(policyKey).get(entry_id).capability().isDelete() == WikiAuthenticator.HoldPermission));
 				printer.addBR();
-				printer.addRADIOBUTTON("No", entry_id+WikiServer.propertyDeletePermission, "NoPermission", (_policyListing.get(policyKey).get(entry_id).isDelete() != WikiAuthenticator.HoldPermission));
+				printer.addRADIOBUTTON("No", entry_id+WikiServer.propertyDeletePermission, "NoPermission", (_policyListing.get(policyKey).get(entry_id).capability().isDelete() != WikiAuthenticator.HoldPermission));
 				printer.closeTD();
 				//update permission
 				printer.openTD(CSS.CSSFormControl);
-				printer.addRADIOBUTTON("Yes", entry_id+WikiServer.propertyUpdatePermission, "HoldPermission", (_policyListing.get(policyKey).get(entry_id).isUpdate() == WikiAuthenticator.HoldPermission));
+				printer.addRADIOBUTTON("Yes", entry_id+WikiServer.propertyUpdatePermission, "HoldPermission", (_policyListing.get(policyKey).get(entry_id).capability().isUpdate() == WikiAuthenticator.HoldPermission));
 				printer.addBR();
-				printer.addRADIOBUTTON("No", entry_id+WikiServer.propertyUpdatePermission, "NoPermission", (_policyListing.get(policyKey).get(entry_id).isUpdate() != WikiAuthenticator.HoldPermission));
+				printer.addRADIOBUTTON("No", entry_id+WikiServer.propertyUpdatePermission, "NoPermission", (_policyListing.get(policyKey).get(entry_id).capability().isUpdate() != WikiAuthenticator.HoldPermission));
 				printer.closeTD();
 			}else{
 				//read permission

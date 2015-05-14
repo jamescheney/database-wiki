@@ -95,11 +95,6 @@ public class WikiAuthenticator extends Authenticator {
     private Vector<Authorization> _authorizationListing;
     private File _formTemplate = null;
        
-    private boolean isReadRequest;
-    private boolean isInsertRequest;
-    private boolean isDeleteRequest;
-    private boolean isUpdateRequest;
-
     // TODO: Get rid of this?
     private WikiServer _server;
     
@@ -148,12 +143,16 @@ public class WikiAuthenticator extends Authenticator {
     
     }
        
+
+    // TODO: Further simplify this and factor into authentication part (establishing user identity) 
+    // and authorization part (checking request against policy once identity is established)
+    
     public synchronized Result authenticate(Exchange<HttpExchange> exchange){
         // FIXME: #security: If the request is to log in then we should check the username and password no matter what!
         // Currently we don't if we happen to be at a page that doesn't require authentication.
            
         if (allowedFileRequest(exchange.getRequestURI().getPath())) {
-            return accessGranted(exchange,User.UnknownUserName); //new Authenticator.Success(new HttpPrincipal("", _realm));
+            return accessGranted(exchange,User.UnknownUserName); 
         }
            
         Headers rmap = exchange.get().getRequestHeaders();
@@ -187,10 +186,10 @@ public class WikiAuthenticator extends Authenticator {
                     || (exchange.getRequestURI().getPath().equals(WikiServer.SpecialFolderLogin))) {
                 if (checkCredentials(uname, pass)) {
                     if(isAdmin){
-                        return accessGranted(exchange,uname); // return new Authenticator.Success(new HttpPrincipal(uname, _realm));
+                        return accessGranted(exchange,uname); 
                     }else{
                         if(exchange.getRequestURI().getPath().equals(WikiServer.SpecialFolderLogin)){
-                            return accessGranted(exchange,uname); // return new Authenticator.Success(new HttpPrincipal(uname, _realm));
+                            return accessGranted(exchange,uname); 
                         }
                         Map<Integer,Map<Integer,DBPolicy>> policyListing = new HashMap<Integer,Map<Integer,DBPolicy>>();
                         for(int i = 0;i<_authorizationListing.size();i++){
@@ -200,45 +199,48 @@ public class WikiAuthenticator extends Authenticator {
                             String user_login = _users.get(user_id).login();
                             if(user_login.equals(uname) && dbname.equals(_realm)) {
                                 //get the access permissions in the database
-                                boolean isRead = _authorizationListing.get(i).is_read();
-                                boolean isInsert = _authorizationListing.get(i).is_insert();
-                                boolean isDelete = _authorizationListing.get(i).is_delete();
-                                boolean isUpdate = _authorizationListing.get(i).is_update();
-                                // check what kind of request it is
+                                boolean isRead = _authorizationListing.get(i).capability().isRead();
+                                boolean isInsert = _authorizationListing.get(i).capability().isInsert();
+                                boolean isDelete = _authorizationListing.get(i).capability().isDelete();
+                                boolean isUpdate = _authorizationListing.get(i).capability().isUpdate();
+                                
+                                URI uri = exchange.getRequestURI();
+                            	Option<Integer> entryIdOpt = isEntryLevelRequest(uri);
+                            	policyListing = _server.getDBPolicyListing(database_name, user_id);
+
+                            	// check what kind of request it is
                                 if(isProtectedRequest) {
-                                    //insert request
-                                    if(isInsertRequest == true && isInsert == true){
-                                    	URI uri = exchange.getRequestURI();
-                                    	Option<Integer> entryIdOpt = isEntryLevelRequest(uri);
+                                	//insert request
+                                    if(isInsertRequest(exchange) && isInsert == true){
+                                    	// if this is an entry-level request
                                         if(entryIdOpt.exists()) {
-                                        	int entryId = entryIdOpt.elt();    
-                                        	policyListing = _server.getDBPolicyListing(database_name, user_id);
+                                        	int entryId = entryIdOpt.elt();
+                                        	// and we have an entry-level polict
                                             if(havePolicies(policyListing, user_id,entryId)) {
-                                                if(policyListing.get(user_id).get(entryId).isInsert()==true){
-                                                    return accessGranted(exchange,uname); // return new Authenticator.Success(new HttpPrincipal(uname, _realm));
-                                                }else{
+                                                if(policyListing.get(user_id).get(entryId).capability().isInsert()==true){
+                                                	// then use it to grant access
+                                                    return accessGranted(exchange,uname); 
+                                                } else {
                                                     try {
-                                                        return accessDenied(exchange); //sendAccessDenied(exchange.get());
+                                                    	// or to deny access
+                                                        return accessDenied(exchange); 
                                                     } catch (Exception e) {
                                                         e.printStackTrace();
                                                     }
                                                 }
                                             }
-                                        }
-                                        return accessGranted(exchange,uname); // return new Authenticator.Success(new HttpPrincipal(uname, _realm));
+                                        } // otherwise allow it
+                                        return accessGranted(exchange,uname); 
                                     //delete request
-                                    }else if(isDeleteRequest == true && isDelete == true){
-                                    	URI uri = exchange.getRequestURI();
-                                    	Option<Integer> entryIdOpt = isEntryLevelRequest(uri);
+                                    }else if(isDeleteRequest(exchange) && isDelete == true){
                                         if(entryIdOpt.exists()) {
                                         	int entryId = entryIdOpt.elt();    
-                                        	policyListing = _server.getDBPolicyListing(database_name, user_id);
                                             if(havePolicies(policyListing, user_id,entryId)) {
-                                                if(policyListing.get(user_id).get(entryId).isDelete()==true){
-                                                    return accessGranted(exchange,uname); // return new Authenticator.Success(new HttpPrincipal(uname, _realm));
+                                                if(policyListing.get(user_id).get(entryId).capability().isDelete()==true){
+                                                    return accessGranted(exchange,uname); 
                                                 }else{
                                                     try {
-                                                        return accessDenied(exchange); //sendAccessDenied(exchange.get());
+                                                        return accessDenied(exchange); 
                                                     } catch (Exception e) {
                                                         e.printStackTrace();
                                                     }
@@ -247,55 +249,48 @@ public class WikiAuthenticator extends Authenticator {
                                         }
                                         return accessGranted(exchange,uname); // return new Authenticator.Success(new HttpPrincipal(uname, _realm));
                                     //update request
-                                    }else if(isUpdateRequest == true && isUpdate == true){
-                                    	URI uri = exchange.getRequestURI();
-                                    	Option<Integer> entryIdOpt = isEntryLevelRequest(uri);
+                                    }else if(isUpdateRequest(exchange) && isUpdate == true){
                                         if(entryIdOpt.exists()){
                                         	int entryId = entryIdOpt.elt();    
-                                        	policyListing = _server.getDBPolicyListing(database_name, user_id);
                                             if(havePolicies(policyListing, user_id,entryId)) {
-                                                if(policyListing.get(user_id).get(entryId).isUpdate()==true){
-                                                    return accessGranted(exchange,uname); // return new Authenticator.Success(new HttpPrincipal(uname, _realm));
+                                                if(policyListing.get(user_id).get(entryId).capability().isUpdate()==true){
+                                                    return accessGranted(exchange,uname); 
                                                 }else{
                                                     try {
-                                                        return accessDenied(exchange); //sendAccessDenied(exchange.get());
+                                                        return accessDenied(exchange); 
                                                     } catch (Exception e) {
                                                         e.printStackTrace();
                                                     }
                                                 }
                                             }
                                         }
-                                        return accessGranted(exchange,uname); // return new Authenticator.Success(new HttpPrincipal(uname, _realm));
+                                        return accessGranted(exchange,uname); 
                                     }else{
                                         try {
-                                            return accessDenied(exchange); //sendAccessDenied(exchange.get());
+                                            return accessDenied(exchange);
                                         } catch (Exception e) {
                                             e.printStackTrace();
                                         }
                                     }
                                 }else{
                                     //read request
-                                    isReadRequest = true;
-                                    if(isReadRequest == true && isRead == true){
-                                        URI uri = exchange.getRequestURI();
-                                    	Option<Integer> entryIdOpt = isEntryLevelRequest(uri);
+                                    if(isRead == true){
                                         if(entryIdOpt.exists()){
                                         	int entryId = entryIdOpt.elt();    
-                                            policyListing = _server.getDBPolicyListing(database_name, user_id);
                                             if(havePolicies(policyListing, user_id,entryId)) {
-                                                if(policyListing.get(user_id).get(entryId).isRead()==true){
-                                                    return accessGranted(exchange,uname); // return new Authenticator.Success(new HttpPrincipal(uname, _realm));
+                                                if(policyListing.get(user_id).get(entryId).capability().isRead()==true){
+                                                    return accessGranted(exchange,uname); 
                                                 }else{
                                                     try {
-                                                        return accessDenied(exchange); //sendAccessDenied(exchange.get());
+                                                        return accessDenied(exchange); 
                                                     } catch (Exception e) {
                                                         e.printStackTrace();
                                                     }
                                                 }
                                             }
                                         }
-                                        return accessGranted(exchange,uname); // return new Authenticator.Success(new HttpPrincipal(uname, _realm));
-                                    }else{
+                                        return accessGranted(exchange,uname); 
+                                    } else {
                                         try {
                                             return accessDenied(exchange); //sendAccessDenied(exchange.get());
                                         } catch (Exception e) {
@@ -312,9 +307,8 @@ public class WikiAuthenticator extends Authenticator {
                         e.printStackTrace();
                     }
                     return accessGranted(exchange,uname); // return new Authenticator.Success(new HttpPrincipal(uname, _realm));
-
                 } else {
-                        return retryAccess(exchange);
+                    return retryAccess(exchange);
                 }
             } else {
                 return accessGranted(exchange,uname); // return new Authenticator.Success(new HttpPrincipal(uname, _realm));
@@ -441,46 +435,8 @@ public class WikiAuthenticator extends Authenticator {
     }
     
     
-    /** Checks whether a request is an entry-level request
-     *
-     * @param uri the request uri
-     * @return boolean
-     * @throws SQLException
-     * @throws WikiException
-     */
-    /*
-    private boolean IsEntryLevelRequest(String uri) throws SQLException, WikiException {
-           
-        String[] items = uri.split("/");
-           
-        if(items.length>=3){
-            if(items[2].contains("?")){
-                if(items[2].split("\\?")[0].length()==0){
-                    return false;
-                } else {
-                    try {
-                        this.entryId = Integer.parseInt(items[2].split("\\?")[0],16);
-                    } catch (NumberFormatException e) {
-                        return false;
-                    }
-                    return true;
-                }
-            }else{
-                Map<Integer, Entry> entryListing = _server.getEntryListing(_realm.substring(1));
-                try {
-                    int entry = Integer.parseInt(items[2],16);
-                    if(entryListing.get(entry)!=null) {
-                        this.entryId = entry;
-                        return true;
-                    }
-                } catch (NumberFormatException e) {
-                    return false;
-                }
-            }
-        }
-        return false;
-    }
-    */
+
+   
     /** Checks whether a request accesses a protected resource
      *
      * @param exchange HttpExchange
@@ -490,57 +446,108 @@ public class WikiAuthenticator extends Authenticator {
         if (exchange.isGet()) {
             String rawQuery = exchange.getRequestURI().getRawQuery();
             if (rawQuery != null) {
-                RequestParameterList parameters;
-                isReadRequest = true;
-                isInsertRequest = false;
-                isDeleteRequest = false;
-                isUpdateRequest = false;
-                
                 try {
-                    parameters = new RequestParameterList(rawQuery);
+                    RequestParameterList parameters = new RequestParameterList(rawQuery);
+	                if (parameters.hasParameter(RequestParameter.ParameterActivate)) {
+	                    return true;
+	                } else if (parameters.hasParameter(RequestParameter.ParameterCreate)) {
+	                    return true;
+	                } else if(parameters.hasParameter(RequestParameter.ParameterAllUsers)){
+	                    return true;
+	                } else if(parameters.hasParameter(RequestParameter.ParameterAuthorization)){
+	                    return true;
+	                } else if (parameters.hasParameter(RequestParameter.ParameterCreateSchemaNode)) {
+	                    return true;
+	                } else if (parameters.hasParameter(RequestParameter.ParameterDelete)) {
+	                    return true;
+	                } else if (parameters.hasParameter(RequestParameter.ParameterEdit)) {
+	                    return true;
+	                } else if (parameters.hasParameter(RequestParameter.ParameterLayout)) {
+	                    return true;
+	                } else if (parameters.hasParameter(RequestParameter.ParameterPaste)) {
+	                    return true;
+	                } else if (parameters.hasParameter(RequestParameter.ParameterReset)) {
+	                    return true;
+	                } else if (parameters.hasParameter(RequestParameter.ParameterTemplate)) {
+	                    return true;
+	                } else if (parameters.hasParameter(RequestParameter.ParameterStyleSheet)) {
+	                    return true;
+	                } else {
+	                    return false;
+	                }
                 } catch (WikiFatalException e) {
                     e.printStackTrace();
                     // is this really what we want to do?
                     return true;
                 }
-                if (parameters.hasParameter(RequestParameter.ParameterActivate)) {
-                    return true;
-                } else if (parameters.hasParameter(RequestParameter.ParameterCreate)) {
-                    isInsertRequest = true;
-                     
-                    return true;
-                }else if(parameters.hasParameter(RequestParameter.ParameterAllUsers)){
-                    return true;
-                }else if(parameters.hasParameter(RequestParameter.ParameterAuthorization)){
-                    return true;
-                } else if (parameters.hasParameter(RequestParameter.ParameterCreateSchemaNode)) {
-                    isInsertRequest = true;
-                    return true;
-                } else if (parameters.hasParameter(RequestParameter.ParameterDelete)) {
-                    isDeleteRequest = true;
-                    return true;
-                } else if (parameters.hasParameter(RequestParameter.ParameterEdit)) {
-                    isUpdateRequest = true;                
-                    return true;
-                } else if (parameters.hasParameter(RequestParameter.ParameterLayout)) {
-                    return true;
-                } else if (parameters.hasParameter(RequestParameter.ParameterPaste)) {
-                    return true;
-                } else if (parameters.hasParameter(RequestParameter.ParameterReset)) {
-                    return true;
-                } else if (parameters.hasParameter(RequestParameter.ParameterTemplate)) {
-                    return true;
-                } else if (parameters.hasParameter(RequestParameter.ParameterStyleSheet)) {
-                    return true;
-                } else {
-                    return false;
-                }
+                
             }
         }
         return false;
     }
     
 
+    private boolean isInsertRequest(Exchange<?> exchange) {
+        if (exchange.isGet()) {
+            String rawQuery = exchange.getRequestURI().getRawQuery();
+            if (rawQuery != null) {
+                try {
+                	RequestParameterList parameters = new RequestParameterList(rawQuery);
+	                if (parameters.hasParameter(RequestParameter.ParameterCreate)) {
+	                    return true;
+	                } else if (parameters.hasParameter(RequestParameter.ParameterCreateSchemaNode)) {
+	                    return true;
+	                }
+                } catch (WikiFatalException e) {
+                    e.printStackTrace();
+                    // is this really what we want to do?
+                    return false;
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean isDeleteRequest(Exchange<?> exchange) {
+        if (exchange.isGet()) {
+            String rawQuery = exchange.getRequestURI().getRawQuery();
+            if (rawQuery != null) {
+                try {
+                	RequestParameterList parameters = new RequestParameterList(rawQuery);
+	                if (parameters.hasParameter(RequestParameter.ParameterDelete)) {
+	                    return true;
+	                } 
+                } catch (WikiFatalException e) {
+                    e.printStackTrace();
+                    // is this really what we want to do?
+                    return false;
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean isUpdateRequest(Exchange<?> exchange) {
+        if (exchange.isGet()) {
+            String rawQuery = exchange.getRequestURI().getRawQuery();
+            if (rawQuery != null) {
+                try {
+                	RequestParameterList parameters = new RequestParameterList(rawQuery);
+	                if (parameters.hasParameter(RequestParameter.ParameterEdit)) {
+	                    return true;
+	                } 
+                } catch (WikiFatalException e) {
+                    e.printStackTrace();
+                    // is this really what we want to do?
+                    return false;
+                }
+            }
+        }
+        return false;
+    }
+
+
+    
     public void updateAuthorizationListing(Vector<Authorization> authorizationListing) {
     this._authorizationListing = authorizationListing;
     }
