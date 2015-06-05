@@ -104,10 +104,9 @@ public class WikiServerHttpHandler extends WikiServer implements HttpHandler {
 				urlDecodingVersion = rs.getInt(RelDatabaseColURLDecoding);
 			}
 			SimplePolicy policy = new SimplePolicy(rs.getInt(RelDatabaseColAuthentication));
-			WikiAuthenticator authenticator = new WikiAuthenticator("/" + name,  _users, _formTemplate,this, policy);
 			int autoSchemaChanges = rs.getInt(RelDatabaseColAutoSchemaChanges);
 			ConfigSetting setting = new ConfigSetting(layoutVersion, templateVersion, styleSheetVersion, urlDecodingVersion);
-			_wikiListing.add(new DatabaseWikiHttpHandler(id, name, title, authenticator, autoSchemaChanges, setting, _connector, this));
+			_wikiListing.add(new DatabaseWikiHttpHandler(id, name, title, _users,_formTemplate, policy, autoSchemaChanges, setting, _connector, this));
 		}
 		rs.close();
 		stmt.close();
@@ -144,7 +143,7 @@ public class WikiServerHttpHandler extends WikiServer implements HttpHandler {
 		_webServer.setExecutor(Executors.newFixedThreadPool(_threadCount));
 
 		HttpContext context = _webServer.createContext("/", this);
-		context.setAuthenticator(new WikiAuthenticator("/", _users, _formTemplate,this,_policy));
+		context.setAuthenticator(new WikiAuthenticator("/", _users, _formTemplate,null,_policy));
 
 		for (int iWiki = 0; iWiki < _wikiListing.size(); iWiki++) {
 			DatabaseWikiHttpHandler wiki = _wikiListing.get(iWiki);
@@ -188,15 +187,14 @@ public class WikiServerHttpHandler extends WikiServer implements HttpHandler {
 			wikiID = r.createCollection(con, versionIndex);
 			con.commit();
 			SimplePolicy policy = new SimplePolicy(authenticationMode);
-			WikiAuthenticator authenticator = new WikiAuthenticator("/" + name,  _users, _formTemplate,this,policy);
-			DatabaseWikiHttpHandler wiki = new DatabaseWikiHttpHandler(wikiID, name, title, authenticator, autoSchemaChanges, _connector, this,
+			DatabaseWikiHttpHandler wiki = new DatabaseWikiHttpHandler(wikiID, name, title, _users, _formTemplate, policy, autoSchemaChanges, _connector, this,
 									con, versionIndex);
 
 			// this should now only be called when starting a web server
 
 			String realm = wiki.database().identifier().databaseHomepage();
 			HttpContext context = _webServer.createContext(realm, wiki);
-			context.setAuthenticator(authenticator);
+			context.setAuthenticator(wiki.authenticator());
 			
 			_wikiListing.add(wiki);
 			Collections.sort(_wikiListing);

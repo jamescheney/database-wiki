@@ -24,6 +24,8 @@
 package org.dbwiki.web.server;
 
 import java.sql.Connection;
+
+import org.dbwiki.data.security.SimplePolicy;
 import org.dbwiki.data.wiki.SimpleWiki;
 import org.dbwiki.driver.rdbms.DatabaseConnector;
 import org.dbwiki.driver.rdbms.RDBMSDatabase;
@@ -45,11 +47,11 @@ public class DatabaseWikiStandalone extends DatabaseWiki {
 	 * 
 	 */
 	public DatabaseWikiStandalone(int id, String name, String title,
-			int autoSchemaChanges, int authenticationMode,
+			int autoSchemaChanges, SimplePolicy policy, 
 			ConfigSetting setting, DatabaseConnector connector,
 			WikiServerStandalone server)
 			throws org.dbwiki.exception.WikiException {
-		_authenticationMode = authenticationMode;
+		_policy = policy;
 		_id = id;
 		_server = server;
 		_name = name;
@@ -67,11 +69,11 @@ public class DatabaseWikiStandalone extends DatabaseWiki {
 	// HACK: pass in and use an existing connection and version index.
 	// Used only in WikiServer.RegisterDatabase to create a new database.
 	public DatabaseWikiStandalone(int id, String name, String title,
-			int autoSchemaChanges, int authenticationMode,
+			int autoSchemaChanges, SimplePolicy policy, 
 			DatabaseConnector connector, WikiServerStandalone server,
 			Connection con, SQLVersionIndex versionIndex)
 			throws org.dbwiki.exception.WikiException {
-		_authenticationMode = authenticationMode;
+		_policy = policy;
 		_autoSchemaChanges = autoSchemaChanges;
 		_id = id;
 		_server = server;

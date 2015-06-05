@@ -30,14 +30,11 @@ import java.io.StringWriter;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-
-
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
-
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -67,19 +64,17 @@ import org.dbwiki.data.schema.AttributeSchemaNode;
 import org.dbwiki.data.schema.SchemaNode;
 import org.dbwiki.data.schema.GroupSchemaNode;
 import org.dbwiki.data.security.DBPolicy;
+import org.dbwiki.data.security.SimplePolicy;
 import org.dbwiki.data.wiki.Wiki;
 import org.dbwiki.driver.rdbms.DatabaseConnector;
 import org.dbwiki.driver.rdbms.DatabaseConstants;
-
 import org.dbwiki.exception.WikiException;
 import org.dbwiki.exception.WikiFatalException;
 import org.dbwiki.exception.web.WikiRequestException;
 import org.dbwiki.user.UserListing;
 import org.dbwiki.web.html.HtmlPage;
 import org.dbwiki.web.html.RedirectPage;
-
 import org.dbwiki.web.request.Exchange;
-
 import org.dbwiki.web.request.HttpRequest;
 import org.dbwiki.web.request.URLDecodingRules;
 import org.dbwiki.web.request.WikiDataRequest;
@@ -91,7 +86,6 @@ import org.dbwiki.web.request.parameter.RequestParameterAction;
 import org.dbwiki.web.request.parameter.RequestParameterActionCancel;
 import org.dbwiki.web.request.parameter.RequestParameterVersion;
 import org.dbwiki.web.request.parameter.RequestParameterVersionSingle;
-
 import org.dbwiki.web.ui.DatabaseWikiContentGenerator;
 import org.dbwiki.web.ui.HtmlTemplateDecorator;
 import org.dbwiki.web.ui.layout.DatabaseLayouter;
@@ -119,9 +113,7 @@ import org.dbwiki.web.ui.printer.page.PageContentPrinter;
 import org.dbwiki.web.ui.printer.page.PageHistoryPrinter;
 import org.dbwiki.web.ui.printer.page.PageMenuPrinter;
 import org.dbwiki.web.ui.printer.page.PageUpdateFormPrinter;
-
 import org.dbwiki.web.ui.printer.schema.SchemaMenuPrinter;
-
 import org.dbwiki.web.ui.printer.schema.SchemaNodePrinter;
 import org.dbwiki.web.ui.printer.schema.SchemaPathPrinter;
 import org.dbwiki.web.server.DatabaseWikiProperties;
@@ -156,7 +148,8 @@ public abstract class DatabaseWiki implements Comparable<DatabaseWiki> {
 	protected String _template = null;
 	protected String _title;
 	protected Wiki _wiki;
-	protected int _authenticationMode;
+	//protected int _authenticationMode;
+	protected SimplePolicy _policy;
 	// FIXME: Remove?
 	protected DatabaseConnector _connector;
 	
@@ -197,7 +190,7 @@ public abstract class DatabaseWiki implements Comparable<DatabaseWiki> {
  	}
  	
 	public int getAuthenticationMode() {
-		return _authenticationMode;
+		return _policy._mode;
 	}
 	
 	public int getAutoSchemaChanges() {
@@ -296,9 +289,9 @@ public abstract class DatabaseWiki implements Comparable<DatabaseWiki> {
 	public void setTitle(String value) {
 		_title = value;
 	}
-	
+
 	public void setAuthenticationMode(int authMode) {
-		_authenticationMode = authMode;
+		_policy._mode = authMode;
 	}
 	/* 
 	 * Actions
@@ -1218,6 +1211,7 @@ public abstract class DatabaseWiki implements Comparable<DatabaseWiki> {
 	 * @throws WikiException
 	 * FIXME: make non-static / make method of DatabaseWiki 
 	 */
+	@Deprecated
 	public Map<Integer, Entry> getEntryListing()
 			throws SQLException, WikiException {
 		Map<Integer, Entry> entryListing = new HashMap<Integer, Entry>();

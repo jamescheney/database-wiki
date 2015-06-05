@@ -6,6 +6,10 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Vector;
 
+import org.dbwiki.exception.WikiFatalException;
+import org.dbwiki.web.request.Exchange;
+import org.dbwiki.web.request.parameter.RequestParameter;
+import org.dbwiki.web.request.parameter.RequestParameterList;
 import org.dbwiki.web.server.WikiServerConstants;
 
 public class SimplePolicy implements WikiServerConstants {
@@ -22,6 +26,7 @@ public class SimplePolicy implements WikiServerConstants {
     public SimplePolicy(int mode) {
     	_mode = mode;
     }
+    
 	/**
 	 * Initialize authorization listing from database
 	 * 
@@ -46,7 +51,121 @@ public class SimplePolicy implements WikiServerConstants {
 		stmt.close();
 
 	}
-	
+
+	/* TODO: Would be nice to define this as a method of Exchange */
+	public static boolean isUpdateRequest(Exchange<?> exchange) {
+        if (exchange.isGet()) {
+            String rawQuery = exchange.getRequestURI().getRawQuery();
+            if (rawQuery != null) {
+                try {
+                	RequestParameterList parameters = new RequestParameterList(rawQuery);
+	                if (parameters.hasParameter(RequestParameter.ParameterEdit)) {
+	                    return true;
+	                } 
+                } catch (WikiFatalException e) {
+                    e.printStackTrace();
+                    // is this really what we want to do?
+                    return false;
+                }
+            }
+        }
+        return false;
+    }
+
+    public static boolean isDeleteRequest(Exchange<?> exchange) {
+        if (exchange.isGet()) {
+            String rawQuery = exchange.getRequestURI().getRawQuery();
+            if (rawQuery != null) {
+                try {
+                	RequestParameterList parameters = new RequestParameterList(rawQuery);
+	                if (parameters.hasParameter(RequestParameter.ParameterDelete)) {
+	                    return true;
+	                } 
+                } catch (WikiFatalException e) {
+                    e.printStackTrace();
+                    // is this really what we want to do?
+                    return false;
+                }
+            }
+        }
+        return false;
+    }
+    
+    
+
+    public static boolean isInsertRequest(Exchange<?> exchange) {
+        if (exchange.isGet()) {
+            String rawQuery = exchange.getRequestURI().getRawQuery();
+            if (rawQuery != null) {
+                try {
+                	RequestParameterList parameters = new RequestParameterList(rawQuery);
+	                if (parameters.hasParameter(RequestParameter.ParameterCreate)) {
+	                    return true;
+	                } else if (parameters.hasParameter(RequestParameter.ParameterCreateSchemaNode)) {
+	                    return true;
+	                }
+                } catch (WikiFatalException e) {
+                    e.printStackTrace();
+                    // is this really what we want to do?
+                    return false;
+                }
+            }
+        }
+        return false;
+    }
+
+
+    /** Checks whether a request accesses a protected resource
+    *
+    * @param exchange HttpExchange
+    * @return boolean
+    */
+   public static boolean isProtectedRequest(Exchange<?> exchange) {
+       if (exchange.isGet()) {
+           String rawQuery = exchange.getRequestURI().getRawQuery();
+           if (rawQuery != null) {
+               try {
+                   RequestParameterList parameters = new RequestParameterList(rawQuery);
+	                if (parameters.hasParameter(RequestParameter.ParameterActivate)) {
+	                    return true;
+	                } else if (parameters.hasParameter(RequestParameter.ParameterCreate)) {
+	                    return true;
+	                } else if(parameters.hasParameter(RequestParameter.ParameterAllUsers)){
+	                    return true;
+	                } else if(parameters.hasParameter(RequestParameter.ParameterAuthorization)){
+	                    return true;
+	                } else if (parameters.hasParameter(RequestParameter.ParameterCreateSchemaNode)) {
+	                    return true;
+	                } else if (parameters.hasParameter(RequestParameter.ParameterDelete)) {
+	                    return true;
+	                } else if (parameters.hasParameter(RequestParameter.ParameterEdit)) {
+	                    return true;
+	                } else if (parameters.hasParameter(RequestParameter.ParameterLayout)) {
+	                    return true;
+	                } else if (parameters.hasParameter(RequestParameter.ParameterPaste)) {
+	                    return true;
+	                } else if (parameters.hasParameter(RequestParameter.ParameterReset)) {
+	                    return true;
+	                } else if (parameters.hasParameter(RequestParameter.ParameterTemplate)) {
+	                    return true;
+	                } else if (parameters.hasParameter(RequestParameter.ParameterStyleSheet)) {
+	                    return true;
+	                } else {
+	                    return false;
+	                }
+               } catch (WikiFatalException e) {
+                   e.printStackTrace();
+                   // is this really what we want to do?
+                   return true;
+               }
+               
+           }
+       }
+       return false;
+   	}
+
+   
+   
 
 
 }

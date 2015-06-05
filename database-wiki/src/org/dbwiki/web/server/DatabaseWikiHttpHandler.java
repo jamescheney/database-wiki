@@ -23,11 +23,15 @@
 
 package org.dbwiki.web.server;
 
+import java.io.File;
 import java.sql.Connection;
+
+import org.dbwiki.data.security.SimplePolicy;
 import org.dbwiki.data.wiki.SimpleWiki;
 import org.dbwiki.driver.rdbms.DatabaseConnector;
 import org.dbwiki.driver.rdbms.RDBMSDatabase;
 import org.dbwiki.driver.rdbms.SQLVersionIndex;
+import org.dbwiki.user.UserListing;
 import org.dbwiki.web.html.FatalExceptionPage;
 import org.dbwiki.web.request.Exchange;
 import org.dbwiki.web.request.RequestURL;
@@ -37,6 +41,7 @@ import org.dbwiki.web.request.WikiSchemaRequest;
 import org.dbwiki.web.security.WikiAuthenticator;
 import org.dbwiki.web.ui.DatabaseWikiContentGenerator;
 import org.dbwiki.web.ui.HtmlTemplateDecorator;
+
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
@@ -59,11 +64,13 @@ public class DatabaseWikiHttpHandler extends DatabaseWiki implements
 	 * 
 	 */
 	public DatabaseWikiHttpHandler(int id, String name, String title,
-			WikiAuthenticator authenticator, int autoSchemaChanges,
+			UserListing _users, File _formTemplate, SimplePolicy policy, int autoSchemaChanges,
 			ConfigSetting setting, DatabaseConnector connector,
 			WikiServerHttpHandler server)
 			throws org.dbwiki.exception.WikiException {
+		WikiAuthenticator authenticator = new WikiAuthenticator("/" + name,  _users, _formTemplate,this,policy);
 		_authenticator = authenticator;
+		_policy = policy;
 		_autoSchemaChanges = autoSchemaChanges;
 		_id = id;
 		_server = server;
@@ -83,11 +90,14 @@ public class DatabaseWikiHttpHandler extends DatabaseWiki implements
 	// HACK: pass in and use an existing connection and version index.
 	// Used only in WikiServer.RegisterDatabase to create a new database.
 	public DatabaseWikiHttpHandler(int id, String name, String title,
-			WikiAuthenticator authenticator, int autoSchemaChanges,
+			UserListing _users, File _formTemplate, SimplePolicy policy, int autoSchemaChanges,
 			DatabaseConnector connector, WikiServerHttpHandler server,
 			Connection con, SQLVersionIndex versionIndex)
 			throws org.dbwiki.exception.WikiException {
+		WikiAuthenticator authenticator = new WikiAuthenticator("/" + name,  _users, _formTemplate,this,policy);
+
 		_authenticator = authenticator;
+		_policy = policy;
 		_autoSchemaChanges = autoSchemaChanges;
 		_id = id;
 		_server = server;
@@ -107,23 +117,12 @@ public class DatabaseWikiHttpHandler extends DatabaseWiki implements
 	/*
 	 * Getters
 	 */
-
+	
 	public WikiAuthenticator authenticator() {
 		return _authenticator;
 	}
 
-	@Override
-    @Deprecated
-	public int getAuthenticationMode() {
-		return _authenticator.getAuthenticationMode();
-	}
-
-	@Override
-	@Deprecated
-	public void setAuthenticationMode(int authMode) {
-		super.setAuthenticationMode(authMode);
-		_authenticator.setAuthenticationMode(authMode);
-	}
+	
 
 	/*
 	 * Actions

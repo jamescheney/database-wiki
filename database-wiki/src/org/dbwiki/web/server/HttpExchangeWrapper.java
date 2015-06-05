@@ -20,7 +20,7 @@ import com.sun.net.httpserver.HttpExchange;
  */
 @SuppressWarnings("restriction")
 
-public class HttpExchangeWrapper  implements Exchange<HttpExchange> {
+public class HttpExchangeWrapper implements Exchange<HttpExchange> {
 	
 	HttpExchange _exchange;
 

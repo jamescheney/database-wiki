@@ -154,7 +154,6 @@ public abstract class WikiServer  implements WikiServerConstants {
 	 */
 
 	protected String _wikiTitle = "Database Wiki";
-	//protected int _authenticationMode;
 	
 	protected DatabaseConnector _connector;
 	protected File _formTemplate = null;
@@ -163,6 +162,8 @@ public abstract class WikiServer  implements WikiServerConstants {
 	// FIXME #query: move UserListing into new global Database interface/class
 	protected UserListing _users;
 	protected File _directory;
+	
+	//protected int _authenticationMode;
 	//protected Vector<Authorization> _authorizationListing;
 	protected SimplePolicy _policy;
 
@@ -382,7 +383,7 @@ public abstract class WikiServer  implements WikiServerConstants {
 	 * FIXME: get rid of this?
 	 */
 	@Deprecated
-	public  Map<Integer, Entry> getEntryListing(String wiki_name)
+	private  Map<Integer, Entry> getEntryListing(String wiki_name)
 			throws SQLException, WikiException {
 		return get(wiki_name).getEntryListing();
 		/*Map<Integer, Entry> entryListing = new HashMap<Integer, Entry>();

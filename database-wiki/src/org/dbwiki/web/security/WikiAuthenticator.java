@@ -31,21 +31,20 @@ import java.net.URI;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+
 import org.dbwiki.exception.WikiException;
-import org.dbwiki.exception.WikiFatalException;
 import org.dbwiki.user.User;
 import org.dbwiki.user.UserListing;
 import org.dbwiki.web.request.Exchange;
 import org.dbwiki.web.request.HttpRequest;
 import org.dbwiki.web.request.RequestURL;
-import org.dbwiki.web.request.parameter.RequestParameter;
-import org.dbwiki.web.request.parameter.RequestParameterList;
+import org.dbwiki.data.index.DatabaseContent;
 import org.dbwiki.data.security.DBPolicy;
 import org.dbwiki.data.security.SimplePolicy;
 import org.dbwiki.lib.Option;
 import org.dbwiki.lib.Some;
 import org.dbwiki.lib.None;
-import org.dbwiki.web.server.Entry;
+import org.dbwiki.web.server.DatabaseWiki;
 import org.dbwiki.web.server.HttpExchangeWrapper;
 import org.dbwiki.web.server.WikiServer;
 import org.dbwiki.web.ui.HtmlContentGenerator;
@@ -94,7 +93,8 @@ public class WikiAuthenticator extends Authenticator {
     private File _formTemplate = null;
        
     // TODO: Get rid of this?
-    private WikiServer _server;
+    //private WikiServer _server;
+    private DatabaseWiki _wiki = null;  // optional for now
     private SimplePolicy _policy;
     
     // Hardwired policy filtering file requests
@@ -110,14 +110,20 @@ public class WikiAuthenticator extends Authenticator {
      * Constructors
      */
        
-    public WikiAuthenticator(String realm, UserListing users, File template, WikiServer server, SimplePolicy policy) {
+    public WikiAuthenticator(String realm, UserListing users, File template, SimplePolicy policy) {
 	    _realm = realm;
 	    _users = users;
 	    _formTemplate = template;
-	    _server = server;
 	    _policy = policy;
     }
        
+    public WikiAuthenticator(String realm, UserListing users, File template, DatabaseWiki wiki, SimplePolicy policy) {
+	    _realm = realm;
+	    _users = users;
+	    _formTemplate = template;
+	    _wiki = wiki;
+	    _policy = policy;
+    }
        
     /*
      * Public Methods
@@ -155,7 +161,7 @@ public class WikiAuthenticator extends Authenticator {
            
         Headers rmap = exchange.get().getRequestHeaders();
            
-        boolean isProtectedRequest = this.isProtectedRequest(exchange);
+        boolean isProtectedRequest = SimplePolicy.isProtectedRequest(exchange);
            
         String auth = rmap.getFirst("Authorization");
         if (auth == null) {
@@ -204,12 +210,12 @@ public class WikiAuthenticator extends Authenticator {
                                 
                                 URI uri = exchange.getRequestURI();
                             	Option<Integer> entryIdOpt = isEntryLevelRequest(uri);
-                            	policyListing = _server.getDBPolicyListing(database_name, user_id);
+                            	policyListing = _wiki.getDBPolicyListing(user_id);
 
                             	// check what kind of request it is
                                 if(isProtectedRequest) {
                                 	//insert request
-                                    if(isInsertRequest(exchange) && isInsert == true){
+                                    if(SimplePolicy.isInsertRequest(exchange) && isInsert == true){
                                     	// if this is an entry-level request
                                         if(entryIdOpt.exists()) {
                                         	int entryId = entryIdOpt.elt();
@@ -230,7 +236,7 @@ public class WikiAuthenticator extends Authenticator {
                                         } // otherwise allow it
                                         return accessGranted(exchange,uname); 
                                     //delete request
-                                    }else if(isDeleteRequest(exchange) && isDelete == true){
+                                    }else if(SimplePolicy.isDeleteRequest(exchange) && isDelete == true){
                                         if(entryIdOpt.exists()) {
                                         	int entryId = entryIdOpt.elt();    
                                             if(havePolicies(policyListing, user_id,entryId)) {
@@ -245,9 +251,9 @@ public class WikiAuthenticator extends Authenticator {
                                                 }
                                             }
                                         }
-                                        return accessGranted(exchange,uname); // return new Authenticator.Success(new HttpPrincipal(uname, _realm));
+                                        return accessGranted(exchange,uname); 
                                     //update request
-                                    }else if(isUpdateRequest(exchange) && isUpdate == true){
+                                    }else if(SimplePolicy.isUpdateRequest(exchange) && isUpdate == true){
                                         if(entryIdOpt.exists()){
                                         	int entryId = entryIdOpt.elt();    
                                             if(havePolicies(policyListing, user_id,entryId)) {
@@ -290,7 +296,7 @@ public class WikiAuthenticator extends Authenticator {
                                         return accessGranted(exchange,uname); 
                                     } else {
                                         try {
-                                            return accessDenied(exchange); //sendAccessDenied(exchange.get());
+                                            return accessDenied(exchange); 
                                         } catch (Exception e) {
                                             e.printStackTrace();
                                         }
@@ -300,16 +306,16 @@ public class WikiAuthenticator extends Authenticator {
                         }
                     }
                     try {
-                        return accessDenied(exchange); //sendAccessDenied(exchange.get());
+                        return accessDenied(exchange); 
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    return accessGranted(exchange,uname); // return new Authenticator.Success(new HttpPrincipal(uname, _realm));
+                    return accessGranted(exchange,uname); 
                 } else {
                     return retryAccess(exchange);
                 }
             } else {
-                return accessGranted(exchange,uname); // return new Authenticator.Success(new HttpPrincipal(uname, _realm));
+                return accessGranted(exchange,uname); 
                    
             }
         }
@@ -333,18 +339,12 @@ public class WikiAuthenticator extends Authenticator {
         return new Authenticator.Failure(401);
  
     }
-    @Deprecated
-    public synchronized int getAuthenticationMode() {
-        return _policy._mode;
-    }
+    
        
     public String getRealm() {
         return _realm;
     }
-    @Deprecated
-    public synchronized void setAuthenticationMode(int value) {
-    	_policy._mode = value;
-    }
+ 
        
        
     /*
@@ -397,7 +397,7 @@ public class WikiAuthenticator extends Authenticator {
     private Option<Integer> isEntryLevelRequest(URI uri) {
     	String path = uri.getPath();
         if (uri.getRawQuery() != null) {
-        path = path + "?" + uri.getRawQuery();
+        	path = path + "?" + uri.getRawQuery();
         }
         String[] items = path.split("/");
         if(items.length >= 3) {
@@ -414,10 +414,12 @@ public class WikiAuthenticator extends Authenticator {
                 }
             } else {
                 try {
-                    Map<Integer, Entry> entryListing = _server.getEntryListing(_realm.substring(1));
+                    //Map<Integer, Entry> entryListing = _server.getEntryListing(_realm.substring(1));
+                	// TODO: Avoid server dependence here
+                	DatabaseContent entries = _wiki.database().content();
                     try {
                         int entry = Integer.parseInt(items[2],16);
-                        if(entryListing.get(entry)!=null) {
+                        if(entries.get(entry)!=null) {
                             return new Some<Integer>(entry);
                         }
                     } catch (NumberFormatException e) {
@@ -435,114 +437,10 @@ public class WikiAuthenticator extends Authenticator {
     
 
    
-    /** Checks whether a request accesses a protected resource
-     *
-     * @param exchange HttpExchange
-     * @return boolean
-     */
-    private boolean isProtectedRequest(Exchange<?> exchange) {
-        if (exchange.isGet()) {
-            String rawQuery = exchange.getRequestURI().getRawQuery();
-            if (rawQuery != null) {
-                try {
-                    RequestParameterList parameters = new RequestParameterList(rawQuery);
-	                if (parameters.hasParameter(RequestParameter.ParameterActivate)) {
-	                    return true;
-	                } else if (parameters.hasParameter(RequestParameter.ParameterCreate)) {
-	                    return true;
-	                } else if(parameters.hasParameter(RequestParameter.ParameterAllUsers)){
-	                    return true;
-	                } else if(parameters.hasParameter(RequestParameter.ParameterAuthorization)){
-	                    return true;
-	                } else if (parameters.hasParameter(RequestParameter.ParameterCreateSchemaNode)) {
-	                    return true;
-	                } else if (parameters.hasParameter(RequestParameter.ParameterDelete)) {
-	                    return true;
-	                } else if (parameters.hasParameter(RequestParameter.ParameterEdit)) {
-	                    return true;
-	                } else if (parameters.hasParameter(RequestParameter.ParameterLayout)) {
-	                    return true;
-	                } else if (parameters.hasParameter(RequestParameter.ParameterPaste)) {
-	                    return true;
-	                } else if (parameters.hasParameter(RequestParameter.ParameterReset)) {
-	                    return true;
-	                } else if (parameters.hasParameter(RequestParameter.ParameterTemplate)) {
-	                    return true;
-	                } else if (parameters.hasParameter(RequestParameter.ParameterStyleSheet)) {
-	                    return true;
-	                } else {
-	                    return false;
-	                }
-                } catch (WikiFatalException e) {
-                    e.printStackTrace();
-                    // is this really what we want to do?
-                    return true;
-                }
-                
-            }
-        }
-        return false;
-    }
-    
 
-    private boolean isInsertRequest(Exchange<?> exchange) {
-        if (exchange.isGet()) {
-            String rawQuery = exchange.getRequestURI().getRawQuery();
-            if (rawQuery != null) {
-                try {
-                	RequestParameterList parameters = new RequestParameterList(rawQuery);
-	                if (parameters.hasParameter(RequestParameter.ParameterCreate)) {
-	                    return true;
-	                } else if (parameters.hasParameter(RequestParameter.ParameterCreateSchemaNode)) {
-	                    return true;
-	                }
-                } catch (WikiFatalException e) {
-                    e.printStackTrace();
-                    // is this really what we want to do?
-                    return false;
-                }
-            }
-        }
-        return false;
-    }
+ 
 
-    private boolean isDeleteRequest(Exchange<?> exchange) {
-        if (exchange.isGet()) {
-            String rawQuery = exchange.getRequestURI().getRawQuery();
-            if (rawQuery != null) {
-                try {
-                	RequestParameterList parameters = new RequestParameterList(rawQuery);
-	                if (parameters.hasParameter(RequestParameter.ParameterDelete)) {
-	                    return true;
-	                } 
-                } catch (WikiFatalException e) {
-                    e.printStackTrace();
-                    // is this really what we want to do?
-                    return false;
-                }
-            }
-        }
-        return false;
-    }
 
-    private boolean isUpdateRequest(Exchange<?> exchange) {
-        if (exchange.isGet()) {
-            String rawQuery = exchange.getRequestURI().getRawQuery();
-            if (rawQuery != null) {
-                try {
-                	RequestParameterList parameters = new RequestParameterList(rawQuery);
-	                if (parameters.hasParameter(RequestParameter.ParameterEdit)) {
-	                    return true;
-	                } 
-                } catch (WikiFatalException e) {
-                    e.printStackTrace();
-                    // is this really what we want to do?
-                    return false;
-                }
-            }
-        }
-        return false;
-    }
 
 
 

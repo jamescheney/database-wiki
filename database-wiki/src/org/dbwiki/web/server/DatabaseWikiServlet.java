@@ -24,13 +24,16 @@
 package org.dbwiki.web.server;
 
 import java.sql.Connection;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.dbwiki.data.security.SimplePolicy;
 import org.dbwiki.data.wiki.SimpleWiki;
 import org.dbwiki.driver.rdbms.DatabaseConnector;
 import org.dbwiki.driver.rdbms.RDBMSDatabase;
 import org.dbwiki.driver.rdbms.SQLVersionIndex;
+import org.dbwiki.user.UserListing;
 import org.dbwiki.web.html.FatalExceptionPage;
 import org.dbwiki.web.request.Exchange;
 import org.dbwiki.web.request.RequestURL;
@@ -58,11 +61,14 @@ public class DatabaseWikiServlet extends DatabaseWiki {
 	 * 
 	 */
 	public DatabaseWikiServlet(int id, String name, String title,
-			int autoSchemaChanges, WikiServletAuthenticator authenticator,
+			int autoSchemaChanges, UserListing _users,  SimplePolicy policy,
 			ConfigSetting setting, DatabaseConnector connector,
 			WikiServerServlet server)
 			throws org.dbwiki.exception.WikiException {
+		WikiServletAuthenticator authenticator = new WikiServletAuthenticator( "/"+name, _users, this,policy);
+
 		_authenticator = authenticator;
+		_policy = policy;
 		_id = id;
 		_server = server;
 		_name = name;
@@ -80,11 +86,14 @@ public class DatabaseWikiServlet extends DatabaseWiki {
 	// HACK: pass in and use an existing connection and version index.
 	// Used only in WikiServer.RegisterDatabase to create a new database.
 	public DatabaseWikiServlet(int id, String name, String title,
-			int autoSchemaChanges, WikiServletAuthenticator authenticator,
+			int autoSchemaChanges, UserListing _users, SimplePolicy policy,
 			DatabaseConnector connector, WikiServerServlet server,
 			Connection con, SQLVersionIndex versionIndex)
 			throws org.dbwiki.exception.WikiException {
+		WikiServletAuthenticator authenticator = new WikiServletAuthenticator( "/"+name, _users, this,policy);
+
 		_authenticator = authenticator;
+		_policy = policy;
 		_autoSchemaChanges = autoSchemaChanges;
 		_id = id;
 		_server = server;
@@ -115,7 +124,7 @@ public class DatabaseWikiServlet extends DatabaseWiki {
 		Exchange<HttpServletRequest> exchange = new ServletExchangeWrapper(request,response);
 		try {
 			String filename = exchange.getRequestURI().toString();
-			if(_authenticator.authenticate(request)) {
+			if(_authenticator.authenticate(request,response)) {
 				int pos = filename.lastIndexOf('.');
 				if (pos != -1) {
 					_server.sendFile(exchange);
@@ -155,28 +164,6 @@ public class DatabaseWikiServlet extends DatabaseWiki {
 		}
 	}
 	
-	/*
-	 * Getters
-	 */
-
-	public WikiServletAuthenticator authenticator() {
-		return _authenticator;
-	}
-
-	@Override
-	@Deprecated
-	public int getAuthenticationMode() {
-		return _authenticator.getAuthenticationMode();
-	}
-
-	@Override
-	@Deprecated
-	public void setAuthenticationMode(int authMode) {
-		super.setAuthenticationMode(authMode);
-		_authenticator.setAuthenticationMode(authMode);
-	}
-
-
 
 	
 

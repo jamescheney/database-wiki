@@ -27,23 +27,22 @@ import java.net.URI;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.dbwiki.exception.WikiException;
-import org.dbwiki.exception.WikiFatalException;
 import org.dbwiki.lib.None;
 import org.dbwiki.lib.Option;
 import org.dbwiki.lib.Some;
 import org.dbwiki.user.UserListing;
 import org.dbwiki.web.request.Exchange;
-import org.dbwiki.web.request.parameter.RequestParameter;
-import org.dbwiki.web.request.parameter.RequestParameterList;
+import org.dbwiki.data.index.DatabaseContent;
 import org.dbwiki.data.security.DBPolicy;
 import org.dbwiki.data.security.SimplePolicy;
+import org.dbwiki.web.server.DatabaseWiki;
 import org.dbwiki.web.server.DatabaseWikiProperties;
-import org.dbwiki.web.server.Entry;
 import org.dbwiki.web.server.ServletExchangeWrapper;
-import org.dbwiki.web.server.WikiServer;
 
 
 
@@ -61,7 +60,9 @@ public class WikiServletAuthenticator {
     private SimplePolicy _policy;
     
     // TODO: Get rid of this?
-    private WikiServer _server;
+    //private WikiServer _server;
+    private DatabaseWiki _wiki;
+    
     private static String[] fileMatches = { 
 		".*/html/.*\\.html",
 		".*/html/style/.*\\.css",
@@ -71,11 +72,11 @@ public class WikiServletAuthenticator {
 		".*/pictures/.*\\.gif",
 		};
     
-    public WikiServletAuthenticator(String realm, UserListing users, WikiServer server, SimplePolicy policy) {
+    public WikiServletAuthenticator(String realm, UserListing users, DatabaseWiki wiki, SimplePolicy policy) {
         _users = users;
         _realm = realm;
         _policy = policy;
-        _server = server;
+        _wiki = wiki;
     }
        
     
@@ -90,14 +91,18 @@ public class WikiServletAuthenticator {
     	return false;
     }
 
-    public boolean authenticate(HttpServletRequest request) {
+    public boolean authenticate(HttpServletRequest request, HttpServletResponse response) {
+        return authenticate (new ServletExchangeWrapper(request,response));
         
-    	if (allowedFileRequest(request.getRequestURI())) {
+    }
+    
+    public boolean authenticate(Exchange<HttpServletRequest> exchange) {
+        
+    	if (allowedFileRequest(exchange.get().getRequestURI())) {
     		return true;
     	}
-        Exchange<HttpServletRequest> exchange = new ServletExchangeWrapper(request,null);
-        boolean needsAuth = this.isProtectedRequest(exchange);
-        if(request.getUserPrincipal() == null) {
+        boolean needsAuth = SimplePolicy.isProtectedRequest(exchange);
+        if(exchange.get().getUserPrincipal() == null) {
             if ((_policy._mode == DatabaseWikiProperties.AuthenticateAlways) ||
                 (_policy._mode == DatabaseWikiProperties.AuthenticateWriteOnly) && needsAuth) {
                 return false;
@@ -107,7 +112,7 @@ public class WikiServletAuthenticator {
             }
         } else if ((_policy._mode == DatabaseWikiProperties.AuthenticateAlways) ||
             (_policy._mode == DatabaseWikiProperties.AuthenticateWriteOnly) && needsAuth) {
-            String uname = request.getUserPrincipal().getName();
+            String uname = exchange.get().getUserPrincipal().getName();
             // check if user is administrator
             if(_users.get(uname).is_admin()) {
                 return true;
@@ -125,12 +130,12 @@ public class WikiServletAuthenticator {
                         boolean isDelete = _policy._authorizationListing.get(i).capability().isDelete();
                         boolean isUpdate = _policy._authorizationListing.get(i).capability().isUpdate();
  
-                    	Option<Integer> entryIdOpt = isEntryLevelRequest(URI.create(request.getRequestURI())); 
-                        policyListing = _server.getDBPolicyListing(database_name, user_id);
+                    	Option<Integer> entryIdOpt = isEntryLevelRequest(URI.create(exchange.get().getRequestURI())); 
+                        policyListing = _wiki.getDBPolicyListing(user_id);
                         // check what kind of request it is
                         if(needsAuth) {
                             // insert request
-                            if(isInsertRequest(exchange) && isInsert == true) {
+                            if(SimplePolicy.isInsertRequest(exchange) && isInsert == true) {
                                 if(entryIdOpt.exists()) {
                                 	int entryId = entryIdOpt.elt();    
                                     if(havePolicies(policyListing, user_id,entryId)) {
@@ -139,7 +144,7 @@ public class WikiServletAuthenticator {
                                 }
                                 return true;
                             // delete request
-                            } else if(isDeleteRequest(exchange) && isDelete == true) {
+                            } else if(SimplePolicy.isDeleteRequest(exchange) && isDelete == true) {
                                 if(entryIdOpt.exists()) {
                                 	int entryId = entryIdOpt.elt();    
                                     if(havePolicies(policyListing, user_id,entryId)) {
@@ -148,7 +153,7 @@ public class WikiServletAuthenticator {
                                 }
                                 return true;
                             // update request
-                            } else if(isUpdateRequest(exchange) && isUpdate == true){
+                            } else if(SimplePolicy.isUpdateRequest(exchange) && isUpdate == true){
                                 if(entryIdOpt.exists()) {
                                 	int entryId = entryIdOpt.elt();    
                                     if(havePolicies(policyListing, user_id,entryId)) {
@@ -198,114 +203,11 @@ public class WikiServletAuthenticator {
         return false;
     }
        
-    /** Checks whether a request accesses a protected resource
-     *
-     * @param exchange HttpExchange
-     * @return boolean
-     */
-    private boolean isProtectedRequest(Exchange<?> exchange) {
-        if (exchange.isGet()) {
-            String rawQuery = exchange.getRequestURI().getRawQuery();
-            if (rawQuery != null) {
-                try {
-                    RequestParameterList parameters = new RequestParameterList(rawQuery);
-	                if (parameters.hasParameter(RequestParameter.ParameterActivate)) {
-	                    return true;
-	                } else if (parameters.hasParameter(RequestParameter.ParameterCreate)) {
-	                    return true;
-	                } else if(parameters.hasParameter(RequestParameter.ParameterAllUsers)){
-	                    return true;
-	                } else if(parameters.hasParameter(RequestParameter.ParameterAuthorization)){
-	                    return true;
-	                } else if (parameters.hasParameter(RequestParameter.ParameterCreateSchemaNode)) {
-	                    return true;
-	                } else if (parameters.hasParameter(RequestParameter.ParameterDelete)) {
-	                    return true;
-	                } else if (parameters.hasParameter(RequestParameter.ParameterEdit)) {
-	                    return true;
-	                } else if (parameters.hasParameter(RequestParameter.ParameterLayout)) {
-	                    return true;
-	                } else if (parameters.hasParameter(RequestParameter.ParameterPaste)) {
-	                    return true;
-	                } else if (parameters.hasParameter(RequestParameter.ParameterReset)) {
-	                    return true;
-	                } else if (parameters.hasParameter(RequestParameter.ParameterTemplate)) {
-	                    return true;
-	                } else if (parameters.hasParameter(RequestParameter.ParameterStyleSheet)) {
-	                    return true;
-	                } else {
-	                    return false;
-	                }
-                } catch (WikiFatalException e) {
-                    e.printStackTrace();
-                    // is this really what we want to do?
-                    return true;
-                }
-                
-            }
-        }
-        return false;
-    }
     
-    private boolean isInsertRequest(Exchange<?> exchange) {
-        if (exchange.isGet()) {
-            String rawQuery = exchange.getRequestURI().getRawQuery();
-            if (rawQuery != null) {
-                try {
-                	RequestParameterList parameters = new RequestParameterList(rawQuery);
-	                if (parameters.hasParameter(RequestParameter.ParameterCreate)) {
-	                    return true;
-	                } else if (parameters.hasParameter(RequestParameter.ParameterCreateSchemaNode)) {
-	                    return true;
-	                }
-                } catch (WikiFatalException e) {
-                    e.printStackTrace();
-                    // is this really what we want to do?
-                    return false;
-                }
-            }
-        }
-        return false;
-    }
 
-    private boolean isDeleteRequest(Exchange<?> exchange) {
-        if (exchange.isGet()) {
-            String rawQuery = exchange.getRequestURI().getRawQuery();
-            if (rawQuery != null) {
-                try {
-                	RequestParameterList parameters = new RequestParameterList(rawQuery);
-	                if (parameters.hasParameter(RequestParameter.ParameterDelete)) {
-	                    return true;
-	                } 
-                } catch (WikiFatalException e) {
-                    e.printStackTrace();
-                    // is this really what we want to do?
-                    return false;
-                }
-            }
-        }
-        return false;
-    }
 
-    private boolean isUpdateRequest(Exchange<?> exchange) {
-        if (exchange.isGet()) {
-            String rawQuery = exchange.getRequestURI().getRawQuery();
-            if (rawQuery != null) {
-                try {
-                	RequestParameterList parameters = new RequestParameterList(rawQuery);
-	                if (parameters.hasParameter(RequestParameter.ParameterEdit)) {
-	                    return true;
-	                } 
-                } catch (WikiFatalException e) {
-                    e.printStackTrace();
-                    // is this really what we want to do?
-                    return false;
-                }
-            }
-        }
-        return false;
-    }
 
+    
     
     /** Checks whether a request is an entry-level request
      *
@@ -317,7 +219,7 @@ public class WikiServletAuthenticator {
     private Option<Integer> isEntryLevelRequest(URI uri) {
     	String path = uri.getPath();
         if (uri.getRawQuery() != null) {
-        path = path + "?" + uri.getRawQuery();
+        	path = path + "?" + uri.getRawQuery();
         }
         String[] items = path.split("/");
         if(items.length >= 3) {
@@ -334,10 +236,11 @@ public class WikiServletAuthenticator {
                 }
             } else {
                 try {
-                    Map<Integer, Entry> entryListing = _server.getEntryListing(_realm.substring(1));
+                    //Map<Integer, Entry> entryListing = _server.getEntryListing(_realm.substring(1));
+                    DatabaseContent entries = _wiki.database().content();
                     try {
                         int entry = Integer.parseInt(items[2],16);
-                        if(entryListing.get(entry)!=null) {
+                        if(entries.get(entry)!=null) {
                             return new Some<Integer>(entry);
                         }
                     } catch (NumberFormatException e) {
@@ -352,13 +255,6 @@ public class WikiServletAuthenticator {
         return new None<Integer>();
     }
        
-    @Deprecated
-    public int getAuthenticationMode() {
-        return _policy._mode;
-    }
-    @Deprecated
-    public void setAuthenticationMode(int mode) {
-    	_policy._mode = mode;
-    }
+
 
 }
