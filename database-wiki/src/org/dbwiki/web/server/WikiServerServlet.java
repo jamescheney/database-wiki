@@ -42,6 +42,7 @@ import org.dbwiki.data.database.Database;
 import org.dbwiki.data.io.ImportHandler;
 import org.dbwiki.data.io.XMLDocumentImportReader;
 import org.dbwiki.data.schema.DatabaseSchema;
+import org.dbwiki.data.security.SimplePolicy;
 import org.dbwiki.driver.rdbms.DatabaseImportHandler;
 import org.dbwiki.driver.rdbms.SQLVersionIndex;
 import org.dbwiki.exception.WikiException;
@@ -77,7 +78,7 @@ public class WikiServerServlet extends WikiServer {
 	
 	public WikiServerServlet(String prefix, Properties properties) throws org.dbwiki.exception.WikiException {
 		super(prefix, properties);
-		_authenticator = new WikiServletAuthenticator(_authenticationMode, "/", _users, _authorizationListing,this);
+		_authenticator = new WikiServletAuthenticator( "/", _users,this, _policy);
 	}
 	
 	/** 
@@ -105,7 +106,8 @@ public class WikiServerServlet extends WikiServer {
 			}
 			int autoSchemaChanges = rs.getInt(RelDatabaseColAutoSchemaChanges);
 			ConfigSetting setting = new ConfigSetting(layoutVersion, templateVersion, styleSheetVersion, urlDecodingVersion);
-			WikiServletAuthenticator authenticator = new WikiServletAuthenticator(rs.getInt(RelDatabaseColAuthentication), "/"+name, _users, _authorizationListing,this);
+			SimplePolicy policy = new SimplePolicy(rs.getInt(RelDatabaseColAuthentication));
+			WikiServletAuthenticator authenticator = new WikiServletAuthenticator( "/"+name, _users, this,policy);
 			_wikiListing.add(new DatabaseWikiServlet(id, name, title, autoSchemaChanges, authenticator, setting, _connector, this));
 		}
 		rs.close();
@@ -169,7 +171,8 @@ public class WikiServerServlet extends WikiServer {
 			
 			wikiID = r.createCollection(con, versionIndex);
 			con.commit();
-			WikiServletAuthenticator authenticator = new WikiServletAuthenticator(authenticationMode, "/" + name, _users, _authorizationListing,this);
+			SimplePolicy policy = new SimplePolicy(authenticationMode);
+			WikiServletAuthenticator authenticator = new WikiServletAuthenticator( "/" + name, _users,this, policy);
 			DatabaseWikiServlet wiki = new DatabaseWikiServlet(wikiID, name, title, autoSchemaChanges, authenticator, _connector, this,
 									con, versionIndex);
 			_wikiListing.add(wiki);

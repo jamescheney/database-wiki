@@ -24,12 +24,9 @@
 package org.dbwiki.web.server;
 
 import java.sql.Connection;
-import java.util.Vector;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.dbwiki.data.security.Authorization;
 import org.dbwiki.data.wiki.SimpleWiki;
 import org.dbwiki.driver.rdbms.DatabaseConnector;
 import org.dbwiki.driver.rdbms.RDBMSDatabase;
@@ -167,23 +164,19 @@ public class DatabaseWikiServlet extends DatabaseWiki {
 	}
 
 	@Override
+	@Deprecated
 	public int getAuthenticationMode() {
 		return _authenticator.getAuthenticationMode();
 	}
 
 	@Override
+	@Deprecated
 	public void setAuthenticationMode(int authMode) {
 		super.setAuthenticationMode(authMode);
 		_authenticator.setAuthenticationMode(authMode);
 	}
 
-	@Override
-	public void updateAuthorizationListing(
-			Vector<Authorization> authorizationListing) {
-		_authenticator.updateAuthorizationListing(authorizationListing);
-		
-	}
-	
+
 
 	
 

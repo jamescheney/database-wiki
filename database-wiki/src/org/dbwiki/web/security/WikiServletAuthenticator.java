@@ -25,13 +25,8 @@ package org.dbwiki.web.security;
 
 import java.net.URI;
 import java.sql.SQLException;
-import java.util.Collections;
-import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Vector;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.dbwiki.exception.WikiException;
@@ -43,8 +38,8 @@ import org.dbwiki.user.UserListing;
 import org.dbwiki.web.request.Exchange;
 import org.dbwiki.web.request.parameter.RequestParameter;
 import org.dbwiki.web.request.parameter.RequestParameterList;
-import org.dbwiki.data.security.Authorization;
 import org.dbwiki.data.security.DBPolicy;
+import org.dbwiki.data.security.SimplePolicy;
 import org.dbwiki.web.server.DatabaseWikiProperties;
 import org.dbwiki.web.server.Entry;
 import org.dbwiki.web.server.ServletExchangeWrapper;
@@ -60,11 +55,10 @@ import org.dbwiki.web.server.WikiServer;
 
 public class WikiServletAuthenticator {
 
-    private int _mode;
     private UserListing _users;
     private String _realm;
-    private Vector<Authorization> _authorizationListing;
-    
+    //private Vector<Authorization> _authorizationListing;
+    private SimplePolicy _policy;
     
     // TODO: Get rid of this?
     private WikiServer _server;
@@ -77,11 +71,10 @@ public class WikiServletAuthenticator {
 		".*/pictures/.*\\.gif",
 		};
     
-    public WikiServletAuthenticator(int mode, String realm, UserListing users, Vector<Authorization> authorizationListing, WikiServer server) {
-        _mode = mode;
+    public WikiServletAuthenticator(String realm, UserListing users, WikiServer server, SimplePolicy policy) {
         _users = users;
         _realm = realm;
-        _authorizationListing = authorizationListing;
+        _policy = policy;
         _server = server;
     }
        
@@ -105,32 +98,32 @@ public class WikiServletAuthenticator {
         Exchange<HttpServletRequest> exchange = new ServletExchangeWrapper(request,null);
         boolean needsAuth = this.isProtectedRequest(exchange);
         if(request.getUserPrincipal() == null) {
-            if ((_mode == DatabaseWikiProperties.AuthenticateAlways) ||
-                (_mode == DatabaseWikiProperties.AuthenticateWriteOnly) && needsAuth) {
+            if ((_policy._mode == DatabaseWikiProperties.AuthenticateAlways) ||
+                (_policy._mode == DatabaseWikiProperties.AuthenticateWriteOnly) && needsAuth) {
                 return false;
             }
             else {
                 return true;
             }
-        } else if ((_mode == DatabaseWikiProperties.AuthenticateAlways) ||
-            (_mode == DatabaseWikiProperties.AuthenticateWriteOnly) && needsAuth) {
+        } else if ((_policy._mode == DatabaseWikiProperties.AuthenticateAlways) ||
+            (_policy._mode == DatabaseWikiProperties.AuthenticateWriteOnly) && needsAuth) {
             String uname = request.getUserPrincipal().getName();
             // check if user is administrator
             if(_users.get(uname).is_admin()) {
                 return true;
             } else {
                 Map<Integer, Map<Integer,DBPolicy>> policyListing = new HashMap<Integer, Map<Integer,DBPolicy>>();
-                for(int i = 0; i<_authorizationListing.size(); i++) {
-                    int user_id = _authorizationListing.get(i).user_id();
-                    String database_name = _authorizationListing.get(i).database_name();
+                for(int i = 0; i<_policy._authorizationListing.size(); i++) {
+                    int user_id = _policy._authorizationListing.get(i).user_id();
+                    String database_name = _policy._authorizationListing.get(i).database_name();
                     String dbname = "/" + database_name;
                     String user_login = _users.get(user_id).login();
                     if(user_login.equals(uname) && dbname.equals(_realm)) {
                         //get the access permissions in the database
-                        boolean isRead = _authorizationListing.get(i).capability().isRead();
-                        boolean isInsert = _authorizationListing.get(i).capability().isInsert();
-                        boolean isDelete = _authorizationListing.get(i).capability().isDelete();
-                        boolean isUpdate = _authorizationListing.get(i).capability().isUpdate();
+                        boolean isRead = _policy._authorizationListing.get(i).capability().isRead();
+                        boolean isInsert = _policy._authorizationListing.get(i).capability().isInsert();
+                        boolean isDelete = _policy._authorizationListing.get(i).capability().isDelete();
+                        boolean isUpdate = _policy._authorizationListing.get(i).capability().isUpdate();
  
                     	Option<Integer> entryIdOpt = isEntryLevelRequest(URI.create(request.getRequestURI())); 
                         policyListing = _server.getDBPolicyListing(database_name, user_id);
@@ -359,16 +352,13 @@ public class WikiServletAuthenticator {
         return new None<Integer>();
     }
        
+    @Deprecated
     public int getAuthenticationMode() {
-        return _mode;
+        return _policy._mode;
     }
-       
+    @Deprecated
     public void setAuthenticationMode(int mode) {
-        _mode = mode;
-    }
-       
-    public void updateAuthorizationListing(Vector<Authorization> auth) {
-        _authorizationListing = auth;
+    	_policy._mode = mode;
     }
 
 }

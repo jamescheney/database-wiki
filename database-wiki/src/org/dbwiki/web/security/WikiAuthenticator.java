@@ -31,8 +31,6 @@ import java.net.URI;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Vector;
-
 import org.dbwiki.exception.WikiException;
 import org.dbwiki.exception.WikiFatalException;
 import org.dbwiki.user.User;
@@ -42,8 +40,8 @@ import org.dbwiki.web.request.HttpRequest;
 import org.dbwiki.web.request.RequestURL;
 import org.dbwiki.web.request.parameter.RequestParameter;
 import org.dbwiki.web.request.parameter.RequestParameterList;
-import org.dbwiki.data.security.Authorization;
 import org.dbwiki.data.security.DBPolicy;
+import org.dbwiki.data.security.SimplePolicy;
 import org.dbwiki.lib.Option;
 import org.dbwiki.lib.Some;
 import org.dbwiki.lib.None;
@@ -89,14 +87,15 @@ public class WikiAuthenticator extends Authenticator {
      * Private Variables
      */
        
-    private int _mode;
+    //private int _mode;
     private String _realm;
     private UserListing _users;
-    private Vector<Authorization> _authorizationListing;
+    //private Vector<Authorization> _authorizationListing;
     private File _formTemplate = null;
        
     // TODO: Get rid of this?
     private WikiServer _server;
+    private SimplePolicy _policy;
     
     // Hardwired policy filtering file requests
     private static String[] fileMatches = { 
@@ -111,13 +110,12 @@ public class WikiAuthenticator extends Authenticator {
      * Constructors
      */
        
-    public WikiAuthenticator(String realm, int mode, UserListing users, Vector<Authorization> authorizationListing, File template, WikiServer server) {
-	    _mode = mode;
+    public WikiAuthenticator(String realm, UserListing users, File template, WikiServer server, SimplePolicy policy) {
 	    _realm = realm;
 	    _users = users;
-	    _authorizationListing = authorizationListing;
 	    _formTemplate = template;
 	    _server = server;
+	    _policy = policy;
     }
        
        
@@ -161,8 +159,8 @@ public class WikiAuthenticator extends Authenticator {
            
         String auth = rmap.getFirst("Authorization");
         if (auth == null) {
-            if ((_mode == AuthenticateAlways)
-                    || ((_mode == AuthenticateWriteOnly) && (isProtectedRequest))
+            if ((_policy._mode == AuthenticateAlways)
+                    || ((_policy._mode == AuthenticateWriteOnly) && (isProtectedRequest))
                     || (exchange.getRequestURI().getPath().equals(WikiServer.SpecialFolderLogin))) {
                 return retryAccess(exchange);
                 
@@ -181,8 +179,8 @@ public class WikiAuthenticator extends Authenticator {
             String uname = userpass.substring(0, colon);
             String pass = userpass.substring(colon + 1);
             Boolean isAdmin = _users.get(uname).is_admin();
-            if ((_mode == AuthenticateAlways)
-                    || ((_mode == AuthenticateWriteOnly) && (isProtectedRequest))
+            if ((_policy._mode == AuthenticateAlways)
+                    || ((_policy._mode == AuthenticateWriteOnly) && (isProtectedRequest))
                     || (exchange.getRequestURI().getPath().equals(WikiServer.SpecialFolderLogin))) {
                 if (checkCredentials(uname, pass)) {
                     if(isAdmin){
@@ -192,17 +190,17 @@ public class WikiAuthenticator extends Authenticator {
                             return accessGranted(exchange,uname); 
                         }
                         Map<Integer,Map<Integer,DBPolicy>> policyListing = new HashMap<Integer,Map<Integer,DBPolicy>>();
-                        for(int i = 0;i<_authorizationListing.size();i++){
-                            int user_id = _authorizationListing.get(i).user_id();
-                            String database_name = _authorizationListing.get(i).database_name();
+                        for(int i = 0;i<_policy._authorizationListing.size();i++){
+                            int user_id = _policy._authorizationListing.get(i).user_id();
+                            String database_name = _policy._authorizationListing.get(i).database_name();
                             String dbname = "/" + database_name;
                             String user_login = _users.get(user_id).login();
                             if(user_login.equals(uname) && dbname.equals(_realm)) {
                                 //get the access permissions in the database
-                                boolean isRead = _authorizationListing.get(i).capability().isRead();
-                                boolean isInsert = _authorizationListing.get(i).capability().isInsert();
-                                boolean isDelete = _authorizationListing.get(i).capability().isDelete();
-                                boolean isUpdate = _authorizationListing.get(i).capability().isUpdate();
+                                boolean isRead = _policy._authorizationListing.get(i).capability().isRead();
+                                boolean isInsert = _policy._authorizationListing.get(i).capability().isInsert();
+                                boolean isDelete = _policy._authorizationListing.get(i).capability().isDelete();
+                                boolean isUpdate = _policy._authorizationListing.get(i).capability().isUpdate();
                                 
                                 URI uri = exchange.getRequestURI();
                             	Option<Integer> entryIdOpt = isEntryLevelRequest(uri);
@@ -335,17 +333,17 @@ public class WikiAuthenticator extends Authenticator {
         return new Authenticator.Failure(401);
  
     }
-
+    @Deprecated
     public synchronized int getAuthenticationMode() {
-        return _mode;
+        return _policy._mode;
     }
        
     public String getRealm() {
         return _realm;
     }
-       
+    @Deprecated
     public synchronized void setAuthenticationMode(int value) {
-        _mode = value;
+    	_policy._mode = value;
     }
        
        
@@ -547,8 +545,5 @@ public class WikiAuthenticator extends Authenticator {
     }
 
 
-    
-    public void updateAuthorizationListing(Vector<Authorization> authorizationListing) {
-    this._authorizationListing = authorizationListing;
-    }
+
 }

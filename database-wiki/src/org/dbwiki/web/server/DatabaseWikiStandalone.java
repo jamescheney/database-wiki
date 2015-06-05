@@ -24,9 +24,6 @@
 package org.dbwiki.web.server;
 
 import java.sql.Connection;
-import java.util.Vector;
-
-import org.dbwiki.data.security.Authorization;
 import org.dbwiki.data.wiki.SimpleWiki;
 import org.dbwiki.driver.rdbms.DatabaseConnector;
 import org.dbwiki.driver.rdbms.RDBMSDatabase;
@@ -102,11 +99,5 @@ public class DatabaseWikiStandalone extends DatabaseWiki {
 		return _server;
 	}
 
-	@Override
-	public void updateAuthorizationListing(
-			Vector<Authorization> authorizationListing) {
-		//FIXME: This does nothing, perhaps code calling it should be devolved to subclasses of WikiServer.
-		
-	}
 
 }

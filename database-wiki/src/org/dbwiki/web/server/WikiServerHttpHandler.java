@@ -38,6 +38,7 @@ import org.dbwiki.data.database.Database;
 import org.dbwiki.data.io.ImportHandler;
 import org.dbwiki.data.io.XMLDocumentImportReader;
 import org.dbwiki.data.schema.DatabaseSchema;
+import org.dbwiki.data.security.SimplePolicy;
 import org.dbwiki.driver.rdbms.DatabaseImportHandler;
 import org.dbwiki.driver.rdbms.SQLVersionIndex;
 import org.dbwiki.exception.WikiException;
@@ -49,11 +50,13 @@ import org.dbwiki.web.request.Exchange;
 import org.dbwiki.web.request.RequestURL;
 import org.dbwiki.web.request.parameter.RequestParameter;
 import org.dbwiki.web.security.WikiAuthenticator;
+
 import com.sun.net.httpserver.HttpContext;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
+@SuppressWarnings("restriction") 
 public class WikiServerHttpHandler extends WikiServer implements HttpHandler {
 
 
@@ -100,7 +103,8 @@ public class WikiServerHttpHandler extends WikiServer implements HttpHandler {
 			if (org.dbwiki.lib.JDBC.hasColumn(rs, RelDatabaseColURLDecoding)) {
 				urlDecodingVersion = rs.getInt(RelDatabaseColURLDecoding);
 			}
-			WikiAuthenticator authenticator = new WikiAuthenticator("/" + name, rs.getInt(RelDatabaseColAuthentication), _users,_authorizationListing, _formTemplate,this);
+			SimplePolicy policy = new SimplePolicy(rs.getInt(RelDatabaseColAuthentication));
+			WikiAuthenticator authenticator = new WikiAuthenticator("/" + name,  _users, _formTemplate,this, policy);
 			int autoSchemaChanges = rs.getInt(RelDatabaseColAutoSchemaChanges);
 			ConfigSetting setting = new ConfigSetting(layoutVersion, templateVersion, styleSheetVersion, urlDecodingVersion);
 			_wikiListing.add(new DatabaseWikiHttpHandler(id, name, title, authenticator, autoSchemaChanges, setting, _connector, this));
@@ -140,7 +144,7 @@ public class WikiServerHttpHandler extends WikiServer implements HttpHandler {
 		_webServer.setExecutor(Executors.newFixedThreadPool(_threadCount));
 
 		HttpContext context = _webServer.createContext("/", this);
-		context.setAuthenticator(new WikiAuthenticator("/", _authenticationMode, _users,_authorizationListing, _formTemplate,this));
+		context.setAuthenticator(new WikiAuthenticator("/", _users, _formTemplate,this,_policy));
 
 		for (int iWiki = 0; iWiki < _wikiListing.size(); iWiki++) {
 			DatabaseWikiHttpHandler wiki = _wikiListing.get(iWiki);
@@ -183,8 +187,8 @@ public class WikiServerHttpHandler extends WikiServer implements HttpHandler {
 			
 			wikiID = r.createCollection(con, versionIndex);
 			con.commit();
-
-			WikiAuthenticator authenticator = new WikiAuthenticator("/" + name, authenticationMode, _users,_authorizationListing, _formTemplate,this);
+			SimplePolicy policy = new SimplePolicy(authenticationMode);
+			WikiAuthenticator authenticator = new WikiAuthenticator("/" + name,  _users, _formTemplate,this,policy);
 			DatabaseWikiHttpHandler wiki = new DatabaseWikiHttpHandler(wikiID, name, title, authenticator, autoSchemaChanges, _connector, this,
 									con, versionIndex);
 

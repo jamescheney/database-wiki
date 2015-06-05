@@ -28,7 +28,6 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
-
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.Connection;
@@ -48,11 +47,10 @@ import org.dbwiki.data.io.SAXCallbackInputHandler;
 import org.dbwiki.data.io.StructureParser;
 import org.dbwiki.data.schema.DatabaseSchema;
 import org.dbwiki.data.schema.SchemaParser;
-import org.dbwiki.data.security.Authorization;
 import org.dbwiki.data.security.DBPolicy;
+import org.dbwiki.data.security.SimplePolicy;
 import org.dbwiki.driver.rdbms.DatabaseConnector;
 import org.dbwiki.driver.rdbms.DatabaseConnectorFactory;
-
 import org.dbwiki.driver.rdbms.DatabaseConstants;
 import org.dbwiki.driver.rdbms.SQLVersionIndex;
 import org.dbwiki.exception.WikiException;
@@ -61,7 +59,6 @@ import org.dbwiki.exception.web.WikiRequestException;
 import org.dbwiki.user.User;
 import org.dbwiki.user.UserListing;
 import org.dbwiki.web.html.FileNotFoundPage;
-
 import org.dbwiki.web.log.FileServerLog;
 import org.dbwiki.web.log.ServerLog;
 import org.dbwiki.web.log.StandardOutServerLog;
@@ -70,7 +67,6 @@ import org.dbwiki.web.request.HttpRequest;
 import org.dbwiki.web.request.RequestURL;
 import org.dbwiki.web.request.parameter.RequestParameter;
 import org.dbwiki.web.request.parameter.RequestParameterAction;
-
 import org.dbwiki.web.ui.HtmlContentGenerator;
 import org.dbwiki.web.ui.HtmlTemplateDecorator;
 import org.dbwiki.web.ui.ServerResponseHandler;
@@ -158,7 +154,7 @@ public abstract class WikiServer  implements WikiServerConstants {
 	 */
 
 	protected String _wikiTitle = "Database Wiki";
-	protected int _authenticationMode;
+	//protected int _authenticationMode;
 	
 	protected DatabaseConnector _connector;
 	protected File _formTemplate = null;
@@ -167,7 +163,8 @@ public abstract class WikiServer  implements WikiServerConstants {
 	// FIXME #query: move UserListing into new global Database interface/class
 	protected UserListing _users;
 	protected File _directory;
-	protected Vector<Authorization> _authorizationListing;
+	//protected Vector<Authorization> _authorizationListing;
+	protected SimplePolicy _policy;
 
 	
 	// private ExtendedPegDownProcessor _pegDownProcessor = null;
@@ -181,19 +178,20 @@ public abstract class WikiServer  implements WikiServerConstants {
 
 		initHomepageTemplate(properties.getProperty(propertyHomepageTemplate));
 
-		_authenticationMode = Integer.parseInt(properties
-				.getProperty(propertyAuthenticationMode));
-
+		int authenticationMode = Integer.parseInt(properties.getProperty(propertyAuthenticationMode));
+		_policy = new SimplePolicy(authenticationMode);
+		
 		// Database Connection
 		_connector = new DatabaseConnectorFactory().getConnector(properties);
 
+		
 		initWikiTitle(properties.getProperty(propertyWikiTitle));
 
 		// Read information about users and DatabassWikis
 		// from the database we are connected to
 		try {
 			Connection con = _connector.getConnection();
-			getAuthorizationListing(con);
+			_policy.getAuthorizationListing(con);
 			getUserListing(con);
 			getWikiListing(con);
 			con.close();
@@ -298,14 +296,16 @@ public abstract class WikiServer  implements WikiServerConstants {
 	 * Initialize authorization listing from database
 	 * 
 	 */
+	/*  Now in SimplePolicy
 	private void getAuthorizationListing(Connection connection)
+	 
 			throws SQLException {
-		_authorizationListing = new Vector<Authorization>();
+		_policy._authorizationListing = new Vector<Authorization>();
 		Statement stmt = connection.createStatement();
 		ResultSet rs = stmt.executeQuery("SELECT * FROM "
 				+ RelationAuthorization);
 		while (rs.next()) {
-			_authorizationListing.add(new Authorization(rs
+			_policy._authorizationListing.add(new Authorization(rs
 					.getString(RelAuthenticationColDatabaseName), rs
 					.getInt(RelAuthenticationColUserID), rs
 					.getBoolean(RelAuthenticationColRead), rs
@@ -317,7 +317,7 @@ public abstract class WikiServer  implements WikiServerConstants {
 		rs.close();
 		stmt.close();
 
-	}
+	}*/
 	
 	protected abstract void getWikiListing(Connection con) throws SQLException, WikiException ;
 
@@ -820,7 +820,7 @@ public abstract class WikiServer  implements WikiServerConstants {
 								"Manage Authorization",
 								RequestParameterAction.ActionUpdateAuthorization,
 								new DatabaseWikiProperties(wiki),
-								_users, _authorizationListing));
+								_users, _policy._authorizationListing));
 		return responseHandler;
 	}
 	
@@ -948,7 +948,7 @@ public abstract class WikiServer  implements WikiServerConstants {
 			//
 			// If the parameter values are valid the database wiki is created
 			//
-			if ((request.user() == null) && (_authenticationMode != DatabaseWikiProperties.AuthenticateNever)) {
+			if ((request.user() == null) && (_policy._mode != DatabaseWikiProperties.AuthenticateNever)) {
 				throw new WikiFatalException("User information is missing");
 			}
 
@@ -1110,7 +1110,7 @@ public abstract class WikiServer  implements WikiServerConstants {
 			return responseHandler;
 		} else {
 			// Otherwise, apply the changes.
-			if ((request.user() == null) && (_authenticationMode != DatabaseWikiProperties.AuthenticateNever)) {
+			if ((request.user() == null) && (_policy._mode != DatabaseWikiProperties.AuthenticateNever)) {
 				throw new WikiFatalException("User information is missing");
 			}
 			try {
@@ -1212,7 +1212,7 @@ public abstract class WikiServer  implements WikiServerConstants {
 				 
 			// If there are no problems, apply the change.
 			}else{
-				if ((request.user() == null) && (_authenticationMode !=
+				if ((request.user() == null) && (_policy._mode !=
 						 DatabaseWikiProperties.AuthenticateNever)) {
 						 throw new WikiFatalException("User information is missing");
 				}
@@ -1265,8 +1265,9 @@ public abstract class WikiServer  implements WikiServerConstants {
 			if(request.parameters().get(0).name().equals("action")){
 				first_para=1;
 			}
-		for (int para_index = first_para, user_index = 1; para_index <= request.parameters()
-				.size() - 3; para_index += 4, user_index++) {
+		for (int para_index = first_para, user_index = 1; 
+			 para_index <= request.parameters().size() - 3; 
+			 para_index += 4, user_index++) {
 			String wiki_name = wiki.name();
 			boolean is_read = false;
 			boolean is_insert = false;
@@ -1297,9 +1298,9 @@ public abstract class WikiServer  implements WikiServerConstants {
 			
 			boolean flag = false;
 			int j = 0;
-			for(j = 0; j<_authorizationListing.size();j++){
-				int user_id = _authorizationListing.get(j).user_id();
-				String database_name = _authorizationListing.get(j).database_name();
+			for(j = 0; j<_policy._authorizationListing.size();j++){
+				int user_id = _policy._authorizationListing.get(j).user_id();
+				String database_name = _policy._authorizationListing.get(j).database_name();
 				if(user_id==user_index && database_name.equals(wiki_name)){
 					flag = true;
 					break;
@@ -1350,9 +1351,8 @@ public abstract class WikiServer  implements WikiServerConstants {
 		}
 		
 		con.commit();
-		getAuthorizationListing(con);
-		//getWikiListing(con);
-		wiki.updateAuthorizationListing(_authorizationListing);
+		_policy.getAuthorizationListing(con);
+		
 		con.close();
 		
 		} catch (SQLException sqlException) {
@@ -1673,7 +1673,7 @@ public abstract class WikiServer  implements WikiServerConstants {
 										"Manage Authorization",
 										RequestParameterAction.ActionUpdateAuthorization,
 										new DatabaseWikiProperties(wiki),
-										_users, _authorizationListing));
+										_users, _policy._authorizationListing));
 			} else {
 				responseHandler = new ServerResponseHandler(request,
 						"Access Denied");

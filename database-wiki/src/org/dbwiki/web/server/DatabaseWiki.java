@@ -66,7 +66,6 @@ import org.dbwiki.data.resource.PageIdentifier;
 import org.dbwiki.data.schema.AttributeSchemaNode;
 import org.dbwiki.data.schema.SchemaNode;
 import org.dbwiki.data.schema.GroupSchemaNode;
-import org.dbwiki.data.security.Authorization;
 import org.dbwiki.data.security.DBPolicy;
 import org.dbwiki.data.wiki.Wiki;
 import org.dbwiki.driver.rdbms.DatabaseConnector;
@@ -336,8 +335,6 @@ public abstract class DatabaseWiki implements Comparable<DatabaseWiki> {
 		return _urlDecodingVersion;
 	}
 	
-
-	public abstract void updateAuthorizationListing(Vector<Authorization> authorizationListing);
 	
 	/*
 	 * Private Methods
