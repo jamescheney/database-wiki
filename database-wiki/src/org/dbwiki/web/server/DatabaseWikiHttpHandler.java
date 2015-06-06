@@ -129,10 +129,10 @@ public class DatabaseWikiHttpHandler extends DatabaseWiki implements
 	 */
 
 	/**
-	 * Dispatches HTTP interactions based on the type of the request. Data
-	 * requests are handled by respondToDataRequest Wiki Page requests are
-	 * handled by respondToPageRequest Schema requests are handled by
-	 * respondToSchemaRequest
+	 * Dispatches HTTP interactions based on the type of the request. 
+	 * - Data requests are handled by respondToDataRequest 
+	 * - Wiki Page requests are handled by respondToPageRequest 
+	 * - Schema requests are handled by respondToSchemaRequest
 	 */
 	public void handle(HttpExchange httpExchange) throws java.io.IOException {
 		Exchange<HttpExchange> exchange = new HttpExchangeWrapper(httpExchange);

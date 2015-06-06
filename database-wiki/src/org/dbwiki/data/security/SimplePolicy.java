@@ -16,12 +16,13 @@ public class SimplePolicy implements WikiServerConstants {
 
     public Vector<Authorization> _authorizationListing;
     public int _mode;
-
+    
     
     public SimplePolicy(int mode, Vector<Authorization> authorizationListing) {
     	_mode = mode;
     	_authorizationListing = authorizationListing;
     }
+    
     
     public SimplePolicy(int mode) {
     	_mode = mode;
@@ -38,13 +39,13 @@ public class SimplePolicy implements WikiServerConstants {
 		ResultSet rs = stmt.executeQuery("SELECT * FROM "
 				+ RelationAuthorization);
 		while (rs.next()) {
-			_authorizationListing.add(new Authorization(rs
-					.getString(RelAuthenticationColDatabaseName), rs
-					.getInt(RelAuthenticationColUserID), rs
-					.getBoolean(RelAuthenticationColRead), rs
-					.getBoolean(RelAuthenticationColInsert), rs
-					.getBoolean(RelAuthenticationColDelete), rs
-					.getBoolean(RelAuthenticationColUpdate)));
+			_authorizationListing.add(new Authorization(
+					rs.getString(RelAuthenticationColDatabaseName), 
+					rs.getInt(RelAuthenticationColUserID), 
+					rs.getBoolean(RelAuthenticationColRead), 
+					rs.getBoolean(RelAuthenticationColInsert), 
+					rs.getBoolean(RelAuthenticationColDelete), 
+					rs.getBoolean(RelAuthenticationColUpdate)));
 		}
 		
 		rs.close();
@@ -166,6 +167,14 @@ public class SimplePolicy implements WikiServerConstants {
 
    
    
-
+   // Hardwired policy filtering file requests
+   public static String[] fileMatches = { 
+   		".*/html/.*\\.html",
+   		".*/html/style/.*\\.css",
+   		".*/js/.*\\.js",
+   		".*/.*\\.txt",
+   		".*/.*\\.ico",
+   		".*/pictures/.*\\.gif",
+   		};
 
 }

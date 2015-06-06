@@ -103,7 +103,7 @@ public class WikiServerHttpHandler extends WikiServer implements HttpHandler {
 			if (org.dbwiki.lib.JDBC.hasColumn(rs, RelDatabaseColURLDecoding)) {
 				urlDecodingVersion = rs.getInt(RelDatabaseColURLDecoding);
 			}
-			SimplePolicy policy = new SimplePolicy(rs.getInt(RelDatabaseColAuthentication));
+			SimplePolicy policy = new SimplePolicy(rs.getInt(RelDatabaseColAuthentication),_policy._authorizationListing);
 			int autoSchemaChanges = rs.getInt(RelDatabaseColAutoSchemaChanges);
 			ConfigSetting setting = new ConfigSetting(layoutVersion, templateVersion, styleSheetVersion, urlDecodingVersion);
 			_wikiListing.add(new DatabaseWikiHttpHandler(id, name, title, _users,_formTemplate, policy, autoSchemaChanges, setting, _connector, this));
@@ -186,7 +186,7 @@ public class WikiServerHttpHandler extends WikiServer implements HttpHandler {
 			
 			wikiID = r.createCollection(con, versionIndex);
 			con.commit();
-			SimplePolicy policy = new SimplePolicy(authenticationMode);
+			SimplePolicy policy = new SimplePolicy(authenticationMode,_policy._authorizationListing);
 			DatabaseWikiHttpHandler wiki = new DatabaseWikiHttpHandler(wikiID, name, title, _users, _formTemplate, policy, autoSchemaChanges, _connector, this,
 									con, versionIndex);
 

@@ -106,7 +106,7 @@ public class WikiServerServlet extends WikiServer {
 			}
 			int autoSchemaChanges = rs.getInt(RelDatabaseColAutoSchemaChanges);
 			ConfigSetting setting = new ConfigSetting(layoutVersion, templateVersion, styleSheetVersion, urlDecodingVersion);
-			SimplePolicy policy = new SimplePolicy(rs.getInt(RelDatabaseColAuthentication));
+			SimplePolicy policy = new SimplePolicy(rs.getInt(RelDatabaseColAuthentication),_policy._authorizationListing);
 			_wikiListing.add(new DatabaseWikiServlet(id, name, title, autoSchemaChanges, _users, policy, setting, _connector, this));
 		}
 		rs.close();
@@ -170,7 +170,7 @@ public class WikiServerServlet extends WikiServer {
 			
 			wikiID = r.createCollection(con, versionIndex);
 			con.commit();
-			SimplePolicy policy = new SimplePolicy(authenticationMode);
+			SimplePolicy policy = new SimplePolicy(authenticationMode,_policy._authorizationListing);
 			DatabaseWikiServlet wiki = new DatabaseWikiServlet(wikiID, name, title, autoSchemaChanges, _users, policy, _connector, this,
 									con, versionIndex);
 			_wikiListing.add(wiki);
