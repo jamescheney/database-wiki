@@ -18,6 +18,9 @@ import org.dbwiki.web.ui.printer.HtmlContentPrinter;
  * Generates a form that allows managing the entry-level access permissions
  */
 
+/* FIXME: Use Database content function instead of passed-in map
+ * FIXME: #security USe policy instead of passed-in map
+ */
 public class DatabaseWikiEntryAuthorizationPrinter extends HtmlContentPrinter {
 	private String _headline;
 	private String _action;

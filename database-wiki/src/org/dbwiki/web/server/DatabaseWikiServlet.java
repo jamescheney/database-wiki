@@ -61,14 +61,13 @@ public class DatabaseWikiServlet extends DatabaseWiki {
 	 * 
 	 */
 	public DatabaseWikiServlet(int id, String name, String title,
-			int autoSchemaChanges, UserListing _users,  SimplePolicy policy,
+			int authenticationMode, int autoSchemaChanges, UserListing _users,  
 			ConfigSetting setting, DatabaseConnector connector,
 			WikiServerServlet server)
 			throws org.dbwiki.exception.WikiException {
-		WikiServletAuthenticator authenticator = new WikiServletAuthenticator( "/"+name, _users, this,policy);
-
-		_authenticator = authenticator;
-		_policy = policy;
+		
+		_policy = new SimplePolicy(authenticationMode,_policy);
+		_authenticator = new WikiServletAuthenticator( "/"+name, _users, this,_policy);
 		_id = id;
 		_server = server;
 		_name = name;
@@ -86,14 +85,13 @@ public class DatabaseWikiServlet extends DatabaseWiki {
 	// HACK: pass in and use an existing connection and version index.
 	// Used only in WikiServer.RegisterDatabase to create a new database.
 	public DatabaseWikiServlet(int id, String name, String title,
-			int autoSchemaChanges, UserListing _users, SimplePolicy policy,
+			int authenticationMode, int autoSchemaChanges, UserListing _users, 
 			DatabaseConnector connector, WikiServerServlet server,
 			Connection con, SQLVersionIndex versionIndex)
 			throws org.dbwiki.exception.WikiException {
-		WikiServletAuthenticator authenticator = new WikiServletAuthenticator( "/"+name, _users, this,policy);
-
-		_authenticator = authenticator;
-		_policy = policy;
+		
+		_policy = new SimplePolicy(authenticationMode,_policy);
+		_authenticator = new WikiServletAuthenticator( "/"+name, _users, this,_policy);
 		_autoSchemaChanges = autoSchemaChanges;
 		_id = id;
 		_server = server;

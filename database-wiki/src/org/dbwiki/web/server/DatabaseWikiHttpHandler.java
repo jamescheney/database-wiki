@@ -64,13 +64,13 @@ public class DatabaseWikiHttpHandler extends DatabaseWiki implements
 	 * 
 	 */
 	public DatabaseWikiHttpHandler(int id, String name, String title,
-			UserListing _users, File _formTemplate, SimplePolicy policy, int autoSchemaChanges,
+			UserListing _users, File _formTemplate, int authenticationMode, int autoSchemaChanges,
 			ConfigSetting setting, DatabaseConnector connector,
 			WikiServerHttpHandler server)
 			throws org.dbwiki.exception.WikiException {
-		WikiAuthenticator authenticator = new WikiAuthenticator("/" + name,  _users, _formTemplate,this,policy);
-		_authenticator = authenticator;
-		_policy = policy;
+		
+		_policy = new SimplePolicy(authenticationMode,server._policy);
+		_authenticator = new WikiAuthenticator("/" + name,  _users, _formTemplate,this,_policy);
 		_autoSchemaChanges = autoSchemaChanges;
 		_id = id;
 		_server = server;
@@ -90,14 +90,12 @@ public class DatabaseWikiHttpHandler extends DatabaseWiki implements
 	// HACK: pass in and use an existing connection and version index.
 	// Used only in WikiServer.RegisterDatabase to create a new database.
 	public DatabaseWikiHttpHandler(int id, String name, String title,
-			UserListing _users, File _formTemplate, SimplePolicy policy, int autoSchemaChanges,
+			UserListing _users, File _formTemplate, int authenticationMode, int autoSchemaChanges,
 			DatabaseConnector connector, WikiServerHttpHandler server,
 			Connection con, SQLVersionIndex versionIndex)
 			throws org.dbwiki.exception.WikiException {
-		WikiAuthenticator authenticator = new WikiAuthenticator("/" + name,  _users, _formTemplate,this,policy);
-
-		_authenticator = authenticator;
-		_policy = policy;
+		_policy = new SimplePolicy(authenticationMode,server._policy);
+		_authenticator = new WikiAuthenticator("/" + name,  _users, _formTemplate,this,_policy);
 		_autoSchemaChanges = autoSchemaChanges;
 		_id = id;
 		_server = server;

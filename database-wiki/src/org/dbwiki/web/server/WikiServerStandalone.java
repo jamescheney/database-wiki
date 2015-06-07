@@ -36,7 +36,6 @@ import org.dbwiki.data.database.Database;
 import org.dbwiki.data.io.ImportHandler;
 import org.dbwiki.data.io.XMLDocumentImportReader;
 import org.dbwiki.data.schema.DatabaseSchema;
-import org.dbwiki.data.security.SimplePolicy;
 import org.dbwiki.driver.rdbms.DatabaseImportHandler;
 import org.dbwiki.driver.rdbms.SQLVersionIndex;
 import org.dbwiki.exception.WikiException;
@@ -83,9 +82,8 @@ public class WikiServerStandalone extends WikiServer {
 			}
 			int authenticationMode = rs.getInt(RelDatabaseColAuthentication);
 			int autoSchemaChanges = rs.getInt(RelDatabaseColAutoSchemaChanges);
-			SimplePolicy policy = new SimplePolicy(authenticationMode,_policy._authorizationListing);
 			ConfigSetting setting = new ConfigSetting(layoutVersion, templateVersion, styleSheetVersion, urlDecodingVersion);
-			_wikiListing.add(new DatabaseWikiStandalone(id, name, title, autoSchemaChanges, policy, setting, _connector, this));
+			_wikiListing.add(new DatabaseWikiStandalone(id, name, title, authenticationMode, autoSchemaChanges, setting, _connector, this));
 		}
 		rs.close();
 		stmt.close();
@@ -141,9 +139,8 @@ public class WikiServerStandalone extends WikiServer {
 		try {
 			wikiID = r.createCollection(con, versionIndex);
 			con.commit();
-			SimplePolicy policy = new SimplePolicy(authenticationMode,_policy._authorizationListing);
 
-			DatabaseWikiStandalone wiki = new DatabaseWikiStandalone(wikiID, name, title, autoSchemaChanges, policy, _connector, this,
+			DatabaseWikiStandalone wiki = new DatabaseWikiStandalone(wikiID, name, title, authenticationMode, autoSchemaChanges,  _connector, this,
 									con, versionIndex);
 			
 			_wikiListing.add(wiki);

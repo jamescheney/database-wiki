@@ -26,25 +26,13 @@ package org.dbwiki.web.security;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.net.URI;
-import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.dbwiki.exception.WikiException;
 import org.dbwiki.user.User;
 import org.dbwiki.user.UserListing;
 import org.dbwiki.web.request.Exchange;
 import org.dbwiki.web.request.HttpRequest;
 import org.dbwiki.web.request.RequestURL;
-import org.dbwiki.data.index.DatabaseContent;
-import org.dbwiki.data.security.DBPolicy;
 import org.dbwiki.data.security.SimplePolicy;
-import org.dbwiki.lib.Option;
-import org.dbwiki.lib.Some;
-import org.dbwiki.lib.None;
 import org.dbwiki.web.server.DatabaseWiki;
-import org.dbwiki.web.server.DatabaseWikiProperties;
 import org.dbwiki.web.server.HttpExchangeWrapper;
 import org.dbwiki.web.server.WikiServer;
 import org.dbwiki.web.ui.HtmlContentGenerator;
@@ -77,14 +65,10 @@ public class WikiAuthenticator extends Authenticator {
      * Private Variables
      */
        
-    //private int _mode;
     private String _realm;
     private UserListing _users;
-    //private Vector<Authorization> _authorizationListing;
     private File _formTemplate = null;
        
-    // TODO: Get rid of this?
-    //private WikiServer _server;
     private DatabaseWiki _wiki = null;  // optional for now
     private SimplePolicy _policy;
     
@@ -112,50 +96,40 @@ public class WikiAuthenticator extends Authenticator {
      * Public Methods
      */
 
-     
-    private boolean allowedFileRequest(String requestURI) {
-        // If the request is for a file (as specified by the 
-    	// regular expressions above), then no authorization is
-        // required.
-    	for (String m : SimplePolicy.fileMatches) {
-    		if (requestURI.matches(m)) 
-    			return true;
-    	}
-    	return false;
+
+    
+    public boolean isControlledRequest(Exchange <?> exchange) {
+    	return _policy.isControlledRequest(exchange) 
+    			|| (exchange.getRequestURI().getPath().equals(WikiServer.SpecialFolderLogin));
     }
-       
     
     public synchronized Result authenticate(HttpExchange exchange) {
     	return authenticate (new HttpExchangeWrapper(exchange));
-    
     }
        
 
-    // TODO: Further simplify this and factor into authentication part (establishing user identity) 
-    // and authorization part (checking request against policy once identity is established)
-    
+    /** 
+     *  Authenticate and check the request.
+     * @param exchange
+     * @return
+     */
     public Result authenticate(Exchange<HttpExchange> exchange) {
         // FIXME: #security: If the request is to log in then we should check the username and password no matter what!
         // Currently we don't if we happen to be at a page that doesn't require authentication.
            
-        if (allowedFileRequest(exchange.getRequestURI().getPath())) {
+        if (SimplePolicy.allowedFileRequest(exchange)) {
             return accessGranted(exchange,User.UnknownUserName); 
         }
            
         Headers rmap = exchange.get().getRequestHeaders();
            
-        boolean isProtectedRequest = SimplePolicy.isProtectedRequest(exchange);
-           
+       
         String auth = rmap.getFirst("Authorization");
         if (auth == null) {
-            if ((_policy._mode == DatabaseWikiProperties.AuthenticateAlways)
-                    || ((_policy._mode == DatabaseWikiProperties.AuthenticateWriteOnly) && (isProtectedRequest))
-                    || (exchange.getRequestURI().getPath().equals(WikiServer.SpecialFolderLogin))) {
+            if (isControlledRequest(exchange) ) {
                 return retryAccess(exchange);
-                
             } else {
                 return accessGranted(exchange,User.UnknownUserName);
-                
             }
         } else {
             int sp = auth.indexOf(' ');
@@ -166,12 +140,13 @@ public class WikiAuthenticator extends Authenticator {
             String userpass = new String(b);
             int colon = userpass.indexOf(':');
             String uname = userpass.substring(0, colon);
+            User user = _users.get(uname);
             String pass = userpass.substring(colon + 1);
-            if ((_policy._mode == DatabaseWikiProperties.AuthenticateAlways)
-                    || ((_policy._mode == DatabaseWikiProperties.AuthenticateWriteOnly) && (isProtectedRequest))
-                    || (exchange.getRequestURI().getPath().equals(WikiServer.SpecialFolderLogin))) {
+            if (isControlledRequest(exchange)) {
                 if (checkCredentials(uname, pass)) {
-                	if (checkRequest(uname, isProtectedRequest, exchange)) {
+                	if (exchange.getRequestURI().getPath().equals(WikiServer.SpecialFolderLogin)) {
+                        return accessGranted(exchange, uname);
+                    } else if (_policy.checkRequest(user, _wiki, exchange)) {
                 		return accessGranted(exchange, uname);
                 	} else {
                 		return accessDenied(exchange);
@@ -186,103 +161,7 @@ public class WikiAuthenticator extends Authenticator {
         }
     }
     
-    /** Check a request by user uname to do request specified by exchange */
-    private boolean checkRequest(String uname, boolean isProtectedRequest, Exchange<HttpExchange> exchange) {
-    	
-    	if(_users.get(uname).is_admin()){
-            return true; 
-        } else if (exchange.getRequestURI().getPath().equals(WikiServer.SpecialFolderLogin)) {
-            return true; 
-        } else {
-        	
-            Map<Integer,Map<Integer,DBPolicy>> policyListing = new HashMap<Integer,Map<Integer,DBPolicy>>();
-            for(int i = 0;i<_policy._authorizationListing.size();i++){
-                int user_id = _policy._authorizationListing.get(i).user_id();
-                String database_name = _policy._authorizationListing.get(i).database_name();
-                String dbname = "/" + database_name;
-                String user_login = _users.get(user_id).login();
-                if(user_login.equals(uname) && dbname.equals(_realm)) {
-                    //get the access permissions in the database
-                    boolean isRead = _policy._authorizationListing.get(i).capability().isRead();
-                    boolean isInsert = _policy._authorizationListing.get(i).capability().isInsert();
-                    boolean isDelete = _policy._authorizationListing.get(i).capability().isDelete();
-                    boolean isUpdate = _policy._authorizationListing.get(i).capability().isUpdate();
-                    
-                    URI uri = exchange.getRequestURI();
-                	Option<Integer> entryIdOpt = isEntryLevelRequest(uri);
-                	policyListing = _wiki.getDBPolicyListing(user_id);
-
-                	// check what kind of request it is
-                    if (isProtectedRequest) {
-                    	//insert request
-                        if (SimplePolicy.isInsertRequest(exchange) && isInsert == true){
-                        	// if this is an entry-level request
-                            if(entryIdOpt.exists()) {
-                            	int entryId = entryIdOpt.elt();
-                            	// and we have an entry-level policy
-                                if(havePolicies(policyListing, user_id,entryId)) {
-                                    if(policyListing.get(user_id).get(entryId).capability().isInsert()==true){
-                                    	// then use it to grant access
-                                        return true; 
-                                    } else {
-                                        return false; 
-                                    }
-                                }
-                            } // otherwise allow it
-                            return true; 
-                        //delete request
-                        } else if (SimplePolicy.isDeleteRequest(exchange) && isDelete == true){
-                            if(entryIdOpt.exists()) {
-                            	int entryId = entryIdOpt.elt();    
-                                if(havePolicies(policyListing, user_id,entryId)) {
-                                    if(policyListing.get(user_id).get(entryId).capability().isDelete()==true){
-                                        return true;
-                                    } else {
-                                        return false;
-                                    }
-                                }
-                            }
-                            return true; 
-                        //update request
-                        } else if (SimplePolicy.isUpdateRequest(exchange) && isUpdate == true){
-                            if(entryIdOpt.exists()){
-                            	int entryId = entryIdOpt.elt();    
-                                if(havePolicies(policyListing, user_id,entryId)) {
-                                    if(policyListing.get(user_id).get(entryId).capability().isUpdate()==true){
-                                        return true; 
-                                    }else{
-                                        return false;
-                                    }
-                                }
-                            }
-                            return true;
-                        } else {
-                            return false;
-                        }
-                    } else { // !isProtectedRequest
-                        //read request
-                        if (isRead == true) {
-                            if (entryIdOpt.exists()){
-                            	int entryId = entryIdOpt.elt();    
-                                if(havePolicies(policyListing, user_id,entryId)) {
-                                    if (policyListing.get(user_id).get(entryId).capability().isRead()==true){
-                                        return true; 
-                                    } else {
-                                        return false;
-                                    }
-                                }
-                            }
-                            return true;
-                        } else { // !isRead
-                            return false;
-                        }
-                    }
-                }
-            }
-        }
-    	// if no rule matches, deny access
-        return false; 
-    }
+ 
     
     private Result accessGranted(Exchange<?> exchange, String user) {
     	
@@ -307,11 +186,7 @@ public class WikiAuthenticator extends Authenticator {
 
     }
     
-       
-    public String getRealm() {
-        return _realm;
-    }
- 
+
        
        
     /*
@@ -332,73 +207,6 @@ public class WikiAuthenticator extends Authenticator {
         } else {
             return true;
         }
-    }
-       
-    /** Checks whether we have entry-level policies for the specific request
-     *
-     * @param exchange HttpExchange
-     * @return boolean
-     */
-    private boolean havePolicies(Map<Integer, Map<Integer,DBPolicy>> listing, int userId, int entryId) {
-        if(listing != null) {
-            if(listing.get(userId) != null) {
-                if(listing.get(userId).get(entryId) != null) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-       
-    
-
-
-    
-    /** Checks whether a request is an entry-level request
-     *
-     * @param uri the request uri
-     * @return boolean
-     * @throws SQLException
-     * @throws WikiException
-     */
-    private Option<Integer> isEntryLevelRequest(URI uri) {
-    	String path = uri.getPath();
-        if (uri.getRawQuery() != null) {
-        	path = path + "?" + uri.getRawQuery();
-        }
-        String[] items = path.split("/");
-        if(items.length >= 3) {
-            if(items[2].contains("?")) {
-                if(items[2].split("\\?")[0].length() == 0) {
-                    return new None<Integer>();
-                } else {
-                    try {
-                        return new Some<Integer>(Integer.parseInt(items[2].split("\\?")[0],16));
-                    } catch (NumberFormatException e) {
-                        return new None<Integer>();
-                    }
-                    
-                }
-            } else {
-                try {
-                    //Map<Integer, Entry> entryListing = _server.getEntryListing(_realm.substring(1));
-                	// TODO: Avoid server dependence here
-                	DatabaseContent entries = _wiki.database().content();
-                    try {
-                        int entry = Integer.parseInt(items[2],16);
-                        if(entries.get(entry)!=null) {
-                            return new Some<Integer>(entry);
-                        }
-                    } catch (NumberFormatException e) {
-                        return new None<Integer>();
-                    }
-                } catch (Exception e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-            }
-        }
-        return new None<Integer>();
     }
 
 }

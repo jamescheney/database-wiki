@@ -23,25 +23,14 @@
 
 package org.dbwiki.web.security;
 
-import java.net.URI;
-import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.dbwiki.exception.WikiException;
-import org.dbwiki.lib.None;
-import org.dbwiki.lib.Option;
-import org.dbwiki.lib.Some;
+import org.dbwiki.user.User;
 import org.dbwiki.user.UserListing;
 import org.dbwiki.web.request.Exchange;
-import org.dbwiki.data.index.DatabaseContent;
-import org.dbwiki.data.security.DBPolicy;
 import org.dbwiki.data.security.SimplePolicy;
 import org.dbwiki.web.server.DatabaseWiki;
-import org.dbwiki.web.server.DatabaseWikiProperties;
 import org.dbwiki.web.server.ServletExchangeWrapper;
 
 
@@ -55,8 +44,6 @@ import org.dbwiki.web.server.ServletExchangeWrapper;
 public class WikiServletAuthenticator {
 
     private UserListing _users;
-    private String _realm;
-    //private Vector<Authorization> _authorizationListing;
     private SimplePolicy _policy;
     
     // TODO: Get rid of this?
@@ -65,193 +52,45 @@ public class WikiServletAuthenticator {
     
     public WikiServletAuthenticator(String realm, UserListing users, DatabaseWiki wiki, SimplePolicy policy) {
         _users = users;
-        _realm = realm;
         _policy = policy;
         _wiki = wiki;
     }
        
-    
-    private boolean allowedFileRequest(String requestURI) {
-        // If the request is for a file (as specified by the 
-    	// regular expressions above), then no authorization is
-        // required.
-    	for (String m : SimplePolicy.fileMatches) {
-    		if (requestURI.matches(m)) 
-    			return true;
-    	}
-    	return false;
-    }
 
     public synchronized boolean authenticate(HttpServletRequest request, HttpServletResponse response) {
         return authenticate (new ServletExchangeWrapper(request,response));
         
     }
     
-    public synchronized boolean authenticate(Exchange<HttpServletRequest> exchange) {
+    public boolean authenticate(Exchange<HttpServletRequest> exchange) {
         
-    	if (allowedFileRequest(exchange.getRequestURI().getPath())) {
+    	if (SimplePolicy.allowedFileRequest(exchange)) {
     		return true;
     	}
-        boolean needsAuth = SimplePolicy.isProtectedRequest(exchange);
+    	
         if(exchange.get().getUserPrincipal() == null) {
-            if ((_policy._mode == DatabaseWikiProperties.AuthenticateAlways) ||
-                (_policy._mode == DatabaseWikiProperties.AuthenticateWriteOnly) && needsAuth) {
+            if (isControlledRequest(exchange)) {
                 return false;
             }
             else {
                 return true;
             }
-        } else if ((_policy._mode == DatabaseWikiProperties.AuthenticateAlways) ||
-            (_policy._mode == DatabaseWikiProperties.AuthenticateWriteOnly) && needsAuth) {
+        } else if (isControlledRequest(exchange)) {
             String uname = exchange.get().getUserPrincipal().getName();
+            User user = _users.get(uname);
             // check if user is administrator
-            return checkRequest(uname, needsAuth, exchange);
+            return _policy.checkRequest(user, _wiki, exchange);
             
         } else {
             return true;
         }
     }
        
-    /** Checks a request by user uname to do the operation specified by exchange */
-    private synchronized boolean checkRequest(String uname, boolean needsAuth, Exchange <?> exchange) {
-    	
-    	if(_users.get(uname).is_admin()) {
-            return true;
-        } else {
-            Map<Integer, Map<Integer,DBPolicy>> policyListing = new HashMap<Integer, Map<Integer,DBPolicy>>();
-            for(int i = 0; i<_policy._authorizationListing.size(); i++) {
-                int user_id = _policy._authorizationListing.get(i).user_id();
-                String database_name = _policy._authorizationListing.get(i).database_name();
-                String dbname = "/" + database_name;
-                String user_login = _users.get(user_id).login();
-                if(user_login.equals(uname) && dbname.equals(_realm)) {
-                    //get the access permissions in the database
-                    boolean isRead = _policy._authorizationListing.get(i).capability().isRead();
-                    boolean isInsert = _policy._authorizationListing.get(i).capability().isInsert();
-                    boolean isDelete = _policy._authorizationListing.get(i).capability().isDelete();
-                    boolean isUpdate = _policy._authorizationListing.get(i).capability().isUpdate();
-
-                	Option<Integer> entryIdOpt = isEntryLevelRequest(URI.create(exchange.getRequestURI().getPath())); 
-                    policyListing = _wiki.getDBPolicyListing(user_id);
-                    // check what kind of request it is
-                    if(needsAuth) {
-                        // insert request
-                        if(SimplePolicy.isInsertRequest(exchange) && isInsert == true) {
-                            if(entryIdOpt.exists()) {
-                            	int entryId = entryIdOpt.elt();    
-                                if(havePolicies(policyListing, user_id,entryId)) {
-                                    return policyListing.get(user_id).get(entryId).capability().isInsert();
-                                }
-                            }
-                            return true;
-                        // delete request
-                        } else if(SimplePolicy.isDeleteRequest(exchange) && isDelete == true) {
-                            if(entryIdOpt.exists()) {
-                            	int entryId = entryIdOpt.elt();    
-                                if(havePolicies(policyListing, user_id,entryId)) {
-                                    return policyListing.get(user_id).get(entryId).capability().isDelete();
-                                }
-                            }
-                            return true;
-                        // update request
-                        } else if(SimplePolicy.isUpdateRequest(exchange) && isUpdate == true){
-                            if(entryIdOpt.exists()) {
-                            	int entryId = entryIdOpt.elt();    
-                                if(havePolicies(policyListing, user_id,entryId)) {
-                                    return policyListing.get(user_id).get(entryId).capability().isUpdate();
-                                }
-                            }
-                            return true;
-                        } else {
-                            return false;
-                        }
-                    } else {
-                        // read request
-                        if(isRead == true) {
-                            if(entryIdOpt.exists()) {
-                            	int entryId = entryIdOpt.elt();    
-                                if(havePolicies(policyListing, user_id,entryId)) {
-                                    return policyListing.get(user_id).get(entryId).capability().isRead();
-                                }
-                            }
-                            return true;
-                        } else {
-                            return false;
-                        }
-                    }
-                }
-            }
-        }
-        return false;
-    }
-    /** Checks whether we have entry-level policies for the specific request
-     *
-     * @param exchange HttpExchange
-     * @return boolean
-     */
-    private boolean havePolicies(Map<Integer, Map<Integer,DBPolicy>> listing, int userId, int entryId) {
-        if(listing != null) {
-            if(listing.get(userId) != null) {
-                if(listing.get(userId).get(entryId) != null) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-       
-    
+    private boolean isControlledRequest(Exchange<HttpServletRequest> exchange) {
+		return _policy.isControlledRequest(exchange);
+	}
 
 
-
-    
-    
-    /** Checks whether a request is an entry-level request
-     * FIXME This is a fairly low-level and fragile way to check whether a request asks for an entry.
-     * @param uri the request uri
-     * @return boolean
-     * @throws SQLException
-     * @throws WikiException
-     */
-    private Option<Integer> isEntryLevelRequest(URI uri) {
-    	String path = uri.getPath();
-        if (uri.getRawQuery() != null) {
-        	path = path + "?" + uri.getRawQuery();
-        }
-        String[] items = path.split("/");
-        if(items.length >= 3) {
-            if(items[2].contains("?")) {
-                if(items[2].split("\\?")[0].length() == 0) {
-                    return new None<Integer>();
-                } else {
-                    try {
-                        return new Some<Integer>(Integer.parseInt(items[2].split("\\?")[0],16));
-                    } catch (NumberFormatException e) {
-                        return new None<Integer>();
-                    }
-                    
-                }
-            } else {
-                try {
-                    //Map<Integer, Entry> entryListing = _server.getEntryListing(_realm.substring(1));
-                    DatabaseContent entries = _wiki.database().content();
-                    try {
-                        int entry = Integer.parseInt(items[2],16);
-                        if(entries.get(entry)!=null) {
-                            return new Some<Integer>(entry);
-                        }
-                    } catch (NumberFormatException e) {
-                        return new None<Integer>();
-                    }
-                } catch (Exception e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-            }
-        }
-        return new None<Integer>();
-    }
-       
-
-
+	
+  
 }

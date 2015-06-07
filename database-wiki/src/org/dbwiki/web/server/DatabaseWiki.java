@@ -190,7 +190,7 @@ public abstract class DatabaseWiki implements Comparable<DatabaseWiki> {
  	}
  	
 	public int getAuthenticationMode() {
-		return _policy._mode;
+		return _policy.getAuthenticationMode();
 	}
 	
 	public int getAutoSchemaChanges() {
@@ -291,7 +291,7 @@ public abstract class DatabaseWiki implements Comparable<DatabaseWiki> {
 	}
 
 	public void setAuthenticationMode(int authMode) {
-		_policy._mode = authMode;
+		_policy.setAuthenticationMode(authMode);
 	}
 	/* 
 	 * Actions
@@ -1162,6 +1162,7 @@ public abstract class DatabaseWiki implements Comparable<DatabaseWiki> {
 	 * @param user_id the id of a user
 	 * @return Map<Integer, Map<Integer,DBPolicy>>
 	 */
+	@Deprecated
 	public Map<Integer,Map<Integer,DBPolicy>> getDBPolicyListing(int user_id) {
 		
 		Map<Integer,Map<Integer,DBPolicy>> policyListing = new HashMap<Integer,Map<Integer,DBPolicy>>();
@@ -1209,7 +1210,7 @@ public abstract class DatabaseWiki implements Comparable<DatabaseWiki> {
 	 * @return Map<Integer, Entry>
 	 * @throws SQLException
 	 * @throws WikiException
-	 * FIXME: make non-static / make method of DatabaseWiki 
+	 * FIXME: #security This duplicates functionality in Database 
 	 */
 	@Deprecated
 	public Map<Integer, Entry> getEntryListing()

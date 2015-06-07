@@ -47,11 +47,11 @@ public class DatabaseWikiStandalone extends DatabaseWiki {
 	 * 
 	 */
 	public DatabaseWikiStandalone(int id, String name, String title,
-			int autoSchemaChanges, SimplePolicy policy, 
+			int authenticationMode, int autoSchemaChanges, 
 			ConfigSetting setting, DatabaseConnector connector,
 			WikiServerStandalone server)
 			throws org.dbwiki.exception.WikiException {
-		_policy = policy;
+		_policy = new SimplePolicy(authenticationMode,server._policy);
 		_id = id;
 		_server = server;
 		_name = name;
@@ -69,11 +69,11 @@ public class DatabaseWikiStandalone extends DatabaseWiki {
 	// HACK: pass in and use an existing connection and version index.
 	// Used only in WikiServer.RegisterDatabase to create a new database.
 	public DatabaseWikiStandalone(int id, String name, String title,
-			int autoSchemaChanges, SimplePolicy policy, 
+			int authenticationMode, int autoSchemaChanges, 
 			DatabaseConnector connector, WikiServerStandalone server,
 			Connection con, SQLVersionIndex versionIndex)
 			throws org.dbwiki.exception.WikiException {
-		_policy = policy;
+		_policy = new SimplePolicy(authenticationMode,server._policy);
 		_autoSchemaChanges = autoSchemaChanges;
 		_id = id;
 		_server = server;

@@ -38,7 +38,6 @@ import org.dbwiki.data.database.Database;
 import org.dbwiki.data.io.ImportHandler;
 import org.dbwiki.data.io.XMLDocumentImportReader;
 import org.dbwiki.data.schema.DatabaseSchema;
-import org.dbwiki.data.security.SimplePolicy;
 import org.dbwiki.driver.rdbms.DatabaseImportHandler;
 import org.dbwiki.driver.rdbms.SQLVersionIndex;
 import org.dbwiki.exception.WikiException;
@@ -103,10 +102,10 @@ public class WikiServerHttpHandler extends WikiServer implements HttpHandler {
 			if (org.dbwiki.lib.JDBC.hasColumn(rs, RelDatabaseColURLDecoding)) {
 				urlDecodingVersion = rs.getInt(RelDatabaseColURLDecoding);
 			}
-			SimplePolicy policy = new SimplePolicy(rs.getInt(RelDatabaseColAuthentication),_policy._authorizationListing);
+			int authenticationMode = rs.getInt(RelDatabaseColAuthentication);
 			int autoSchemaChanges = rs.getInt(RelDatabaseColAutoSchemaChanges);
 			ConfigSetting setting = new ConfigSetting(layoutVersion, templateVersion, styleSheetVersion, urlDecodingVersion);
-			_wikiListing.add(new DatabaseWikiHttpHandler(id, name, title, _users,_formTemplate, policy, autoSchemaChanges, setting, _connector, this));
+			_wikiListing.add(new DatabaseWikiHttpHandler(id, name, title, _users,_formTemplate, authenticationMode, autoSchemaChanges, setting, _connector, this));
 		}
 		rs.close();
 		stmt.close();
@@ -186,8 +185,7 @@ public class WikiServerHttpHandler extends WikiServer implements HttpHandler {
 			
 			wikiID = r.createCollection(con, versionIndex);
 			con.commit();
-			SimplePolicy policy = new SimplePolicy(authenticationMode,_policy._authorizationListing);
-			DatabaseWikiHttpHandler wiki = new DatabaseWikiHttpHandler(wikiID, name, title, _users, _formTemplate, policy, autoSchemaChanges, _connector, this,
+			DatabaseWikiHttpHandler wiki = new DatabaseWikiHttpHandler(wikiID, name, title, _users, _formTemplate, authenticationMode, autoSchemaChanges, _connector, this,
 									con, versionIndex);
 
 			// this should now only be called when starting a web server
