@@ -35,8 +35,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -65,13 +63,11 @@ import org.dbwiki.data.resource.PageIdentifier;
 import org.dbwiki.data.schema.AttributeSchemaNode;
 import org.dbwiki.data.schema.SchemaNode;
 import org.dbwiki.data.schema.GroupSchemaNode;
-import org.dbwiki.data.security.Entry;
 import org.dbwiki.data.security.DBPolicy;
 import org.dbwiki.data.security.SimplePolicy;
 import org.dbwiki.data.wiki.Wiki;
 import org.dbwiki.driver.rdbms.DatabaseConnector;
 import org.dbwiki.driver.rdbms.DatabaseConstants;
-import org.dbwiki.exception.WikiException;
 import org.dbwiki.exception.WikiFatalException;
 import org.dbwiki.exception.web.WikiRequestException;
 import org.dbwiki.user.UserListing;
@@ -1215,6 +1211,7 @@ public abstract class DatabaseWiki implements Comparable<DatabaseWiki> {
 	 * @throws WikiException
 	 * FIXME: #security This duplicates functionality in Database 
 	 */
+	/*
 	@Deprecated
 	public Map<Integer, Entry> getEntryListing()
 			throws SQLException, WikiException {
@@ -1252,8 +1249,10 @@ public abstract class DatabaseWiki implements Comparable<DatabaseWiki> {
 		stmt.close();
 		return entryListing;
 	}
+	*/
 	
 	/** The sorted entry ids */
+	/*
 	@Deprecated
 	public ArrayList<Integer> getSortedKeys() throws SQLException, WikiException {
 		Map<Integer, Entry> _entryListing = getEntryListing();
@@ -1261,5 +1260,6 @@ public abstract class DatabaseWiki implements Comparable<DatabaseWiki> {
 		Collections.sort(keys);
 		return keys;
 	}
+	*/
 
 }
