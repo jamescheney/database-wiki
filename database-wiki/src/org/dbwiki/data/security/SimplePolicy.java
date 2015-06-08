@@ -288,6 +288,7 @@ public class SimplePolicy implements WikiServerConstants {
 
     				URI uri = exchange.getRequestURI();
     				Option<Integer> entryIdOpt = SimplePolicy.isEntryLevelRequest(uri, wiki);
+    				// FIXME: This should become part of the policy state.
     				Map<Integer,Map<Integer,DBPolicy>> policyListing = wiki.getDBPolicyListing(user_id);
 
     				// check what kind of request it is

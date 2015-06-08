@@ -96,6 +96,7 @@ public abstract class DatabaseConnector implements DatabaseConstants, WikiServer
             createTimestampTable(con, dbName);
             createPagesTable(con, dbName);
             createPolicyTable(con, dbName);
+            createDataView(con, dbName); 
             createSchemaIndexView(con, dbName);
                
             // store the schema, generating a version number and timestamp for the root
@@ -216,7 +217,7 @@ public abstract class DatabaseConnector implements DatabaseConstants, WikiServer
             dropView(stmt, dbName + ViewSchemaIndex);
                
             dropTable(stmt, dbName + RelationAnnotation);
-            dropTable(stmt, dbName + RelationAnnotation);
+            dropTable(stmt, dbName + RelationPolicy);
             dropTable(stmt, dbName + RelationData);
             dropTable(stmt, dbName + RelationPages);
             dropTable(stmt, dbName + RelationSchema);
@@ -242,6 +243,7 @@ public abstract class DatabaseConnector implements DatabaseConstants, WikiServer
             rs.close();
         }
         dropTable(stmt, RelationDatabase);
+        dropTable(stmt, RelationAuthorization);
         dropTable(stmt, RelationPresentation);
         dropTable(stmt, RelationUser);
         stmt.close();
@@ -315,6 +317,31 @@ public abstract class DatabaseConnector implements DatabaseConstants, WikiServer
         stmt.close();
     }
 
+    protected void createDataView(Connection con, String dbName) throws java.sql.SQLException {
+    	Statement stmt = con.createStatement();
+
+    	stmt.execute("CREATE VIEW " + dbName + ViewData + " AS " +
+    			"SELECT " + 
+    			"d." + RelDataColID + " " + ViewDataColNodeID + ", " +
+    			"d." + RelDataColParent + " " + ViewDataColNodeParent + ", " +
+    			"d." + RelDataColSchema + " " + ViewDataColNodeSchema + ", " +
+    			"d." + RelDataColEntry + " " + ViewDataColNodeEntry + ", " +
+    			"d." + RelDataColValue + " " + ViewDataColNodeValue + ", " +
+    			"d." + RelDataColPre + " " + ViewDataColNodePre + ", " +
+    			"d." + RelDataColPost + " " + ViewDataColNodePost + ", " +
+    			"t." + RelTimesequenceColStart + " " + ViewDataColTimestampStart + ", " +
+    			"t." + RelTimesequenceColStop + " " + ViewDataColTimestampEnd + ", " +
+    			"a." + RelAnnotationColID + " " + ViewDataColAnnotationID + ", " +
+    			"a." + RelAnnotationColDate + " " + ViewDataColAnnotationDate + ", " +
+    			"a." + RelAnnotationColUser + " " + ViewDataColAnnotationUser + ", " +
+    			"a." + RelAnnotationColText + " " + ViewDataColAnnotationText + " " +
+    			"FROM " + dbName + RelationData + " d " +
+    			"LEFT OUTER JOIN " + dbName + RelationTimesequence + " t ON (d." + RelDataColTimesequence + " = " + "t." + RelTimesequenceColID + ") " +
+    			"LEFT OUTER JOIN " + dbName + RelationAnnotation + " a ON (d." + RelDataColID + " = " + "a." + RelAnnotationColNode + ")");
+
+    	stmt.close();
+    }
+    
     protected void createPagesTable(Connection con, String dbName) throws java.sql.SQLException {  
         Statement stmt = con.createStatement();
            

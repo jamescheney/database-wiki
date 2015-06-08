@@ -1,2 +1,2 @@
-Admin	Admin	admin
-Guest	Guest	guest
+Admin	Admin	admin	true
+Guest	Guest	guest	false
