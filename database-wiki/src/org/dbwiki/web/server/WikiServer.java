@@ -48,6 +48,7 @@ import org.dbwiki.data.io.StructureParser;
 import org.dbwiki.data.schema.DatabaseSchema;
 import org.dbwiki.data.schema.SchemaParser;
 import org.dbwiki.data.security.Capability;
+import org.dbwiki.data.security.Entry;
 import org.dbwiki.data.security.DBPolicy;
 import org.dbwiki.data.security.SimplePolicy;
 import org.dbwiki.driver.rdbms.DatabaseConnector;

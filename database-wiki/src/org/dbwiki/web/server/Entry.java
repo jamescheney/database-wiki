@@ -29,7 +29,7 @@ package org.dbwiki.web.server;
  * @author mingjun
  * TODO: Move to security module
  */
-
+@Deprecated
 public class Entry {
 	private int entry_id;
 	private String entry_value;

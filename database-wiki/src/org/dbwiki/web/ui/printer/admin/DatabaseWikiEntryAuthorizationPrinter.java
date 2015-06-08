@@ -8,7 +8,7 @@ import org.dbwiki.exception.WikiException;
 import org.dbwiki.user.UserListing;
 import org.dbwiki.web.html.HtmlLinePrinter;
 import org.dbwiki.web.request.parameter.RequestParameterAction;
-import org.dbwiki.web.server.Entry;
+import org.dbwiki.data.security.Entry;
 import org.dbwiki.data.security.DBPolicy;
 import org.dbwiki.web.server.WikiServer;
 import org.dbwiki.web.ui.CSS;
