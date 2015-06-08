@@ -81,13 +81,15 @@ public class SimpleWiki implements Wiki {
 			VectorDatabaseListing content = new VectorDatabaseListing();
 			Connection con = _connector.getConnection();
 			PreparedStatement pStmtSelectPages = con.prepareStatement(
-					"SELECT DISTINCT " + DatabaseConstants.RelPagesColName + " " +
+					"SELECT DISTINCT " + DatabaseConstants.RelPagesColName + ", " + 
+									     DatabaseConstants.RelPagesColID + " " + 
 					"FROM " +  _relName + DatabaseConstants.RelationPages + " " +
 					"ORDER BY " + DatabaseConstants.RelPagesColName);
 			ResultSet rs = pStmtSelectPages.executeQuery();
 			while (rs.next()) {
 				String title = rs.getString(DatabaseConstants.RelPagesColName);
-				content.add(new WikiPageDescription(title, new PageIdentifier(URLEncoder.encode(title, "UTF-8"))));
+				int id = rs.getInt(DatabaseConstants.RelPagesColID);
+				content.add(new WikiPageDescription(title, new PageIdentifier(URLEncoder.encode(title, "UTF-8"),id,-1)));
 			}
 			rs.close();
 			pStmtSelectPages.close();

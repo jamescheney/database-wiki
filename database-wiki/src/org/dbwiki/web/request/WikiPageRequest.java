@@ -67,7 +67,7 @@ public class WikiPageRequest extends WikiRequest  {
 			if(timestampParameter != null) {
 				timestamp = Long.parseLong(timestampParameter.value());
 			}
-			_wri = new WRI(wikiIdentifier, new PageIdentifier(url.get(0).encodedText(), timestamp));
+			_wri = new WRI(wikiIdentifier, new PageIdentifier(url.get(0).encodedText(), -1, timestamp));
 		} else {
 			throw new WikiNodeException(WikiNodeException.InvalidIdentifierFormat, url.toString());
 		}

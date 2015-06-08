@@ -35,6 +35,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -1168,38 +1170,38 @@ public abstract class DatabaseWiki implements Comparable<DatabaseWiki> {
 		
 		Map<Integer,Map<Integer,DBPolicy>> policyListing = new HashMap<Integer,Map<Integer,DBPolicy>>();
 		try{
-		Connection con = _connector.getConnection();
-		con.setAutoCommit(false);
-		Statement stmt = con.createStatement();
-		ResultSet rs = stmt.executeQuery("SELECT * FROM "
-				+ _name + DatabaseConstants.RelationPolicy
-				+" WHERE " + DatabaseConstants.RelPolicyUserID + " = "+user_id);
-		System.out.println("SELECT * FROM "
-				+ _name + DatabaseConstants.RelationPolicy
-				+" WHERE " + DatabaseConstants.RelPolicyUserID + " = "+user_id);
-		while (rs.next()) {
-			if(policyListing.get(rs.getInt(DatabaseConstants.RelPolicyUserID))==null){
-				Map<Integer,DBPolicy> map = new HashMap<Integer,DBPolicy>();
-				map.put(rs.getInt(DatabaseConstants.RelPolicyEntry), new DBPolicy(rs
-					.getInt(DatabaseConstants.RelPolicyUserID), rs
-					.getInt(DatabaseConstants.RelPolicyEntry), rs
-					.getBoolean(DatabaseConstants.RelPolicyRead), rs
-					.getBoolean(DatabaseConstants.RelPolicyInsert), rs
-					.getBoolean(DatabaseConstants.RelPolicyDelete), rs
-					.getBoolean(DatabaseConstants.RelPolicyUpdate)));
-				policyListing.put(rs.getInt(DatabaseConstants.RelPolicyUserID), map);
-			} else {
-				policyListing.get(rs.getInt(DatabaseConstants.RelPolicyUserID)).put(rs.getInt(DatabaseConstants.RelPolicyEntry), new DBPolicy(rs
-					.getInt(DatabaseConstants.RelPolicyUserID), rs
-					.getInt(DatabaseConstants.RelPolicyEntry), rs
-					.getBoolean(DatabaseConstants.RelPolicyRead), rs
-					.getBoolean(DatabaseConstants.RelPolicyInsert), rs
-					.getBoolean(DatabaseConstants.RelPolicyDelete), rs
-					.getBoolean(DatabaseConstants.RelPolicyUpdate)));
+			Connection con = _connector.getConnection();
+			con.setAutoCommit(false);
+			Statement stmt = con.createStatement();
+			ResultSet rs = stmt.executeQuery("SELECT * FROM "
+					+ _name + DatabaseConstants.RelationPolicy
+					+" WHERE " + DatabaseConstants.RelPolicyUserID + " = "+user_id);
+			System.out.println("SELECT * FROM "
+					+ _name + DatabaseConstants.RelationPolicy
+					+" WHERE " + DatabaseConstants.RelPolicyUserID + " = "+user_id);
+			while (rs.next()) {
+				if(policyListing.get(rs.getInt(DatabaseConstants.RelPolicyUserID))==null){
+					Map<Integer,DBPolicy> map = new HashMap<Integer,DBPolicy>();
+					map.put(rs.getInt(DatabaseConstants.RelPolicyEntry), new DBPolicy(rs
+						.getInt(DatabaseConstants.RelPolicyUserID), rs
+						.getInt(DatabaseConstants.RelPolicyEntry), rs
+						.getBoolean(DatabaseConstants.RelPolicyRead), rs
+						.getBoolean(DatabaseConstants.RelPolicyInsert), rs
+						.getBoolean(DatabaseConstants.RelPolicyDelete), rs
+						.getBoolean(DatabaseConstants.RelPolicyUpdate)));
+					policyListing.put(rs.getInt(DatabaseConstants.RelPolicyUserID), map);
+				} else {
+					policyListing.get(rs.getInt(DatabaseConstants.RelPolicyUserID)).put(rs.getInt(DatabaseConstants.RelPolicyEntry), new DBPolicy(rs
+						.getInt(DatabaseConstants.RelPolicyUserID), rs
+						.getInt(DatabaseConstants.RelPolicyEntry), rs
+						.getBoolean(DatabaseConstants.RelPolicyRead), rs
+						.getBoolean(DatabaseConstants.RelPolicyInsert), rs
+						.getBoolean(DatabaseConstants.RelPolicyDelete), rs
+						.getBoolean(DatabaseConstants.RelPolicyUpdate)));
+				}
 			}
-		}
-		rs.close();
-		stmt.close();
+			rs.close();
+			stmt.close();
 		} catch(Exception e){
 			e.printStackTrace();
 		}
@@ -1249,6 +1251,15 @@ public abstract class DatabaseWiki implements Comparable<DatabaseWiki> {
 		rs.close();
 		stmt.close();
 		return entryListing;
+	}
+	
+	/** The sorted entry ids */
+	@Deprecated
+	public ArrayList<Integer> getSortedKeys() throws SQLException, WikiException {
+		Map<Integer, Entry> _entryListing = getEntryListing();
+		ArrayList<Integer> keys = new ArrayList<Integer>(_entryListing.keySet());
+		Collections.sort(keys);
+		return keys;
 	}
 
 }

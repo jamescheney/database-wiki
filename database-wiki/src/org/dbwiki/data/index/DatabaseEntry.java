@@ -38,6 +38,7 @@ public interface DatabaseEntry extends Comparable<DatabaseEntry> {
 	
 	public ResourceIdentifier identifier();
 	public String label();
+	public int id();
 	public int lastChange();
 	public TimeSequence timestamp();
 }

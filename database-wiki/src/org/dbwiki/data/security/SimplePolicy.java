@@ -281,10 +281,11 @@ public class SimplePolicy implements WikiServerConstants {
     			//String user_login = _users.get(user_id).login();
     			if(user.id() == user_id && database_name.equals(wiki.name())) {
     				//get the access permissions in the database
-    				boolean isRead = _authorizationListing.get(i).capability().isRead();
-    				boolean isInsert = _authorizationListing.get(i).capability().isInsert();
-    				boolean isDelete = _authorizationListing.get(i).capability().isDelete();
-    				boolean isUpdate = _authorizationListing.get(i).capability().isUpdate();
+    				Capability cap =  _authorizationListing.get(i).capability();
+    				boolean isRead = cap.isRead();
+    				boolean isInsert = cap.isInsert();
+    				boolean isDelete = cap.isDelete();
+    				boolean isUpdate = cap.isUpdate();
 
     				URI uri = exchange.getRequestURI();
     				Option<Integer> entryIdOpt = SimplePolicy.isEntryLevelRequest(uri, wiki);
@@ -432,6 +433,12 @@ public class SimplePolicy implements WikiServerConstants {
 			pStmt.execute();
 			pStmt.close();
 		}
+		con.commit();
+		/* FIXME: #security Reloading after every change is correct, but inefficient; 
+		 * we should change the _authorizationListing in-place. 
+		 */
+		getAuthorizationListing(con);
     }
+    
 
 }

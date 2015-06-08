@@ -1,15 +1,15 @@
 package org.dbwiki.web.ui.printer.admin;
 
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Map;
+
 import org.dbwiki.exception.WikiException;
 import org.dbwiki.user.UserListing;
 import org.dbwiki.web.html.HtmlLinePrinter;
 import org.dbwiki.web.request.parameter.RequestParameterAction;
-import org.dbwiki.data.security.Entry;
+import org.dbwiki.data.index.DatabaseContent;
 import org.dbwiki.data.security.DBPolicy;
+import org.dbwiki.web.server.DatabaseWiki;
 import org.dbwiki.web.server.WikiServer;
 import org.dbwiki.web.ui.CSS;
 import org.dbwiki.web.ui.printer.HtmlContentPrinter;
@@ -26,17 +26,15 @@ public class DatabaseWikiEntryAuthorizationPrinter extends HtmlContentPrinter {
 	private String _action;
 	private UserListing _users;
 	private int _user_id;
-	private String _wiki;
-	private Map<Integer, Entry> _entryListing;
+	private DatabaseWiki _wiki;
 	private Map<Integer,Map<Integer,DBPolicy>> _policyListing;
 
-	public DatabaseWikiEntryAuthorizationPrinter(String _headline,String _action, UserListing _users, String _wiki, int _user_id, Map<Integer,Entry> _entryListing, Map<Integer,Map<Integer,DBPolicy>> _policyListing) {
+	public DatabaseWikiEntryAuthorizationPrinter(String _headline,String _action, UserListing _users, DatabaseWiki _wiki, int _user_id,  Map<Integer,Map<Integer,DBPolicy>> _policyListing) {
 		this._headline = _headline;
 		this._action = _action;
 		this._users = _users;
 		this._wiki = _wiki;
 		this._user_id = _user_id;
-		this._entryListing = _entryListing;
 		this._policyListing = _policyListing;
 	}
 	
@@ -48,7 +46,7 @@ public class DatabaseWikiEntryAuthorizationPrinter extends HtmlContentPrinter {
 	
 	
 	public void print(HtmlLinePrinter printer) throws WikiException {
-		
+	
 		_headline += "\t-" + _users.get(_user_id).login();
 		printer.paragraph(_headline, CSS.CSSHeadline);
 
@@ -94,12 +92,20 @@ public class DatabaseWikiEntryAuthorizationPrinter extends HtmlContentPrinter {
 		printer.closeTH();
 		printer.closeTR();
 		//contents
-		// Sorting key set helps align form with update code, see WikiServer.getUpdateEntryAuthorizationResponseHandler
+		
+		/*Map<Integer, Entry> _entryListing = _wiki.getEntryListing();
 		ArrayList<Integer> keys = new ArrayList<Integer>(_entryListing.keySet());
-		Collections.sort(keys);
-		for(Integer i:keys){
-			String entry_value = _entryListing.get(i).entry_value();
-			int entry_id = _entryListing.get(i).entry_id();
+		Collections.sort(keys);*/
+		
+		// FIXME: Use DatabaseContents instead here!
+		
+		//Map<Integer, Entry> _entryListing = _wiki.getEntryListing();
+		//ArrayList<Integer> keys = _wiki.getSortedKeys();
+		DatabaseContent entries = _wiki.database().content();
+		// Sorting key set helps align form with update code, see WikiServer.getUpdateEntryAuthorizationResponseHandler
+		for(int i = 0; i < entries.size(); i++){
+			String entry_value = entries.get(i).label();
+			int entry_id = entries.get(i).id();
 			
 			//
 			// entry name
@@ -183,7 +189,7 @@ public class DatabaseWikiEntryAuthorizationPrinter extends HtmlContentPrinter {
 		
 		printer.closeTABLE();
 		//find  name of the database here
-		printer.addHIDDEN(WikiServer.ParameterName, _wiki);
+		printer.addHIDDEN(WikiServer.ParameterName, _wiki.name());
 		printer.addHIDDEN("user_id", _user_id+"");
 		printer.openPARAGRAPH(CSS.CSSButtonLine);
 		printer.openCENTER();
@@ -200,6 +206,7 @@ public class DatabaseWikiEntryAuthorizationPrinter extends HtmlContentPrinter {
 		printer.closeTD();
 		printer.closeTR();
 		printer.closeTABLE();
+	
 	}
 		
 }
