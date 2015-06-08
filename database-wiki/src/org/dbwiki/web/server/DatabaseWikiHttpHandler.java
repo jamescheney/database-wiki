@@ -63,6 +63,7 @@ public class DatabaseWikiHttpHandler extends DatabaseWiki implements
 	 * WikiServer.getWikiListing.
 	 * 
 	 */
+	// FIXME: Factor out common stuff in DatabaseWiki constructor
 	public DatabaseWikiHttpHandler(int id, String name, String title,
 			UserListing _users, File _formTemplate, int authenticationMode, int autoSchemaChanges,
 			ConfigSetting setting, DatabaseConnector connector,
@@ -85,10 +86,14 @@ public class DatabaseWikiHttpHandler extends DatabaseWiki implements
 		_database = new RDBMSDatabase(this, connector);
 		_database.validate();
 		_wiki = new SimpleWiki(name, connector, server.users());
+		
+		initializePolicy();
+		
 	}
 
 	// HACK: pass in and use an existing connection and version index.
 	// Used only in WikiServer.RegisterDatabase to create a new database.
+	// FIXME: Factor out common stuff in DatabaseWiki constructor
 	public DatabaseWikiHttpHandler(int id, String name, String title,
 			UserListing _users, File _formTemplate, int authenticationMode, int autoSchemaChanges,
 			DatabaseConnector connector, WikiServerHttpHandler server,
@@ -110,6 +115,8 @@ public class DatabaseWikiHttpHandler extends DatabaseWiki implements
 
 		_database = new RDBMSDatabase(this, connector, con, versionIndex);
 		_wiki = new SimpleWiki(name, connector, server.users());
+		initializePolicy();
+		
 	}
 
 	/*

@@ -6,10 +6,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
 
 import org.dbwiki.data.index.DatabaseContent;
+import org.dbwiki.driver.rdbms.DatabaseConstants;
 import org.dbwiki.exception.WikiException;
 import org.dbwiki.exception.WikiFatalException;
 import org.dbwiki.lib.None;
@@ -26,7 +28,7 @@ import org.dbwiki.web.server.WikiServerConstants;
 public class SimplePolicy implements WikiServerConstants {
 
     private Vector<Authorization> _authorizationListing;
-    
+    private Map<Integer,Map<Integer,DBPolicy>> _policyListing;
     private int _authenticationMode;
     
     
@@ -253,21 +255,7 @@ public class SimplePolicy implements WikiServerConstants {
     	return new None<Integer>();
     }
 
-    /** Checks whether we have entry-level policies for the specific request
-     *
-     * @param exchange HttpExchange
-     * @return boolean
-     */
-    private static boolean havePolicies(Map<Integer, Map<Integer,DBPolicy>> listing, int userId, int entryId) {
-    	if(listing != null) {
-    		if(listing.get(userId) != null) {
-    			if(listing.get(userId).get(entryId) != null) {
-    				return true;
-    			}
-    		}
-    	}
-    	return false;
-    }
+    
    
     /** Check a request by user uname to do request specified by exchange */
     public boolean checkRequest(User user, DatabaseWiki wiki, Exchange<?> exchange) {
@@ -290,8 +278,8 @@ public class SimplePolicy implements WikiServerConstants {
     				URI uri = exchange.getRequestURI();
     				Option<Integer> entryIdOpt = SimplePolicy.isEntryLevelRequest(uri, wiki);
     				// FIXME: This should become part of the policy state.
-    				Map<Integer,Map<Integer,DBPolicy>> policyListing = wiki.getDBPolicyListing(user_id);
-
+   				    //Map<Integer,Map<Integer,DBPolicy>> policyListing = wiki.getDBPolicyListing(user_id);
+    				
     				// check what kind of request it is
     				if (isProtectedRequest) {
     					//insert request
@@ -300,8 +288,8 @@ public class SimplePolicy implements WikiServerConstants {
     						if(entryIdOpt.exists()) {
     							int entryId = entryIdOpt.elt();
     							// and we have an entry-level policy
-    							if(SimplePolicy.havePolicies(policyListing, user_id,entryId)) {
-    								return policyListing.get(user_id).get(entryId).capability().isInsert();
+    							if(findEntry(user_id,entryId)) {
+    								return findEntryCapability(user_id,entryId).isInsert();
     							}
     						} // otherwise allow it
     						return true; 
@@ -309,8 +297,8 @@ public class SimplePolicy implements WikiServerConstants {
     					} else if (SimplePolicy.isDeleteRequest(exchange) && isDelete == true){
     						if(entryIdOpt.exists()) {
     							int entryId = entryIdOpt.elt();    
-    							if(SimplePolicy.havePolicies(policyListing, user_id,entryId)) {
-    								return policyListing.get(user_id).get(entryId).capability().isDelete();
+    							if(findEntry(user_id,entryId)) {
+    								return findEntryCapability(user_id,entryId).isDelete();
     							}
     						}
     						return true; 
@@ -318,8 +306,8 @@ public class SimplePolicy implements WikiServerConstants {
     					} else if (SimplePolicy.isUpdateRequest(exchange) && isUpdate == true){
     						if(entryIdOpt.exists()){
     							int entryId = entryIdOpt.elt();    
-    							if(SimplePolicy.havePolicies(policyListing, user_id,entryId)) {
-    								return policyListing.get(user_id).get(entryId).capability().isUpdate();
+    							if(findEntry(user_id,entryId)) {
+    								return findEntryCapability(user_id,entryId).isUpdate();
     							}
     						}
     						return true;
@@ -331,8 +319,8 @@ public class SimplePolicy implements WikiServerConstants {
     					if (isRead == true) {
     						if (entryIdOpt.exists()){
     							int entryId = entryIdOpt.elt();    
-    							if(SimplePolicy.havePolicies(policyListing, user_id,entryId)) {
-    								return policyListing.get(user_id).get(entryId).capability().isRead();
+    							if(findEntry(user_id,entryId)) {
+    								return findEntryCapability(user_id,entryId).isRead();
     							}
     						}
     						return true;
@@ -370,6 +358,21 @@ public class SimplePolicy implements WikiServerConstants {
     	}
     	return false;
     }
+    
+    public boolean findEntry (int user_index, int entry) {
+		for( int key : _policyListing.keySet()){
+			if (user_index == key){
+				Map<Integer,DBPolicy> map = _policyListing.get(key);
+				for(Integer entryId : map.keySet()){
+					if(entryId == entry){
+						return true;
+
+					}
+				}
+			}
+		}
+		return false;
+    }
 
     /** Return the authorization/capability for user user_index in database wiki_name
      * FIXME: It would be better to build a map from user ids and db names to capabilities.
@@ -387,6 +390,21 @@ public class SimplePolicy implements WikiServerConstants {
     		}
     	}
     	return null;
+    }
+    
+    public Capability findEntryCapability (int user_index, int entry) {
+		for( int key : _policyListing.keySet()){
+			if (user_index == key){
+				Map<Integer,DBPolicy> map = _policyListing.get(key);
+				for(Integer entryId : map.keySet()){
+					if(entryId == entry){
+						return _policyListing.get(user_index).get(entry).capability();
+
+					}
+				}
+			}
+		}
+		return null;
     }
     
     /* FIXME: #security It would be better if this also updated the authorization listing. */
@@ -440,5 +458,91 @@ public class SimplePolicy implements WikiServerConstants {
 		getAuthorizationListing(con);
     }
     
+    public void updateEntryCapability(Connection con, int user_index, DatabaseWiki wiki, int entry, Capability cap) 
+    		throws SQLException {
+    	
+    	PreparedStatement pStmt = null;
+		
+		if (findEntry(user_index, entry)) {
+			pStmt = con.prepareStatement("UPDATE "
+					+ wiki.name() + DatabaseConstants.RelationPolicy + " " + "SET "
+					+ DatabaseConstants.RelPolicyRead + " = ?, "
+					+ DatabaseConstants.RelPolicyInsert + " = ?, "
+					+ DatabaseConstants.RelPolicyDelete + " = ?, "
+					+ DatabaseConstants.RelPolicyUpdate + " = ? "
+					+ "WHERE " + DatabaseConstants.RelPolicyEntry + " = ? "
+					+ "AND " + DatabaseConstants.RelPolicyUserID + " = ?");
+
+			pStmt.setBoolean(1, cap.isRead());
+			pStmt.setBoolean(2, cap.isInsert());
+			pStmt.setBoolean(3, cap.isDelete());
+			pStmt.setBoolean(4, cap.isUpdate());
+			pStmt.setInt(5, entry);
+			pStmt.setInt(6, user_index);
+			pStmt.execute();
+			pStmt.close();
+		} else {
+			pStmt = con.prepareStatement("INSERT INTO "
+					+ wiki.name() + DatabaseConstants.RelationPolicy + "("
+					+ DatabaseConstants.RelPolicyEntry + ", "
+					+ DatabaseConstants.RelPolicyUserID + ", "
+					+ DatabaseConstants.RelPolicyRead + ", "
+					+ DatabaseConstants.RelPolicyInsert + ", "
+					+ DatabaseConstants.RelPolicyDelete + ", "
+					+ DatabaseConstants.RelPolicyUpdate
+					+ ") VALUES(?, ?, ?, ?, ?, ?)");
+
+			pStmt.setInt(1, entry);
+			pStmt.setInt(2, user_index);
+			pStmt.setBoolean(3, cap.isRead());
+			pStmt.setBoolean(4, cap.isInsert());
+			pStmt.setBoolean(5, cap.isDelete());
+			pStmt.setBoolean(6, cap.isUpdate());
+			pStmt.execute();
+			pStmt.close();
+		}
+		con.commit();
+		/* FIXME: #security Reloading after every change is correct, but inefficient; 
+		 * we should change the _authorizationListing in-place. 
+		 */
+		getDBPolicyListing(con, wiki);
+    }
+    /**
+	 * Get entry permissions of all users for database DB from DB_policy table
+	 * @param user_id the id of a user
+	 * FIXME: Combine this with getAuthorizationListing
+	 */
+	public void getDBPolicyListing(Connection con, DatabaseWiki wiki) throws SQLException {
+
+		_policyListing = new HashMap<Integer,Map<Integer,DBPolicy>>();
+		Statement stmt = con.createStatement();
+		ResultSet rs = stmt.executeQuery("SELECT * FROM "
+				+ wiki.name() + DatabaseConstants.RelationPolicy);
+		System.out.println("SELECT * FROM "
+				+ wiki.name() + DatabaseConstants.RelationPolicy);
+		while (rs.next()) {
+			if(_policyListing.get(rs.getInt(DatabaseConstants.RelPolicyUserID))==null){
+				Map<Integer,DBPolicy> map = new HashMap<Integer,DBPolicy>();
+				map.put(rs.getInt(DatabaseConstants.RelPolicyEntry), new DBPolicy(rs
+					.getInt(DatabaseConstants.RelPolicyUserID), rs
+					.getInt(DatabaseConstants.RelPolicyEntry), rs
+					.getBoolean(DatabaseConstants.RelPolicyRead), rs
+					.getBoolean(DatabaseConstants.RelPolicyInsert), rs
+					.getBoolean(DatabaseConstants.RelPolicyDelete), rs
+					.getBoolean(DatabaseConstants.RelPolicyUpdate)));
+				_policyListing.put(rs.getInt(DatabaseConstants.RelPolicyUserID), map);
+			} else {
+				_policyListing.get(rs.getInt(DatabaseConstants.RelPolicyUserID)).put(rs.getInt(DatabaseConstants.RelPolicyEntry), new DBPolicy(rs
+					.getInt(DatabaseConstants.RelPolicyUserID), rs
+					.getInt(DatabaseConstants.RelPolicyEntry), rs
+					.getBoolean(DatabaseConstants.RelPolicyRead), rs
+					.getBoolean(DatabaseConstants.RelPolicyInsert), rs
+					.getBoolean(DatabaseConstants.RelPolicyDelete), rs
+					.getBoolean(DatabaseConstants.RelPolicyUpdate)));
+			}
+		}
+		rs.close();
+		stmt.close();
+	}
 
 }

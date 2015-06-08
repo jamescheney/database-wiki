@@ -46,6 +46,7 @@ public class DatabaseWikiStandalone extends DatabaseWiki {
 	 * WikiServer.getWikiListing.
 	 * 
 	 */
+	// FIXME: Factor out common stuff in DatabaseWiki constructor
 	public DatabaseWikiStandalone(int id, String name, String title,
 			int authenticationMode, int autoSchemaChanges, 
 			ConfigSetting setting, DatabaseConnector connector,
@@ -64,10 +65,13 @@ public class DatabaseWikiStandalone extends DatabaseWiki {
 		_database = new RDBMSDatabase(this, connector);
 		_database.validate();
 		_wiki = new SimpleWiki(name, connector, server.users());
+		initializePolicy();
+		
 	}
 
 	// HACK: pass in and use an existing connection and version index.
 	// Used only in WikiServer.RegisterDatabase to create a new database.
+	// FIXME: Factor out common stuff in DatabaseWiki constructor
 	public DatabaseWikiStandalone(int id, String name, String title,
 			int authenticationMode, int autoSchemaChanges, 
 			DatabaseConnector connector, WikiServerStandalone server,
@@ -88,6 +92,8 @@ public class DatabaseWikiStandalone extends DatabaseWiki {
 
 		_database = new RDBMSDatabase(this, connector, con, versionIndex);
 		_wiki = new SimpleWiki(name, connector, server.users());
+		initializePolicy();
+		
 	}
 
 

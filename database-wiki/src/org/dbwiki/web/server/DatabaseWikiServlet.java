@@ -60,6 +60,7 @@ public class DatabaseWikiServlet extends DatabaseWiki {
 	 * WikiServer.getWikiListing.
 	 * 
 	 */
+	// FIXME: Factor out common stuff in DatabaseWiki constructor
 	public DatabaseWikiServlet(int id, String name, String title,
 			int authenticationMode, int autoSchemaChanges, UserListing _users,  
 			ConfigSetting setting, DatabaseConnector connector,
@@ -80,10 +81,13 @@ public class DatabaseWikiServlet extends DatabaseWiki {
 		_database = new RDBMSDatabase(this, connector);
 		_database.validate();
 		_wiki = new SimpleWiki(name, connector, server.users());
+		initializePolicy();
+		
 	}
 
 	// HACK: pass in and use an existing connection and version index.
 	// Used only in WikiServer.RegisterDatabase to create a new database.
+	// FIXME: Factor out common stuff in DatabaseWiki constructor
 	public DatabaseWikiServlet(int id, String name, String title,
 			int authenticationMode, int autoSchemaChanges, UserListing _users, 
 			DatabaseConnector connector, WikiServerServlet server,
@@ -106,6 +110,8 @@ public class DatabaseWikiServlet extends DatabaseWiki {
 
 		_database = new RDBMSDatabase(this, connector, con, versionIndex);
 		_wiki = new SimpleWiki(name, connector, server.users());
+		initializePolicy();
+		
 	}
 
 	/*

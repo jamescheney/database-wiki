@@ -188,6 +188,10 @@ public abstract class DatabaseWiki implements Comparable<DatabaseWiki> {
  		
  	}
  	
+ 	public SimplePolicy policy() {
+ 		return _policy;
+ 	}
+ 	
 	public int getAuthenticationMode() {
 		return _policy.getAuthenticationMode();
 	}
@@ -1262,4 +1266,14 @@ public abstract class DatabaseWiki implements Comparable<DatabaseWiki> {
 	}
 	*/
 
+	@Deprecated
+	protected void initializePolicy() {
+		try{
+			Connection con = _connector.getConnection();
+			con.setAutoCommit(false);
+			_policy.getDBPolicyListing(con, this);
+		} catch(Exception e){
+			e.printStackTrace();
+		}
+	}
 }

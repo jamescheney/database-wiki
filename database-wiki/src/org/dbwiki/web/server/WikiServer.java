@@ -37,7 +37,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.Properties;
 import java.util.Vector;
 import java.util.zip.GZIPInputStream;
@@ -48,7 +47,6 @@ import org.dbwiki.data.io.StructureParser;
 import org.dbwiki.data.schema.DatabaseSchema;
 import org.dbwiki.data.schema.SchemaParser;
 import org.dbwiki.data.security.Capability;
-import org.dbwiki.data.security.DBPolicy;
 import org.dbwiki.data.security.SimplePolicy;
 import org.dbwiki.driver.rdbms.DatabaseConnector;
 import org.dbwiki.driver.rdbms.DatabaseConnectorFactory;
@@ -1245,7 +1243,7 @@ public abstract class WikiServer  implements WikiServerConstants {
 			DatabaseContent entries = wiki.database().content();
 			//ArrayList<Integer> keys = wiki.getSortedKeys();
 			
-			Map<Integer,Map<Integer,DBPolicy>> policyListing = wiki.getDBPolicyListing(user_id);
+			//Map<Integer,Map<Integer,DBPolicy>> policyListing = wiki.getDBPolicyListing(user_id);
 
 			Connection con = _connector.getConnection();
 			con.setAutoCommit(false);
@@ -1285,64 +1283,9 @@ public abstract class WikiServer  implements WikiServerConstants {
 					is_read = true;
 				}
 				
-				boolean flag = false;
-	//			int j = 0;
-	//			List<String> policy_keys = new ArrayList(policyListing.keySet());
-	//			Collections.sort(keys);
-	//			for(j = 0; j<policyListing.size();j++){
-	//			for(j = 0; j<policy_keys.size();j++){
-				for( int key : policyListing.keySet()){
-					if (user_id == key){
-						Map<Integer,DBPolicy> map = policyListing.get(key);
-						for(Integer entryId : map.keySet()){
-							if(entryId == entry){
-								flag = true;
-								break;
-							}
-						}
-					}
-				}
-					
-				PreparedStatement pStmt = null;
 				
-				if (flag) {
-					pStmt = con.prepareStatement("UPDATE "
-							+ wiki.name() + DatabaseConstants.RelationPolicy + " " + "SET "
-							+ DatabaseConstants.RelPolicyRead + " = ?, "
-							+ DatabaseConstants.RelPolicyInsert + " = ?, "
-							+ DatabaseConstants.RelPolicyUpdate + " = ?, "
-							+ DatabaseConstants.RelPolicyDelete + " = ? "
-							+ "WHERE " + DatabaseConstants.RelPolicyEntry + " = ? "
-							+ "AND " + DatabaseConstants.RelPolicyUserID + " = ?");
-	
-					pStmt.setBoolean(1, is_read);
-					pStmt.setBoolean(2, is_insert);
-					pStmt.setBoolean(3, is_delete);
-					pStmt.setBoolean(4, is_update);
-					pStmt.setInt(5, entry);
-					pStmt.setInt(6, user_id);
-					pStmt.execute();
-					pStmt.close();
-				} else {
-					pStmt = con.prepareStatement("INSERT INTO "
-							+ wiki.name() + DatabaseConstants.RelationPolicy + "("
-							+ DatabaseConstants.RelPolicyEntry + ", "
-							+ DatabaseConstants.RelPolicyUserID + ", "
-							+ DatabaseConstants.RelPolicyRead + ", "
-							+ DatabaseConstants.RelPolicyInsert + ", "
-							+ DatabaseConstants.RelPolicyUpdate + ", "
-							+ DatabaseConstants.RelPolicyDelete
-							+ ") VALUES(?, ?, ?, ?, ?, ?)");
-	
-					pStmt.setInt(1, entry);
-					pStmt.setInt(2, user_id);
-					pStmt.setBoolean(3, is_read);
-					pStmt.setBoolean(4, is_insert);
-					pStmt.setBoolean(5, is_delete);
-					pStmt.setBoolean(6, is_update);
-					pStmt.execute();
-					pStmt.close();
-				}
+				Capability cap = new Capability (is_read, is_insert, is_delete, is_update);
+				wiki.policy().updateEntryCapability(con,user_id,wiki, entry,cap);
 			}
 			
 			con.commit();
@@ -1554,14 +1497,14 @@ public abstract class WikiServer  implements WikiServerConstants {
 					user_id = Integer.parseInt(parameter.value());
 				}
 				DatabaseWiki wiki = getRequestWiki(request, RequestParameter.ParameterAuthorization);
-				Map<Integer,Map<Integer,DBPolicy>> policyListing = wiki.getDBPolicyListing(user_id);
+				//Map<Integer,Map<Integer,DBPolicy>> policyListing = wiki.getDBPolicyListing(user_id);
 				responseHandler = new ServerResponseHandler(request, _wikiTitle
 						+ " - Manage Authorization Mode By Entries");
 				responseHandler
 						.put(HtmlContentGenerator.ContentContent,
 								new DatabaseWikiEntryAuthorizationPrinter(
 										"Manage Authorization Mode By Entries",
-										RequestParameterAction.ActionUpdateEntryAuthorization,_users,wiki,user_id,policyListing));
+										RequestParameterAction.ActionUpdateEntryAuthorization,_users,wiki,user_id));
 			} else {
 				responseHandler = new ServerResponseHandler(request,
 						"Access Denied");

@@ -1,14 +1,12 @@
 package org.dbwiki.web.ui.printer.admin;
 
 
-import java.util.Map;
-
 import org.dbwiki.exception.WikiException;
 import org.dbwiki.user.UserListing;
 import org.dbwiki.web.html.HtmlLinePrinter;
 import org.dbwiki.web.request.parameter.RequestParameterAction;
 import org.dbwiki.data.index.DatabaseContent;
-import org.dbwiki.data.security.DBPolicy;
+import org.dbwiki.data.security.Capability;
 import org.dbwiki.web.server.DatabaseWiki;
 import org.dbwiki.web.server.WikiServer;
 import org.dbwiki.web.ui.CSS;
@@ -27,15 +25,13 @@ public class DatabaseWikiEntryAuthorizationPrinter extends HtmlContentPrinter {
 	private UserListing _users;
 	private int _user_id;
 	private DatabaseWiki _wiki;
-	private Map<Integer,Map<Integer,DBPolicy>> _policyListing;
-
-	public DatabaseWikiEntryAuthorizationPrinter(String _headline,String _action, UserListing _users, DatabaseWiki _wiki, int _user_id,  Map<Integer,Map<Integer,DBPolicy>> _policyListing) {
+	
+	public DatabaseWikiEntryAuthorizationPrinter(String _headline,String _action, UserListing _users, DatabaseWiki _wiki, int _user_id) {
 		this._headline = _headline;
 		this._action = _action;
 		this._users = _users;
 		this._wiki = _wiki;
 		this._user_id = _user_id;
-		this._policyListing = _policyListing;
 	}
 	
 
@@ -117,7 +113,7 @@ public class DatabaseWikiEntryAuthorizationPrinter extends HtmlContentPrinter {
 			printer.closeCENTER();
 			printer.closeTD();
 			
-			boolean flag = false;
+			/*boolean flag = false;
 			int policyKey = 0;
 			for(int key:_policyListing.keySet()){
 				if (_user_id == key){
@@ -130,32 +126,34 @@ public class DatabaseWikiEntryAuthorizationPrinter extends HtmlContentPrinter {
 						}
 					}
 				}
-			}
+			}*/
+			boolean flag = _wiki.policy().findEntry(_user_id, entry_id);
 			
 			if(flag){
+				Capability cap = _wiki.policy().findEntryCapability(_user_id, entry_id);
 				//read permission
 				printer.openTD(CSS.CSSFormControl);
-				printer.addRADIOBUTTON("Yes", entry_id+WikiServer.propertyReadPermission, "HoldPermission", (_policyListing.get(policyKey).get(entry_id).capability().isRead()));
+				printer.addRADIOBUTTON("Yes", entry_id+WikiServer.propertyReadPermission, "HoldPermission", (cap.isRead()));
 				printer.addBR();
-				printer.addRADIOBUTTON("No", entry_id+WikiServer.propertyReadPermission, "NoPermission", (!_policyListing.get(policyKey).get(entry_id).capability().isRead()));
+				printer.addRADIOBUTTON("No", entry_id+WikiServer.propertyReadPermission, "NoPermission", (!cap.isRead()));
 				printer.closeTD();
 				//insert permission
 				printer.openTD(CSS.CSSFormControl);
-				printer.addRADIOBUTTON("Yes", entry_id+WikiServer.propertyInsertPermission, "HoldPermission", (_policyListing.get(policyKey).get(entry_id).capability().isInsert()));
+				printer.addRADIOBUTTON("Yes", entry_id+WikiServer.propertyInsertPermission, "HoldPermission", (cap.isInsert()));
 				printer.addBR();
-				printer.addRADIOBUTTON("No", entry_id+WikiServer.propertyInsertPermission, "NoPermission", (!_policyListing.get(policyKey).get(entry_id).capability().isInsert()));
+				printer.addRADIOBUTTON("No", entry_id+WikiServer.propertyInsertPermission, "NoPermission", (!cap.isInsert()));
 				printer.closeTD();
 				//delete permission
 				printer.openTD(CSS.CSSFormControl);
-				printer.addRADIOBUTTON("Yes", entry_id+WikiServer.propertyDeletePermission, "HoldPermission", (_policyListing.get(policyKey).get(entry_id).capability().isDelete()));
+				printer.addRADIOBUTTON("Yes", entry_id+WikiServer.propertyDeletePermission, "HoldPermission", (cap.isDelete()));
 				printer.addBR();
-				printer.addRADIOBUTTON("No", entry_id+WikiServer.propertyDeletePermission, "NoPermission", (!_policyListing.get(policyKey).get(entry_id).capability().isDelete()));
+				printer.addRADIOBUTTON("No", entry_id+WikiServer.propertyDeletePermission, "NoPermission", (!cap.isDelete()));
 				printer.closeTD();
 				//update permission
 				printer.openTD(CSS.CSSFormControl);
-				printer.addRADIOBUTTON("Yes", entry_id+WikiServer.propertyUpdatePermission, "HoldPermission", (_policyListing.get(policyKey).get(entry_id).capability().isUpdate()));
+				printer.addRADIOBUTTON("Yes", entry_id+WikiServer.propertyUpdatePermission, "HoldPermission", (cap.isUpdate()));
 				printer.addBR();
-				printer.addRADIOBUTTON("No", entry_id+WikiServer.propertyUpdatePermission, "NoPermission", (!_policyListing.get(policyKey).get(entry_id).capability().isUpdate()));
+				printer.addRADIOBUTTON("No", entry_id+WikiServer.propertyUpdatePermission, "NoPermission", (!cap.isUpdate()));
 				printer.closeTD();
 			}else{
 				//read permission
