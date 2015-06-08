@@ -1163,6 +1163,8 @@ public abstract class WikiServer  implements WikiServerConstants {
 	 * @throws org.dbwiki.exception.WikiException
 	 * @throws IOException
 	 */
+	//FIXME: Does this need to be sever-level or can it be delgated to DatabaseWiki?
+	// TODO: Avoid code duplication with entry-level handler.
 	protected ServerResponseHandler getUpdateAuthorizationResponseHandler(
 			HttpRequest request)
 			throws org.dbwiki.exception.WikiException, IOException {
@@ -1228,6 +1230,7 @@ public abstract class WikiServer  implements WikiServerConstants {
 	 * @throws org.dbwiki.exception.WikiException
 	 * @throws IOException
 	 */
+	// FIXME: Does this need to be server-level or can it be delegated to wiki?
 	protected ServerResponseHandler getUpdateEntryAuthorizationResponseHandler(
 			HttpRequest request)
 			throws org.dbwiki.exception.WikiException, IOException {
@@ -1235,16 +1238,9 @@ public abstract class WikiServer  implements WikiServerConstants {
 		try {
 			int user_id = Integer.parseInt(request.parameters().get("user_id").value());
 			DatabaseWiki wiki = this.getRequestWiki(request, ParameterName);
-			/*
-			Map<Integer,Entry> entryListing = wiki.getEntryListing();;
-			ArrayList<Integer> keys = new ArrayList<Integer>(entryListing.keySet());
-			Collections.sort(keys);
-			*/
-			DatabaseContent entries = wiki.database().content();
-			//ArrayList<Integer> keys = wiki.getSortedKeys();
-			
-			//Map<Integer,Map<Integer,DBPolicy>> policyListing = wiki.getDBPolicyListing(user_id);
 
+			DatabaseContent entries = wiki.database().content();
+			
 			Connection con = _connector.getConnection();
 			con.setAutoCommit(false);
 			
@@ -1289,9 +1285,7 @@ public abstract class WikiServer  implements WikiServerConstants {
 			}
 			
 			con.commit();
-			/* TODO: no effect; remove */
-			//wiki.getEntryListing();
-			//wiki.getDBPolicyListing(user_id);
+
 			con.close();
 		
 		} catch (SQLException sqlException) {

@@ -25,6 +25,7 @@ import org.dbwiki.web.server.DatabaseWiki;
 import org.dbwiki.web.server.DatabaseWikiProperties;
 import org.dbwiki.web.server.WikiServerConstants;
 
+// FIXME: Split into server-wide and DatabaseWiki-specific policies
 public class SimplePolicy implements WikiServerConstants {
 
     private Vector<Authorization> _authorizationListing;

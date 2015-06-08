@@ -89,15 +89,9 @@ public class DatabaseWikiEntryAuthorizationPrinter extends HtmlContentPrinter {
 		printer.closeTR();
 		//contents
 		
-		/*Map<Integer, Entry> _entryListing = _wiki.getEntryListing();
-		ArrayList<Integer> keys = new ArrayList<Integer>(_entryListing.keySet());
-		Collections.sort(keys);*/
 		
-		// FIXME: Use DatabaseContents instead here!
-		
-		//Map<Integer, Entry> _entryListing = _wiki.getEntryListing();
-		//ArrayList<Integer> keys = _wiki.getSortedKeys();
 		DatabaseContent entries = _wiki.database().content();
+		
 		// Sorting key set helps align form with update code, see WikiServer.getUpdateEntryAuthorizationResponseHandler
 		for(int i = 0; i < entries.size(); i++){
 			String entry_value = entries.get(i).label();
