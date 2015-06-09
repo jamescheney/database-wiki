@@ -25,7 +25,6 @@ package org.dbwiki.web.server;
 
 import java.sql.Connection;
 
-import org.dbwiki.data.security.SimplePolicy;
 import org.dbwiki.data.wiki.SimpleWiki;
 import org.dbwiki.driver.rdbms.DatabaseConnector;
 import org.dbwiki.driver.rdbms.RDBMSDatabase;
@@ -49,23 +48,20 @@ public class DatabaseWikiStandalone extends DatabaseWiki {
 	// FIXME: Factor out common stuff in DatabaseWiki constructor
 	public DatabaseWikiStandalone(int id, String name, String title,
 			int authenticationMode, int autoSchemaChanges, 
-			ConfigSetting setting, DatabaseConnector connector,
+			DatabaseConnector connector, ConfigSetting setting, 
 			WikiServerStandalone server)
 			throws org.dbwiki.exception.WikiException {
-		_policy = new SimplePolicy(authenticationMode,server._policy);
-		_id = id;
+		super(id, name, title,authenticationMode,autoSchemaChanges,connector);
+		
 		_server = server;
-		_name = name;
-		_title = title;
-
+		
 		reset(setting.getLayoutVersion(), setting.getTemplateVersion(),
 				setting.getStyleSheetVersion(),
 				setting.getURLDecodingRulesVersion());
-
+		
 		_database = new RDBMSDatabase(this, connector);
 		_database.validate();
 		_wiki = new SimpleWiki(name, connector, server.users());
-		initializePolicy();
 		
 	}
 
@@ -77,22 +73,17 @@ public class DatabaseWikiStandalone extends DatabaseWiki {
 			DatabaseConnector connector, WikiServerStandalone server,
 			Connection con, SQLVersionIndex versionIndex)
 			throws org.dbwiki.exception.WikiException {
-		_policy = new SimplePolicy(authenticationMode,server._policy);
-		_autoSchemaChanges = autoSchemaChanges;
-		_id = id;
+		super(id,name,title,authenticationMode,autoSchemaChanges,connector);
+		
 		_server = server;
-		_name = name;
-		_title = title;
-
+		
 		ConfigSetting setting = new ConfigSetting();
-
 		reset(setting.getLayoutVersion(), setting.getTemplateVersion(),
 				setting.getStyleSheetVersion(),
 				setting.getURLDecodingRulesVersion());
 
 		_database = new RDBMSDatabase(this, connector, con, versionIndex);
 		_wiki = new SimpleWiki(name, connector, server.users());
-		initializePolicy();
 		
 	}
 

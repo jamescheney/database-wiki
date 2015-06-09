@@ -12,7 +12,7 @@ import org.dbwiki.web.html.HtmlLinePrinter;
 import org.dbwiki.web.request.parameter.RequestParameter;
 import org.dbwiki.web.request.parameter.RequestParameterAction;
 import org.dbwiki.data.security.Capability;
-import org.dbwiki.data.security.SimplePolicy;
+import org.dbwiki.web.server.DatabaseWiki;
 import org.dbwiki.web.server.WikiServer;
 import org.dbwiki.web.ui.CSS;
 import org.dbwiki.web.ui.printer.HtmlContentPrinter;
@@ -24,13 +24,13 @@ public class DatabaseWikiAuthorizationPrinter extends HtmlContentPrinter {
 	private String _action;
 	private DatabaseWikiProperties _properties;
 	private UserListing _user_listing;
-	private SimplePolicy _policy;
+	private DatabaseWiki _wiki;
 
-	public DatabaseWikiAuthorizationPrinter(String headline, String action, DatabaseWikiProperties properties, UserListing user_listing, SimplePolicy policy) {
+	public DatabaseWikiAuthorizationPrinter(String headline, String action, DatabaseWikiProperties properties, UserListing user_listing, DatabaseWiki wiki) {
 		this._headline = headline;
 		this._action = action;
 		this._user_listing = user_listing;
-		this._policy = policy;
+		this._wiki = wiki;
 		this._properties = properties;
 	}
 	
@@ -110,8 +110,8 @@ public class DatabaseWikiAuthorizationPrinter extends HtmlContentPrinter {
 			
 			
 			
-			if(_policy.find(id, _properties.getName())){
-				Capability capability = _policy.findCapability(id, _properties.getName());
+			if(_wiki.policy().find(id)){
+				Capability capability = _wiki.policy().findCapability(id);
 
 				//read permission
 				printer.openTD(CSS.CSSFormControl);

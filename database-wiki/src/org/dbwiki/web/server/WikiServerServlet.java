@@ -77,7 +77,7 @@ public class WikiServerServlet extends WikiServer {
 	
 	public WikiServerServlet(String prefix, Properties properties) throws org.dbwiki.exception.WikiException {
 		super(prefix, properties);
-		_authenticator = new WikiServletAuthenticator( "/", _users, null, _policy);
+		_authenticator = new WikiServletAuthenticator( _users, _policy);
 	}
 	
 	/** 
@@ -106,7 +106,7 @@ public class WikiServerServlet extends WikiServer {
 			int authenticationMode = rs.getInt(RelDatabaseColAuthentication);
 			int autoSchemaChanges = rs.getInt(RelDatabaseColAutoSchemaChanges);
 			ConfigSetting setting = new ConfigSetting(layoutVersion, templateVersion, styleSheetVersion, urlDecodingVersion);
-			_wikiListing.add(new DatabaseWikiServlet(id, name, title, authenticationMode, autoSchemaChanges, _users, setting, _connector, this));
+			_wikiListing.add(new DatabaseWikiServlet(id, name, title, authenticationMode, autoSchemaChanges, setting, _connector, this));
 		}
 		rs.close();
 		stmt.close();
@@ -169,7 +169,7 @@ public class WikiServerServlet extends WikiServer {
 			
 			wikiID = r.createCollection(con, versionIndex);
 			con.commit();
-			DatabaseWikiServlet wiki = new DatabaseWikiServlet(wikiID, name, title, authenticationMode, autoSchemaChanges, _users, _connector, this,
+			DatabaseWikiServlet wiki = new DatabaseWikiServlet(wikiID, name, title, authenticationMode, autoSchemaChanges, _connector, this,
 									con, versionIndex);
 			_wikiListing.add(wiki);
 			Collections.sort(_wikiListing);

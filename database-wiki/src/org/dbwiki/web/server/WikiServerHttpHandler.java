@@ -105,7 +105,7 @@ public class WikiServerHttpHandler extends WikiServer implements HttpHandler {
 			int authenticationMode = rs.getInt(RelDatabaseColAuthentication);
 			int autoSchemaChanges = rs.getInt(RelDatabaseColAutoSchemaChanges);
 			ConfigSetting setting = new ConfigSetting(layoutVersion, templateVersion, styleSheetVersion, urlDecodingVersion);
-			_wikiListing.add(new DatabaseWikiHttpHandler(id, name, title, _users,_formTemplate, authenticationMode, autoSchemaChanges, setting, _connector, this));
+			_wikiListing.add(new DatabaseWikiHttpHandler(id, name, title,  authenticationMode, autoSchemaChanges, _connector, setting,_formTemplate, this));
 		}
 		rs.close();
 		stmt.close();
@@ -142,7 +142,7 @@ public class WikiServerHttpHandler extends WikiServer implements HttpHandler {
 		_webServer.setExecutor(Executors.newFixedThreadPool(_threadCount));
 
 		HttpContext context = _webServer.createContext("/", this);
-		context.setAuthenticator(new WikiAuthenticator("/", _users, _formTemplate,null,_policy));
+		context.setAuthenticator(new WikiAuthenticator("/", _users, _formTemplate,_policy));
 
 		for (int iWiki = 0; iWiki < _wikiListing.size(); iWiki++) {
 			DatabaseWikiHttpHandler wiki = _wikiListing.get(iWiki);
@@ -185,7 +185,7 @@ public class WikiServerHttpHandler extends WikiServer implements HttpHandler {
 			
 			wikiID = r.createCollection(con, versionIndex);
 			con.commit();
-			DatabaseWikiHttpHandler wiki = new DatabaseWikiHttpHandler(wikiID, name, title, _users, _formTemplate, authenticationMode, autoSchemaChanges, _connector, this,
+			DatabaseWikiHttpHandler wiki = new DatabaseWikiHttpHandler(wikiID, name, title,  authenticationMode, autoSchemaChanges, _connector, _formTemplate, this,
 									con, versionIndex);
 
 			// this should now only be called when starting a web server

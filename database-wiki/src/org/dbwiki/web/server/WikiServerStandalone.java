@@ -83,7 +83,7 @@ public class WikiServerStandalone extends WikiServer {
 			int authenticationMode = rs.getInt(RelDatabaseColAuthentication);
 			int autoSchemaChanges = rs.getInt(RelDatabaseColAutoSchemaChanges);
 			ConfigSetting setting = new ConfigSetting(layoutVersion, templateVersion, styleSheetVersion, urlDecodingVersion);
-			_wikiListing.add(new DatabaseWikiStandalone(id, name, title, authenticationMode, autoSchemaChanges, setting, _connector, this));
+			_wikiListing.add(new DatabaseWikiStandalone(id, name, title, authenticationMode, autoSchemaChanges, _connector, setting, this));
 		}
 		rs.close();
 		stmt.close();

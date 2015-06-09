@@ -29,8 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.dbwiki.user.User;
 import org.dbwiki.user.UserListing;
 import org.dbwiki.web.request.Exchange;
-import org.dbwiki.data.security.SimplePolicy;
-import org.dbwiki.web.server.DatabaseWiki;
+import org.dbwiki.data.security.Policy;
 import org.dbwiki.web.server.ServletExchangeWrapper;
 
 
@@ -44,16 +43,13 @@ import org.dbwiki.web.server.ServletExchangeWrapper;
 public class WikiServletAuthenticator {
 
     private UserListing _users;
-    private SimplePolicy _policy;
-    
-    // TODO: Get rid of this?
-    private DatabaseWiki _wiki;
+    private Policy _policy;
     
     
-    public WikiServletAuthenticator(String realm, UserListing users, DatabaseWiki wiki, SimplePolicy policy) {
+    
+    public WikiServletAuthenticator(UserListing users, Policy policy) {
         _users = users;
         _policy = policy;
-        _wiki = wiki;
     }
        
 
@@ -64,7 +60,7 @@ public class WikiServletAuthenticator {
     
     public boolean authenticate(Exchange<HttpServletRequest> exchange) {
         
-    	if (SimplePolicy.allowedFileRequest(exchange)) {
+    	if (_policy.allowedFileRequest(exchange)) {
     		return true;
     	}
     	
@@ -79,7 +75,7 @@ public class WikiServletAuthenticator {
             String uname = exchange.get().getUserPrincipal().getName();
             User user = _users.get(uname);
             // check if user is administrator
-            return _policy.checkRequest(user, _wiki, exchange);
+            return _policy.checkRequest(user, exchange);
             
         } else {
             return true;

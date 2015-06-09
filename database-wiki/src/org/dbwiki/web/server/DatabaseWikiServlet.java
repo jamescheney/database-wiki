@@ -28,12 +28,10 @@ import java.sql.Connection;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.dbwiki.data.security.SimplePolicy;
 import org.dbwiki.data.wiki.SimpleWiki;
 import org.dbwiki.driver.rdbms.DatabaseConnector;
 import org.dbwiki.driver.rdbms.RDBMSDatabase;
 import org.dbwiki.driver.rdbms.SQLVersionIndex;
-import org.dbwiki.user.UserListing;
 import org.dbwiki.web.html.FatalExceptionPage;
 import org.dbwiki.web.request.Exchange;
 import org.dbwiki.web.request.RequestURL;
@@ -62,18 +60,15 @@ public class DatabaseWikiServlet extends DatabaseWiki {
 	 */
 	// FIXME: Factor out common stuff in DatabaseWiki constructor
 	public DatabaseWikiServlet(int id, String name, String title,
-			int authenticationMode, int autoSchemaChanges, UserListing _users,  
+			int authenticationMode, int autoSchemaChanges,   
 			ConfigSetting setting, DatabaseConnector connector,
 			WikiServerServlet server)
 			throws org.dbwiki.exception.WikiException {
-		
-		_policy = new SimplePolicy(authenticationMode,_policy);
-		_authenticator = new WikiServletAuthenticator( "/"+name, _users, this,_policy);
-		_id = id;
-		_server = server;
-		_name = name;
-		_title = title;
+		super(id,name,title,authenticationMode,autoSchemaChanges, connector);
 
+		_server = server;
+		_authenticator = new WikiServletAuthenticator( _server.users(),_policy);
+		
 		reset(setting.getLayoutVersion(), setting.getTemplateVersion(),
 				setting.getStyleSheetVersion(),
 				setting.getURLDecodingRulesVersion());
@@ -81,7 +76,6 @@ public class DatabaseWikiServlet extends DatabaseWiki {
 		_database = new RDBMSDatabase(this, connector);
 		_database.validate();
 		_wiki = new SimpleWiki(name, connector, server.users());
-		initializePolicy();
 		
 	}
 
@@ -89,19 +83,15 @@ public class DatabaseWikiServlet extends DatabaseWiki {
 	// Used only in WikiServer.RegisterDatabase to create a new database.
 	// FIXME: Factor out common stuff in DatabaseWiki constructor
 	public DatabaseWikiServlet(int id, String name, String title,
-			int authenticationMode, int autoSchemaChanges, UserListing _users, 
+			int authenticationMode, int autoSchemaChanges,  
 			DatabaseConnector connector, WikiServerServlet server,
 			Connection con, SQLVersionIndex versionIndex)
 			throws org.dbwiki.exception.WikiException {
-		
-		_policy = new SimplePolicy(authenticationMode,_policy);
-		_authenticator = new WikiServletAuthenticator( "/"+name, _users, this,_policy);
-		_autoSchemaChanges = autoSchemaChanges;
-		_id = id;
-		_server = server;
-		_name = name;
-		_title = title;
+		super(id,name,title,authenticationMode,autoSchemaChanges,connector);
 
+		_server = server;
+		_authenticator = new WikiServletAuthenticator( _server.users(), _policy);
+		
 		ConfigSetting setting = new ConfigSetting();
 
 		reset(setting.getLayoutVersion(), setting.getTemplateVersion(),
@@ -110,7 +100,6 @@ public class DatabaseWikiServlet extends DatabaseWiki {
 
 		_database = new RDBMSDatabase(this, connector, con, versionIndex);
 		_wiki = new SimpleWiki(name, connector, server.users());
-		initializePolicy();
 		
 	}
 

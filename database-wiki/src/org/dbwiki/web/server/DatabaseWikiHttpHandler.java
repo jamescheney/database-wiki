@@ -26,12 +26,10 @@ package org.dbwiki.web.server;
 import java.io.File;
 import java.sql.Connection;
 
-import org.dbwiki.data.security.SimplePolicy;
 import org.dbwiki.data.wiki.SimpleWiki;
 import org.dbwiki.driver.rdbms.DatabaseConnector;
 import org.dbwiki.driver.rdbms.RDBMSDatabase;
 import org.dbwiki.driver.rdbms.SQLVersionIndex;
-import org.dbwiki.user.UserListing;
 import org.dbwiki.web.html.FatalExceptionPage;
 import org.dbwiki.web.request.Exchange;
 import org.dbwiki.web.request.RequestURL;
@@ -65,29 +63,23 @@ public class DatabaseWikiHttpHandler extends DatabaseWiki implements
 	 */
 	// FIXME: Factor out common stuff in DatabaseWiki constructor
 	public DatabaseWikiHttpHandler(int id, String name, String title,
-			UserListing _users, File _formTemplate, int authenticationMode, int autoSchemaChanges,
-			ConfigSetting setting, DatabaseConnector connector,
+			int authenticationMode, int autoSchemaChanges,
+			DatabaseConnector connector, ConfigSetting setting, 
+			File _formTemplate, 
 			WikiServerHttpHandler server)
 			throws org.dbwiki.exception.WikiException {
+		super(id, name, title, authenticationMode, autoSchemaChanges, connector);
 		
-		_policy = new SimplePolicy(authenticationMode,server._policy);
-		_authenticator = new WikiAuthenticator("/" + name,  _users, _formTemplate,this,_policy);
-		_autoSchemaChanges = autoSchemaChanges;
-		_id = id;
 		_server = server;
-		_name = name;
-		_title = title;
-
+		_authenticator = new WikiAuthenticator("/" + name,  _server.users(), _formTemplate,_policy);
+		
 		reset(setting.getLayoutVersion(), setting.getTemplateVersion(),
 				setting.getStyleSheetVersion(),
 				setting.getURLDecodingRulesVersion());
 		
-		_connector = connector;
 		_database = new RDBMSDatabase(this, connector);
 		_database.validate();
 		_wiki = new SimpleWiki(name, connector, server.users());
-		
-		initializePolicy();
 		
 	}
 
@@ -95,17 +87,16 @@ public class DatabaseWikiHttpHandler extends DatabaseWiki implements
 	// Used only in WikiServer.RegisterDatabase to create a new database.
 	// FIXME: Factor out common stuff in DatabaseWiki constructor
 	public DatabaseWikiHttpHandler(int id, String name, String title,
-			UserListing _users, File _formTemplate, int authenticationMode, int autoSchemaChanges,
-			DatabaseConnector connector, WikiServerHttpHandler server,
+			int authenticationMode, int autoSchemaChanges,
+			DatabaseConnector connector, 
+			File _formTemplate, 
+			WikiServerHttpHandler server,
 			Connection con, SQLVersionIndex versionIndex)
 			throws org.dbwiki.exception.WikiException {
-		_policy = new SimplePolicy(authenticationMode,server._policy);
-		_authenticator = new WikiAuthenticator("/" + name,  _users, _formTemplate,this,_policy);
-		_autoSchemaChanges = autoSchemaChanges;
-		_id = id;
+		super(id,name,title,authenticationMode,autoSchemaChanges,connector);
+		
 		_server = server;
-		_name = name;
-		_title = title;
+		_authenticator = new WikiAuthenticator("/" + name,  _server.users(), _formTemplate,_policy);
 
 		ConfigSetting setting = new ConfigSetting();
 
@@ -115,7 +106,6 @@ public class DatabaseWikiHttpHandler extends DatabaseWiki implements
 
 		_database = new RDBMSDatabase(this, connector, con, versionIndex);
 		_wiki = new SimpleWiki(name, connector, server.users());
-		initializePolicy();
 		
 	}
 

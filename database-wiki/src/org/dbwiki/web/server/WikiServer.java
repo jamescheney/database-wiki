@@ -191,7 +191,6 @@ public abstract class WikiServer  implements WikiServerConstants {
 		// from the database we are connected to
 		try {
 			Connection con = _connector.getConnection();
-			_policy.getAuthorizationListing(con);
 			getUserListing(con);
 			getWikiListing(con);
 			con.close();
@@ -730,7 +729,7 @@ public abstract class WikiServer  implements WikiServerConstants {
 								"Manage Authorization",
 								RequestParameterAction.ActionUpdateAuthorization,
 								new DatabaseWikiProperties(wiki),
-								_users, _policy));
+								_users, wiki));
 		return responseHandler;
 	}
 	
@@ -1180,7 +1179,6 @@ public abstract class WikiServer  implements WikiServerConstants {
 			for (int para_index = first_para, user_index = 1; 
 				 para_index <= request.parameters().size() - 3; 
 				 para_index += 4, user_index++) {
-				String wiki_name = wiki.name();
 				boolean is_read = false;
 				boolean is_insert = false;
 				boolean is_delete = false;
@@ -1208,7 +1206,7 @@ public abstract class WikiServer  implements WikiServerConstants {
 					is_read = true;
 				}
 				
-				_policy.updateCapability(con,user_index, wiki_name, new Capability(is_read, is_insert, is_delete, is_update));
+				wiki.policy().updateCapability(con,user_index, new Capability(is_read, is_insert, is_delete, is_update));
 			}
 		
 			con.close();
@@ -1476,7 +1474,7 @@ public abstract class WikiServer  implements WikiServerConstants {
 										"Manage Authorization",
 										RequestParameterAction.ActionUpdateAuthorization,
 										new DatabaseWikiProperties(wiki),
-										_users, _policy));
+										_users, wiki));
 			} else {
 				responseHandler = new ServerResponseHandler(request,
 						"Access Denied");

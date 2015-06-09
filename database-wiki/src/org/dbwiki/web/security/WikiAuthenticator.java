@@ -26,13 +26,13 @@ package org.dbwiki.web.security;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+
 import org.dbwiki.user.User;
 import org.dbwiki.user.UserListing;
 import org.dbwiki.web.request.Exchange;
 import org.dbwiki.web.request.HttpRequest;
 import org.dbwiki.web.request.RequestURL;
-import org.dbwiki.data.security.SimplePolicy;
-import org.dbwiki.web.server.DatabaseWiki;
+import org.dbwiki.data.security.Policy;
 import org.dbwiki.web.server.HttpExchangeWrapper;
 import org.dbwiki.web.server.WikiServer;
 import org.dbwiki.web.ui.HtmlContentGenerator;
@@ -69,28 +69,20 @@ public class WikiAuthenticator extends Authenticator {
     private UserListing _users;
     private File _formTemplate = null;
        
-    private DatabaseWiki _wiki = null;  // optional for now
-    private SimplePolicy _policy;
+    private Policy _policy;
     
 
     /*
      * Constructors
      */
        
-    public WikiAuthenticator(String realm, UserListing users, File template, SimplePolicy policy) {
+    public WikiAuthenticator(String realm, UserListing users, File template, Policy policy) {
 	    _realm = realm;
 	    _users = users;
 	    _formTemplate = template;
 	    _policy = policy;
     }
        
-    public WikiAuthenticator(String realm, UserListing users, File template, DatabaseWiki wiki, SimplePolicy policy) {
-	    _realm = realm;
-	    _users = users;
-	    _formTemplate = template;
-	    _wiki = wiki;
-	    _policy = policy;
-    }
        
     /*
      * Public Methods
@@ -117,7 +109,7 @@ public class WikiAuthenticator extends Authenticator {
         // FIXME: #security: If the request is to log in then we should check the username and password no matter what!
         // Currently we don't if we happen to be at a page that doesn't require authentication.
            
-        if (SimplePolicy.allowedFileRequest(exchange)) {
+        if (_policy.allowedFileRequest(exchange)) {
             return accessGranted(exchange,User.UnknownUserName); 
         }
            
@@ -146,7 +138,7 @@ public class WikiAuthenticator extends Authenticator {
                 if (checkCredentials(uname, pass)) {
                 	if (exchange.getRequestURI().getPath().equals(WikiServer.SpecialFolderLogin)) {
                         return accessGranted(exchange, uname);
-                    } else if (_policy.checkRequest(user, _wiki, exchange)) {
+                    } else if (_policy.checkRequest(user, exchange)) {
                 		return accessGranted(exchange, uname);
                 	} else {
                 		return accessDenied(exchange);

@@ -31,14 +31,10 @@ import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.Map;
 import java.util.Properties;
 import java.util.Vector;
 
@@ -63,11 +59,9 @@ import org.dbwiki.data.resource.PageIdentifier;
 import org.dbwiki.data.schema.AttributeSchemaNode;
 import org.dbwiki.data.schema.SchemaNode;
 import org.dbwiki.data.schema.GroupSchemaNode;
-import org.dbwiki.data.security.DBPolicy;
-import org.dbwiki.data.security.SimplePolicy;
+import org.dbwiki.data.security.WikiPolicy;
 import org.dbwiki.data.wiki.Wiki;
 import org.dbwiki.driver.rdbms.DatabaseConnector;
-import org.dbwiki.driver.rdbms.DatabaseConstants;
 import org.dbwiki.exception.WikiFatalException;
 import org.dbwiki.exception.web.WikiRequestException;
 import org.dbwiki.user.UserListing;
@@ -148,7 +142,7 @@ public abstract class DatabaseWiki implements Comparable<DatabaseWiki> {
 	protected String _title;
 	protected Wiki _wiki;
 	//protected int _authenticationMode;
-	protected SimplePolicy _policy;
+	protected WikiPolicy _policy;
 	// FIXME: Remove?
 	protected DatabaseConnector _connector;
 	
@@ -170,6 +164,19 @@ public abstract class DatabaseWiki implements Comparable<DatabaseWiki> {
 
 	
 	
+	public DatabaseWiki(int id, String name, String title, 
+			int authenticationMode, int autoSchemaChanges, DatabaseConnector connector) {
+		// TODO Auto-generated constructor stub
+		_id = id;
+		_name = name;
+		_title = title;
+		_policy = new WikiPolicy(authenticationMode,this);
+		_autoSchemaChanges = autoSchemaChanges;
+		_connector = connector;
+		initializePolicy();
+
+	}
+
 	/** Comparator.  Compare database wikis by title, to sort list of wikis.
 	 * 
 	 */
@@ -188,7 +195,7 @@ public abstract class DatabaseWiki implements Comparable<DatabaseWiki> {
  		
  	}
  	
- 	public SimplePolicy policy() {
+ 	public WikiPolicy policy() {
  		return _policy;
  	}
  	
@@ -1164,7 +1171,8 @@ public abstract class DatabaseWiki implements Comparable<DatabaseWiki> {
 		try{
 			Connection con = _connector.getConnection();
 			con.setAutoCommit(false);
-			_policy.getDBPolicyListing(con, this);
+			_policy.getAuthorizationListing(con);
+			_policy.getDBPolicyListing(con);
 		} catch(Exception e){
 			e.printStackTrace();
 		}
