@@ -24,11 +24,9 @@
 package org.dbwiki.web.server;
 
 import java.io.File;
-import java.sql.Connection;
-
-import org.dbwiki.data.wiki.SimpleWiki;
 import org.dbwiki.driver.rdbms.DatabaseConnector;
 import org.dbwiki.driver.rdbms.RDBMSDatabase;
+import org.dbwiki.driver.rdbms.SQLDatabaseSchema;
 import org.dbwiki.driver.rdbms.SQLVersionIndex;
 import org.dbwiki.web.html.FatalExceptionPage;
 import org.dbwiki.web.request.Exchange;
@@ -61,7 +59,6 @@ public class DatabaseWikiHttpHandler extends DatabaseWiki implements
 	 * WikiServer.getWikiListing.
 	 * 
 	 */
-	// FIXME: Factor out common stuff in DatabaseWiki constructor
 	public DatabaseWikiHttpHandler(int id, String name, String title,
 			int authenticationMode, int autoSchemaChanges,
 			DatabaseConnector connector, ConfigSetting setting, 
@@ -73,42 +70,32 @@ public class DatabaseWikiHttpHandler extends DatabaseWiki implements
 		_server = server;
 		_authenticator = new WikiAuthenticator("/" + name,  _server.users(), _formTemplate,_policy);
 		
-		reset(setting.getLayoutVersion(), setting.getTemplateVersion(),
-				setting.getStyleSheetVersion(),
-				setting.getURLDecodingRulesVersion());
+		initialize(setting, server);
 		
 		_database = new RDBMSDatabase(this, connector);
 		_database.validate();
-		_wiki = new SimpleWiki(name, connector, server.users());
 		
 	}
 
-	// HACK: pass in and use an existing connection and version index.
-	// Used only in WikiServer.RegisterDatabase to create a new database.
-	// FIXME: Factor out common stuff in DatabaseWiki constructor
+	
+
 	public DatabaseWikiHttpHandler(int id, String name, String title,
 			int authenticationMode, int autoSchemaChanges,
 			DatabaseConnector connector, 
 			File _formTemplate, 
 			WikiServerHttpHandler server,
-			Connection con, SQLVersionIndex versionIndex)
+			SQLDatabaseSchema schema, SQLVersionIndex versionIndex)
 			throws org.dbwiki.exception.WikiException {
 		super(id,name,title,authenticationMode,autoSchemaChanges,connector);
 		
 		_server = server;
 		_authenticator = new WikiAuthenticator("/" + name,  _server.users(), _formTemplate,_policy);
 
-		ConfigSetting setting = new ConfigSetting();
-
-		reset(setting.getLayoutVersion(), setting.getTemplateVersion(),
-				setting.getStyleSheetVersion(),
-				setting.getURLDecodingRulesVersion());
-
-		_database = new RDBMSDatabase(this, connector, con, versionIndex);
-		_wiki = new SimpleWiki(name, connector, server.users());
+		initialize(new ConfigSetting(), server);
+		
+		_database = new RDBMSDatabase(this, connector, schema, versionIndex);
 		
 	}
-
 	/*
 	 * Getters
 	 */
@@ -135,10 +122,10 @@ public class DatabaseWikiHttpHandler extends DatabaseWiki implements
 			String filename = exchange.getRequestURI().getPath();
 			int pos = filename.lastIndexOf('.');
 			if (pos != -1) {
-				_server.sendFile(exchange);
+				server().sendFile(exchange);
 			} else {
-				if (_server.serverLog() != null) {
-					_server.serverLog().logRequest(exchange.getRequestURI(),
+				if (server().serverLog() != null) {
+					server().serverLog().logRequest(exchange.getRequestURI(),
 							exchange.get().getRemoteAddress(),
 							exchange.get().getResponseHeaders());
 				}

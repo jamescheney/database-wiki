@@ -39,6 +39,7 @@ import org.dbwiki.data.io.ImportHandler;
 import org.dbwiki.data.io.XMLDocumentImportReader;
 import org.dbwiki.data.schema.DatabaseSchema;
 import org.dbwiki.driver.rdbms.DatabaseImportHandler;
+import org.dbwiki.driver.rdbms.SQLDatabaseSchema;
 import org.dbwiki.driver.rdbms.SQLVersionIndex;
 import org.dbwiki.exception.WikiException;
 import org.dbwiki.exception.WikiFatalException;
@@ -185,8 +186,13 @@ public class WikiServerHttpHandler extends WikiServer implements HttpHandler {
 			
 			wikiID = r.createCollection(con, versionIndex);
 			con.commit();
-			DatabaseWikiHttpHandler wiki = new DatabaseWikiHttpHandler(wikiID, name, title,  authenticationMode, autoSchemaChanges, _connector, _formTemplate, this,
-									con, versionIndex);
+			SQLDatabaseSchema schema = new SQLDatabaseSchema(con, versionIndex, name);
+
+			DatabaseWikiHttpHandler wiki = 
+					new DatabaseWikiHttpHandler(wikiID, name, title,  
+												authenticationMode, autoSchemaChanges, 
+												_connector, _formTemplate, this,
+												schema, versionIndex);
 
 			// this should now only be called when starting a web server
 

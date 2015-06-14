@@ -23,11 +23,9 @@
 
 package org.dbwiki.web.server;
 
-import java.sql.Connection;
-
-import org.dbwiki.data.wiki.SimpleWiki;
 import org.dbwiki.driver.rdbms.DatabaseConnector;
 import org.dbwiki.driver.rdbms.RDBMSDatabase;
+import org.dbwiki.driver.rdbms.SQLDatabaseSchema;
 import org.dbwiki.driver.rdbms.SQLVersionIndex;
 
 /**
@@ -45,7 +43,6 @@ public class DatabaseWikiStandalone extends DatabaseWiki {
 	 * WikiServer.getWikiListing.
 	 * 
 	 */
-	// FIXME: Factor out common stuff in DatabaseWiki constructor
 	public DatabaseWikiStandalone(int id, String name, String title,
 			int authenticationMode, int autoSchemaChanges, 
 			DatabaseConnector connector, ConfigSetting setting, 
@@ -55,39 +52,29 @@ public class DatabaseWikiStandalone extends DatabaseWiki {
 		
 		_server = server;
 		
-		reset(setting.getLayoutVersion(), setting.getTemplateVersion(),
-				setting.getStyleSheetVersion(),
-				setting.getURLDecodingRulesVersion());
+		initialize(setting, server);
 		
 		_database = new RDBMSDatabase(this, connector);
 		_database.validate();
-		_wiki = new SimpleWiki(name, connector, server.users());
+		
 		
 	}
 
-	// HACK: pass in and use an existing connection and version index.
-	// Used only in WikiServer.RegisterDatabase to create a new database.
-	// FIXME: Factor out common stuff in DatabaseWiki constructor
+	
+
 	public DatabaseWikiStandalone(int id, String name, String title,
 			int authenticationMode, int autoSchemaChanges, 
 			DatabaseConnector connector, WikiServerStandalone server,
-			Connection con, SQLVersionIndex versionIndex)
+			SQLDatabaseSchema schema, SQLVersionIndex versionIndex)
 			throws org.dbwiki.exception.WikiException {
 		super(id,name,title,authenticationMode,autoSchemaChanges,connector);
 		
 		_server = server;
 		
-		ConfigSetting setting = new ConfigSetting();
-		reset(setting.getLayoutVersion(), setting.getTemplateVersion(),
-				setting.getStyleSheetVersion(),
-				setting.getURLDecodingRulesVersion());
-
-		_database = new RDBMSDatabase(this, connector, con, versionIndex);
-		_wiki = new SimpleWiki(name, connector, server.users());
+		initialize(new ConfigSetting(), server);
+		_database = new RDBMSDatabase(this, connector, schema, versionIndex);
 		
 	}
-
-
 
 	/*
 	 * Getters

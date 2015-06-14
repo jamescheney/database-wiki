@@ -37,6 +37,7 @@ import org.dbwiki.data.io.ImportHandler;
 import org.dbwiki.data.io.XMLDocumentImportReader;
 import org.dbwiki.data.schema.DatabaseSchema;
 import org.dbwiki.driver.rdbms.DatabaseImportHandler;
+import org.dbwiki.driver.rdbms.SQLDatabaseSchema;
 import org.dbwiki.driver.rdbms.SQLVersionIndex;
 import org.dbwiki.exception.WikiException;
 import org.dbwiki.exception.WikiFatalException;
@@ -139,9 +140,13 @@ public class WikiServerStandalone extends WikiServer {
 		try {
 			wikiID = r.createCollection(con, versionIndex);
 			con.commit();
+			SQLDatabaseSchema schema = new SQLDatabaseSchema(con, versionIndex, name);
 
-			DatabaseWikiStandalone wiki = new DatabaseWikiStandalone(wikiID, name, title, authenticationMode, autoSchemaChanges,  _connector, this,
-									con, versionIndex);
+			DatabaseWikiStandalone wiki = 
+					new DatabaseWikiStandalone(wikiID, name, title, 
+												authenticationMode, autoSchemaChanges, 
+												_connector, this,
+												schema, versionIndex);
 			
 			_wikiListing.add(wiki);
 			Collections.sort(_wikiListing);

@@ -60,6 +60,7 @@ import org.dbwiki.data.schema.AttributeSchemaNode;
 import org.dbwiki.data.schema.SchemaNode;
 import org.dbwiki.data.schema.GroupSchemaNode;
 import org.dbwiki.data.security.WikiPolicy;
+import org.dbwiki.data.wiki.SimpleWiki;
 import org.dbwiki.data.wiki.Wiki;
 import org.dbwiki.driver.rdbms.DatabaseConnector;
 import org.dbwiki.exception.WikiFatalException;
@@ -69,6 +70,7 @@ import org.dbwiki.web.html.HtmlPage;
 import org.dbwiki.web.html.RedirectPage;
 import org.dbwiki.web.request.Exchange;
 import org.dbwiki.web.request.HttpRequest;
+import org.dbwiki.web.request.RequestURL;
 import org.dbwiki.web.request.URLDecodingRules;
 import org.dbwiki.web.request.WikiDataRequest;
 import org.dbwiki.web.request.WikiPageRequest;
@@ -173,7 +175,23 @@ public abstract class DatabaseWiki implements Comparable<DatabaseWiki> {
 		_policy = new WikiPolicy(authenticationMode,this);
 		_autoSchemaChanges = autoSchemaChanges;
 		_connector = connector;
-		initializePolicy();
+		
+	}
+	
+	protected void initialize(ConfigSetting setting, WikiServer server) 
+			throws org.dbwiki.exception.WikiException {
+		reset(setting.getLayoutVersion(), setting.getTemplateVersion(),
+				setting.getStyleSheetVersion(),
+				setting.getURLDecodingRulesVersion());
+		_wiki = new SimpleWiki(_name, _connector, server.users());
+		try {
+			Connection con = _connector.getConnection();
+			con.setAutoCommit(false);
+			_policy.getAuthorizationListing(con);
+			_policy.getDBPolicyListing(con);
+		} catch(Exception e){
+			e.printStackTrace();
+		}
 
 	}
 
@@ -1166,15 +1184,5 @@ public abstract class DatabaseWiki implements Comparable<DatabaseWiki> {
 		}
 	}
 
-	@Deprecated
-	protected void initializePolicy() {
-		try{
-			Connection con = _connector.getConnection();
-			con.setAutoCommit(false);
-			_policy.getAuthorizationListing(con);
-			_policy.getDBPolicyListing(con);
-		} catch(Exception e){
-			e.printStackTrace();
-		}
-	}
+	
 }
