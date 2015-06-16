@@ -23,13 +23,9 @@
 
 package org.dbwiki.web.server;
 
-import java.sql.Connection;
-import java.util.Vector;
-
-import org.dbwiki.data.security.Authorization;
-import org.dbwiki.data.wiki.SimpleWiki;
 import org.dbwiki.driver.rdbms.DatabaseConnector;
 import org.dbwiki.driver.rdbms.RDBMSDatabase;
+import org.dbwiki.driver.rdbms.SQLDatabaseSchema;
 import org.dbwiki.driver.rdbms.SQLVersionIndex;
 
 /**
@@ -48,50 +44,37 @@ public class DatabaseWikiStandalone extends DatabaseWiki {
 	 * 
 	 */
 	public DatabaseWikiStandalone(int id, String name, String title,
-			int autoSchemaChanges, int authenticationMode,
-			ConfigSetting setting, DatabaseConnector connector,
+			int authenticationMode, int autoSchemaChanges, 
+			DatabaseConnector connector, ConfigSetting setting, 
 			WikiServerStandalone server)
 			throws org.dbwiki.exception.WikiException {
-		_authenticationMode = authenticationMode;
-		_id = id;
+		super(id, name, title,authenticationMode,autoSchemaChanges,connector);
+		
 		_server = server;
-		_name = name;
-		_title = title;
-
-		reset(setting.getLayoutVersion(), setting.getTemplateVersion(),
-				setting.getStyleSheetVersion(),
-				setting.getURLDecodingRulesVersion());
-
+		
+		initialize(setting, server);
+		
 		_database = new RDBMSDatabase(this, connector);
 		_database.validate();
-		_wiki = new SimpleWiki(name, connector, server.users());
+		
+		
 	}
 
-	// HACK: pass in and use an existing connection and version index.
-	// Used only in WikiServer.RegisterDatabase to create a new database.
+	
+
 	public DatabaseWikiStandalone(int id, String name, String title,
-			int autoSchemaChanges, int authenticationMode,
+			int authenticationMode, int autoSchemaChanges, 
 			DatabaseConnector connector, WikiServerStandalone server,
-			Connection con, SQLVersionIndex versionIndex)
+			SQLDatabaseSchema schema, SQLVersionIndex versionIndex)
 			throws org.dbwiki.exception.WikiException {
-		_authenticationMode = authenticationMode;
-		_autoSchemaChanges = autoSchemaChanges;
-		_id = id;
+		super(id,name,title,authenticationMode,autoSchemaChanges,connector);
+		
 		_server = server;
-		_name = name;
-		_title = title;
-
-		ConfigSetting setting = new ConfigSetting();
-
-		reset(setting.getLayoutVersion(), setting.getTemplateVersion(),
-				setting.getStyleSheetVersion(),
-				setting.getURLDecodingRulesVersion());
-
-		_database = new RDBMSDatabase(this, connector, con, versionIndex);
-		_wiki = new SimpleWiki(name, connector, server.users());
+		
+		initialize(new ConfigSetting(), server);
+		_database = new RDBMSDatabase(this, connector, schema, versionIndex);
+		
 	}
-
-
 
 	/*
 	 * Getters
@@ -102,11 +85,5 @@ public class DatabaseWikiStandalone extends DatabaseWiki {
 		return _server;
 	}
 
-	@Override
-	public void updateAuthorizationListing(
-			Vector<Authorization> authorizationListing) {
-		//FIXME: This does nothing, perhaps code calling it should be devolved to subclasses of WikiServer.
-		
-	}
 
 }

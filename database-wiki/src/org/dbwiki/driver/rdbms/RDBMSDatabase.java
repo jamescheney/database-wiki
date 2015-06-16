@@ -118,7 +118,7 @@ public class RDBMSDatabase implements Database, DatabaseConstants {
 	private DatabaseIdentifier _identifier;
 	private SQLDatabaseSchema _schema;
 	private SQLVersionIndex _versionIndex;
-	private DatabaseWiki _wiki;
+    private DatabaseWiki _wiki;
 	private HashMap<String,QueryResultSet> _cache;
 	/*
 	 * Constructors
@@ -143,6 +143,7 @@ public class RDBMSDatabase implements Database, DatabaseConstants {
 	
 	// HACK: the last two arguments supply existing session
 	// information for initialising the database
+	@Deprecated
 	public RDBMSDatabase(DatabaseWiki wiki, DatabaseConnector connector,
 						Connection con, SQLVersionIndex versionIndex)
 		throws org.dbwiki.exception.WikiException {
@@ -162,6 +163,20 @@ public class RDBMSDatabase implements Database, DatabaseConstants {
 		}
 	}
 	
+	public RDBMSDatabase(DatabaseWiki wiki, DatabaseConnector connector,
+						 SQLDatabaseSchema schema, SQLVersionIndex versionIndex)
+					{
+		_connector = connector;
+		_wiki = wiki;
+
+		_identifier = new DatabaseIdentifier(wiki.name());
+		
+		_cache = new HashMap<String,QueryResultSet>();
+
+		_versionIndex = versionIndex;
+		_schema = schema;
+	
+	}
 	
 	/*
 	 * Public Methods

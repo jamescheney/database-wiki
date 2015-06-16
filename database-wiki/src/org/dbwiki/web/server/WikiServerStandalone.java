@@ -31,11 +31,13 @@ import java.sql.Statement;
 import java.util.Collections;
 import java.util.Properties;
 import java.util.Vector;
+
 import org.dbwiki.data.database.Database;
 import org.dbwiki.data.io.ImportHandler;
 import org.dbwiki.data.io.XMLDocumentImportReader;
 import org.dbwiki.data.schema.DatabaseSchema;
 import org.dbwiki.driver.rdbms.DatabaseImportHandler;
+import org.dbwiki.driver.rdbms.SQLDatabaseSchema;
 import org.dbwiki.driver.rdbms.SQLVersionIndex;
 import org.dbwiki.exception.WikiException;
 import org.dbwiki.exception.WikiFatalException;
@@ -82,7 +84,7 @@ public class WikiServerStandalone extends WikiServer {
 			int authenticationMode = rs.getInt(RelDatabaseColAuthentication);
 			int autoSchemaChanges = rs.getInt(RelDatabaseColAutoSchemaChanges);
 			ConfigSetting setting = new ConfigSetting(layoutVersion, templateVersion, styleSheetVersion, urlDecodingVersion);
-			_wikiListing.add(new DatabaseWikiStandalone(id, name, title, authenticationMode, autoSchemaChanges, setting, _connector, this));
+			_wikiListing.add(new DatabaseWikiStandalone(id, name, title, authenticationMode, autoSchemaChanges, _connector, setting, this));
 		}
 		rs.close();
 		stmt.close();
@@ -138,9 +140,13 @@ public class WikiServerStandalone extends WikiServer {
 		try {
 			wikiID = r.createCollection(con, versionIndex);
 			con.commit();
-			
-			DatabaseWikiStandalone wiki = new DatabaseWikiStandalone(wikiID, name, title, autoSchemaChanges, authenticationMode,_connector, this,
-									con, versionIndex);
+			SQLDatabaseSchema schema = new SQLDatabaseSchema(con, versionIndex, name);
+
+			DatabaseWikiStandalone wiki = 
+					new DatabaseWikiStandalone(wikiID, name, title, 
+												authenticationMode, autoSchemaChanges, 
+												_connector, this,
+												schema, versionIndex);
 			
 			_wikiListing.add(wiki);
 			Collections.sort(_wikiListing);

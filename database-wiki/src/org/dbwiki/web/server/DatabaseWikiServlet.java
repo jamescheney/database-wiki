@@ -23,16 +23,12 @@
 
 package org.dbwiki.web.server;
 
-import java.sql.Connection;
-import java.util.Vector;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.dbwiki.data.security.Authorization;
-import org.dbwiki.data.wiki.SimpleWiki;
 import org.dbwiki.driver.rdbms.DatabaseConnector;
 import org.dbwiki.driver.rdbms.RDBMSDatabase;
+import org.dbwiki.driver.rdbms.SQLDatabaseSchema;
 import org.dbwiki.driver.rdbms.SQLVersionIndex;
 import org.dbwiki.web.html.FatalExceptionPage;
 import org.dbwiki.web.request.Exchange;
@@ -61,49 +57,39 @@ public class DatabaseWikiServlet extends DatabaseWiki {
 	 * 
 	 */
 	public DatabaseWikiServlet(int id, String name, String title,
-			int autoSchemaChanges, WikiServletAuthenticator authenticator,
+			int authenticationMode, int autoSchemaChanges,   
 			ConfigSetting setting, DatabaseConnector connector,
 			WikiServerServlet server)
 			throws org.dbwiki.exception.WikiException {
-		_authenticator = authenticator;
-		_id = id;
-		_server = server;
-		_name = name;
-		_title = title;
+		super(id,name,title,authenticationMode,autoSchemaChanges, connector);
 
-		reset(setting.getLayoutVersion(), setting.getTemplateVersion(),
-				setting.getStyleSheetVersion(),
-				setting.getURLDecodingRulesVersion());
+		_server = server;
+		_authenticator = new WikiServletAuthenticator( _server.users(),_policy);
+		
+		initialize(setting, server);
 
 		_database = new RDBMSDatabase(this, connector);
 		_database.validate();
-		_wiki = new SimpleWiki(name, connector, server.users());
+		
 	}
 
-	// HACK: pass in and use an existing connection and version index.
-	// Used only in WikiServer.RegisterDatabase to create a new database.
+	
+
 	public DatabaseWikiServlet(int id, String name, String title,
-			int autoSchemaChanges, WikiServletAuthenticator authenticator,
+			int authenticationMode, int autoSchemaChanges,  
 			DatabaseConnector connector, WikiServerServlet server,
-			Connection con, SQLVersionIndex versionIndex)
+			SQLDatabaseSchema schema, SQLVersionIndex versionIndex)
 			throws org.dbwiki.exception.WikiException {
-		_authenticator = authenticator;
-		_autoSchemaChanges = autoSchemaChanges;
-		_id = id;
+		super(id,name,title,authenticationMode,autoSchemaChanges,connector);
+
 		_server = server;
-		_name = name;
-		_title = title;
+		_authenticator = new WikiServletAuthenticator( _server.users(), _policy);
+		
+		initialize(new ConfigSetting(), server);
 
-		ConfigSetting setting = new ConfigSetting();
-
-		reset(setting.getLayoutVersion(), setting.getTemplateVersion(),
-				setting.getStyleSheetVersion(),
-				setting.getURLDecodingRulesVersion());
-
-		_database = new RDBMSDatabase(this, connector, con, versionIndex);
-		_wiki = new SimpleWiki(name, connector, server.users());
+		_database = new RDBMSDatabase(this, connector, schema, versionIndex);
+		
 	}
-
 	/*
 	 * Getters
 	 */
@@ -118,13 +104,13 @@ public class DatabaseWikiServlet extends DatabaseWiki {
 		Exchange<HttpServletRequest> exchange = new ServletExchangeWrapper(request,response);
 		try {
 			String filename = exchange.getRequestURI().toString();
-			if(_authenticator.authenticate(request)) {
+			if(_authenticator.authenticate(request,response)) {
 				int pos = filename.lastIndexOf('.');
 				if (pos != -1) {
-					_server.sendFile(exchange);
+					server().sendFile(exchange);
 				} else {
-					if (_server.serverLog() != null) {
-						_server.serverLog().logRequest(request);
+					if (server().serverLog() != null) {
+						server().serverLog().logRequest(request);
 					}
 					RequestURL url = new RequestURL(exchange, _database.identifier().linkPrefix());
 					if (url.isDataRequest()) {
@@ -156,32 +142,6 @@ public class DatabaseWikiServlet extends DatabaseWiki {
 			exception.printStackTrace();
 			exchange.send(new FatalExceptionPage(exception));
 		}
-	}
-	
-	/*
-	 * Getters
-	 */
-
-	public WikiServletAuthenticator authenticator() {
-		return _authenticator;
-	}
-
-	@Override
-	public int getAuthenticationMode() {
-		return _authenticator.getAuthenticationMode();
-	}
-
-	@Override
-	public void setAuthenticationMode(int authMode) {
-		super.setAuthenticationMode(authMode);
-		_authenticator.setAuthenticationMode(authMode);
-	}
-
-	@Override
-	public void updateAuthorizationListing(
-			Vector<Authorization> authorizationListing) {
-		_authenticator.updateAuthorizationListing(authorizationListing);
-		
 	}
 	
 

@@ -12,7 +12,7 @@ public interface Exchange<T> {
 	public int getLocalPort();
 	public boolean isGet();
 	public boolean isPost();
-	public String contentType();
+    public String contentType();
 	public InputStream getRequestBody() throws java.io.IOException;
 	public void send(HtmlPage page) throws java.io.IOException;
 	public void send(HtmlPage page, int responseCode) throws java.io.IOException;

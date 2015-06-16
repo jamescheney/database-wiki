@@ -92,4 +92,8 @@ public class RDBMSDatabaseEntry implements DatabaseEntry {
 	public TimeSequence timestamp() {
 		return _timestamp;
 	}
+
+	public int id() {
+		return _identifier.nodeID();
+	}
 }

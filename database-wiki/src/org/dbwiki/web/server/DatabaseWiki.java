@@ -30,18 +30,11 @@ import java.io.StringWriter;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-
-
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.text.SimpleDateFormat;
-
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.Map;
 import java.util.Properties;
 import java.util.Vector;
 
@@ -66,21 +59,16 @@ import org.dbwiki.data.resource.PageIdentifier;
 import org.dbwiki.data.schema.AttributeSchemaNode;
 import org.dbwiki.data.schema.SchemaNode;
 import org.dbwiki.data.schema.GroupSchemaNode;
-import org.dbwiki.data.security.Authorization;
-import org.dbwiki.data.security.DBPolicy;
+import org.dbwiki.data.security.WikiPolicy;
+import org.dbwiki.data.wiki.SimpleWiki;
 import org.dbwiki.data.wiki.Wiki;
 import org.dbwiki.driver.rdbms.DatabaseConnector;
-import org.dbwiki.driver.rdbms.DatabaseConstants;
-
-import org.dbwiki.exception.WikiException;
 import org.dbwiki.exception.WikiFatalException;
 import org.dbwiki.exception.web.WikiRequestException;
 import org.dbwiki.user.UserListing;
 import org.dbwiki.web.html.HtmlPage;
 import org.dbwiki.web.html.RedirectPage;
-
 import org.dbwiki.web.request.Exchange;
-
 import org.dbwiki.web.request.HttpRequest;
 import org.dbwiki.web.request.URLDecodingRules;
 import org.dbwiki.web.request.WikiDataRequest;
@@ -92,7 +80,6 @@ import org.dbwiki.web.request.parameter.RequestParameterAction;
 import org.dbwiki.web.request.parameter.RequestParameterActionCancel;
 import org.dbwiki.web.request.parameter.RequestParameterVersion;
 import org.dbwiki.web.request.parameter.RequestParameterVersionSingle;
-
 import org.dbwiki.web.ui.DatabaseWikiContentGenerator;
 import org.dbwiki.web.ui.HtmlTemplateDecorator;
 import org.dbwiki.web.ui.layout.DatabaseLayouter;
@@ -120,9 +107,7 @@ import org.dbwiki.web.ui.printer.page.PageContentPrinter;
 import org.dbwiki.web.ui.printer.page.PageHistoryPrinter;
 import org.dbwiki.web.ui.printer.page.PageMenuPrinter;
 import org.dbwiki.web.ui.printer.page.PageUpdateFormPrinter;
-
 import org.dbwiki.web.ui.printer.schema.SchemaMenuPrinter;
-
 import org.dbwiki.web.ui.printer.schema.SchemaNodePrinter;
 import org.dbwiki.web.ui.printer.schema.SchemaPathPrinter;
 import org.dbwiki.web.server.DatabaseWikiProperties;
@@ -157,7 +142,8 @@ public abstract class DatabaseWiki implements Comparable<DatabaseWiki> {
 	protected String _template = null;
 	protected String _title;
 	protected Wiki _wiki;
-	protected int _authenticationMode;
+	//protected int _authenticationMode;
+	protected WikiPolicy _policy;
 	// FIXME: Remove?
 	protected DatabaseConnector _connector;
 	
@@ -179,6 +165,34 @@ public abstract class DatabaseWiki implements Comparable<DatabaseWiki> {
 
 	
 	
+	public DatabaseWiki(int id, String name, String title, 
+			int authenticationMode, int autoSchemaChanges, DatabaseConnector connector) {
+		// TODO Auto-generated constructor stub
+		_id = id;
+		_name = name;
+		_title = title;
+		_policy = new WikiPolicy(authenticationMode,this);
+		_autoSchemaChanges = autoSchemaChanges;
+		_connector = connector;
+		
+	}
+	
+	protected void initialize(ConfigSetting setting, WikiServer server) 
+			throws org.dbwiki.exception.WikiException {
+		reset(setting.getLayoutVersion(), setting.getTemplateVersion(),
+				setting.getStyleSheetVersion(),
+				setting.getURLDecodingRulesVersion());
+		_wiki = new SimpleWiki(_name, _connector, server.users());
+		try {
+			Connection con = _connector.getConnection();
+			con.setAutoCommit(false);
+			_policy.initialize(con);
+		} catch(Exception e){
+			e.printStackTrace();
+		}
+
+	}
+
 	/** Comparator.  Compare database wikis by title, to sort list of wikis.
 	 * 
 	 */
@@ -197,8 +211,12 @@ public abstract class DatabaseWiki implements Comparable<DatabaseWiki> {
  		
  	}
  	
+ 	public WikiPolicy policy() {
+ 		return _policy;
+ 	}
+ 	
 	public int getAuthenticationMode() {
-		return _authenticationMode;
+		return _policy.getAuthenticationMode();
 	}
 	
 	public int getAutoSchemaChanges() {
@@ -297,9 +315,9 @@ public abstract class DatabaseWiki implements Comparable<DatabaseWiki> {
 	public void setTitle(String value) {
 		_title = value;
 	}
-	
+
 	public void setAuthenticationMode(int authMode) {
-		_authenticationMode = authMode;
+		_policy.setAuthenticationMode(authMode);
 	}
 	/* 
 	 * Actions
@@ -336,8 +354,6 @@ public abstract class DatabaseWiki implements Comparable<DatabaseWiki> {
 		return _urlDecodingVersion;
 	}
 	
-
-	public abstract void updateAuthorizationListing(Vector<Authorization> authorizationListing);
 	
 	/*
 	 * Private Methods
@@ -345,7 +361,7 @@ public abstract class DatabaseWiki implements Comparable<DatabaseWiki> {
 	
 	
 	/** Gets the document node associated with an insert POST request.
-	 * 
+	 * FIXME: Could be a method of WikiDataRequest
 	 * @param request
 	 * @return
 	 * @throws org.dbwiki.exception.WikiException
@@ -386,7 +402,7 @@ public abstract class DatabaseWiki implements Comparable<DatabaseWiki> {
 	
 
 	/** Collects the node updates associated with the text fields of a POST request generated by a data edit form
-	 *  
+	 *  FIXME: Could be a method of WikiDataRequest
 	 * @param request
 	 * @return
 	 * @throws org.dbwiki.exception.WikiException
@@ -1165,97 +1181,6 @@ public abstract class DatabaseWiki implements Comparable<DatabaseWiki> {
 			_urlDecodingVersion = server().updateConfigFile(wikiID, fileType, value, request.user());
 		}
 	}
-	
-	
-	/**
-	 * Get entry permissions of a user to a database DB from DB_policy table
-	 * @param user_id the id of a user
-	 * @return Map<Integer, Map<Integer,DBPolicy>>
-	 */
-	public Map<Integer,Map<Integer,DBPolicy>> getDBPolicyListing(int user_id) {
-		
-		Map<Integer,Map<Integer,DBPolicy>> policyListing = new HashMap<Integer,Map<Integer,DBPolicy>>();
-		try{
-		Connection con = _connector.getConnection();
-		con.setAutoCommit(false);
-		Statement stmt = con.createStatement();
-		ResultSet rs = stmt.executeQuery("SELECT * FROM "
-				+ _name + DatabaseConstants.RelationPolicy
-				+" WHERE " + DatabaseConstants.RelPolicyUserID + " = "+user_id);
-		System.out.println("SELECT * FROM "
-				+ _name + DatabaseConstants.RelationPolicy
-				+" WHERE " + DatabaseConstants.RelPolicyUserID + " = "+user_id);
-		while (rs.next()) {
-			if(policyListing.get(rs.getInt(DatabaseConstants.RelPolicyUserID))==null){
-				Map<Integer,DBPolicy> map = new HashMap<Integer,DBPolicy>();
-				map.put(rs.getInt(DatabaseConstants.RelPolicyEntry), new DBPolicy(rs
-					.getInt(DatabaseConstants.RelPolicyUserID), rs
-					.getInt(DatabaseConstants.RelPolicyEntry), rs
-					.getBoolean(DatabaseConstants.RelPolicyRead), rs
-					.getBoolean(DatabaseConstants.RelPolicyInsert), rs
-					.getBoolean(DatabaseConstants.RelPolicyDelete), rs
-					.getBoolean(DatabaseConstants.RelPolicyUpdate)));
-				policyListing.put(rs.getInt(DatabaseConstants.RelPolicyUserID), map);
-			} else {
-				policyListing.get(rs.getInt(DatabaseConstants.RelPolicyUserID)).put(rs.getInt(DatabaseConstants.RelPolicyEntry), new DBPolicy(rs
-					.getInt(DatabaseConstants.RelPolicyUserID), rs
-					.getInt(DatabaseConstants.RelPolicyEntry), rs
-					.getBoolean(DatabaseConstants.RelPolicyRead), rs
-					.getBoolean(DatabaseConstants.RelPolicyInsert), rs
-					.getBoolean(DatabaseConstants.RelPolicyDelete), rs
-					.getBoolean(DatabaseConstants.RelPolicyUpdate)));
-			}
-		}
-		rs.close();
-		stmt.close();
-		} catch(Exception e){
-			e.printStackTrace();
-		}
-		return policyListing;
-	}
 
-	/**
-	 * Get entry listing of a specific database in DBWiki
-	 * @return Map<Integer, Entry>
-	 * @throws SQLException
-	 * @throws WikiException
-	 * FIXME: make non-static / make method of DatabaseWiki 
-	 */
-	public Map<Integer, Entry> getEntryListing()
-			throws SQLException, WikiException {
-		Map<Integer, Entry> entryListing = new HashMap<Integer, Entry>();
-		Connection con = _connector.getConnection();
-		con.setAutoCommit(false);
-		Statement stmt = con.createStatement();
-		ResultSet rs = stmt.executeQuery("SELECT DISTINCT ss." + DatabaseConstants.RelDataColEntry + ", ss." + DatabaseConstants.RelDataColValue +
-				" FROM " + _name + DatabaseConstants.RelationData + " ss "+
-				" JOIN " + _name + DatabaseConstants.RelationData + " s "+
-				" ON ss." + DatabaseConstants.RelDataColParent + " = s." + DatabaseConstants.RelDataColID +
-				" JOIN " + _name + DatabaseConstants.RelationData + " p "+
-				" ON s." + DatabaseConstants.RelDataColParent + " = p." + DatabaseConstants.RelDataColID +
-				" WHERE p." + DatabaseConstants.RelSchemaColParent + " = -1" +
-				" AND s." + DatabaseConstants.RelDataColTimesequence + " = -1" +
-				" ORDER BY ss." + DatabaseConstants.RelDataColValue + " ASC");
-		System.out.println("SELECT DISTINCT ss." + DatabaseConstants.RelDataColEntry + ", ss." + DatabaseConstants.RelDataColValue +
-				" FROM " + _name + DatabaseConstants.RelationData + " ss "+
-				" JOIN " + _name + DatabaseConstants.RelationData + " s "+
-				" ON ss." + DatabaseConstants.RelDataColParent + " = s." + DatabaseConstants.RelDataColID +
-				" JOIN " + _name + DatabaseConstants.RelationData + " p "+
-				" ON s." + DatabaseConstants.RelDataColParent + " = p." + DatabaseConstants.RelDataColID +
-				" WHERE p." + DatabaseConstants.RelSchemaColParent + " = -1" +
-				" AND s." + DatabaseConstants.RelDataColTimesequence + " = -1" +
-				" ORDER BY ss." + DatabaseConstants.RelDataColValue + " ASC");
-		while (rs.next()) {
-			if(rs.getString(DatabaseConstants.RelDataColValue)!= null){
-			Entry entry = new Entry(rs.getInt(DatabaseConstants.RelDataColEntry), rs.getString(DatabaseConstants.RelDataColValue));
-			entryListing.put(entry.entry_id(),entry);
-			}else{
-				break;
-			}
-		}
-		rs.close();
-		stmt.close();
-		return entryListing;
-	}
-
+	
 }

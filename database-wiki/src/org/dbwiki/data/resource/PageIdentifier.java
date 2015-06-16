@@ -41,17 +41,20 @@ public class PageIdentifier implements ResourceIdentifier {
 	 */
 	private String _title;
 	private long _timestamp;
+	private int _id;
 	
 	/*
 	 * Constructors
 	 */
-	public PageIdentifier(String title, long timestamp) {
+	public PageIdentifier(String title, int id, long timestamp) {
 		_title = title;
 		_timestamp = timestamp;
+		_id = id;
 	}
 	
 	public PageIdentifier(String title) {
-		this(title, -1);
+		this(title, -1, -1);		
+		
 	}
 	
 	public PageIdentifier() {
@@ -91,5 +94,9 @@ public class PageIdentifier implements ResourceIdentifier {
 	
 	public String toURLString() {
 		return "/" + _title;
+	}
+
+	public int id() {
+		return _id;
 	}
 }

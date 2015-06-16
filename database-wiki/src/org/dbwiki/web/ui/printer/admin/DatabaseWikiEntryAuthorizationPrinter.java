@@ -1,16 +1,13 @@
 package org.dbwiki.web.ui.printer.admin;
 
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Map;
 import org.dbwiki.exception.WikiException;
 import org.dbwiki.user.UserListing;
 import org.dbwiki.web.html.HtmlLinePrinter;
 import org.dbwiki.web.request.parameter.RequestParameterAction;
-import org.dbwiki.web.security.WikiAuthenticator;
-import org.dbwiki.web.server.Entry;
-import org.dbwiki.data.security.DBPolicy;
+import org.dbwiki.data.index.DatabaseContent;
+import org.dbwiki.data.security.Capability;
+import org.dbwiki.web.server.DatabaseWiki;
 import org.dbwiki.web.server.WikiServer;
 import org.dbwiki.web.ui.CSS;
 import org.dbwiki.web.ui.printer.HtmlContentPrinter;
@@ -19,23 +16,22 @@ import org.dbwiki.web.ui.printer.HtmlContentPrinter;
  * Generates a form that allows managing the entry-level access permissions
  */
 
+/* FIXME: Use Database content function instead of passed-in map
+ * FIXME: #security USe policy instead of passed-in map
+ */
 public class DatabaseWikiEntryAuthorizationPrinter extends HtmlContentPrinter {
 	private String _headline;
 	private String _action;
 	private UserListing _users;
 	private int _user_id;
-	private String _wiki;
-	private Map<Integer, Entry> _entryListing;
-	private Map<Integer,Map<Integer,DBPolicy>> _policyListing;
-
-	public DatabaseWikiEntryAuthorizationPrinter(String _headline,String _action, UserListing _users, String _wiki, int _user_id, Map<Integer,Entry> _entryListing, Map<Integer,Map<Integer,DBPolicy>> _policyListing) {
+	private DatabaseWiki _wiki;
+	
+	public DatabaseWikiEntryAuthorizationPrinter(String _headline,String _action, UserListing _users, DatabaseWiki _wiki, int _user_id) {
 		this._headline = _headline;
 		this._action = _action;
 		this._users = _users;
 		this._wiki = _wiki;
 		this._user_id = _user_id;
-		this._entryListing = _entryListing;
-		this._policyListing = _policyListing;
 	}
 	
 
@@ -46,7 +42,7 @@ public class DatabaseWikiEntryAuthorizationPrinter extends HtmlContentPrinter {
 	
 	
 	public void print(HtmlLinePrinter printer) throws WikiException {
-		
+	
 		_headline += "\t-" + _users.get(_user_id).login();
 		printer.paragraph(_headline, CSS.CSSHeadline);
 
@@ -92,12 +88,14 @@ public class DatabaseWikiEntryAuthorizationPrinter extends HtmlContentPrinter {
 		printer.closeTH();
 		printer.closeTR();
 		//contents
+		
+		
+		DatabaseContent entries = _wiki.database().content();
+		
 		// Sorting key set helps align form with update code, see WikiServer.getUpdateEntryAuthorizationResponseHandler
-		ArrayList<Integer> keys = new ArrayList<Integer>(_entryListing.keySet());
-		Collections.sort(keys);
-		for(Integer i:keys){
-			String entry_value = _entryListing.get(i).entry_value();
-			int entry_id = _entryListing.get(i).entry_id();
+		for(int i = 0; i < entries.size(); i++){
+			String entry_value = entries.get(i).label();
+			int entry_id = entries.get(i).id();
 			
 			//
 			// entry name
@@ -109,7 +107,7 @@ public class DatabaseWikiEntryAuthorizationPrinter extends HtmlContentPrinter {
 			printer.closeCENTER();
 			printer.closeTD();
 			
-			boolean flag = false;
+			/*boolean flag = false;
 			int policyKey = 0;
 			for(int key:_policyListing.keySet()){
 				if (_user_id == key){
@@ -122,32 +120,34 @@ public class DatabaseWikiEntryAuthorizationPrinter extends HtmlContentPrinter {
 						}
 					}
 				}
-			}
+			}*/
+			boolean flag = _wiki.policy().findEntry(_user_id, entry_id);
 			
 			if(flag){
+				Capability cap = _wiki.policy().findEntryCapability(_user_id, entry_id);
 				//read permission
 				printer.openTD(CSS.CSSFormControl);
-				printer.addRADIOBUTTON("Yes", entry_id+WikiServer.propertyReadPermission, "HoldPermission", (_policyListing.get(policyKey).get(entry_id).capability().isRead() == WikiAuthenticator.HoldPermission));
+				printer.addRADIOBUTTON("Yes", entry_id+WikiServer.propertyReadPermission, "HoldPermission", (cap.isRead()));
 				printer.addBR();
-				printer.addRADIOBUTTON("No", entry_id+WikiServer.propertyReadPermission, "NoPermission", (_policyListing.get(policyKey).get(entry_id).capability().isRead() != WikiAuthenticator.HoldPermission));
+				printer.addRADIOBUTTON("No", entry_id+WikiServer.propertyReadPermission, "NoPermission", (!cap.isRead()));
 				printer.closeTD();
 				//insert permission
 				printer.openTD(CSS.CSSFormControl);
-				printer.addRADIOBUTTON("Yes", entry_id+WikiServer.propertyInsertPermission, "HoldPermission", (_policyListing.get(policyKey).get(entry_id).capability().isInsert() == WikiAuthenticator.HoldPermission));
+				printer.addRADIOBUTTON("Yes", entry_id+WikiServer.propertyInsertPermission, "HoldPermission", (cap.isInsert()));
 				printer.addBR();
-				printer.addRADIOBUTTON("No", entry_id+WikiServer.propertyInsertPermission, "NoPermission", (_policyListing.get(policyKey).get(entry_id).capability().isInsert() != WikiAuthenticator.HoldPermission));
+				printer.addRADIOBUTTON("No", entry_id+WikiServer.propertyInsertPermission, "NoPermission", (!cap.isInsert()));
 				printer.closeTD();
 				//delete permission
 				printer.openTD(CSS.CSSFormControl);
-				printer.addRADIOBUTTON("Yes", entry_id+WikiServer.propertyDeletePermission, "HoldPermission", (_policyListing.get(policyKey).get(entry_id).capability().isDelete() == WikiAuthenticator.HoldPermission));
+				printer.addRADIOBUTTON("Yes", entry_id+WikiServer.propertyDeletePermission, "HoldPermission", (cap.isDelete()));
 				printer.addBR();
-				printer.addRADIOBUTTON("No", entry_id+WikiServer.propertyDeletePermission, "NoPermission", (_policyListing.get(policyKey).get(entry_id).capability().isDelete() != WikiAuthenticator.HoldPermission));
+				printer.addRADIOBUTTON("No", entry_id+WikiServer.propertyDeletePermission, "NoPermission", (!cap.isDelete()));
 				printer.closeTD();
 				//update permission
 				printer.openTD(CSS.CSSFormControl);
-				printer.addRADIOBUTTON("Yes", entry_id+WikiServer.propertyUpdatePermission, "HoldPermission", (_policyListing.get(policyKey).get(entry_id).capability().isUpdate() == WikiAuthenticator.HoldPermission));
+				printer.addRADIOBUTTON("Yes", entry_id+WikiServer.propertyUpdatePermission, "HoldPermission", (cap.isUpdate()));
 				printer.addBR();
-				printer.addRADIOBUTTON("No", entry_id+WikiServer.propertyUpdatePermission, "NoPermission", (_policyListing.get(policyKey).get(entry_id).capability().isUpdate() != WikiAuthenticator.HoldPermission));
+				printer.addRADIOBUTTON("No", entry_id+WikiServer.propertyUpdatePermission, "NoPermission", (!cap.isUpdate()));
 				printer.closeTD();
 			}else{
 				//read permission
@@ -181,7 +181,7 @@ public class DatabaseWikiEntryAuthorizationPrinter extends HtmlContentPrinter {
 		
 		printer.closeTABLE();
 		//find  name of the database here
-		printer.addHIDDEN(WikiServer.ParameterName, _wiki);
+		printer.addHIDDEN(WikiServer.ParameterName, _wiki.name());
 		printer.addHIDDEN("user_id", _user_id+"");
 		printer.openPARAGRAPH(CSS.CSSButtonLine);
 		printer.openCENTER();
@@ -198,6 +198,7 @@ public class DatabaseWikiEntryAuthorizationPrinter extends HtmlContentPrinter {
 		printer.closeTD();
 		printer.closeTR();
 		printer.closeTABLE();
+	
 	}
 		
 }

@@ -67,7 +67,7 @@ public class RequestURL {
 	 */
 	
 	// TODO #request: Factor the URL / request parsing code out
-	public RequestURL(Exchange<?> exchange, String ignorePathPrefix) throws org.dbwiki.exception.WikiException {
+	public RequestURL(Exchange<?> exchange, String ignorePathPrefix) throws org.dbwiki.exception.WikiFatalException {
 		_exchange = exchange;
 		
 		_uri = exchange.getRequestURI();
@@ -114,8 +114,8 @@ public class RequestURL {
 				}
 				in.close();
 		    }
-		} catch (java.io.IOException ioException) {
-			throw new WikiFatalException(ioException);
+		} catch (Exception exception) {
+			throw new WikiFatalException(exception);
 		}
 		_parameters = new RequestParameterList(urlParameter);
 	}

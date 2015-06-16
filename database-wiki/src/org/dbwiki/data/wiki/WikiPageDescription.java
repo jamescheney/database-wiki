@@ -75,4 +75,10 @@ public class WikiPageDescription implements DatabaseEntry {
 	public TimeSequence timestamp() {
 		return new TimeSequence(1);
 	}
+
+
+	@Override
+	public int id() {
+		return _identifier.id();
+	}
 }
