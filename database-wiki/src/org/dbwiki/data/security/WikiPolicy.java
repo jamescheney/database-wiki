@@ -16,11 +16,11 @@ import org.dbwiki.user.User;
 import org.dbwiki.web.request.Exchange;
 import org.dbwiki.web.server.DatabaseWiki;
 
-// FIXME: Split into server-wide and DatabaseWiki-specific policies
 public class WikiPolicy extends SimplePolicy {
 
-	// FIXME: Keeping a reference to authorization listing of parent policy is wrong; it gets outdated
+	// map from user ids to capabilities
     private Map<Integer,Capability> _authorizationListing;
+    // map from user ids and entries to capabilites
     private Map<Integer,Map<Integer,Capability>> _policyListing;
     private DatabaseWiki _wiki;
     
@@ -162,9 +162,10 @@ public class WikiPolicy extends SimplePolicy {
 						if(findEntry(user.id(),entryId)) {
 							return findEntryCapability(user.id(),entryId).isInsert();
 						}
-					} // otherwise allow it
+					} else { // otherwise use database-level capability
 					return true; 
-					// delete request
+					}
+					// if delete request
 				} else if (isDeleteRequest(exchange) && isDelete == true){
 					if(entryId != null) {
 						if(findEntry(user.id(),entryId)) {
@@ -180,7 +181,7 @@ public class WikiPolicy extends SimplePolicy {
 						}
 					}
 					return true;
-				} else {
+				} else { // deny all other protected requests, for now
 					return false;
 				}
 			} else { // !isProtectedRequest
@@ -235,7 +236,7 @@ public class WikiPolicy extends SimplePolicy {
     }
     
     /* FIXME: #security It would be better if this also updated the authorization listing. */
-    public void updateCapability(Connection con, int user_index,  Capability cap) 
+    public synchronized void updateCapability(Connection con, int user_index,  Capability cap) 
     	throws SQLException {
     	PreparedStatement pStmt = null;
 		
@@ -283,14 +284,14 @@ public class WikiPolicy extends SimplePolicy {
 		_authorizationListing.put(user_index, new Capability(cap.isRead(), cap.isInsert(), cap.isDelete(),cap.isUpdate()));
     }
     
-    public void updateEntryCapability(Connection con, int user_index, DatabaseWiki wiki, int entry, Capability cap) 
+    public synchronized void updateEntryCapability(Connection con, int user_index, int entry, Capability cap) 
     		throws SQLException {
     	
     	PreparedStatement pStmt = null;
 		
 		if (findEntry(user_index, entry)) {
 			pStmt = con.prepareStatement("UPDATE "
-					+ wiki.name() + DatabaseConstants.RelationPolicy + " " + "SET "
+					+ _wiki.name() + DatabaseConstants.RelationPolicy + " " + "SET "
 					+ DatabaseConstants.RelPolicyRead + " = ?, "
 					+ DatabaseConstants.RelPolicyInsert + " = ?, "
 					+ DatabaseConstants.RelPolicyDelete + " = ?, "
@@ -308,7 +309,7 @@ public class WikiPolicy extends SimplePolicy {
 			pStmt.close();
 		} else {
 			pStmt = con.prepareStatement("INSERT INTO "
-					+ wiki.name() + DatabaseConstants.RelationPolicy + "("
+					+ _wiki.name() + DatabaseConstants.RelationPolicy + "("
 					+ DatabaseConstants.RelPolicyEntry + ", "
 					+ DatabaseConstants.RelPolicyUserID + ", "
 					+ DatabaseConstants.RelPolicyRead + ", "
@@ -332,7 +333,7 @@ public class WikiPolicy extends SimplePolicy {
 	}
     
     
-    protected void updateEntryCapability(int user_index, int entry, Capability capability) {
+    protected synchronized void updateEntryCapability(int user_index, int entry, Capability capability) {
     	if(!_policyListing.containsKey(user_index)) {
 	    	Map<Integer,Capability> map = new HashMap<Integer,Capability>();
 			map.put(entry, capability);

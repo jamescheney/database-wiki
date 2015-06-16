@@ -1279,7 +1279,7 @@ public abstract class WikiServer  implements WikiServerConstants {
 				
 				
 				Capability cap = new Capability (is_read, is_insert, is_delete, is_update);
-				wiki.policy().updateEntryCapability(con,user_id,wiki, entry,cap);
+				wiki.policy().updateEntryCapability(con,user_id, entry,cap);
 			}
 			
 			con.commit();

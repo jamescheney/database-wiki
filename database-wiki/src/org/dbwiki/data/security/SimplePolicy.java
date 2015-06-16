@@ -26,6 +26,8 @@ public class SimplePolicy implements WikiServerConstants, Policy {
     	_authenticationMode = mode;
     }
     
+    // TODO: Check that this is restrictive enough, e.g. disallows going up in the file system outside
+    // the server root dir
 	public boolean allowedFileRequest(Exchange<?> exchange) {
 		// If the request is for a file (as specified by the 
     	// regular expressions above), then no authorization is
@@ -171,7 +173,7 @@ public class SimplePolicy implements WikiServerConstants, Policy {
     	}     	// if no rule matches, deny access
     	return false; 
     }
-   
+    
     public boolean isControlledRequest(Exchange <?> exchange) {
     	return ((_authenticationMode == DatabaseWikiProperties.AuthenticateAlways) ||
     			(_authenticationMode == DatabaseWikiProperties.AuthenticateWriteOnly) 
