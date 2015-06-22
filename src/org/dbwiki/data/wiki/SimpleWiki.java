@@ -76,15 +76,17 @@ public class SimpleWiki implements Wiki {
 	/** Get the content listing of the wiki
 	 * 
 	 */
+	// FIXME: This displays all versions of wiki pages, not just the most recent one.
 	public synchronized DatabaseContent content() throws org.dbwiki.exception.WikiException {
 		try {
 			VectorDatabaseListing content = new VectorDatabaseListing();
 			Connection con = _connector.getConnection();
 			PreparedStatement pStmtSelectPages = con.prepareStatement(
 					"SELECT DISTINCT " + DatabaseConstants.RelPagesColName + ", " + 
-									     DatabaseConstants.RelPagesColID + " " + 
+									     "MAX(" + DatabaseConstants.RelPagesColID + ") AS " + DatabaseConstants.RelPagesColID + " " + 
 					"FROM " +  _relName + DatabaseConstants.RelationPages + " " +
-					"ORDER BY " + DatabaseConstants.RelPagesColName);
+					"GROUP BY " + DatabaseConstants.RelPagesColName + " " +
+				    "ORDER BY " + DatabaseConstants.RelPagesColName);
 			ResultSet rs = pStmtSelectPages.executeQuery();
 			while (rs.next()) {
 				String title = rs.getString(DatabaseConstants.RelPagesColName);
