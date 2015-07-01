@@ -21,6 +21,8 @@
 */
 package org.dbwiki.data.provenance;
 
+import java.net.URL;
+
 import org.dbwiki.user.User;
 
 public class ProvenanceImport extends Provenance {
@@ -28,14 +30,14 @@ public class ProvenanceImport extends Provenance {
 	 * Private Variables
 	 */
 	
-	private String _sourceURL;
+	private URL _sourceURL;
 	
 	
 	/*
 	 * Constructors
 	 */
 	
-	public ProvenanceImport(User user, String sourceURL) {
+	public ProvenanceImport(User user, URL sourceURL) {
 		super(ProvenanceTypeImport, user, null);
 		
 		_sourceURL = sourceURL;
@@ -50,7 +52,7 @@ public class ProvenanceImport extends Provenance {
 		return "IMPORT";
 	}
 	
-	public String sourceURL() {
+	public URL sourceURL() {
 		return _sourceURL;
 	}
 }

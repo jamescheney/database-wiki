@@ -21,26 +21,21 @@
 */
 package org.dbwiki.driver.rdbms;
 
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-
 import org.dbwiki.data.provenance.Provenance;
 import org.dbwiki.data.provenance.ProvenanceCopy;
 import org.dbwiki.data.provenance.ProvenanceFactory;
 import org.dbwiki.data.provenance.ProvenanceImport;
-
 import org.dbwiki.data.resource.NodeIdentifier;
-
 import org.dbwiki.data.time.VersionIndex;
 import org.dbwiki.data.time.Version;
-
-
 import org.dbwiki.exception.WikiFatalException;
-
 import org.dbwiki.user.User;
 import org.dbwiki.user.UserListing;
 
@@ -82,23 +77,33 @@ public class SQLVersionIndex extends VersionIndex implements DatabaseConstants {
 	
 	public void load(Connection con,UserListing users) throws org.dbwiki.exception.WikiException, java.sql.SQLException {
 		Statement stmt = con.createStatement();
+		
 		ResultSet rs = stmt.executeQuery("SELECT * FROM " + _name + RelationVersion + " ORDER BY " + RelVersionColNumber);
-		while (rs.next()) {
-			int versionNumber = rs.getInt(RelVersionColNumber);
-			String versionName = rs.getString(RelVersionColName);
-			User user = users.get(rs.getInt(RelVersionColUser));
-			int nodeId = rs.getInt(RelVersionColNode);
-			NodeIdentifier nid = null;
-			if(nodeId != -1)
-				nid = new NodeIdentifier(nodeId);
-			Provenance provenance =
-				ProvenanceFactory.getProvenance((byte)rs.getInt(RelVersionColProvenance),
-						user, nid, rs.getString(RelVersionColSource));
-			long createTime = rs.getLong(RelVersionColTime);
-			this.add(new Version(versionNumber, versionName, createTime, provenance, this));
-		}	
-		rs.close();
-		stmt.close();	
+		try {
+			while (rs.next()) {
+				int versionNumber = rs.getInt(RelVersionColNumber);
+				String versionName = rs.getString(RelVersionColName);
+				User user = users.get(rs.getInt(RelVersionColUser));
+				int nodeId = rs.getInt(RelVersionColNode);
+				NodeIdentifier nid = null;
+				if(nodeId != -1)
+					nid = new NodeIdentifier(nodeId);
+				URL url = null;
+				if (rs.getString(RelVersionColSource) != null) {
+					url = new URL(rs.getString(RelVersionColSource));
+				}
+				Provenance provenance =
+					ProvenanceFactory.getProvenance((byte)rs.getInt(RelVersionColProvenance),
+							user, nid, url);
+				long createTime = rs.getLong(RelVersionColTime);
+				this.add(new Version(versionNumber, versionName, createTime, provenance, this));
+			}
+		} catch (java.net.MalformedURLException e) {
+			throw new WikiFatalException(e);
+		} finally {
+			rs.close();
+			stmt.close();
+		}
 	
 	}
 	public void store(Connection con) throws org.dbwiki.exception.WikiException {
@@ -169,9 +174,9 @@ public class SQLVersionIndex extends VersionIndex implements DatabaseConstants {
 			statement.setInt(5, RelVersionColNodeValImport);
 		}
 		if (provenance.isCopy()) {
-			statement.setString(6, ((ProvenanceCopy)provenance).sourceURL());
+			statement.setString(6, ((ProvenanceCopy)provenance).sourceURL().toString());
 		} else if (provenance.isImport()) {
-			statement.setString(6, ((ProvenanceImport)provenance).sourceURL());
+			statement.setString(6, ((ProvenanceImport)provenance).sourceURL().toString());
 		} else {
 			statement.setString(6, null);
 		}

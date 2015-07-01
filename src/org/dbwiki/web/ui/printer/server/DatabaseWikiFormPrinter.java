@@ -293,23 +293,27 @@ public class DatabaseWikiFormPrinter extends HtmlContentPrinter {
 			printer.openTD(CSS.CSSFormLabel);
 			printer.text("Data file (URL)");
 			printer.closeTD();
+			String url = "";
+			if (_properties.getResource() != null) {
+				url = _properties.getResource().toString();
+			}
 			if (_message == MessageFileNotFound) {
 				printer.openTD(CSS.CSSFormMessage);
 				printer.text("Resource not found.");
 				printer.addBR();
 				printer.addBR();
 				//printer.addFILE(WikiServer.ParameterInputFile);
-				printer.addTEXTAREA(WikiServer.ParameterInputFile, "90", _properties.getResource());
+				printer.addTEXTAREA(WikiServer.ParameterInputFile, "90", url);
 				printer.closeTD();
 			} else if (_message != MessageNone) {
 				printer.openTD(CSS.CSSFormText);
-				printer.addHIDDEN(WikiServer.ParameterInputFile, _properties.getResource());
-				printer.text(_properties.getResource());
+				printer.addHIDDEN(WikiServer.ParameterInputFile, url);
+				printer.text(url);
 				printer.closeTD();
 			} else {
 				printer.openTD(CSS.CSSFormControl);
 				//printer.addFILE(WikiServer.ParameterInputFile);
-				printer.addTEXTAREA(WikiServer.ParameterInputFile, "90", _properties.getResource());
+				printer.addTEXTAREA(WikiServer.ParameterInputFile, "90", url);
 				printer.closeTD();
 			}
 			printer.closeTR();

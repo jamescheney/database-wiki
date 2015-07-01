@@ -48,7 +48,7 @@ public class XMLDocumentImportReader {
 	private InputStream _inputStream;
 	private String _rootPath;
 	private DatabaseSchema _schema;
-	private String _sourceURL;
+	private URL _sourceURL;
 	private User _user;
 	private boolean _validating;
 	private boolean _xmlSchema;
@@ -58,7 +58,7 @@ public class XMLDocumentImportReader {
 	 */
 	
 	public XMLDocumentImportReader(URL sourceURL, DatabaseSchema schema, String rootPath, User user, boolean validating, boolean xmlSchema) throws org.dbwiki.exception.WikiException {
-		_sourceURL = sourceURL.toString();
+		_sourceURL = sourceURL;
 		_schema = schema;
 		_rootPath = rootPath;
 		_user = user;
@@ -66,7 +66,7 @@ public class XMLDocumentImportReader {
 		_xmlSchema = xmlSchema;
 		
 		try {
-			if(_sourceURL.endsWith(".gz")) {
+			if(_sourceURL.getPath().endsWith(".gz")) {
 				_inputStream = new GZIPInputStream(sourceURL.openStream());
 			} else {
 				_inputStream = sourceURL.openStream();

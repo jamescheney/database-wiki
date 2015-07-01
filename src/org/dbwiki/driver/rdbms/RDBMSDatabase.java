@@ -22,6 +22,7 @@
 
 package org.dbwiki.driver.rdbms;
 
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -32,7 +33,6 @@ import java.util.Hashtable;
 import java.util.Vector;
 
 import org.dbwiki.data.annotation.Annotation;
-
 import org.dbwiki.data.database.Database;
 import org.dbwiki.data.database.DatabaseAttributeNode;
 import org.dbwiki.data.database.DatabaseElementNode;
@@ -42,7 +42,6 @@ import org.dbwiki.data.database.DatabaseNodeValue;
 import org.dbwiki.data.database.DatabaseTextNode;
 import org.dbwiki.data.database.NodeUpdate;
 import org.dbwiki.data.database.Update;
-
 import org.dbwiki.data.document.DocumentAttributeNode;
 import org.dbwiki.data.document.DocumentGroupNode;
 import org.dbwiki.data.document.DocumentNode;
@@ -51,50 +50,39 @@ import org.dbwiki.data.document.PasteElementNode;
 import org.dbwiki.data.document.PasteGroupNode;
 import org.dbwiki.data.document.PasteNode;
 import org.dbwiki.data.document.PasteTextNode;
-
 import org.dbwiki.data.index.DatabaseContent;
 import org.dbwiki.data.index.VectorDatabaseListing;
-
 import org.dbwiki.data.io.NodeWriter;
-
 import org.dbwiki.data.provenance.ProvenanceActivate;
 import org.dbwiki.data.provenance.ProvenanceCopy;
 import org.dbwiki.data.provenance.ProvenanceDelete;
 import org.dbwiki.data.provenance.ProvenanceInsert;
 import org.dbwiki.data.provenance.ProvenanceUnknown;
 import org.dbwiki.data.provenance.ProvenanceUpdate;
-
 import org.dbwiki.data.query.QueryResultSet;
 import org.dbwiki.data.query.QueryStatement;
 import org.dbwiki.data.query.condition.AttributeCondition;
 import org.dbwiki.data.query.condition.AttributeConditionListing;
-
 import org.dbwiki.data.resource.DatabaseIdentifier;
 import org.dbwiki.data.resource.SchemaNodeIdentifier;
 import org.dbwiki.data.resource.NodeIdentifier;
 import org.dbwiki.data.resource.ResourceIdentifier;
-
 import org.dbwiki.data.schema.AttributeSchemaNode;
 import org.dbwiki.data.schema.DatabaseSchema;
 import org.dbwiki.data.schema.SchemaNode;
 import org.dbwiki.data.schema.GroupSchemaNode;
-
 import org.dbwiki.data.time.TimeInterval;
 import org.dbwiki.data.time.TimeSequence;
 import org.dbwiki.data.time.TimestampedObject;
 import org.dbwiki.data.time.Version;
 import org.dbwiki.data.time.VersionIndex;
-
 import org.dbwiki.exception.WikiFatalException;
 import org.dbwiki.exception.data.WikiDataException;
 import org.dbwiki.exception.data.WikiSchemaException;
 import org.dbwiki.exception.web.WikiRequestException;
-
 import org.dbwiki.user.User;
 import org.dbwiki.user.UserListing;
-
 import org.dbwiki.web.request.RequestURL;
-
 import org.dbwiki.web.server.DatabaseWiki;
 import org.dbwiki.web.server.DatabaseWikiProperties;
 
@@ -138,7 +126,7 @@ public class RDBMSDatabase implements Database, DatabaseConstants {
 			con.close();
 		} catch (java.sql.SQLException sqlException) {
 			throw new WikiFatalException(sqlException);
-		}
+		} 
 	}
 	
 	// HACK: the last two arguments supply existing session
@@ -473,7 +461,7 @@ public class RDBMSDatabase implements Database, DatabaseConstants {
 		return _wiki.name();
 	}
 
-	public synchronized void paste(ResourceIdentifier target, PasteNode pasteNode, String sourceURL, User user) throws org.dbwiki.exception.WikiException {
+	public synchronized void paste(ResourceIdentifier target, PasteNode pasteNode, URL sourceURL, User user) throws org.dbwiki.exception.WikiException {
 		DatabaseElementNode targetElement = null;
 		
 		if (!target.isRootIdentifier()) {

@@ -178,8 +178,10 @@ public class WikiServerHttpHandler extends WikiServer implements HttpHandler {
 		
 		Connection con = _connector.getConnection();
 		int wikiID = -1;
-		SQLVersionIndex versionIndex = new SQLVersionIndex(con, name, users(), true);
 		CreateCollectionRecord r = new CreateCollectionRecord(name,title,authenticationMode,autoSchemaChanges,databaseSchema,user);
+		SQLVersionIndex versionIndex = null;
+		versionIndex = new SQLVersionIndex(con, name, users(), true);
+		
 		con.setAutoCommit(false);
 		con.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 		try {
@@ -221,7 +223,7 @@ public class WikiServerHttpHandler extends WikiServer implements HttpHandler {
 			con.rollback();
 			con.close();
 			throw new WikiFatalException(sqlException);
-		}
+		} 
 		con.commit();
 		con.close();
 	}

@@ -21,19 +21,15 @@
 */
 package org.dbwiki.driver.rdbms;
 
+import java.net.URL;
 import java.sql.Connection;
-
 
 import org.dbwiki.data.database.Database;
 import org.dbwiki.data.document.DocumentGroupNode;
 import org.dbwiki.data.io.ImportHandler;
-
 import org.dbwiki.data.provenance.ProvenanceImport;
-
 import org.dbwiki.data.time.Version;
-
 import org.dbwiki.exception.WikiFatalException;
-
 import org.dbwiki.user.User;
 
 /** Import handler that loads the xml data being imported into RDBMSDatabase 
@@ -94,7 +90,7 @@ public class DatabaseImportHandler implements ImportHandler {
 		}
 	}
 
-	public void startImport(User user, String sourceURL) throws org.dbwiki.exception.WikiException {
+	public void startImport(User user, URL sourceURL) throws org.dbwiki.exception.WikiException {
 		_importVersion = _database.versionIndex().getNextVersion(new ProvenanceImport(user, sourceURL));
 	}
 }

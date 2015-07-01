@@ -430,10 +430,10 @@ public abstract class DatabaseWiki implements Comparable<DatabaseWiki> {
 	 * @param url
 	 * @throws org.dbwiki.exception.WikiException
 	 */
-	protected void pasteURL(WikiDataRequest  request, String url) throws org.dbwiki.exception.WikiException {
+	protected void pasteURL(WikiDataRequest  request, URL url) throws org.dbwiki.exception.WikiException {
 		if (url != null) {
 			CopyPasteInputHandler ioHandler = new CopyPasteInputHandler();
-			String sourceURL = url;
+			String sourceURL = url.getPath();
 			if (sourceURL.indexOf("?") != -1) {
 				sourceURL = sourceURL + "&" + RequestParameter.ParameterCopyPasteExport;
 			} else {
@@ -724,7 +724,7 @@ public abstract class DatabaseWiki implements Comparable<DatabaseWiki> {
 			} else {
 				url = URLDecoder.decode(request.copyBuffer(), "UTF-8");
 			}
-			this.pasteURL(request, url);
+			this.pasteURL(request, new URL (url));
 			isGetRequest = !request.isRootRequest();
 			isIndexRequest = !isGetRequest;
 		} else if (request.type().isReset()) {

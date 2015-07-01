@@ -22,6 +22,8 @@
 package org.dbwiki.data.provenance;
 
 
+import java.net.URL;
+
 import org.dbwiki.data.resource.ResourceIdentifier;
 import org.dbwiki.user.User;
 
@@ -30,14 +32,14 @@ public class ProvenanceCopy extends Provenance {
 	 * Private Variables
 	 */
 	
-	private String _sourceURL;
+	private URL _sourceURL;
 	
 	
 	/*
 	 * Constructors
 	 */
 	
-	public ProvenanceCopy(User user, ResourceIdentifier identifier, String sourceURL) {
+	public ProvenanceCopy(User user, ResourceIdentifier identifier, URL sourceURL) {
 		super(ProvenanceTypeCopy, user, identifier);
 		
 		_sourceURL = sourceURL;
@@ -52,7 +54,7 @@ public class ProvenanceCopy extends Provenance {
 		return "COPY";
 	}
 	
-	public String sourceURL() {
+	public URL sourceURL() {
 		return _sourceURL;
 	}
 }

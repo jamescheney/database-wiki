@@ -1,5 +1,7 @@
 package org.dbwiki.web.server;
 
+import java.net.URL;
+
 import org.dbwiki.web.request.parameter.RequestParameterList;
 
 public class DatabaseWikiProperties {
@@ -23,7 +25,7 @@ public class DatabaseWikiProperties {
 	private int _authentication;
 	private int _autoSchemaChanges;
 	private String _name;
-	private String _resource;
+	private URL _resource;
 	private String _schema;
 	private String _schemaPath;
 	private String _title;
@@ -51,9 +53,13 @@ public class DatabaseWikiProperties {
 			_name = "";
 		}
 		if (parameters.hasParameter(WikiServer.ParameterInputFile)) {
-			_resource = parameters.get(WikiServer.ParameterInputFile).value();
+			try {
+				_resource = new URL(parameters.get(WikiServer.ParameterInputFile).value());
+			} catch (Exception e) {
+				_resource = null;
+			}
 		} else {
-			_resource = "";
+			_resource = null;
 		}
 		if (parameters.hasParameter(WikiServer.ParameterSchema)) {
 			_schema = parameters.get(WikiServer.ParameterSchema).value();
@@ -77,7 +83,7 @@ public class DatabaseWikiProperties {
 		_authentication = wiki.getAuthenticationMode();
 		_autoSchemaChanges = wiki.getAutoSchemaChanges();
 		_name = wiki.name();
-		_resource = "";
+		_resource = null;
 		_schema = wiki.database().schema().printSchemaHTML();
 		_schemaPath = "";
 		_title = wiki.getTitle();
@@ -88,7 +94,7 @@ public class DatabaseWikiProperties {
 		_authentication = AuthenticateWriteOnly;
 		_autoSchemaChanges = AutoSchemaChangesIgnore;
 		_name = "";
-		_resource = "";
+		_resource = null;
 		_schema = "";
 		_schemaPath = "";
 		_title = "";
@@ -111,7 +117,7 @@ public class DatabaseWikiProperties {
 		return _name;
 	}
 	
-	public String getResource() {
+	public URL getResource() {
 		return _resource;
 	}
 	

@@ -21,29 +21,23 @@
 */
 package org.dbwiki.data.database;
 
-import org.dbwiki.data.annotation.Annotation;
+import java.net.URL;
 
+import org.dbwiki.data.annotation.Annotation;
 import org.dbwiki.data.document.DocumentNode;
 import org.dbwiki.data.document.PasteNode;
-
 import org.dbwiki.data.index.DatabaseContent;
-
 import org.dbwiki.data.io.NodeWriter;
-
 import org.dbwiki.data.schema.DatabaseSchema;
 import org.dbwiki.data.schema.SchemaNode;
 import org.dbwiki.data.schema.GroupSchemaNode;
-
 import org.dbwiki.data.time.VersionIndex;
-
 import org.dbwiki.data.query.QueryResultSet;
 import org.dbwiki.data.query.condition.AttributeConditionListing;
-
 import org.dbwiki.data.resource.DatabaseIdentifier;
 import org.dbwiki.data.resource.ResourceIdentifier;
 import org.dbwiki.user.User;
 import org.dbwiki.user.UserListing;
-
 import org.dbwiki.web.request.RequestURL;
 
 /** Interface wrapping up all of the operations we can perform on the database.
@@ -112,7 +106,7 @@ public interface Database {
 	public void delete(ResourceIdentifier identifier, User user) throws org.dbwiki.exception.WikiException;
 	public void activate(ResourceIdentifier identifier, User user) throws org.dbwiki.exception.WikiException;
 	public void annotate(ResourceIdentifier identifier, Annotation annotation) throws org.dbwiki.exception.WikiException;
-	public void paste(ResourceIdentifier target, PasteNode pasteNode, String sourceURL, User user) throws org.dbwiki.exception.WikiException;
+	public void paste(ResourceIdentifier target, PasteNode pasteNode, URL sourceURL, User user) throws org.dbwiki.exception.WikiException;
 	public void validate() throws org.dbwiki.exception.WikiException;
 	/* Import/export */
 	public void export(ResourceIdentifier identifier, int version, NodeWriter out) throws org.dbwiki.exception.WikiException;

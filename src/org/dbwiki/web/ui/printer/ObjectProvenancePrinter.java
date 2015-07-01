@@ -158,11 +158,11 @@ public class ObjectProvenancePrinter extends HtmlContentPrinter {
 		body.openTD(css);
 		if (version.provenance().isCopy()) {
 			body.text(version.provenance().name() + " (");
-			body.link(((ProvenanceCopy)version.provenance()).sourceURL(), "Source", CSS.CSSLinkActive);
+			body.link(((ProvenanceCopy)version.provenance()).sourceURL().toString(), "Source", CSS.CSSLinkActive);
 			body.text(")");
 		} else if (version.provenance().isImport()) {
 			body.text(version.provenance().name() + " (");
-			body.link(((ProvenanceImport)version.provenance()).sourceURL(), "Source", CSS.CSSLinkActive);
+			body.link(((ProvenanceImport)version.provenance()).sourceURL().toString(), "Source", CSS.CSSLinkActive);
 			body.text(")");
 		} else {
 			body.text(version.provenance().name());

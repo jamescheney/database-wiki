@@ -746,7 +746,7 @@ public abstract class WikiServer  implements WikiServerConstants {
 	 * @throws MalformedURLException
 	 * @throws IOException
 	 */
-	protected ServerResponseHandler getInsertWikiResponseHandler(HttpRequest request) throws org.dbwiki.exception.WikiException, MalformedURLException, IOException {
+	protected ServerResponseHandler getInsertWikiResponseHandler(HttpRequest request) throws org.dbwiki.exception.WikiException {
 		
 		DatabaseWikiProperties properties = new DatabaseWikiProperties(request.parameters());
 		
@@ -801,14 +801,14 @@ public abstract class WikiServer  implements WikiServerConstants {
 		// given resource and let the user edit/verify the schema.
 		//
 		if ((message == DatabaseWikiFormPrinter.MessageNone)
-				&& (!properties.getResource().equals(""))) {
+				&& (properties.getResource() != null)) {
 			InputStream in = null;
 			try {
-				if (properties.getResource().endsWith(".gz")) {
+				if (properties.getResource().getPath().endsWith(".gz")) {
 					in = new GZIPInputStream(
-							new URL(properties.getResource()).openStream());
+							properties.getResource().openStream());
 				} else {
-					in = new URL(properties.getResource()).openStream();
+					in = properties.getResource().openStream();
 				}
 			} catch (java.net.MalformedURLException mue) {
 				message = DatabaseWikiFormPrinter.MessageFileNotFound;
@@ -873,8 +873,8 @@ public abstract class WikiServer  implements WikiServerConstants {
 				}
 
 				URL resourceURL = null;
-				if (!properties.getResource().equals("")) {
-					resourceURL = new URL(properties.getResource());
+				if (properties.getResource() != null) {
+					resourceURL = properties.getResource();
 				}
 
 				try {

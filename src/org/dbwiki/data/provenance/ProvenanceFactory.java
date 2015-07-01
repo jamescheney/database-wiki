@@ -22,9 +22,10 @@
 package org.dbwiki.data.provenance;
 
 
+import java.net.URL;
+
 import org.dbwiki.exception.WikiFatalException;
 import org.dbwiki.user.User;
-
 import org.dbwiki.data.resource.ResourceIdentifier;
 
 public class ProvenanceFactory {
@@ -32,7 +33,7 @@ public class ProvenanceFactory {
 	 * Public Methods
 	 */
 	
-	public static Provenance getProvenance(byte type, User user, ResourceIdentifier identifier, String sourceURL) throws org.dbwiki.exception.WikiException {
+	public static Provenance getProvenance(byte type, User user, ResourceIdentifier identifier, URL sourceURL) throws org.dbwiki.exception.WikiException {
 		switch (type) {
 		case Provenance.ProvenanceTypeActivate:
 			return new ProvenanceActivate(user, identifier);
