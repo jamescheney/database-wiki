@@ -57,6 +57,7 @@ public abstract class PasteNode {
 	 * Public Methods
 	 */
 	
+	@Deprecated
 	public PasteDatabaseInfo database() {
 		return _database;
 	}

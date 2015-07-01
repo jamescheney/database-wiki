@@ -131,8 +131,8 @@ public class SQLVersionIndex extends VersionIndex implements DatabaseConstants {
 			} else {
 				statement.setString(6, null);
 			}
-			*/
 			statement.setLong(7, version.time());
+			*/
 			statement.execute();
 			statement.close();
 		} catch (java.sql.SQLException exception) {
