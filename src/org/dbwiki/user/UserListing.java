@@ -63,6 +63,13 @@ public class UserListing {
 		return _userIndex.containsKey(login);
 	}
 	
+	public boolean contains(int userID) {
+		for(String login : _userIndex.keySet()) {
+			if(_userIndex.get(login).id() == userID) return true;
+		}
+		return false;
+	}
+	
 	public User get(int userID) {
 		if (userID != User.UnknownUserID) {
 			for (int iUser = 0; iUser < _userListing.size(); iUser++) {

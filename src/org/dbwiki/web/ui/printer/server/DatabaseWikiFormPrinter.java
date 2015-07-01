@@ -200,6 +200,7 @@ public class DatabaseWikiFormPrinter extends HtmlContentPrinter {
 		// Authorization Mode
 		//
 		// FIXME: don't use headline value to determine whether to include this
+		// zhuowei
 		
 		if(_headline.equals("Edit Database Wiki")){
 			printer.openTR();
@@ -209,6 +210,8 @@ public class DatabaseWikiFormPrinter extends HtmlContentPrinter {
 			
 			printer.openTD(CSS.CSSFormText);
 			printer.link("?"+RequestParameter.ParameterAuthorization + "=" + _properties.getName(), "Manage access authority");
+			printer.text("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+			printer.link("?"+RequestParameter.ParameterRoleManagement + "=" + _properties.getName(), "Manage role");
 			printer.closeTD();
 	
 			printer.closeTR();

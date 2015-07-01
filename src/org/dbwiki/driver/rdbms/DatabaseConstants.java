@@ -144,12 +144,39 @@ public interface DatabaseConstants {
 	// Policy
 	//
 	public static final String RelationPolicy = "_policy";
-	
 	public static final String RelPolicyEntry = "entry";
 	public static final String RelPolicyUserID = "user_id";
 	public static final String RelPolicyRead = "p_read";
 	public static final String RelPolicyInsert = "p_insert";
 	public static final String RelPolicyDelete = "p_delete";
 	public static final String RelPolicyUpdate = "p_update";
+	
+	//zhuowei
+	
+	//role
+	public static final String RelationRole =  "_role";
+	public static final String RelRoleID =  "id";
+	public static final String RelRoleName =  "name";
+	public static final String RelRoleRead = "p_read";
+	public static final String RelRoleInsert = "p_insert";
+	public static final String RelRoleDelete = "p_delete";
+	public static final String RelRoleUpdate = "p_update";
+	
+	//role capability
+	public static final String RelationRoleCapability = "_rolecapability";
+	public static final String RelRoleCapabilityRoleID = "role_id";
+	public static final String RelRoleCapabilityEntryID = "entry_id";
+	public static final String RelRoleCapabilityRead = "read";
+	public static final String RelRoleCapabilityInsert = "insert";
+	public static final String RelRoleCapabilityUpdate = "update";
+	public static final String RelRoleCapabilityDelete = "delete";
+	
+	//role assignment
+	public static final String RelationRoleAssignment = "_roleassignment";
+	public static final String RelRoleAssignmentRoleID = "role_id";
+	public static final String RelRoleAssignmentUserID = "user_id";
+	
+	
+	
 	
 }

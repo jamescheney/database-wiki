@@ -25,9 +25,16 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
+import java.util.HashMap;
+
+import org.dbwiki.data.security.Role;
 
 /** A class representing user information, with fields:
  * @param _fullName - full name of the user
@@ -57,6 +64,7 @@ public class User {
 	private int _id;
 	private String _login;
 	private String _password;
+	private HashMap<Integer, ArrayList<Role>> _roleListing; // Wiki ID and roles in this wiki database
 	private boolean _is_admin;
 	
 	
@@ -69,6 +77,16 @@ public class User {
 		_id = id;
 		_login = login;
 		_password = password;
+		_roleListing = new HashMap<Integer, ArrayList<Role>>();
+		_is_admin = is_admin;
+	}
+	
+	public User(int id, String login, String fullName, String password, HashMap<Integer, ArrayList<Role>> roleListing, boolean is_admin) {
+		_fullName  = fullName;
+		_id = id;
+		_login = login;
+		_password = password;
+		_roleListing = roleListing;
 		_is_admin = is_admin;
 	}
 	
@@ -94,11 +112,18 @@ public class User {
 		this._login = _login;
 	}
 
-
 	public void set_password(String _password) {
 		this._password = _password;
 	}
 
+	public void add_role(int wikiID, Role role) {
+		this._roleListing.get(new Integer(wikiID)).add(role);
+	}
+	
+	public void remove_role(int wikiID, Role role) {
+		this._roleListing.get(new Integer(wikiID)).remove(role);
+	}
+	
 	@Deprecated
 	public static int getUnknownuserid() {
 		return UnknownUserID;
@@ -126,6 +151,10 @@ public class User {
 		return _password;
 	}
 	
+	public boolean is_admin() {
+		return _is_admin;
+	}
+	
 	public static List<User> readUsers(File file) throws IOException  {
 		List<User> users = new ArrayList<User>();
 		if (file != null) {
@@ -138,7 +167,7 @@ public class User {
 					String fullName = tokens.nextToken();
 					String password = tokens.nextToken();
 					boolean isAdmin = tokens.nextToken().equals("true");
-					users.add(new User(-1,login, fullName, password,isAdmin));
+					users.add(new User(-1,login, fullName, password, isAdmin));
 				}
 			}
 			in.close();
@@ -146,8 +175,30 @@ public class User {
 		return users;
 	}
 	
-	public boolean is_admin() {
-		return _is_admin;
+	public static User findUser(Connection connection, int userID) throws SQLException{
+		Statement stmt = connection.createStatement();
+		
+		ResultSet rs = stmt.executeQuery("SELECT * FROM _user WHERE id = "
+				+ userID);
+		while(rs.next()) {
+			User user = new User(rs.getInt("id"), rs.getString("login"), rs.getString("full_name"), rs.getString("password"), rs.getBoolean("is_admin"));
+			return user;
+		}
+		
+		return null;
 	}
 	
+	public static ArrayList<User> SearchAlikeUsers(Connection connection, String alikeName) throws SQLException{
+		ArrayList<User> userArray = new ArrayList<User>();
+		
+		Statement stmt = connection.createStatement();
+		ResultSet rs = stmt.executeQuery("SELECT * FROM _user WHERE full_name LIKE '%"
+				+ alikeName + "%'");
+		while(rs.next()) {
+			User user = new User(rs.getInt("id"), rs.getString("login"), rs.getString("full_name"), rs.getString("password"), rs.getBoolean("is_admin"));
+			userArray.add(user);
+		}
+		
+		return userArray;
+	}
 }

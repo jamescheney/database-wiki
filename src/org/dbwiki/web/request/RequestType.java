@@ -88,6 +88,16 @@ public class RequestType {
 	//?entry_authorization
 	private static final byte requestTypeEntryAuthorization = 26;
 	
+	//zhuowei
+	//?role_management
+	private static final byte requestTypeRoleManagement = 27;
+	//?role_authorization
+	private static final byte requestTypeRoleAuthorization = 28;
+	//?role_assignmnet
+	private static final byte requestTypeRoleAssignment = 29;
+	//?role_name
+	private static final byte requestTypeRoleEditName = 30;
+	
 	/*
 	 * Private Variables
 	 */
@@ -147,7 +157,20 @@ public class RequestType {
 				_type = requestTypeAuthorization;
 			} else if (parameters.hasParameter(RequestParameter.ParameterEntryAuthorization)) {
 				_type = requestTypeEntryAuthorization;
-			} else if (parameters.hasParameter(RequestParameter.ParameterCreateSchemaNode)) {
+			} 
+			
+			//zhuowei
+			else if (parameters.hasParameter(RequestParameter.ParameterRoleManagement)) {
+				_type = requestTypeRoleManagement;
+			} else if (parameters.hasParameter(RequestParameter.ParameterRoleAuthorization)) {
+				_type = requestTypeRoleAuthorization;
+			} else if (parameters.hasParameter(RequestParameter.ParameterRoleAssignment)) {
+				_type = requestTypeRoleAssignment;
+			} else if (parameters.hasParameter(RequestParameter.ParameterRoleEditName)) {
+				_type = requestTypeRoleEditName;
+			} 
+			
+			else if (parameters.hasParameter(RequestParameter.ParameterCreateSchemaNode)) {
 				//?new_schema_node
 				_type = requestTypeCreateSchemaNode;
 			} else if (parameters.hasParameter(RequestParameter.ParameterDelete)) {
@@ -369,6 +392,26 @@ public class RequestType {
 	public boolean isEntryAuthorization() {
 		return (_type ==requestTypeEntryAuthorization);
 	}
+	
+	//zhuowei
+	public boolean isRoleManagement() {
+		return (_type ==requestTypeRoleManagement);
+	}
+	
+	public boolean isRoleAuthorization() {
+		return (_type ==requestTypeRoleAuthorization);
+	}
+	
+	public boolean isRoleAssignment() {
+		return (_type ==requestTypeRoleAssignment);
+	}
+	
+	public boolean isRoleName() {
+		return (_type ==requestTypeRoleEditName);
+	}
+	
+	//
+	
 	public String toString() {
 		return String.valueOf(_type);
 	}

@@ -59,6 +59,7 @@ import org.dbwiki.data.resource.PageIdentifier;
 import org.dbwiki.data.schema.AttributeSchemaNode;
 import org.dbwiki.data.schema.SchemaNode;
 import org.dbwiki.data.schema.GroupSchemaNode;
+import org.dbwiki.data.security.RolePolicy;
 import org.dbwiki.data.security.WikiPolicy;
 import org.dbwiki.data.wiki.SimpleWiki;
 import org.dbwiki.data.wiki.Wiki;
@@ -144,6 +145,10 @@ public abstract class DatabaseWiki implements Comparable<DatabaseWiki> {
 	protected Wiki _wiki;
 	//protected int _authenticationMode;
 	protected WikiPolicy _policy;
+	
+	//zhuowei
+	protected RolePolicy _rolePolicy;
+	
 	// FIXME: Remove?
 	protected DatabaseConnector _connector;
 	
@@ -171,7 +176,8 @@ public abstract class DatabaseWiki implements Comparable<DatabaseWiki> {
 		_id = id;
 		_name = name;
 		_title = title;
-		_policy = new WikiPolicy(authenticationMode,this);
+		_policy = new WikiPolicy(authenticationMode, this);
+		_rolePolicy = new RolePolicy(authenticationMode, this);
 		_autoSchemaChanges = autoSchemaChanges;
 		_connector = connector;
 		
@@ -187,6 +193,10 @@ public abstract class DatabaseWiki implements Comparable<DatabaseWiki> {
 			Connection con = _connector.getConnection();
 			con.setAutoCommit(false);
 			_policy.initialize(con);
+			
+			//zhuowei
+			_rolePolicy.initialize(con);
+			
 		} catch(Exception e){
 			e.printStackTrace();
 		}
@@ -213,6 +223,11 @@ public abstract class DatabaseWiki implements Comparable<DatabaseWiki> {
  	
  	public WikiPolicy policy() {
  		return _policy;
+ 	}
+  	
+ 	//zhuowei
+ 	public RolePolicy rolePolicy() {
+ 		return _rolePolicy;
  	}
  	
 	public int getAuthenticationMode() {

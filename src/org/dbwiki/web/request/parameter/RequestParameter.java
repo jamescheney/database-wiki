@@ -62,6 +62,13 @@ public class RequestParameter {
 	public static final String ParameterAllUsers         = "all_users";
 	public static final String ParameterAuthorization	 = "authorization";
 	public static final String ParameterEntryAuthorization	 = "entry_authorization";
+	
+	// zhuowei
+	public static final String ParameterRoleManagement    = "role_management";
+	public static final String ParameterRoleAuthorization = "role_authorization";
+	public static final String ParameterRoleAssignment	 = "role_assignment";
+	public static final String ParameterRoleEditName	 = "role_edit_name";
+	
 
 	
 	public static final String ActionValueAnnotation      = "annotation";
@@ -100,7 +107,14 @@ public class RequestParameter {
 				return new RequestParameterActionUpdateEntryAuthorization();
 			} else if (value.equals(RequestParameterAction.ActionCancelEntryAuthorizationUpdate)) {
 				return new RequestParameterActionCancelEntryAuthorizationUpdate();
-			} else {
+			} 
+			
+			//zhuowei
+			else if (value.equals(RequestParameterAction.ActionAddRole)) {
+				return new RequestParameterActionAddRole();
+			}
+			
+			else {
 				throw new WikiRequestException(WikiRequestException.InvalidParameterValue, parameter.toString());
 			}
 		} else {

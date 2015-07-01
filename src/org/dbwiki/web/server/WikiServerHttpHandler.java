@@ -239,6 +239,7 @@ public class WikiServerHttpHandler extends WikiServer implements HttpHandler {
 		Exchange<HttpExchange> exchange = new HttpExchangeWrapper(httpExchange);
 		try {
 			String path = exchange.getRequestURI().getPath();
+			System.out.println(path);
 			if (path.equals("/")) {
 				if (_serverLog != null) {
 					_serverLog.logRequest(exchange.getRequestURI(),exchange.get().getRemoteAddress(),exchange.get().getResponseHeaders());

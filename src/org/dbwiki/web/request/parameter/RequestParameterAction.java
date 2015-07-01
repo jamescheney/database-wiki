@@ -39,6 +39,22 @@ public abstract class RequestParameterAction {
 	public static final String ActionUpdateEntryAuthorization = "update_entry_authorization";
 	public static final String ActionCancelEntryAuthorizationUpdate = "cancel_entry_authorization_update";
 	
+	//zhuowei 
+	public static final String ActionAddRole = "add_role";
+	public static final String ActionDeleteRole = "delete_role";
+	public static final String ActionExitRoleManagement = "exit_role_management";
+	public static final String ActionUpdateRoleAuthorization = "update_role_authorization";
+	public static final String ActionCancelRoleAuthorizationUpdate = "cancel_role_authorization_update";
+	public static final String ActionUpdateRoleAssignment = "update_role_assignment";
+	public static final String ActionCancelRoleAssignmentUpdate = "cancel_role_assignment_update";
+	public static final String ActionUpdateRoleName = "update_role_name";
+	public static final String ActionCancelRoleNameUpdate = "cancel_role_name_update";
+	public static final String ActionAssignUser = "assign_user";
+	public static final String ActionUnassignUser = "unassign_user";
+	public static final String ActionSearchUsers = "search_users";
+	public static final String ActionExitRoleAssignment = "exit_role_assignment";
+	
+	
 	/*
 	 * Abstract Methods
 	 */
@@ -53,4 +69,13 @@ public abstract class RequestParameterAction {
 	public abstract boolean actionCancelAuthorizationUpdate();
 	public abstract boolean actionUpdateEntryAuthorization();
 	public abstract boolean actionCancelEntryAuthorizationUpdate();
+	
+	//zhuowei
+	public abstract boolean actionUpdateRoleManagement();
+	public abstract boolean actionCancelRoleManagementUpdate();
+	public abstract boolean actionAddRole();
+	public abstract boolean actionUpdateRoleAuthorization();
+	public abstract boolean actionCancelRoleAuthorizationUpdate();
+	public abstract boolean actionUpdateRoleAssignment();
+	public abstract boolean actionCancelRoleAssignmentUpdate();
 }

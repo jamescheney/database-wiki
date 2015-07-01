@@ -77,4 +77,32 @@ public class RequestParameterActionSchemaNode extends RequestParameterAction {
 		// TODO Auto-generated method stub
 		return false;
 	}
+	//zhuowei
+	public boolean actionUpdateRoleManagement(){
+		return false;
+	}
+	
+	public boolean actionCancelRoleManagementUpdate(){
+		return false;
+	}
+	
+	public boolean actionAddRole(){
+		return false;
+	}
+	
+	public boolean actionUpdateRoleAuthorization(){
+		return false;
+	}
+	
+	public boolean actionCancelRoleAuthorizationUpdate(){
+		return false;
+	}
+	
+	public boolean actionUpdateRoleAssignment(){
+		return false;
+	}
+	
+	public boolean actionCancelRoleAssignmentUpdate(){
+		return false;
+	}
 }
