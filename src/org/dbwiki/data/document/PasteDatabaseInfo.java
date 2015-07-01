@@ -22,8 +22,8 @@
 package org.dbwiki.data.document;
 
 /** Information associated with a PasteNode
- * Name is name of the database copied from
- * Version is the version number of the database
+ * @param _name is name of the database copied from
+ * @param _version is the version number of the database
  * @author jcheney
  *
  */

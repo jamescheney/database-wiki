@@ -253,6 +253,7 @@ public abstract class DatabaseConnector implements DatabaseConstants, WikiServer
         }
     }
        
+    @Deprecated
     public String joinMatchSQLStatements(Vector<String> sqlStatements, String database) {
         String sql = null;
         if (sqlStatements.size() > 0) {
