@@ -113,10 +113,10 @@ public class PageUpdateFormPrinter extends HtmlContentPrinter {
 
 		body.openPARAGRAPH(CSS.CSSButtonLine);
 		body.openCENTER();
-		body.addREALBUTTON("submit",
+		body.addRealBUTTON("submit",
 				"action", RequestParameterAction.ActionInsert, "<img src=\"/pictures/button_save.gif\">");
 		body.text("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
-		body.addREALBUTTON("submit",
+		body.addRealBUTTON("submit",
 				"action", RequestParameterAction.ActionCancel, "<img src=\"/pictures/button_cancel.gif\">");
 		body.closeCENTER();
 		body.closePARAGRAPH();
@@ -163,10 +163,10 @@ public class PageUpdateFormPrinter extends HtmlContentPrinter {
 
 		body.openPARAGRAPH(CSS.CSSButtonLine);
 		body.openCENTER();
-		body.addREALBUTTON("submit",
+		body.addRealBUTTON("submit",
 				"action", RequestParameterAction.ActionUpdate, "<img src=\"/pictures/button_save.gif\">");
 		body.text("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
-		body.addREALBUTTON("submit",
+		body.addRealBUTTON("submit",
 				"action", RequestParameterAction.ActionInsert, "<img src=\"/pictures/button_cancel.gif\">");
 		body.closeCENTER();
 		body.closePARAGRAPH();

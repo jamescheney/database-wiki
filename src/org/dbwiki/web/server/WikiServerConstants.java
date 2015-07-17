@@ -109,4 +109,5 @@ public interface WikiServerConstants {
 	public static final String RelAuthenticationColInsert = "a_insert";
 	public static final String RelAuthenticationColDelete = "a_delete";
 	public static final String RelAuthenticationColUpdate = "a_update";
+	
 }

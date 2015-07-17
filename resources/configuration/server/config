@@ -1,0 +1,22 @@
+# Server parameters
+PORT=8080
+THREADCOUNT=20
+BACKLOG=10
+#LOGFILE=STDOUT
+
+# Database Wiki parameters
+# Default Authentication.
+# 0 = Always
+# 1 = Never
+# 2 = On write
+AUTHENTICATION=2
+DIRECTORY=./resources/data
+WIKI_TITLE=Edinburgh Database Wiki
+
+# Database parameters
+RDBMS_TYPE=PSQL
+# If password needed, uncomment and fill in
+JDBC_PASSWORD=123456
+JDBC_URL=jdbc:postgresql://localhost
+JDBC_USER=dbwiki
+

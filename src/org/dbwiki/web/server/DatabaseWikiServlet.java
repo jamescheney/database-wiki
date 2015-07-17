@@ -64,7 +64,7 @@ public class DatabaseWikiServlet extends DatabaseWiki {
 		super(id,name,title,authenticationMode,autoSchemaChanges, connector);
 
 		_server = server;
-		_authenticator = new WikiServletAuthenticator( _server.users(),_policy);
+		_authenticator = new WikiServletAuthenticator( _server.users(),_rolePolicy);
 		
 		initialize(setting, server);
 
@@ -83,7 +83,7 @@ public class DatabaseWikiServlet extends DatabaseWiki {
 		super(id,name,title,authenticationMode,autoSchemaChanges,connector);
 
 		_server = server;
-		_authenticator = new WikiServletAuthenticator( _server.users(), _policy);
+		_authenticator = new WikiServletAuthenticator( _server.users(), _rolePolicy);
 		
 		initialize(new ConfigSetting(), server);
 

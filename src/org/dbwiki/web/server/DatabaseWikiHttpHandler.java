@@ -68,7 +68,7 @@ public class DatabaseWikiHttpHandler extends DatabaseWiki implements
 		super(id, name, title, authenticationMode, autoSchemaChanges, connector);
 		
 		_server = server;
-		_authenticator = new WikiAuthenticator("/" + name,  _server.users(), _formTemplate,_policy);
+		_authenticator = new WikiAuthenticator("/" + name,  _server.users(), _formTemplate,_rolePolicy);
 		
 		initialize(setting, server);
 		
@@ -89,7 +89,7 @@ public class DatabaseWikiHttpHandler extends DatabaseWiki implements
 		super(id,name,title,authenticationMode,autoSchemaChanges,connector);
 		
 		_server = server;
-		_authenticator = new WikiAuthenticator("/" + name,  _server.users(), _formTemplate,_policy);
+		_authenticator = new WikiAuthenticator("/" + name,  _server.users(), _formTemplate,_rolePolicy);
 
 		initialize(new ConfigSetting(), server);
 		

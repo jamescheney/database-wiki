@@ -115,7 +115,7 @@ public class HtmlLinePrinter  {
 	//
 	// It isn't clear that we will always want an empty style attribute, but
 	// it seems to work for the image buttons we are currently using.
-	public void addREALBUTTON(String type, String name, String value, String body) {
+	public void addRealBUTTON(String type, String name, String value, String body) {
 		this.add(
 				_indentation + indentExtension + 
 					"<button " + "style=\"background:none; border:none\"" +
@@ -152,6 +152,15 @@ public class HtmlLinePrinter  {
 		this.add(_indentation + indentExtension + line);
 	}
 
+	public void addDisabledRADIOBUTTON(String label, String name, String value, boolean selected) {
+		String line = "<input type=\"radio\" name=\"" + name + "\" value=\"" + value + "\"";
+		if (selected) {
+			line = line + " CHECKED";
+		}
+		line = line + " disabled/>" + label;
+		this.add(_indentation + indentExtension + line);
+	}
+	
 	public void addSPAN(String text, String cssClass) {
 		this.add(_indentation + indentExtension + "<span class=\"" + cssClass + "\">" + text + "</span>");
 	}
@@ -184,12 +193,12 @@ public class HtmlLinePrinter  {
 		this.add(_indentation + indentExtension + "<input type=\"text\" name=\"" + name + "\" style=\"width: "+ width + "px\"; value=\""+value +"\"/>");
 	}
 	
-	public void addREADONLYTEXTBOX(String name, String width, String value) {
+	public void addReadonlyTEXTBOX(String name, String width, String value) {
 		this.add(_indentation + indentExtension + "<input type=\"text\" name=\"" + name + "\" style=\"width: "+ width + "px\"; value=\""+value +"\" readonly/>");
 	}
 	
-	public void addREQUIREDTEXTBOX(String name, String width, String value) {
-		this.add(_indentation + indentExtension + "<input type=\"text\" name=\"" + name + "\" style=\"width: "+ width + "px\"; value=\""+value +"\" required/>");
+	public void addRequiredTEXTBOX(String name, String width, String value, String placeholder) {
+		this.add(_indentation + indentExtension + "<input type=\"text\" name=\"" + name + "\" style=\"width: "+ width + "px\"; value=\""+value +"\" placeholder=\""+placeholder +"\" required/>");
 	}
 	
 	public void addFILE(String name) {

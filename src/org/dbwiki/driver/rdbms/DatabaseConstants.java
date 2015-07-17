@@ -171,10 +171,20 @@ public interface DatabaseConstants {
 	public static final String RelRoleCapabilityUpdate = "update";
 	public static final String RelRoleCapabilityDelete = "delete";
 	
-	//role assignment
+	// role assignment
 	public static final String RelationRoleAssignment = "_roleassignment";
 	public static final String RelRoleAssignmentRoleID = "role_id";
 	public static final String RelRoleAssignmentUserID = "user_id";
+	
+	// role mutex
+	public static final String RelationRoleMutex = "_rolemutex";
+	public static final String RelaMutexRole1ID = "role1_id";
+	public static final String RelaMutexRole2ID = "role2_id";
+	
+	// role inheritance
+	public static final String RelationRoleInheritance = "_roleinheritance";
+	public static final String RelaSubRoleID = "sub_role_id";
+	public static final String RelaSuperRoleID = "super_role_id";
 	
 	
 	

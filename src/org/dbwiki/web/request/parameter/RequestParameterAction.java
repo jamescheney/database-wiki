@@ -41,18 +41,18 @@ public abstract class RequestParameterAction {
 	
 	//zhuowei 
 	public static final String ActionAddRole = "add_role";
-	public static final String ActionDeleteRole = "delete_role";
-	public static final String ActionExitRoleManagement = "exit_role_management";
+	public static final String ActionAddMutex = "add_mutex";
+	public static final String ActionUpdateSuperRoles = "update_super_roles";
 	public static final String ActionUpdateRoleAuthorization = "update_role_authorization";
-	public static final String ActionCancelRoleAuthorizationUpdate = "cancel_role_authorization_update";
-	public static final String ActionUpdateRoleAssignment = "update_role_assignment";
-	public static final String ActionCancelRoleAssignmentUpdate = "cancel_role_assignment_update";
 	public static final String ActionUpdateRoleName = "update_role_name";
-	public static final String ActionCancelRoleNameUpdate = "cancel_role_name_update";
+	public static final String ActionDeleteRole = "delete_role";
+	public static final String ActionDeleteMutex = "delete_mutex";
+	public static final String ActionBackToRoleManagement = "back_to_role_management";
+	public static final String ActionBackToDatabaseSetting = "back_to_database_setting";
 	public static final String ActionAssignUser = "assign_user";
 	public static final String ActionUnassignUser = "unassign_user";
 	public static final String ActionSearchUsers = "search_users";
-	public static final String ActionExitRoleAssignment = "exit_role_assignment";
+	public static final String ActionBackToUserListing = "back_to_user_listing";
 	
 	
 	/*

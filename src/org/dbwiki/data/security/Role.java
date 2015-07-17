@@ -7,37 +7,39 @@ import org.dbwiki.user.*;
 import org.dbwiki.web.server.DatabaseWiki;
 
 public class Role {
-
+	public static final int ownerID = 0;
+	public static final int assistantID = -1;
+	
 	private int _id;
 	private String _name;
 	private DatabaseWiki _wiki;
 	private Permission _permission;
 	private HashMap<Integer, Capability> _capabilities; // Entry ID and capabilities to this entry
 	private ArrayList<Integer> _users; // user id and User, users who share same role
-	private ArrayList<Integer> _conflictRoles; // roles that can not be assign at the same time
+	private ArrayList<Integer> _mutexRoles; // roles that can not be assign at the same time
+	private ArrayList<Integer> _superRoles;
 	
 	public Role(int id, String name, DatabaseWiki wiki, Permission permission,
-			HashMap<Integer, Capability> capabilities, ArrayList<Integer> users, ArrayList<Integer> conflictRoles) {
-		
+			HashMap<Integer, Capability> capabilities, ArrayList<Integer> users, ArrayList<Integer> mutexRoles, ArrayList<Integer> superRoles) {
 		_id = id;
 		_name = name;
 		_wiki = wiki;
 		_permission = permission;
 		_capabilities = capabilities;
 		_users = users;
-		_conflictRoles = conflictRoles;
+		_mutexRoles = mutexRoles;
+		_superRoles = superRoles;
 	}
 	
 	public Role(int id, String name, DatabaseWiki wiki, Permission permission,
 			HashMap<Integer, Capability> capabilities) {
-		
 		_id = id;
 		_name = name;
 		_wiki = wiki;
 		_permission = permission;
 		_capabilities = capabilities;
 		_users = null;
-		_conflictRoles = null;
+		_mutexRoles = null;
 	}
 	
 	public int getID() {
@@ -68,8 +70,20 @@ public class Role {
 		return _capabilities.get(entryID);
 	}
 	
-	public boolean isConflict(Role role) {
-		return _conflictRoles.contains(role);
+	public boolean isMutex(int roleID) {
+		return _mutexRoles.contains(roleID);
+	}
+	
+	public boolean hasSuperRole(int roleID) {
+		return _superRoles.contains(roleID);
+	}
+	
+	public ArrayList<Integer> getMutexRoles() {
+		return _mutexRoles;
+	}
+	
+	public ArrayList<Integer> getSuperRoles() {
+		return _superRoles;
 	}
 	
 	public void setCapability(int entryID, Capability capability) {
@@ -89,11 +103,11 @@ public class Role {
 	}
 	
 	public void addConflictRoles(int roleID) {
-		_conflictRoles.add(roleID);
+		_mutexRoles.add(roleID);
 	}
 	
 	public void removeConflictRoles(int role) {
-		_conflictRoles.remove(role);
+		_mutexRoles.remove(role);
 	}
 
 }

@@ -34,15 +34,15 @@ public class DatabaseWikiRoleAssignmentPrinter extends HtmlContentPrinter {
 		
 		printer.paragraph(_headline, CSS.CSSHeadline);
 		
-		printer.openFORM("ExitRoleAssignment", "POST", "/");
+		printer.openFORM("BackToRoleManagement", "POST", "/");
 		printer.openCENTER();
 		printer.addHIDDEN(WikiServer.ParameterName, _wiki.name());
-		printer.addREALBUTTON("submit", "action", RequestParameterAction.ActionExitRoleAssignment, "<img src=\"/pictures/button.gif\">");
+		printer.addRealBUTTON("submit", "action", RequestParameterAction.ActionBackToRoleManagement, "<img src=\"/pictures/button_cancel.gif\">");
 		printer.closeCENTER();
 		printer.closeFORM();
 		
-		// table
 		printer.openTABLE(CSS.CSSFormContainer);
+		
 		printer.openTR();
 		printer.openTD(CSS.CSSFormContainer);
 		printer.openTABLE(CSS.CSSFormFrame);
@@ -51,19 +51,19 @@ public class DatabaseWikiRoleAssignmentPrinter extends HtmlContentPrinter {
 		printer.openTR();
 		
 		printer.openTH(CSS.CSSFormLabel);
-		printer.text("User ID");
+		printer.text("User-ID" + "&nbsp;&nbsp;&nbsp;");
 		printer.closeTH();
 		
 		printer.openTH(CSS.CSSFormLabel);
-		printer.text("Login Name");
+		printer.text("Login-Name" + "&nbsp;&nbsp;&nbsp;");
 		printer.closeTH();
 		
 		printer.openTH(CSS.CSSFormLabel);
-		printer.text("Full Name");
+		printer.text("Full-Name" + "&nbsp;&nbsp;&nbsp;");
 		printer.closeTH();
 		
 		printer.openTH(CSS.CSSFormLabel);
-		printer.text("Unassign");
+		printer.text("Unassign" + "&nbsp;&nbsp;&nbsp;");
 		printer.closeTH();	
 		
 		printer.closeTR();
@@ -90,7 +90,7 @@ public class DatabaseWikiRoleAssignmentPrinter extends HtmlContentPrinter {
 			printer.addHIDDEN(WikiServer.ParameterName, _wiki.name());
 			printer.addHIDDEN("role_id", _role_id + "");
 			printer.addHIDDEN("user_id", userID + "");
-			printer.addREALBUTTON("submit", "action", RequestParameterAction.ActionUnassignUser, "<img src=\"/pictures/button.gif\">");
+			printer.addRealBUTTON("submit", "action", RequestParameterAction.ActionUnassignUser, "<img src=\"/pictures/button_ok.gif\">");
 			printer.closeFORM();
 			printer.closeTD();
 			
@@ -101,7 +101,6 @@ public class DatabaseWikiRoleAssignmentPrinter extends HtmlContentPrinter {
 		printer.closeTABLE();
 		printer.closeTD();
 		printer.closeTR();
-		printer.closeTABLE();
 		
 		
 		printer.openPARAGRAPH(CSS.CSSButtonLine);
@@ -124,7 +123,6 @@ public class DatabaseWikiRoleAssignmentPrinter extends HtmlContentPrinter {
 		if(_searchedUsers != null) {
 			System.out.println(_searchedUsers.size());
 			// table
-			printer.openTABLE(CSS.CSSFormContainer);
 			printer.openTR();
 			printer.openTD(CSS.CSSFormContainer);
 			printer.openTABLE(CSS.CSSFormFrame);
@@ -133,19 +131,19 @@ public class DatabaseWikiRoleAssignmentPrinter extends HtmlContentPrinter {
 			printer.openTR();
 			
 			printer.openTH(CSS.CSSFormLabel);
-			printer.text("User ID");
+			printer.text("User ID"+ "&nbsp;&nbsp;&nbsp;");
 			printer.closeTH();
 			
 			printer.openTH(CSS.CSSFormLabel);
-			printer.text("Login Name");
+			printer.text("Login Name" + "&nbsp;&nbsp;&nbsp;");
 			printer.closeTH();
 			
 			printer.openTH(CSS.CSSFormLabel);
-			printer.text("Full Name");
+			printer.text("Full Name" + "&nbsp;&nbsp;&nbsp;");
 			printer.closeTH();
 			
 			printer.openTH(CSS.CSSFormLabel);
-			printer.text("Assign");
+			printer.text("Assign" + "&nbsp;&nbsp;&nbsp;");
 			printer.closeTH();	
 			
 			printer.closeTR();
@@ -170,7 +168,7 @@ public class DatabaseWikiRoleAssignmentPrinter extends HtmlContentPrinter {
 				printer.addHIDDEN(WikiServer.ParameterName, _wiki.name());
 				printer.addHIDDEN("role_id", _role_id + "");
 				printer.addHIDDEN("user_id", user.id() + "");
-				printer.addREALBUTTON("submit", "action", RequestParameterAction.ActionAssignUser, "<img src=\"/pictures/button.gif\">");
+				printer.addRealBUTTON("submit", "action", RequestParameterAction.ActionAssignUser, "<img src=\"/pictures/button_ok.gif\">");
 				printer.closeFORM();
 				printer.closeTD();
 				
@@ -180,24 +178,33 @@ public class DatabaseWikiRoleAssignmentPrinter extends HtmlContentPrinter {
 			
 			printer.closeTABLE();
 			printer.closeTD();
-			printer.closeTR();
-			printer.closeTABLE();
-			
+			printer.closeTR();		
 		}
 		
+		
+		printer.openTR();
+		printer.openTD(CSS.CSSFormContainer);
+		printer.openTABLE(CSS.CSSFormFrame);
+		
+		printer.openTR();
+		
+		printer.openTH();
+		printer.text("Search Roles:");
+		printer.closeTH();
+		
+		printer.openTD();
 		printer.openFORM("searchUsers", "POST", "/");
 		printer.addHIDDEN(WikiServer.ParameterName, _wiki.name());
 		printer.addHIDDEN("role_id", _role_id+"");
-		printer.addREQUIREDTEXTBOX("keyword", "80", "");
-		printer.openPARAGRAPH(CSS.CSSButtonLine);
-		printer.addREALBUTTON("submit", "action", RequestParameterAction.ActionSearchUsers, "<img src=\"/pictures/button.gif\">");
+		printer.addRequiredTEXTBOX("keyword", "120", "", "enter role name");
+		printer.addRealBUTTON("submit", "action", RequestParameterAction.ActionSearchUsers, "<img src=\"/pictures/button_ok.gif\">");
 		printer.closeFORM();
-
-		printer.closeCENTER();
-		printer.closePARAGRAPH();
+		printer.closeTD();
 		
+		printer.closeTABLE();
 		printer.closeTD();
 		printer.closeTR();
+		
 		printer.closeTABLE();
 	}
 }

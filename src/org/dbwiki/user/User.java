@@ -64,7 +64,7 @@ public class User {
 	private int _id;
 	private String _login;
 	private String _password;
-	private HashMap<Integer, ArrayList<Role>> _roleListing; // Wiki ID and roles in this wiki database
+	private HashMap<Integer, ArrayList<Integer>> _roleListing; // Wiki ID and roles in this wiki database
 	private boolean _is_admin;
 	
 	
@@ -77,11 +77,11 @@ public class User {
 		_id = id;
 		_login = login;
 		_password = password;
-		_roleListing = new HashMap<Integer, ArrayList<Role>>();
+		_roleListing = new HashMap<Integer, ArrayList<Integer>>();
 		_is_admin = is_admin;
 	}
 	
-	public User(int id, String login, String fullName, String password, HashMap<Integer, ArrayList<Role>> roleListing, boolean is_admin) {
+	public User(int id, String login, String fullName, String password, HashMap<Integer, ArrayList<Integer>> roleListing, boolean is_admin) {
 		_fullName  = fullName;
 		_id = id;
 		_login = login;
@@ -116,8 +116,8 @@ public class User {
 		this._password = _password;
 	}
 
-	public void add_role(int wikiID, Role role) {
-		this._roleListing.get(new Integer(wikiID)).add(role);
+	public void add_role(int wikiID, int roleID) {
+		this._roleListing.get(new Integer(wikiID)).add(roleID);
 	}
 	
 	public void remove_role(int wikiID, Role role) {

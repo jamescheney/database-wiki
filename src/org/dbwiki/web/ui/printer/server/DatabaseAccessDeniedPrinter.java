@@ -19,7 +19,7 @@ public class DatabaseAccessDeniedPrinter extends HtmlContentPrinter {
         printer.openFORM("", "POST", "/");
         printer.paragraph("Insufficient privileges to perform the requested operation", CSS.CSSExceptionText);
         printer.openCENTER();
-        printer.addREALBUTTON("submit", "action", RequestParameterAction.ActionCancel, "<img src=\"/pictures/button_cancel.gif\">");
+        printer.addRealBUTTON("submit", "action", RequestParameterAction.ActionCancel, "<img src=\"/pictures/button_cancel.gif\">");
         printer.closeCENTER();
         printer.closeFORM();
     }

@@ -64,11 +64,19 @@ public class RequestParameter {
 	public static final String ParameterEntryAuthorization	 = "entry_authorization";
 	
 	// zhuowei
+	public static final String DBName = "db_name";
+	public static final String Type = "type";
+	
+	
+	
 	public static final String ParameterRoleManagement    = "role_management";
 	public static final String ParameterRoleAuthorization = "role_authorization";
 	public static final String ParameterRoleAssignment	 = "role_assignment";
 	public static final String ParameterRoleEditName	 = "role_edit_name";
-	
+	public static final String ParameterSetSuperRoles = "set_super_roles";
+	public static final String SetMutexRolePairs = "set_mutex_role_pairs";
+	public static final String ParameterDBWikiCheckAssignment    = "dbwiki_check_assignment";
+	public static final String ParameterWikiServerCheckAssignment    = "wikiserver_check_assignment";
 
 	
 	public static final String ActionValueAnnotation      = "annotation";

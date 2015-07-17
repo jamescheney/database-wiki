@@ -111,10 +111,10 @@ public class CreateSchemaNodeFormPrinter extends HtmlContentPrinter {
 		printer.openCENTER();
 				
 //		printer.addBUTTON("image", "action", RequestParameterAction.ActionSchemaNode, "/pictures/button_save.gif");
-		printer.addREALBUTTON("submit",
+		printer.addRealBUTTON("submit",
 				"action", RequestParameterAction.ActionSchemaNode, "<img src=\"/pictures/button_save.gif\">");
 		printer.text("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
-		printer.addREALBUTTON("submit",
+		printer.addRealBUTTON("submit",
 				"action", RequestParameterAction.ActionCancel, "<img src=\"/pictures/button_cancel.gif\">");
 //		printer.addBUTTON("image", "action", RequestParameterAction.ActionCancel, "/pictures/button_cancel.gif");
 		printer.closeCENTER();

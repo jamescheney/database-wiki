@@ -124,10 +124,10 @@ public class LayoutEditor extends HtmlContentPrinter {
 		
 		printer.openPARAGRAPH(CSS.CSSButtonLine);
 		printer.openCENTER();
-		printer.addREALBUTTON("submit",
+		printer.addRealBUTTON("submit",
 				"action", RequestParameterAction.ActionUpdate, "<img src=\"/pictures/button_save.gif\">");
 		printer.text("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
-		printer.addREALBUTTON("submit",
+		printer.addRealBUTTON("submit",
 				"action", RequestParameterAction.ActionCancel, "<img src=\"/pictures/button_cancel.gif\">");
 		printer.closeCENTER();
 		printer.closePARAGRAPH();

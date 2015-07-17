@@ -14,14 +14,14 @@ import org.dbwiki.web.ui.printer.HtmlContentPrinter;
 public class DatabaseWikiRoleAuthorizationPrinter extends HtmlContentPrinter {
 	private String _headline;
 	private String _action;
-	private int _role_id;
+	private int _roleID;
 	private DatabaseWiki _wiki;
 	
-	public DatabaseWikiRoleAuthorizationPrinter(String headline,String action, DatabaseWiki wiki, int role_id) {
+	public DatabaseWikiRoleAuthorizationPrinter(String headline,String action, DatabaseWiki wiki, int roleID) {
 		this._headline = headline;
 		this._action = action;
 		this._wiki = wiki;
-		this._role_id = role_id;
+		this._roleID = roleID;
 	}
 	
 
@@ -32,18 +32,16 @@ public class DatabaseWikiRoleAuthorizationPrinter extends HtmlContentPrinter {
 	
 	
 	public void print(HtmlLinePrinter printer) throws WikiException {
-		String roleName =  _wiki.rolePolicy().getRole(_role_id).getName();
+		String roleName =  _wiki.rolePolicy().getRole(_roleID).getName();
 		_headline += "\t- " + roleName;
 		printer.paragraph(_headline, CSS.CSSHeadline);
 
-		printer.openFORM("manageEntryAuthenticationMode", "POST", "/");
-		printer.openPARAGRAPH(CSS.CSSButtonLine);
+		printer.openFORM("RoleAuthorization", "POST", "/");
+		
 		printer.openCENTER();
-		printer.addREALBUTTON("submit",
-				"action", _action, "<img src=\"/pictures/button_save.gif\">");
+		printer.addRealBUTTON("submit", "action", _action, "<img src=\"/pictures/button_save.gif\">");
 		printer.text("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
-		printer.addREALBUTTON("submit",
-				"action", RequestParameterAction.ActionCancelRoleAuthorizationUpdate, "<img src=\"/pictures/button_cancel.gif\">");
+		printer.addRealBUTTON("submit", "action", RequestParameterAction.ActionBackToRoleManagement, "<img src=\"/pictures/button_cancel.gif\">");
 		printer.closeCENTER();
 		printer.closePARAGRAPH();
 		
@@ -75,7 +73,7 @@ public class DatabaseWikiRoleAuthorizationPrinter extends HtmlContentPrinter {
 		printer.closeTH();
 		printer.closeTR();
 		
-		Permission permission = _wiki.rolePolicy().getRole(_role_id).getpermission();
+		Permission permission = _wiki.rolePolicy().getRole(_roleID).getpermission();
 		
 		//read permission
 		printer.openTD(CSS.CSSFormControl);
@@ -128,27 +126,27 @@ public class DatabaseWikiRoleAuthorizationPrinter extends HtmlContentPrinter {
 		//entry name
 		printer.openTR();
 		printer.openTH(CSS.CSSFormLabel);
-		printer.text("Entry Name");
+		printer.text("Entry Name" + "&nbsp;&nbsp;&nbsp;");
 		printer.closeTH();
 		
 		//read permission
 		printer.openTH(CSS.CSSFormLabel);
-		printer.text("Read Permission");
+		printer.text("Read Permission" + "&nbsp;&nbsp;&nbsp;");
 		printer.closeTH();
 		
 		//insert permission
 		printer.openTH(CSS.CSSFormLabel);
-		printer.text("Insert Permission");
+		printer.text("Insert Permission" + "&nbsp;&nbsp;&nbsp;");
 		printer.closeTH();
 		
 		//delete permission
 		printer.openTH(CSS.CSSFormLabel);
-		printer.text("Delete Permission");
+		printer.text("Delete Permission" + "&nbsp;&nbsp;&nbsp;");
 		printer.closeTH();
 		
 		//update permission
 		printer.openTH(CSS.CSSFormLabel);
-		printer.text("Update Permission");
+		printer.text("Update Permission" + "&nbsp;&nbsp;&nbsp;");
 		printer.closeTH();
 		printer.closeTR();
 		//contents
@@ -171,10 +169,10 @@ public class DatabaseWikiRoleAuthorizationPrinter extends HtmlContentPrinter {
 			printer.closeCENTER();
 			printer.closeTD();
 			
-			boolean flag = _wiki.rolePolicy().getRole(_role_id).isCapabilityExist(entry_id);
+			boolean flag = _wiki.rolePolicy().getRole(_roleID).isCapabilityExist(entry_id);
 			
 			if(flag){
-				Capability cap = _wiki.rolePolicy().getRole(_role_id).getCapability(entry_id);
+				Capability cap = _wiki.rolePolicy().getRole(_roleID).getCapability(entry_id);
 				//read permission
 				printer.openTD(CSS.CSSFormControl);
 				printer.addRADIOBUTTON("Yes", entry_id+WikiServer.propertyReadPermission, "HoldPermission", (cap.isRead()));
@@ -232,14 +230,14 @@ public class DatabaseWikiRoleAuthorizationPrinter extends HtmlContentPrinter {
 		printer.closeTABLE();
 		//find  name of the database here
 		printer.addHIDDEN(WikiServer.ParameterName, _wiki.name());
-		printer.addHIDDEN("role_id", _role_id+"");
+		printer.addHIDDEN("role_id", _roleID+"");
 		printer.openPARAGRAPH(CSS.CSSButtonLine);
 		printer.openCENTER();
-		printer.addREALBUTTON("submit",
+		printer.addRealBUTTON("submit",
 				"action", _action, "<img src=\"/pictures/button_save.gif\">");
 		printer.text("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
-		printer.addREALBUTTON("submit",
-				"action", RequestParameterAction.ActionCancelRoleAuthorizationUpdate, "<img src=\"/pictures/button_cancel.gif\">");
+		printer.addRealBUTTON("submit",
+				"action", RequestParameterAction.ActionBackToRoleManagement, "<img src=\"/pictures/button_cancel.gif\">");
 		printer.closeCENTER();
 		printer.closePARAGRAPH();
 

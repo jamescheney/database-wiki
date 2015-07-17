@@ -49,13 +49,15 @@ public class DatabaseWikiEntryAuthorizationPrinter extends HtmlContentPrinter {
 		printer.openFORM("manageEntryAuthenticationMode", "POST", "/");
 		printer.openPARAGRAPH(CSS.CSSButtonLine);
 		printer.openCENTER();
-		printer.addREALBUTTON("submit",
+		printer.addRealBUTTON("submit",
 				"action", _action, "<img src=\"/pictures/button_save.gif\">");
 		printer.text("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
-		printer.addREALBUTTON("submit",
+		printer.addRealBUTTON("submit",
 				"action", RequestParameterAction.ActionCancelEntryAuthorizationUpdate, "<img src=\"/pictures/button_cancel.gif\">");
 		printer.closeCENTER();
+		
 		printer.closePARAGRAPH();
+		
 		printer.openTABLE(CSS.CSSFormContainer);
 		printer.openTR();
 		printer.openTD(CSS.CSSFormContainer);
@@ -185,10 +187,10 @@ public class DatabaseWikiEntryAuthorizationPrinter extends HtmlContentPrinter {
 		printer.addHIDDEN("user_id", _user_id+"");
 		printer.openPARAGRAPH(CSS.CSSButtonLine);
 		printer.openCENTER();
-		printer.addREALBUTTON("submit",
+		printer.addRealBUTTON("submit",
 				"action", _action, "<img src=\"/pictures/button_save.gif\">");
 		printer.text("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
-		printer.addREALBUTTON("submit",
+		printer.addRealBUTTON("submit",
 				"action", RequestParameterAction.ActionCancelEntryAuthorizationUpdate, "<img src=\"/pictures/button_cancel.gif\">");
 		printer.closeCENTER();
 		printer.closePARAGRAPH();

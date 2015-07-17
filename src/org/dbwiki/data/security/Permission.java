@@ -116,4 +116,19 @@ public class Permission {
 		return _deletePermission;
 	}
 	
+	public void setReadPermission(int rp) {
+		_readPermission = rp;
+	}
+	
+	public void setInsertPermission(int ip) {
+		_insertPermission = ip;
+	}
+	
+	public void setUpdatePermission(int up) {
+		_updatePermission = up;
+	}
+	
+	public void setDeletePermission(int dp) {
+		_deletePermission = dp;
+	}
 }

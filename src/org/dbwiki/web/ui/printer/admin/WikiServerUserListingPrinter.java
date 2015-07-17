@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.dbwiki.exception.WikiException;
 import org.dbwiki.user.UserListing;
 import org.dbwiki.web.html.HtmlLinePrinter;
+import org.dbwiki.web.request.parameter.RequestParameter;
 import org.dbwiki.web.request.parameter.RequestParameterAction;
 import org.dbwiki.web.ui.CSS;
 import org.dbwiki.web.ui.printer.HtmlContentPrinter;
@@ -13,7 +14,7 @@ import org.dbwiki.web.ui.printer.HtmlContentPrinter;
  * Generates a form that allows managing the user information and identities
  */
 
-public class DatabaseWikiUserListingPrinter extends HtmlContentPrinter {
+public class WikiServerUserListingPrinter extends HtmlContentPrinter {
 	
 	public static final int MessageNone                 = -1;
 	public static final int MessageNoFullName           = 1;
@@ -24,14 +25,14 @@ public class DatabaseWikiUserListingPrinter extends HtmlContentPrinter {
 	private int _message;
 	private ArrayList<Integer[]> _probs;
 
-	public DatabaseWikiUserListingPrinter(UserListing _user_listing,String _action,String _headline) {
+	public WikiServerUserListingPrinter(UserListing _user_listing,String _action,String _headline) {
 		this._headline = _headline;
 		this._user_listing = _user_listing;
 		this._action = _action;
 		_probs = null;
 	}
 	
-	public DatabaseWikiUserListingPrinter(UserListing _user_listing,String _action,String _headline, ArrayList<Integer[]> _probs) {
+	public WikiServerUserListingPrinter(UserListing _user_listing,String _action,String _headline, ArrayList<Integer[]> _probs) {
 		this._headline = _headline;
 		this._user_listing = _user_listing;
 		this._action = _action;
@@ -53,10 +54,10 @@ public class DatabaseWikiUserListingPrinter extends HtmlContentPrinter {
 		
 		printer.openPARAGRAPH(CSS.CSSButtonLine);
 		printer.openCENTER();
-		printer.addREALBUTTON("submit",
+		printer.addRealBUTTON("submit",
 				"action", _action, "<img src=\"/pictures/button_save.gif\">");
 		printer.text("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
-		printer.addREALBUTTON("submit",
+		printer.addRealBUTTON("submit",
 				"action", RequestParameterAction.ActionCancel, "<img src=\"/pictures/button_cancel.gif\">");
 		printer.closeCENTER();
 		printer.closePARAGRAPH();
@@ -72,29 +73,37 @@ public class DatabaseWikiUserListingPrinter extends HtmlContentPrinter {
 		//
 		printer.openTR();
 		printer.openTH(CSS.CSSFormLabel);
-		printer.text("User ID");
+		printer.text("User-ID" + "&nbsp;&nbsp;&nbsp;");
 		printer.closeTH();
 		
 		//
 		// Login Name
 		//
 		printer.openTH(CSS.CSSFormLabel);
-		printer.text("Login Name");
+		printer.text("Login-Name" + "&nbsp;&nbsp;&nbsp;");
 		printer.closeTH();
 		
 		//
 		// Full Name
 		//
 		printer.openTH(CSS.CSSFormLabel);
-		printer.text("Full Name");
+		printer.text("Full-Name");
 		printer.closeTH();
 		
 		//
 		// Identity
 		//
 		printer.openTH(CSS.CSSFormLabel);
-		printer.text("Administrator");
+		printer.text("Administrator" + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
 		printer.closeTH();
+		
+		//
+		// Role
+		//
+		printer.openTH(CSS.CSSFormLabel);
+		printer.text("Roles");
+		printer.closeTH();
+		
 		printer.closeTR();
 		
 		//content
@@ -136,11 +145,11 @@ public class DatabaseWikiUserListingPrinter extends HtmlContentPrinter {
 				System.out.print("no full name");
 				printer.text("Please enter a valid name.");
 				printer.addBR();
-				printer.addTEXTBOX(_user_listing.get(i).fullName(), "300", _user_listing.get(i).fullName());
+				printer.addTEXTBOX(_user_listing.get(i).fullName(), "150", _user_listing.get(i).fullName());
 				printer.closeTD();
 			}else{
 				printer.openTD(CSS.CSSFormLabel);
-				printer.addTEXTBOX(_user_listing.get(i).fullName(), "300", _user_listing.get(i).fullName());
+				printer.addTEXTBOX(_user_listing.get(i).fullName(), "150", _user_listing.get(i).fullName());
 				printer.closeTD();
 			}
 			
@@ -156,6 +165,14 @@ public class DatabaseWikiUserListingPrinter extends HtmlContentPrinter {
 				printer.addRADIOBUTTON("no", _user_listing.get(i)+"", "not_admin", true);
 			}
 			printer.closeTD();
+			
+			//
+			// role
+			//
+			printer.openTD();
+			printer.link("?" + RequestParameter.ParameterWikiServerCheckAssignment + "=" + _user_listing.get(i).id(), ">>>");
+			printer.closeTD();
+			
 			printer.closeTR();
 			i++;
 		}
@@ -163,10 +180,10 @@ public class DatabaseWikiUserListingPrinter extends HtmlContentPrinter {
 
 		printer.openPARAGRAPH(CSS.CSSButtonLine);
 		printer.openCENTER();
-		printer.addREALBUTTON("submit",
+		printer.addRealBUTTON("submit",
 				"action", _action, "<img src=\"/pictures/button_save.gif\">");
 		printer.text("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
-		printer.addREALBUTTON("submit",
+		printer.addRealBUTTON("submit",
 				"action", RequestParameterAction.ActionCancel, "<img src=\"/pictures/button_cancel.gif\">");
 		printer.closeCENTER();
 		printer.closePARAGRAPH();

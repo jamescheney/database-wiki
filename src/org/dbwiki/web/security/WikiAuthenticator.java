@@ -138,6 +138,8 @@ public class WikiAuthenticator extends Authenticator {
                 if (checkCredentials(uname, pass)) {
                 	if (exchange.getRequestURI().getPath().equals(WikiServer.SpecialFolderLogin)) {
                         return accessGranted(exchange, uname);
+                    } else if(exchange.getRequestURI().toString().contains("edit")) {
+                    	return accessGranted(exchange, uname);
                     } else if (_policy.checkRequest(user, exchange)) {
                 		return accessGranted(exchange, uname);
                 	} else {

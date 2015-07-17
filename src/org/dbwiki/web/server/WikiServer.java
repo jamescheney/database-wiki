@@ -48,6 +48,7 @@ import org.dbwiki.data.schema.DatabaseSchema;
 import org.dbwiki.data.schema.SchemaParser;
 import org.dbwiki.data.security.Capability;
 import org.dbwiki.data.security.Permission;
+import org.dbwiki.data.security.RolePolicy;
 import org.dbwiki.data.security.SimplePolicy;
 import org.dbwiki.driver.rdbms.DatabaseConnector;
 import org.dbwiki.driver.rdbms.DatabaseConnectorFactory;
@@ -74,9 +75,13 @@ import org.dbwiki.web.ui.printer.admin.DatabaseWikiAuthorizationPrinter;
 import org.dbwiki.web.ui.printer.admin.DatabaseWikiEntryAuthorizationPrinter;
 import org.dbwiki.web.ui.printer.admin.DatabaseWikiRoleAssignmentPrinter;
 import org.dbwiki.web.ui.printer.admin.DatabaseWikiRoleAuthorizationPrinter;
+import org.dbwiki.web.ui.printer.admin.DatabaseWikiCheckRoleAssignmentPrinter;
 import org.dbwiki.web.ui.printer.admin.DatabaseWikiRoleManagementPrinter;
-import org.dbwiki.web.ui.printer.admin.DatabaseWikiRoleEditNamePrinter;
-import org.dbwiki.web.ui.printer.admin.DatabaseWikiUserListingPrinter;
+import org.dbwiki.web.ui.printer.admin.DatabaseWikiEditRoleNamePrinter;
+import org.dbwiki.web.ui.printer.admin.DatabaseWikiSetMutexRolePairsPrinter;
+import org.dbwiki.web.ui.printer.admin.DatabaseWikiSetSuperRolesPrinter;
+import org.dbwiki.web.ui.printer.admin.WikiServerCheckRoleAssignmentPrinter;
+import org.dbwiki.web.ui.printer.admin.WikiServerUserListingPrinter;
 import org.dbwiki.web.ui.printer.server.DatabaseAccessDeniedPrinter;
 import org.dbwiki.web.ui.printer.server.DatabaseWikiFormPrinter;
 import org.dbwiki.web.ui.printer.server.DatabaseWikiListingPrinter;
@@ -128,7 +133,6 @@ public abstract class WikiServer  implements WikiServerConstants {
 	public static final String propertyInsertPermission = "INSERT_PERMISSION";
 	public static final String propertyDeletePermission = "DELETE_PERMISSION";
 	public static final String propertyUpdatePermission = "UPDATE_PERMISSION";
-
 	/*
 	 * Private Constants
 	 */
@@ -1100,11 +1104,11 @@ public abstract class WikiServer  implements WikiServerConstants {
 			
 			// Check whether there are invalid information from the form
 			for(int user_index=0;user_index<frm_users.size();user_index++){
-				int message = DatabaseWikiUserListingPrinter.MessageNone;
+				int message = WikiServerUserListingPrinter.MessageNone;
 				String full_name = frm_users.get(user_index).fullName();
 
 				if (full_name.equals("")) {
-					 message = DatabaseWikiUserListingPrinter.MessageNoFullName;
+					 message = WikiServerUserListingPrinter.MessageNoFullName;
 					 probs.add(new Integer[]{user_index+1,message});
 					 }
 			}
@@ -1114,7 +1118,7 @@ public abstract class WikiServer  implements WikiServerConstants {
 				 ServerResponseHandler responseHandler = new
 				 ServerResponseHandler(request, _wikiTitle + " - Manage Users");
 				 responseHandler.put(HtmlContentGenerator.ContentContent,
-							new DatabaseWikiUserListingPrinter(_users,
+							new WikiServerUserListingPrinter(_users,
 									RequestParameterAction.ActionUpdateUsers,
 									"Manage Users", probs));
 				 return responseHandler;
@@ -1304,7 +1308,7 @@ public abstract class WikiServer  implements WikiServerConstants {
 		responseHandler
 				.put(HtmlContentGenerator.ContentContent,
 						new DatabaseWikiRoleManagementPrinter(
-								"Manage Role",
+								"Manage Role", request.user(),
 								new DatabaseWikiProperties(wiki), wiki));
 		return responseHandler;
 	}
@@ -1315,12 +1319,12 @@ public abstract class WikiServer  implements WikiServerConstants {
 		DatabaseWiki wiki = this.getRequestWiki(request, ParameterName);
 		if(!wiki.rolePolicy().isRoleNameExist(request.parameters().get("new_role_name").value())) {
 			Connection con = _connector.getConnection();
-			wiki.rolePolicy().addRole(con, request.parameters().get("new_role_name").value());
+			wiki.rolePolicy().insertRole(con, request.parameters().get("new_role_name").value());
 			
 			ServerResponseHandler responseHandler = new ServerResponseHandler(request, _wikiTitle + " - Manage Role");
 			responseHandler.put(HtmlContentGenerator.ContentContent,
 					new DatabaseWikiRoleManagementPrinter(
-					"Manage Role",
+					"Manage Role", request.user(),
 					new DatabaseWikiProperties(wiki), wiki));
 			return responseHandler;
 		}
@@ -1328,7 +1332,7 @@ public abstract class WikiServer  implements WikiServerConstants {
 			ServerResponseHandler responseHandler = new ServerResponseHandler(request, _wikiTitle + " - Manage Role");
 			responseHandler.put(HtmlContentGenerator.ContentContent,
 					new DatabaseWikiRoleManagementPrinter(
-					"Manage Role - role name already exist",
+					"Manage Role - role name already exist", request.user(),
 					new DatabaseWikiProperties(wiki), wiki));
 			return responseHandler;
 		}
@@ -1348,7 +1352,7 @@ public abstract class WikiServer  implements WikiServerConstants {
 		ServerResponseHandler responseHandler = new ServerResponseHandler(request, _wikiTitle + " - Manage Role");
 		responseHandler.put(HtmlContentGenerator.ContentContent,
 				new DatabaseWikiRoleManagementPrinter(
-				"Manage Role",
+				"Manage Role", request.user(),
 				new DatabaseWikiProperties(wiki), wiki));
 		return responseHandler;
 		
@@ -1462,7 +1466,7 @@ public abstract class WikiServer  implements WikiServerConstants {
 		else {
 			ServerResponseHandler responseHandler = new ServerResponseHandler(request, _wikiTitle + " - Edit Role Name");
 			responseHandler.put(HtmlContentGenerator.ContentContent,
-					new DatabaseWikiRoleEditNamePrinter(
+					new DatabaseWikiEditRoleNamePrinter(
 					"Edit Role Name - role name already exist",
 					RequestParameterAction.ActionUpdateRoleName,
 					wiki, role_id));
@@ -1529,6 +1533,98 @@ public abstract class WikiServer  implements WikiServerConstants {
 						wiki, role_id,_users, null));
 		
 		return responseHandler;
+	}
+	
+	protected ServerResponseHandler getUserListingResponseHandler(
+			HttpRequest request)
+			throws org.dbwiki.exception.WikiException, IOException, SQLException {
+		ServerResponseHandler responseHandler;
+		if (request.user() != null && request.user().is_admin()) {
+			responseHandler = new ServerResponseHandler(request, _wikiTitle
+					+ " - Manage Users");
+			responseHandler.put(HtmlContentGenerator.ContentContent,
+					new WikiServerUserListingPrinter(_users,
+							RequestParameterAction.ActionUpdateUsers,
+							"Manage Users"));
+		} else {
+			responseHandler = new ServerResponseHandler(request,
+					"Access Denied");
+			responseHandler.put(HtmlContentGenerator.ContentContent,
+					new DatabaseAccessDeniedPrinter());
+		}
+		return responseHandler;
+	}
+	
+	protected ServerResponseHandler getAddMutexResponseHandler(HttpRequest request)
+			throws org.dbwiki.exception.WikiException, IOException, SQLException {
+		int role1ID = Integer.parseInt(request.parameters().get("select_role1").value());
+		int role2ID = Integer.parseInt(request.parameters().get("select_role2").value());
+		DatabaseWiki wiki = this.getRequestWiki(request, ParameterName);
+		Connection con = _connector.getConnection();
+		
+		wiki.rolePolicy().insertMutexRolePairs(con, role1ID, role2ID);
+		
+		ServerResponseHandler responseHandler = new ServerResponseHandler(request, _wikiTitle
+				+ " -Set Mutex Role Pairs");
+		responseHandler
+				.put(HtmlContentGenerator.ContentContent,
+						new DatabaseWikiSetMutexRolePairsPrinter(
+								"Set Mutex Role Pairs",
+								wiki));
+		return responseHandler;
+	}
+	
+	protected ServerResponseHandler getDeleteMutexResponseHandler(HttpRequest request)
+			throws org.dbwiki.exception.WikiException, IOException, SQLException {
+		int role1ID = Integer.parseInt(request.parameters().get("role1_id").value());
+		int role2ID = Integer.parseInt(request.parameters().get("role2_id").value());
+		DatabaseWiki wiki = this.getRequestWiki(request, ParameterName);
+		
+		Connection con = _connector.getConnection();
+		
+		wiki.rolePolicy().deleteMutexRolePairs(con, role1ID, role2ID);
+		
+		ServerResponseHandler responseHandler = new ServerResponseHandler(request, _wikiTitle
+				+ " -Set Mutex Role Pairs");
+		responseHandler
+				.put(HtmlContentGenerator.ContentContent,
+						new DatabaseWikiSetMutexRolePairsPrinter(
+								"Set Mutex Role Pairs",
+								wiki));
+		return responseHandler;
+	}
+	
+	protected ServerResponseHandler getUpdateSuperRolesResponseHandler(HttpRequest request)
+			throws org.dbwiki.exception.WikiException, IOException, SQLException {
+		try {
+			int subRoleID = Integer.parseInt(request.parameters().get("sub_role_id").value());
+			DatabaseWiki wiki = this.getRequestWiki(request, ParameterName);
+			Connection con = _connector.getConnection();
+			
+			con.setAutoCommit(false);
+			
+
+			for (int i = 3; i < request.parameters().size(); i++) {
+				int superRoleID = Integer.parseInt(request.parameters().get(i).name().split("_")[1]);
+				
+				if ((request.parameters().get(i).value()).equals("yes")) {
+					wiki.rolePolicy().addSuperRoles(con, subRoleID, superRoleID);
+				}
+				else {
+					wiki.rolePolicy().deleteSuperRoles(con, subRoleID, superRoleID);
+				}
+			}
+			
+			
+			wiki.rolePolicy().initialize(con);
+			con.commit();
+			con.close();
+		} catch (SQLException sqlException) {
+			// TODO Auto-generated catch block
+			throw new WikiFatalException(sqlException);
+		}
+
+		return this.getEditRoleManagementResponseHandler(request);
 	}
 	//=======================================================
 
@@ -1658,9 +1754,8 @@ public abstract class WikiServer  implements WikiServerConstants {
 						new DatabaseAccessDeniedPrinter());
 			}
 		} else if (request.type().isEdit()) {
-			if (request.user() != null && request.user().is_admin()) {
-				DatabaseWiki wiki = this.getRequestWiki(request,
-						RequestParameter.ParameterEdit);
+			DatabaseWiki wiki = this.getRequestWiki(request, RequestParameter.ParameterEdit);
+			if (wiki.rolePolicy().checkRequest(request.user())) {
 				responseHandler = new ServerResponseHandler(request, _wikiTitle
 						+ " - Edit Database Wiki");
 				responseHandler.put(HtmlContentGenerator.ContentContent,
@@ -1689,7 +1784,7 @@ public abstract class WikiServer  implements WikiServerConstants {
 				responseHandler = new ServerResponseHandler(request, _wikiTitle
 						+ " - Manage Users");
 				responseHandler.put(HtmlContentGenerator.ContentContent,
-						new DatabaseWikiUserListingPrinter(_users,
+						new WikiServerUserListingPrinter(_users,
 								RequestParameterAction.ActionUpdateUsers,
 								"Manage Users"));
 			} else {
@@ -1699,9 +1794,25 @@ public abstract class WikiServer  implements WikiServerConstants {
 						new DatabaseAccessDeniedPrinter());
 			}
 
-		} else if (request.type().isAuthorization()) {
+		} else if (request.getRequestURI().toString().contains(RequestParameter.ParameterWikiServerCheckAssignment)) {
+			int userID = Integer.parseInt(request.parameters().get(RequestParameter.ParameterWikiServerCheckAssignment).value());
+			User user = _users.get(userID);
+			Connection con = _connector.getConnection();
 			if (request.user() != null && request.user().is_admin()) {
-				DatabaseWiki wiki = getRequestWiki(request, RequestParameter.ParameterAuthorization);
+				responseHandler = new ServerResponseHandler(request, _wikiTitle
+						+ " - WikiServer Check Role Assignment");
+				responseHandler.put(HtmlContentGenerator.ContentContent,
+						new WikiServerCheckRoleAssignmentPrinter("Check Role Assignment", user, RolePolicy.getWikiServerRoleAssignment(con)));
+			} else {
+				responseHandler = new ServerResponseHandler(request,
+						"Access Denied");
+				responseHandler.put(HtmlContentGenerator.ContentContent,
+						new DatabaseAccessDeniedPrinter());
+			}
+
+		} else if (request.type().isAuthorization()) {
+			DatabaseWiki wiki = getRequestWiki(request, RequestParameter.ParameterAuthorization);
+			if (wiki.rolePolicy().checkRequest(request.user())) {
 				responseHandler = new ServerResponseHandler(request, _wikiTitle
 						+ " - Manage Authorization");
 				responseHandler
@@ -1718,14 +1829,13 @@ public abstract class WikiServer  implements WikiServerConstants {
 						new DatabaseAccessDeniedPrinter());
 			}
 		} else if (request.getRequestURI().toString().contains(RequestParameter.ParameterEntryAuthorization)) {
-			if (request.user() != null && request.user().is_admin()) {
+			DatabaseWiki wiki = getRequestWiki(request, RequestParameter.ParameterAuthorization);
+			if (wiki.rolePolicy().checkRequest(request.user())) {
 				RequestParameter parameter = request.parameters().get(RequestParameter.ParameterEntryAuthorization);
 				int user_id=1;
 				if(parameter.hasValue()){
 					user_id = Integer.parseInt(parameter.value());
 				}
-				DatabaseWiki wiki = getRequestWiki(request, RequestParameter.ParameterAuthorization);
-				//Map<Integer,Map<Integer,DBPolicy>> policyListing = wiki.getDBPolicyListing(user_id);
 				responseHandler = new ServerResponseHandler(request, _wikiTitle
 						+ " - Manage Authorization Mode By Entries");
 				responseHandler
@@ -1744,14 +1854,14 @@ public abstract class WikiServer  implements WikiServerConstants {
 
 		//zhuowei
 		else if (request.type().isRoleManagement()) {
-			if (request.user() != null && request.user().is_admin()) {
-				DatabaseWiki wiki = getRequestWiki(request, RequestParameter.ParameterRoleManagement);
+			DatabaseWiki wiki = getRequestWiki(request, RequestParameter.ParameterRoleManagement);
+			if (wiki.rolePolicy().checkRequest(request.user())) {	
 				responseHandler = new ServerResponseHandler(request, _wikiTitle
 						+ " - Manage Role");
 				responseHandler
 						.put(HtmlContentGenerator.ContentContent,
 								new DatabaseWikiRoleManagementPrinter(
-										"Manage Role",
+										"Manage Role", request.user(),
 										new DatabaseWikiProperties(wiki), wiki));
 			} else {
 				responseHandler = new ServerResponseHandler(request,
@@ -1760,12 +1870,9 @@ public abstract class WikiServer  implements WikiServerConstants {
 						new DatabaseAccessDeniedPrinter());
 			}
 		} else if (request.getRequestURI().toString().contains(RequestParameter.ParameterRoleAuthorization)) {
-			if (request.user() != null && request.user().is_admin()) {
+			DatabaseWiki wiki = getRequestWiki(request, RequestParameter.ParameterRoleManagement);
+			if (wiki.rolePolicy().checkRequest(request.user())) {
 				int roleID = Integer.parseInt((request.parameters().get(RequestParameter.ParameterRoleAuthorization).value()));
-				DatabaseWiki wiki = getRequestWiki(request, RequestParameter.ParameterRoleManagement);
-				
-				
-				//Map<Integer,Map<Integer,DBPolicy>> policyListing = wiki.getDBPolicyListing(user_id);
 				responseHandler = new ServerResponseHandler(request, _wikiTitle
 						+ " - Manage Role Authorization");
 				responseHandler
@@ -1779,9 +1886,9 @@ public abstract class WikiServer  implements WikiServerConstants {
 						new DatabaseAccessDeniedPrinter());
 			}
 		} else if (request.getRequestURI().toString().contains(RequestParameter.ParameterRoleAssignment)) {
-			if (request.user() != null && request.user().is_admin()) {
+			DatabaseWiki wiki = getRequestWiki(request, RequestParameter.ParameterRoleManagement);
+			if (wiki.rolePolicy().checkRequest(request.user())) {
 				int roleID = Integer.parseInt((request.parameters().get(RequestParameter.ParameterRoleAssignment).value()));
-				DatabaseWiki wiki = getRequestWiki(request, RequestParameter.ParameterRoleManagement);
 				responseHandler = new ServerResponseHandler(request, _wikiTitle
 						+ " - Manage Role Assignment");
 				responseHandler
@@ -1796,15 +1903,14 @@ public abstract class WikiServer  implements WikiServerConstants {
 						new DatabaseAccessDeniedPrinter());
 			}
 		} else if (request.getRequestURI().toString().contains(RequestParameter.ParameterRoleEditName)) {
-			
-			if (request.user() != null && request.user().is_admin()) {
+			DatabaseWiki wiki = getRequestWiki(request, RequestParameter.ParameterRoleManagement);
+			if (wiki.rolePolicy().checkRequest(request.user())) {
 				int roleID = Integer.parseInt((request.parameters().get(RequestParameter.ParameterRoleEditName).value()));
-				DatabaseWiki wiki = getRequestWiki(request, RequestParameter.ParameterRoleManagement);
 				responseHandler = new ServerResponseHandler(request, _wikiTitle
 						+ " -Edit Role Name");
 				responseHandler
 						.put(HtmlContentGenerator.ContentContent,
-								new DatabaseWikiRoleEditNamePrinter(
+								new DatabaseWikiEditRoleNamePrinter(
 										"Edit Role Name",
 										RequestParameterAction.ActionUpdateRoleName,
 										wiki, roleID));
@@ -1814,38 +1920,58 @@ public abstract class WikiServer  implements WikiServerConstants {
 				responseHandler.put(HtmlContentGenerator.ContentContent,
 						new DatabaseAccessDeniedPrinter());
 			}
-		} 
-		
-		
-		
-		else if (request.type().isAction()) {
-			
-			//zhuowei 
-			/* unnecessary complex, personal view
-			RequestParameterAction action = RequestParameter
-					.actionParameter(request.parameters().get(
-							RequestParameter.ParameterAction));
-			if (action.actionInsert()) {
-				
-				//if(request.getRequestURI().toString()){}
-				responseHandler = this.getInsertWikiResponseHandler(request);
-			} else if (action.actionCancel()) {
-				responseHandler = this.getHomepageResponseHandler(request);
-			} else if (action.actionUpdate()) {
-				responseHandler = this.getUpdateWikiResponseHandler(request);
-			} else if (action.actionUpdateUsers()) {
-				responseHandler = this.getUpdateUsersResponseHandler(request);
-			} else if (action.actionUpdateAuthorization()) {
-				responseHandler = this.getUpdateAuthorizationResponseHandler(request);
-			} else if (action.actionCancelAuthorizationUpdate()) {
-				responseHandler = this.getEditResponseHandler(request);
-			} else if (action.actionUpdateEntryAuthorization()) {
-				responseHandler = this.getUpdateEntryAuthorizationResponseHandler(request);
-			} else if (action.actionCancelEntryAuthorizationUpdate()) {
-				responseHandler = this.getEditAuthorizationResponseHandler(request);
-			} 
-			*/
-			
+		} else if (request.getRequestURI().toString().contains(RequestParameter.ParameterSetSuperRoles)) {
+			int roleID = Integer.parseInt((request.parameters().get(RequestParameter.ParameterSetSuperRoles).value()));
+			DatabaseWiki wiki = getRequestWiki(request, RequestParameter.ParameterRoleManagement);
+			if (wiki.rolePolicy().checkRequest(request.user())) {
+				responseHandler = new ServerResponseHandler(request, _wikiTitle
+						+ " -Check All Assignment");
+				responseHandler
+						.put(HtmlContentGenerator.ContentContent,
+								new DatabaseWikiSetSuperRolesPrinter(
+										"Set Super Roles",
+										RequestParameterAction.ActionUpdateSuperRoles,
+										wiki, roleID));
+			} else {
+				responseHandler = new ServerResponseHandler(request,
+						"Access Denied");
+				responseHandler.put(HtmlContentGenerator.ContentContent,
+						new DatabaseAccessDeniedPrinter());
+			}
+		} else if (request.getRequestURI().toString().contains(RequestParameter.SetMutexRolePairs)) {
+			DatabaseWiki wiki = getRequestWiki(request, RequestParameter.DBName);
+			if (wiki.rolePolicy().checkRequest(request.user())) {
+				responseHandler = new ServerResponseHandler(request, _wikiTitle
+						+ " -Set Mutex Role Pairs");
+				responseHandler
+						.put(HtmlContentGenerator.ContentContent,
+								new DatabaseWikiSetMutexRolePairsPrinter(
+										"Set Mutex Role Pairs",
+										wiki));
+			} else {
+				responseHandler = new ServerResponseHandler(request,
+						"Access Denied");
+				responseHandler.put(HtmlContentGenerator.ContentContent,
+						new DatabaseAccessDeniedPrinter());
+			}
+		} else if (request.getRequestURI().toString().contains(RequestParameter.ParameterDBWikiCheckAssignment)) {
+			DatabaseWiki wiki = getRequestWiki(request, RequestParameter.ParameterDBWikiCheckAssignment);
+			if (wiki.rolePolicy().checkRequest(request.user())) {
+				responseHandler = new ServerResponseHandler(request, _wikiTitle
+						+ " -Check All Assignment");
+				responseHandler
+						.put(HtmlContentGenerator.ContentContent,
+								new DatabaseWikiCheckRoleAssignmentPrinter(
+										"Check All Assignment",
+										wiki, _users));
+			} else {
+				responseHandler = new ServerResponseHandler(request,
+						"Access Denied");
+				responseHandler.put(HtmlContentGenerator.ContentContent,
+						new DatabaseAccessDeniedPrinter());
+			}
+		} else if (request.type().isAction()) {
+
 			String action = request.parameters().get(RequestParameter.ParameterAction).value();
 			
 			if (action.equals(RequestParameterAction.ActionInsert)) {
@@ -1868,24 +1994,28 @@ public abstract class WikiServer  implements WikiServerConstants {
 				responseHandler = this.getAddRoleHandler(request);
 			} else if (action.equals(RequestParameterAction.ActionDeleteRole)) {
 				responseHandler = this.getDeleteRoleHandler(request);
-			} else if (action.equals(RequestParameterAction.ActionExitRoleManagement)) {
+			} else if (action.equals(RequestParameterAction.ActionBackToDatabaseSetting)) {
 				responseHandler = this.getEditResponseHandler(request);
 			} else if (action.equals(RequestParameterAction.ActionUpdateRoleAuthorization)) {
 				responseHandler = this.getUpdateRoleAuthorizationResponseHandler(request);
-			} else if (action.equals(RequestParameterAction.ActionCancelRoleAuthorizationUpdate)) {
-				responseHandler = this.getEditRoleManagementResponseHandler(request);
-			} else if (action.equals(RequestParameterAction.ActionUpdateRoleName)) {
+			}  else if (action.equals(RequestParameterAction.ActionUpdateRoleName)) {
 				responseHandler = this.getUpdateRoleNameResponseHandler(request);
-			} else if (action.equals(RequestParameterAction.ActionCancelRoleNameUpdate)) {
-				responseHandler = this.getEditRoleManagementResponseHandler(request);
 			} else if (action.equals(RequestParameterAction.ActionSearchUsers)) {
 				responseHandler = this.getSearchUsersResponseHandler(request);
 			} else if (action.equals(RequestParameterAction.ActionAssignUser)) {
 				responseHandler = this.getAssignUserResponseHandler(request);
 			} else if (action.equals(RequestParameterAction.ActionUnassignUser)) {
 				responseHandler = this.getUnassignUserResponseHandler(request);
-			} else if (action.equals(RequestParameterAction.ActionExitRoleAssignment)) {
+			} else if (action.equals(RequestParameterAction.ActionBackToRoleManagement)) {
 				responseHandler = this.getEditRoleManagementResponseHandler(request);
+			} else if (action.equals(RequestParameterAction.ActionBackToUserListing)) {
+				responseHandler = this.getUserListingResponseHandler(request);
+			} else if (action.equals(RequestParameterAction.ActionAddMutex)) {
+				responseHandler = this.getAddMutexResponseHandler(request);
+			} else if (action.equals(RequestParameterAction.ActionDeleteMutex)) {
+				responseHandler = this.getDeleteMutexResponseHandler(request);
+			} else if (action.equals(RequestParameterAction.ActionUpdateSuperRoles)) {
+				responseHandler = this.getUpdateSuperRolesResponseHandler(request);
 			} else {
 				throw new WikiRequestException(
 						WikiRequestException.InvalidRequest, request.toString());

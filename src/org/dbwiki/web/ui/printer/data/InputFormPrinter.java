@@ -92,7 +92,7 @@ public class InputFormPrinter extends HtmlContentPrinter {
 		body.openCENTER();
 		body.addBUTTON("image", "button", "/pictures/button_ok.gif");
 		body.text("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
-		body.addREALBUTTON("submit",
+		body.addRealBUTTON("submit",
 				"action", RequestParameterAction.ActionCancel, "<img src=\"/pictures/button_cancel.gif\">");
 		body.closePARAGRAPH();
 		body.closeFORM();
