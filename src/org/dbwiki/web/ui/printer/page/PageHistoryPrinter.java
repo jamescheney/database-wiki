@@ -22,17 +22,18 @@
 package org.dbwiki.web.ui.printer.page;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
 
 import org.dbwiki.exception.WikiException;
-
 import org.dbwiki.user.User;
 import org.dbwiki.web.html.HtmlLinePrinter;
 import org.dbwiki.web.request.WikiPageRequest;
-
 import org.dbwiki.data.wiki.DatabaseWikiPage;
-
 import org.dbwiki.web.ui.CSS;
 
 
@@ -107,8 +108,24 @@ public class PageHistoryPrinter extends HtmlContentPrinter {
 		assert(versions != null);
 		
 		for(DatabaseWikiPage p : versions) {
-			Date d = new Date(p.getTimestamp());
-			String dateString = new SimpleDateFormat("d MMM yyyy HH:mm:ss").format(d);
+			
+			/*
+			The problem with the strange letters is because of the encoding type.
+			So maybe the best way to fix this could be to not use the names of the months
+			but instead to represent the date as numerics and to save it 
+			in the begining using timezones.
+			After that, whoever needs the time for something, the code should just compare 
+			the users time zone to UTC and add the hours so that the user can see the timestamp
+			in his time zone.
+			*/
+			
+			Calendar calendar=new GregorianCalendar();
+			calendar.setTimeZone(TimeZone.getTimeZone("Etc/UTC"));
+			calendar.set(Calendar.HOUR_OF_DAY, 12);
+			String dateString=calendar.getTime().toString();
+			
+//			Date d = new Date(p.getTimestamp());
+//			String dateString = new SimpleDateFormat("d MMM yyyy HH:mm:ss").format(d);
 			String username = User.UnknownUserName;
 			if(p.getUser() != null) {
 				username = p.getUser().fullName();

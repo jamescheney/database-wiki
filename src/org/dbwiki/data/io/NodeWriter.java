@@ -27,8 +27,8 @@ import org.dbwiki.data.database.Database;
 import org.dbwiki.data.database.DatabaseAttributeNode;
 import org.dbwiki.data.database.DatabaseGroupNode;
 import org.dbwiki.data.database.DatabaseTextNode;
-
 import org.dbwiki.exception.WikiFatalException;
+import org.dbwiki.web.html.HtmlLinePrinter;
 
 /** Abstract class providing the capability to write a node out as XML/JSON.
  * Instantiated by ExportNodeWriter and CopyPasteNodeWriter
@@ -44,7 +44,6 @@ public abstract class NodeWriter {
 	
 	private BufferedWriter _out;
 		
-	
 	/*
 	 * Abstract Methods
 	 */
@@ -58,10 +57,6 @@ public abstract class NodeWriter {
 	public abstract void writeTextNode(DatabaseTextNode node) throws org.dbwiki.exception.WikiException;
 	public abstract void startEntry() throws org.dbwiki.exception.WikiException;
 	public abstract void endEntry() throws org.dbwiki.exception.WikiException;
-	
-	/*
-	 * Public Methods
-	 */
 	
 	/*
 	 * Public Methods

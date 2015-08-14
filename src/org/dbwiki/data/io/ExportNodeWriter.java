@@ -25,9 +25,12 @@ import org.dbwiki.data.database.Database;
 import org.dbwiki.data.database.DatabaseAttributeNode;
 import org.dbwiki.data.database.DatabaseGroupNode;
 import org.dbwiki.data.database.DatabaseTextNode;
-
 import org.dbwiki.exception.WikiException;
 import org.dbwiki.exception.WikiFatalException;
+import org.dbwiki.lib.XML;
+import org.dbwiki.data.time.*;
+import org.dbwiki.web.html.HtmlLinePrinter;
+import org.dbwiki.web.ui.printer.*;
 
 /** A NodeWriter that provides hooks for exporting as plain XML.
  * 
@@ -39,13 +42,17 @@ public class ExportNodeWriter extends NodeWriter {
 	 * Public Methods
 	 */
 	
+	
 	public void writeInit() throws java.io.IOException {
 		this.writeln("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 	}
 	
+	@Override
 	public void startDatabase(Database database, int version) throws org.dbwiki.exception.WikiException {
+
 		try {
 			this.writeln("<" + database.name() + " version=\"" + version + "\">");
+			this.write("");
 		} catch (java.io.IOException ioException) {
 			throw new WikiFatalException(ioException);
 		}
@@ -75,10 +82,14 @@ public class ExportNodeWriter extends NodeWriter {
 		}
 	}
 
-	public void writeAttributeNode(DatabaseAttributeNode node, DatabaseTextNode value, boolean isLast) throws org.dbwiki.exception.WikiException {
+	
+	@Override
+	public void writeAttributeNode(DatabaseAttributeNode node, DatabaseTextNode value, boolean isLast) throws WikiException {
+		// TODO Auto-generated method stub
 		try {
 			this.write("<" + node.label() + ">");
-			this.write(org.dbwiki.lib.XML.maskText(value.getValue()));
+			this.writeln(org.dbwiki.lib.XML.maskText(value.getValue()));
+			this.write("");
 			this.writeln("</" + node.label() + ">");
 		} catch (java.io.IOException ioException) {
 			throw new WikiFatalException(ioException);
@@ -88,6 +99,7 @@ public class ExportNodeWriter extends NodeWriter {
 	public void writeTextNode(DatabaseTextNode node) throws org.dbwiki.exception.WikiException {
 		try {
 			this.write(org.dbwiki.lib.XML.maskText(node.getValue()));
+
 		} catch (java.io.IOException ioException) {
 			throw new WikiFatalException(ioException);
 		}
@@ -104,4 +116,5 @@ public class ExportNodeWriter extends NodeWriter {
 		;
 		
 	}
+
 }

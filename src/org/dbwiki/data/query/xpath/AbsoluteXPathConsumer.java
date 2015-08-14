@@ -35,6 +35,7 @@ public class AbsoluteXPathConsumer {
 
 	public void consume(DatabaseElementNode node, XPath targetPath, QueryNodeHandler consumer) {
 		
+		//could also check if size>0
 		XPathComponent pathComponent = targetPath.firstElement();
 		if (pathComponent.matches(node)) {
 			if (targetPath.size() > 1) {

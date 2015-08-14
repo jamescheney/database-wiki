@@ -22,25 +22,21 @@
 package org.dbwiki.driver.rdbms;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-
+import java.text.SimpleDateFormat;
 
 import org.dbwiki.data.provenance.Provenance;
 import org.dbwiki.data.provenance.ProvenanceCopy;
 import org.dbwiki.data.provenance.ProvenanceFactory;
 import org.dbwiki.data.provenance.ProvenanceImport;
-
 import org.dbwiki.data.resource.NodeIdentifier;
-
 import org.dbwiki.data.time.VersionIndex;
 import org.dbwiki.data.time.Version;
-
-
 import org.dbwiki.exception.WikiFatalException;
-
 import org.dbwiki.user.User;
 import org.dbwiki.user.UserListing;
 
@@ -103,6 +99,9 @@ public class SQLVersionIndex extends VersionIndex implements DatabaseConstants {
 	}
 	public void store(Connection con) throws org.dbwiki.exception.WikiException {
 		try {
+//			proveri vo dbwiki.data.time ime VersionIndex i od tamu moze spored vreme da se zima
+//			SimpleDateFormat sdf=new SimpleDateFormat("dd.MM.yyy HH:mm:ss");
+//			Date d=sdf.parse("29.06.2015 12:12:02");
 			Version version = this.getLastVersion();
 			PreparedStatement statement = storeUpdate(con,version);
 			/*

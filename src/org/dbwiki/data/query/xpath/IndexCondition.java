@@ -80,7 +80,7 @@ public class IndexCondition extends XPathCondition {
 			// TODO Need a way to determine the index of an entry in the database.
 			nodeIndex = -1;
 		}
-		
+		//think that it should be the other way around
 		return (nodeIndex == _index);
 	}
 	

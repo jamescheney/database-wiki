@@ -286,16 +286,24 @@ public class RDBMSDatabase implements Database, DatabaseConstants {
 
 	}
 	
+	/*
+	 * At all times the page will be exporting the 6 version of the history 
+	 * because int version is replaced with the number 6 
+	 * (in the functions export and exportEntry). 
+	 * To get back to exporting the newest version, replace 6 with int version 
+	 * or to export a particular version, replace 6 with version number.
+	 */
+	
 	public void export(ResourceIdentifier identifier, int version, NodeWriter out) throws org.dbwiki.exception.WikiException {
-		out.startDatabase(this, version);
+		out.startDatabase(this, 6);
 		if (identifier.isRootIdentifier()) {
 			RDBMSDatabaseListing entries = content();
 			for (int iEntry = 0; iEntry < entries.size(); iEntry++) {
-				exportEntry(get(entries.get(iEntry).identifier()), version, out);
+				exportEntry(get(entries.get(iEntry).identifier()), 6, out);
 			}
 		} else {
 			out.startEntry();
-			exportNode(get(identifier), version, out, true);
+			exportNode(get(identifier), 6, out, true);
 			out.endEntry();
 		}
 		out.endDatabase(this);
@@ -728,7 +736,7 @@ public class RDBMSDatabase implements Database, DatabaseConstants {
 	private void exportEntry(DatabaseNode node, int version, NodeWriter out) throws org.dbwiki.exception.WikiException {
 		
 		out.startEntry();
-		exportNode(node, version, out, true);
+		exportNode(node, 6, out, true);
 		out.endEntry();
 	}
 	
