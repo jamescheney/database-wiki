@@ -58,6 +58,8 @@ public class DataMenuPrinter extends MenuPrinter {
 	private static final String menuLabelPasteLocal    = "Copy buffer ...";
 	private static final String menuLabelExportXML     = "Export as XML...";
 	private static final String menuLabelExportJSON     = "Export as JSON...";
+	private static final String menuLabelAuthorizedRole = "Check Authorized Role";
+	private static final String menuLabelAuthorizedUser = "Check Authorized User";
 	
 	
 	/*
@@ -204,6 +206,14 @@ public class DataMenuPrinter extends MenuPrinter {
 		printer.add("\t\t\t\t\t<li><a href=\"" + target + "\">" + menuLabelCopy + "</a></li>");
 		
 		this.printPasteSubMenu(printer);
+		
+		printer.add("\t\t\t\t\t<li><a href=\"" + "/?" + RequestParameter.ParameterType + "=" + RequestParameter.EntryAuthorizedRole + "&" 
+				+ RequestParameter.ParameterDBName + "=" + _request.wiki().name() + "&" 
+				+ RequestParameter.ParameterEntryID + "=" + _request.wri().resourceIdentifier().toParameterString() +" \" target=\"view_window\">" + menuLabelAuthorizedRole + "</a></li>");
+		
+		printer.add("\t\t\t\t\t<li><a href=\"" + "/?" + RequestParameter.ParameterType + "=" + RequestParameter.EntryAuthorizedUser + "&" 
+				+ RequestParameter.ParameterDBName + "=" + _request.wiki().name() + "&" 
+				+ RequestParameter.ParameterEntryID + "=" + _request.wri().resourceIdentifier().toParameterString() +" \" target=\"view_window\">" + menuLabelAuthorizedUser + "</a></li>");
 		
 		printer.add("\t\t\t\t\t<li><a href=\"" + _request.wri().getURL() + "?" + RequestParameter.ParameterExportXML + "\">" + menuLabelExportXML + "</a></li>");
 		printer.add("\t\t\t\t\t<li><a href=\"" + _request.wri().getURL() + "?" + RequestParameter.ParameterExportJSON + "\">" + menuLabelExportJSON + "</a></li>");

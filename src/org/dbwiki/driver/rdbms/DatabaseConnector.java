@@ -95,9 +95,15 @@ public abstract class DatabaseConnector implements DatabaseConstants, WikiServer
             createVersionTable(con, dbName);
             createTimestampTable(con, dbName);
             createPagesTable(con, dbName);
-            createPolicyTable(con, dbName);
             createDataView(con, dbName); 
             createSchemaIndexView(con, dbName);
+            
+            //zhuowei
+            this.createRoleTable(con, dbName);
+            this.createRoleCapabilityTable(con, dbName);
+            this.createRoleAssignmentTable(con, dbName);
+            this.createRoleInheritanceTable(con, dbName);
+            this.createRoleMutexTable(con, dbName);
                
             // store the schema, generating a version number and timestamp for the root
             storeSchema(con, dbName, schema, user, versionIndex);
@@ -217,12 +223,18 @@ public abstract class DatabaseConnector implements DatabaseConstants, WikiServer
             dropView(stmt, dbName + ViewSchemaIndex);
                
             dropTable(stmt, dbName + RelationAnnotation);
-            dropTable(stmt, dbName + RelationPolicy);
             dropTable(stmt, dbName + RelationData);
             dropTable(stmt, dbName + RelationPages);
             dropTable(stmt, dbName + RelationSchema);
             dropTable(stmt, dbName + RelationTimesequence);
             dropTable(stmt, dbName + RelationVersion);
+            
+            //zhuowei
+            dropTable(stmt, dbName + RelationRole);
+            dropTable(stmt, dbName + RelationRoleCapability);
+            dropTable(stmt, dbName + RelationRoleAssignment);
+            dropTable(stmt, dbName + RelationRoleMutex);
+            dropTable(stmt, dbName + RelationRoleInheritance);
                
             stmt.close();
         } catch (java.sql.SQLException sqlException) {
@@ -490,17 +502,76 @@ public abstract class DatabaseConnector implements DatabaseConstants, WikiServer
            
         stmt.close();
     }
-       
-    protected void createPolicyTable(Connection con, String dbName) throws java.sql.SQLException {
+    
+    protected void createRoleTable(Connection con, String dbName) throws java.sql.SQLException {
         Statement stmt = con.createStatement();
-        stmt.execute("CREATE TABLE " + dbName + RelationPolicy + " (" +
-                RelPolicyEntry + " int NOT NULL, " +
-                RelPolicyUserID + " int NOT NULL, " +
-                RelPolicyRead + " boolean NOT NULL, " +
-                RelPolicyInsert + " boolean NOT NULL, " +
-                RelPolicyDelete + " boolean NOT NULL, " +
-                RelPolicyUpdate + " boolean NOT NULL, " +
-                "PRIMARY KEY (" + RelPolicyEntry + ", " + RelPolicyUserID + "))");
+        stmt.execute("CREATE TABLE " + dbName + RelationRole + " (" +
+        		autoIncrementColumn(RelRoleID) + ", " +
+        		RelRoleName + " varchar(80) NOT NULL, " +
+        		RelRoleRead + " int NOT NULL, " +
+        		RelRoleInsert + " int NOT NULL, " +
+        		RelRoleDelete + " int NOT NULL, " +
+        		RelRoleUpdate + " int NOT NULL, " +
+                "PRIMARY KEY (" + RelRoleID + "))");
+        stmt.close();
+        PreparedStatement pStmt = con
+				.prepareStatement("INSERT INTO " + dbName + DatabaseConstants.RelationRole + "("
+						+ RelRoleID + " , "
+						+ RelRoleName + " , "
+						+ RelRoleRead + " , "
+						+ RelRoleInsert + " , "
+						+ RelRoleUpdate + " , "
+						+ RelRoleDelete
+						+ ") VALUES ( ?, ?, 1, 1, 1, 1 )");
+
+		pStmt.setInt(1, 0);
+		pStmt.setString(2, "Owner");
+		pStmt.execute();
+		
+		pStmt.setInt(1, -1);
+		pStmt.setString(2, "Assistant");
+		pStmt.execute();
+		
+		pStmt.close();
+    }
+    
+    protected void createRoleCapabilityTable(Connection con, String dbName) throws java.sql.SQLException {
+        Statement stmt = con.createStatement();
+        stmt.execute("CREATE TABLE " + dbName + RelationRoleCapability + " (" +
+        		RelRoleCapabilityRoleID + " int NOT NULL, " +
+        		RelRoleCapabilityEntryID + " int NOT NULL, " +
+        		RelRoleCapabilityRead + " boolean NOT NULL, " +
+        		RelRoleCapabilityInsert + " boolean NOT NULL, " +
+        		RelRoleCapabilityUpdate + " boolean NOT NULL, " +
+        		RelRoleCapabilityDelete + " boolean NOT NULL, " +
+                "PRIMARY KEY (" + RelRoleAssignmentRoleID + "," + RelRoleCapabilityEntryID +"))");
+        stmt.close();
+    }
+    
+    protected void createRoleAssignmentTable(Connection con, String dbName) throws java.sql.SQLException {
+        Statement stmt = con.createStatement();
+        stmt.execute("CREATE TABLE " + dbName + RelationRoleAssignment + " (" +
+        		RelRoleAssignmentRoleID + " int NOT NULL, " +
+        		RelRoleAssignmentUserID + " int NOT NULL, " +
+                "PRIMARY KEY (" + RelRoleAssignmentRoleID + "," + RelRoleAssignmentUserID +"))");
+        stmt.close();
+    }
+    
+    protected void createRoleMutexTable(Connection con, String dbName) throws java.sql.SQLException {
+        Statement stmt = con.createStatement();
+        stmt.execute("CREATE TABLE " + dbName + RelationRoleMutex + " (" +
+        		RelaMutexRole1ID + " int NOT NULL, " +
+        		RelaMutexRole2ID + " int NOT NULL, " +
+                "PRIMARY KEY (" + RelaMutexRole1ID + "," + RelaMutexRole2ID +"))");
+        stmt.close();
+    }
+    
+    protected void createRoleInheritanceTable(Connection con, String dbName) throws java.sql.SQLException {
+        Statement stmt = con.createStatement();
+        stmt.execute("CREATE TABLE " + dbName + RelationRoleInheritance + " (" +
+        		RelaSubRoleID + " int NOT NULL, " +
+        		RelaSuperRoleID + " int NOT NULL, " +
+                "PRIMARY KEY (" + RelaSubRoleID + "," + RelaSuperRoleID +"))");
         stmt.close();
     }
        

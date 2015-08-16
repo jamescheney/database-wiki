@@ -21,6 +21,7 @@
 */
 package org.dbwiki.web.ui.printer;
 
+import java.text.SimpleDateFormat;
 import java.util.Vector;
 
 import org.dbwiki.web.html.HtmlLinePrinter;
@@ -31,6 +32,7 @@ import org.dbwiki.web.html.HtmlLinePrinter;
  *
  */
 public abstract class HtmlContentPrinter {
+	protected SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss:SSS");
 	/*
 	 * Interface Methods
 	 */

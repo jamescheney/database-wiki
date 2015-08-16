@@ -87,7 +87,7 @@ public class WikiPathQueryStatement extends QueryStatement {
 		QueryResultSet result = new QueryResultSet();
 		DatabaseContent content = _database.getMatchingEntries(_targetPath.getConditionListing());
 		for (int iEntry = 0; iEntry < content.size(); iEntry++) {
-			DatabaseGroupNode entry = (DatabaseGroupNode)_database.get(content.get(iEntry).identifier());
+			DatabaseGroupNode entry = (DatabaseGroupNode)_database.get(content.getByIndex(iEntry).identifier());
 			new AbsoluteXPathConsumer().consume(entry, _targetPath, result);
 
 		}

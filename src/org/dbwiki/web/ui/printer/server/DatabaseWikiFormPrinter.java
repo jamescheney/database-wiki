@@ -205,13 +205,12 @@ public class DatabaseWikiFormPrinter extends HtmlContentPrinter {
 		if(_headline.equals("Edit Database Wiki")){
 			printer.openTR();
 			printer.openTD(CSS.CSSFormLabel);
-			printer.text("Authorization by users");
+			printer.text("Role and Authorization");
 			printer.closeTD();
 			
 			printer.openTD(CSS.CSSFormText);
-			printer.link("?"+RequestParameter.ParameterAuthorization + "=" + _properties.getName(), "Manage access authority");
-			printer.text("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
-			printer.link("?"+RequestParameter.ParameterRoleManagement + "=" + _properties.getName(), "Manage role");
+			printer.link("?"+RequestParameter.ParameterType + "=" + RequestParameter.RoleManagement + "&" 
+					+ RequestParameter.ParameterDBName + "=" + _properties.getName(), "Manage role");
 			printer.closeTD();
 	
 			printer.closeTR();

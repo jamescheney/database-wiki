@@ -34,25 +34,19 @@ public abstract class RequestParameterAction {
 	public static final String ActionInsert      = "insert";
 	public static final String ActionUpdate      = "update";
 	public static final String ActionUpdateUsers = "update_users";
-	public static final String ActionUpdateAuthorization = "update_authorization";
-	public static final String ActionCancelAuthorizationUpdate = "cancel_authorization_update";
-	public static final String ActionUpdateEntryAuthorization = "update_entry_authorization";
-	public static final String ActionCancelEntryAuthorizationUpdate = "cancel_entry_authorization_update";
 	
 	//zhuowei 
-	public static final String ActionAddRole = "add_role";
-	public static final String ActionAddMutex = "add_mutex";
-	public static final String ActionUpdateSuperRoles = "update_super_roles";
-	public static final String ActionUpdateRoleAuthorization = "update_role_authorization";
-	public static final String ActionUpdateRoleName = "update_role_name";
-	public static final String ActionDeleteRole = "delete_role";
-	public static final String ActionDeleteMutex = "delete_mutex";
-	public static final String ActionBackToRoleManagement = "back_to_role_management";
-	public static final String ActionBackToDatabaseSetting = "back_to_database_setting";
-	public static final String ActionAssignUser = "assign_user";
-	public static final String ActionUnassignUser = "unassign_user";
-	public static final String ActionSearchUsers = "search_users";
-	public static final String ActionBackToUserListing = "back_to_user_listing";
+	public static final String AddRole = "add_role";
+	public static final String AddMutex = "add_mutex";
+	public static final String UpdateSuperRoles = "update_super_roles";
+	public static final String UpdateRoleAuthority = "update_role_authority";
+	public static final String UpdateRoleName = "update_role_name";
+	public static final String DeleteRole = "delete_role";
+	public static final String DeleteMutex = "delete_mutex";
+	public static final String AssignUser = "assign_user";
+	public static final String UnassignUser = "unassign_user";
+	public static final String SearchUsers = "search_users";
+	public static final String UpdateEntryRoleAuthority = "update_entry_role_authority";
 	
 	
 	/*

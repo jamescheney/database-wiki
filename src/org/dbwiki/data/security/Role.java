@@ -31,17 +31,6 @@ public class Role {
 		_superRoles = superRoles;
 	}
 	
-	public Role(int id, String name, DatabaseWiki wiki, Permission permission,
-			HashMap<Integer, Capability> capabilities) {
-		_id = id;
-		_name = name;
-		_wiki = wiki;
-		_permission = permission;
-		_capabilities = capabilities;
-		_users = null;
-		_mutexRoles = null;
-	}
-	
 	public int getID() {
 		return _id;
 	}
@@ -67,15 +56,25 @@ public class Role {
 	}
 	
 	public Capability getCapability(int entryID) {
-		return _capabilities.get(entryID);
+		if(isCapabilityExist(entryID)) {
+			return _capabilities.get(entryID);
+		}
+		return new Capability();
 	}
 	
 	public boolean isMutex(int roleID) {
+		if(_mutexRoles.isEmpty()) {
+			return false;
+		}
 		return _mutexRoles.contains(roleID);
 	}
 	
 	public boolean hasSuperRole(int roleID) {
 		return _superRoles.contains(roleID);
+	}
+	
+	public boolean hasSuperRole() {
+		return !_superRoles.isEmpty();
 	}
 	
 	public ArrayList<Integer> getMutexRoles() {

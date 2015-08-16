@@ -291,7 +291,7 @@ public class RDBMSDatabase implements Database, DatabaseConstants {
 		if (identifier.isRootIdentifier()) {
 			RDBMSDatabaseListing entries = content();
 			for (int iEntry = 0; iEntry < entries.size(); iEntry++) {
-				exportEntry(get(entries.get(iEntry).identifier()), version, out);
+				exportEntry(get(entries.getByIndex(iEntry).identifier()), version, out);
 			}
 		} else {
 			out.startEntry();

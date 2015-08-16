@@ -177,11 +177,11 @@ public class RDBMSDatabaseListing implements DatabaseContent {
 		_isSorted = false;
 	}
 	
-	public RDBMSDatabaseEntry get(int index) {
+	public RDBMSDatabaseEntry getByIndex(int index) {
 		return _entryList.get(index);
 	}
 	
-	public RDBMSDatabaseEntry get(String key) {
+	public RDBMSDatabaseEntry getByName(String key) {
 		if (_isSorted) {
 			int low = 0;
 			int high = _entryList.size() - 1;
@@ -206,6 +206,17 @@ public class RDBMSDatabaseListing implements DatabaseContent {
 				}
 			}
 		}
+		return null;
+	}
+	
+	public RDBMSDatabaseEntry getByID(int key) {
+		
+		for (RDBMSDatabaseEntry entry : _entryList) {
+			if (entry.id() == key) {
+				return entry;
+			}
+		}
+		
 		return null;
 	}
 

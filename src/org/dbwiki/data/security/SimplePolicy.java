@@ -171,6 +171,12 @@ public class SimplePolicy implements WikiServerConstants, Policy {
     	if(user.is_admin()) { 
     		return true; 
     	}     	// if no rule matches, deny access
+    	if(exchange.getRequestURI().toString().contains("edit")) {
+    		int wikiID = Integer.parseInt(exchange.getRequestURI().toString().split("=")[1]);
+    		if(user.isOwner(wikiID) || user.isAssistant(wikiID)) {
+    			return true;
+    		}
+    	}
     	return false; 
     }
     

@@ -31,7 +31,8 @@ public interface DatabaseContent {
 	 * Interface Methods
 	 */
 	
-	public DatabaseEntry get(int index);
-	public DatabaseEntry get(String key);
+	public DatabaseEntry getByIndex(int index);
+	public DatabaseEntry getByName(String key);
+	public DatabaseEntry getByID(int key);
 	public int size();
 }

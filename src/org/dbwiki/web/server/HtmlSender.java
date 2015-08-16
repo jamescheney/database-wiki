@@ -13,7 +13,6 @@ import com.sun.net.httpserver.Headers;
  * @author jcheney
  *
  */
-@SuppressWarnings("restriction") 
 @Deprecated
 public class HtmlSender {
 	public static void send(HtmlPage page, HttpExchange exchange) throws java.io.IOException {

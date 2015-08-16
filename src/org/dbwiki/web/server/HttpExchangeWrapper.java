@@ -18,8 +18,6 @@ import com.sun.net.httpserver.HttpExchange;
  * @author jcheney
  *
  */
-@SuppressWarnings("restriction")
-
 public class HttpExchangeWrapper implements Exchange<HttpExchange> {
 	
 	HttpExchange _exchange;

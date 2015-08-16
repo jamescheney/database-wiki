@@ -56,9 +56,7 @@ public class WikiServerUserListingPrinter extends HtmlContentPrinter {
 		printer.openCENTER();
 		printer.addRealBUTTON("submit",
 				"action", _action, "<img src=\"/pictures/button_save.gif\">");
-		printer.text("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
-		printer.addRealBUTTON("submit",
-				"action", RequestParameterAction.ActionCancel, "<img src=\"/pictures/button_cancel.gif\">");
+		printer.linkWithOnClick("", "javascript :history.back(-1);", "Go back", "");
 		printer.closeCENTER();
 		printer.closePARAGRAPH();
 		
@@ -170,7 +168,8 @@ public class WikiServerUserListingPrinter extends HtmlContentPrinter {
 			// role
 			//
 			printer.openTD();
-			printer.link("?" + RequestParameter.ParameterWikiServerCheckAssignment + "=" + _user_listing.get(i).id(), ">>>");
+			printer.link("?" + RequestParameter.ParameterType + "=" + RequestParameter.WikiServerUserRoleMapping + "&" 
+					+ RequestParameter.ParameterUserID + "=" + _user_listing.get(i).id(), ">>>");
 			printer.closeTD();
 			
 			printer.closeTR();

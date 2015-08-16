@@ -47,7 +47,6 @@ import com.sun.net.httpserver.HttpHandler;
  * @author jcheney
  * 
  */
-@SuppressWarnings("restriction")
 public class DatabaseWikiHttpHandler extends DatabaseWiki implements
 		HttpHandler {
 

@@ -106,7 +106,7 @@ public class URLDecodingRules {
 					throw new WikiDataException(WikiDataException.UnknownResource, url.toString());
 				}
 			}
-			DatabaseEntry entry = database.content().get(entryIdentifier);
+			DatabaseEntry entry = database.content().getByName(entryIdentifier);
 			if (entry != null) {
 				if (url.size() > 1) {
 					return this.decode(database, (DatabaseGroupNode)database.get(entry.identifier()), versionParameter, url, 1);

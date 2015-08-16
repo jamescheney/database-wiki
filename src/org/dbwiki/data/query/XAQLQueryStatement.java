@@ -101,7 +101,7 @@ public class XAQLQueryStatement extends QueryStatement {
 		// QueryResultSet.
 		DatabaseContent content = _database.getMatchingEntries(_query.getConditionListing());
 		for (int iEntry = 0; iEntry < content.size(); iEntry++) {
-			DatabaseGroupNode entry = (DatabaseGroupNode)_database.get(content.get(iEntry).identifier());
+			DatabaseGroupNode entry = (DatabaseGroupNode)_database.get(content.getByIndex(iEntry).identifier());
 			if (_query.getVersionClause() != null) {
 				entry = this.versionReader(entry, _query.getVersionClause().getTimestamp());
 				if (entry != null) {

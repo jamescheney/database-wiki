@@ -59,7 +59,6 @@ public class WikiServletAuthenticator {
     }
     
     public boolean authenticate(Exchange<HttpServletRequest> exchange) {
-        
     	if (_policy.allowedFileRequest(exchange)) {
     		return true;
     	}

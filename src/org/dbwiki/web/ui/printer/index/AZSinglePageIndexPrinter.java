@@ -80,7 +80,7 @@ public class AZSinglePageIndexPrinter extends IndexContentPrinter {
 				body.add("<p CLASS=\"" + CSS.CSSIndexContent + "\"><a NAME=\"" + container.key() + "\">" + container.key() + "</a></p>");
 				body.add("<ul CLASS=\"" + CSS.CSSIndexContent + "\">");
 				for (int iEntry = 0; iEntry < container.size(); iEntry++) {
-					body.add("<li>" + databaseIdentifier.getLink(container.get(iEntry), versionParameter) + "</li>");
+					body.add("<li>" + databaseIdentifier.getLink(container.getByIndex(iEntry), versionParameter) + "</li>");
 				}
 				body.add("</ul>");
 			}

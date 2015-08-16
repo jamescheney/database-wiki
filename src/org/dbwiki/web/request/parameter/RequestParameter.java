@@ -64,20 +64,25 @@ public class RequestParameter {
 	public static final String ParameterEntryAuthorization	 = "entry_authorization";
 	
 	// zhuowei
-	public static final String DBName = "db_name";
-	public static final String Type = "type";
+	public static final String ParameterDBName = "db_name";
+	public static final String ParameterRoleID = "role_id";
+	public static final String ParameterUserID = "user_id";
+	public static final String ParameterType   = "type";
+	public static final String ParameterEntryID = "entry_id";
 	
-	
-	
-	public static final String ParameterRoleManagement    = "role_management";
-	public static final String ParameterRoleAuthorization = "role_authorization";
-	public static final String ParameterRoleAssignment	 = "role_assignment";
-	public static final String ParameterRoleEditName	 = "role_edit_name";
-	public static final String ParameterSetSuperRoles = "set_super_roles";
-	public static final String SetMutexRolePairs = "set_mutex_role_pairs";
-	public static final String ParameterDBWikiCheckAssignment    = "dbwiki_check_assignment";
-	public static final String ParameterWikiServerCheckAssignment    = "wikiserver_check_assignment";
-
+	public static final String RoleManagement           = "role_management";
+	public static final String RoleAuthorization        = "role_authorization";
+	public static final String RoleAssignment	        = "role_assignment";
+	public static final String RoleEditName	            = "role_edit_name";
+	public static final String RoleInheritance          = "role_inheritance";
+	public static final String RoleMutex                = "role_mutex";
+	public static final String RoleEventualAuthority    = "role_eventual_authority";
+	public static final String UserAuthority            = "user_authority";
+	public static final String DBWikiUserRoleMapping    = "dbwiki_user_role_mapping";
+	public static final String WikiServerUserRoleMapping= "wikiserver_user_role_mapping";
+	public static final String EntryListing             = "entry_listing";
+	public static final String EntryAuthorizedRole      = "entry_Authorized_role";
+	public static final String EntryAuthorizedUser      = "entry_Authorized_user";
 	
 	public static final String ActionValueAnnotation      = "annotation";
 	public static final String ActionValueSchemaNode      = "schema_node";
@@ -107,20 +112,7 @@ public class RequestParameter {
 				return new RequestParameterActionUpdate();
 			} else if (value.equals(RequestParameterAction.ActionUpdateUsers)) {
 				return new RequestParameterActionUpdateUsers();
-			} else if (value.equals(RequestParameterAction.ActionUpdateAuthorization)) {
-				return new RequestParameterActionUpdateAuthorization();
-			} else if (value.equals(RequestParameterAction.ActionCancelAuthorizationUpdate)) {
-				return new RequestParameterActionCancelAuthorizationUpdate();
-			} else if (value.equals(RequestParameterAction.ActionUpdateEntryAuthorization)) {
-				return new RequestParameterActionUpdateEntryAuthorization();
-			} else if (value.equals(RequestParameterAction.ActionCancelEntryAuthorizationUpdate)) {
-				return new RequestParameterActionCancelEntryAuthorizationUpdate();
-			} 
-			
-			//zhuowei
-			else if (value.equals(RequestParameterAction.ActionAddRole)) {
-				return new RequestParameterActionAddRole();
-			}
+			}  
 			
 			else {
 				throw new WikiRequestException(WikiRequestException.InvalidParameterValue, parameter.toString());

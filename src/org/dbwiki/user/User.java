@@ -25,10 +25,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -124,6 +120,20 @@ public class User {
 		this._roleListing.get(new Integer(wikiID)).remove(role);
 	}
 	
+	public boolean isOwner(int wikiID) {
+		if(_roleListing.containsKey(wikiID) && _roleListing.get(wikiID).contains(0)) {
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean isAssistant(int wikiID) {
+		if(_roleListing.containsKey(wikiID) && _roleListing.get(wikiID).contains(-1)) {
+			return true;
+		}
+		return false;
+	}
+	
 	@Deprecated
 	public static int getUnknownuserid() {
 		return UnknownUserID;
@@ -175,30 +185,30 @@ public class User {
 		return users;
 	}
 	
-	public static User findUser(Connection connection, int userID) throws SQLException{
-		Statement stmt = connection.createStatement();
-		
-		ResultSet rs = stmt.executeQuery("SELECT * FROM _user WHERE id = "
-				+ userID);
-		while(rs.next()) {
-			User user = new User(rs.getInt("id"), rs.getString("login"), rs.getString("full_name"), rs.getString("password"), rs.getBoolean("is_admin"));
-			return user;
-		}
-		
-		return null;
-	}
+//	public static User findUser(Connection connection, int userID) throws SQLException{
+//		Statement stmt = connection.createStatement();
+//		
+//		ResultSet rs = stmt.executeQuery("SELECT * FROM _user WHERE id = "
+//				+ userID);
+//		while(rs.next()) {
+//			User user = new User(rs.getInt("id"), rs.getString("login"), rs.getString("full_name"), rs.getString("password"), rs.getBoolean("is_admin"));
+//			return user;
+//		}
+//		
+//		return null;
+//	}
 	
-	public static ArrayList<User> SearchAlikeUsers(Connection connection, String alikeName) throws SQLException{
-		ArrayList<User> userArray = new ArrayList<User>();
-		
-		Statement stmt = connection.createStatement();
-		ResultSet rs = stmt.executeQuery("SELECT * FROM _user WHERE full_name LIKE '%"
-				+ alikeName + "%'");
-		while(rs.next()) {
-			User user = new User(rs.getInt("id"), rs.getString("login"), rs.getString("full_name"), rs.getString("password"), rs.getBoolean("is_admin"));
-			userArray.add(user);
-		}
-		
-		return userArray;
-	}
+//	public static ArrayList<User> SearchAlikeUsers(Connection connection, String alikeName) throws SQLException{
+//		ArrayList<User> userArray = new ArrayList<User>();
+//		
+//		Statement stmt = connection.createStatement();
+//		ResultSet rs = stmt.executeQuery("SELECT * FROM _user WHERE full_name LIKE '%"
+//				+ alikeName + "%'");
+//		while(rs.next()) {
+//			User user = new User(rs.getInt("id"), rs.getString("login"), rs.getString("full_name"), rs.getString("password"), rs.getBoolean("is_admin"));
+//			userArray.add(user);
+//		}
+//		
+//		return userArray;
+//	}
 }

@@ -74,6 +74,7 @@ public class HtmlLinePrinter  {
 		_lines.add(line);
 	}
 	
+	
 	/** Adds an indented line of text. */
 	public void text(String text) {
 		this.add(_indentation + indentExtension + text);
@@ -91,6 +92,9 @@ public class HtmlLinePrinter  {
 		this.text("<img src=\""+src+"\">");
 	}
 	
+	public void addIMG(String src, String explain) {
+		this.text("<img src=\""+src+"\" title=\"" + explain + "\">");
+	}
 	
 	/* Functions to add single elements */
 	public void addBR() {
@@ -124,6 +128,26 @@ public class HtmlLinePrinter  {
 					   _indentation + indentExtension + "</button>");
 	}
 	
+	public void addAlterBUTTON(String type, String name, String value, String body, String alterMsg) {
+		this.add(
+				_indentation + indentExtension + 
+					"<button " + "style=\"background:none; border:none\"" +
+					   " type=\"" + type + "\" name=\"" + name + "\" value=\"" + value + "\" onClick=\"if (confirm('" + alterMsg + "')) return true;return false;\">\n" +
+					   _indentation + indentExtension + body +	
+					   _indentation + indentExtension + "</button>");
+	}
+	
+	public void addBackBUTTON(String type, String name, String value, String body) {
+		this.add(
+				_indentation + indentExtension + 
+					"<button " + "style=\"background:none; border:none\"" +
+					   " type=\"" + type + "\" name=\"" + name + "\" value=\"" + value + "\" onClick=\"javascript:history.back(-1);\">\n" +
+					   _indentation + indentExtension + body +	
+					   _indentation + indentExtension + "</button>");
+	}
+	
+
+	
 	public void addHIDDEN(String name, String value) {
 		this.add(_indentation + indentExtension + "<input value=\"" + value + "\" name=\"" + name +"\" type=\"hidden\"/>");
 	}
@@ -143,21 +167,33 @@ public class HtmlLinePrinter  {
 	}
 	
 	
-	public void addRADIOBUTTON(String label, String name, String value, boolean selected) {
+	public void addRADIOBUTTON(String label, String name, String value, boolean isSlected) {
 		String line = "<input type=\"radio\" name=\"" + name + "\" value=\"" + value + "\"";
-		if (selected) {
+		if (isSlected) {
 			line = line + " CHECKED";
 		}
 		line = line + "/>" + label;
 		this.add(_indentation + indentExtension + line);
 	}
-
-	public void addDisabledRADIOBUTTON(String label, String name, String value, boolean selected) {
+	
+	public void addRADIOBUTTON(String label, String name, String value, boolean isSelected, boolean isDisabled) {
 		String line = "<input type=\"radio\" name=\"" + name + "\" value=\"" + value + "\"";
-		if (selected) {
+		if (isSelected) {
 			line = line + " CHECKED";
 		}
-		line = line + " disabled/>" + label;
+		if (isDisabled) {
+			line = line + " DISABLED";
+		}
+		line = line + "/>" + label;
+		this.add(_indentation + indentExtension + line);
+	}
+
+	public void addDisabledRADIOBUTTON(String label, String name, String value, boolean isSelected) {
+		String line = "<input type=\"radio\" name=\"" + name + "\" value=\"" + value + "\"";
+		if (isSelected) {
+			line = line + " CHECKED";
+		}
+		line = line + " DISABLED/>" + label;
 		this.add(_indentation + indentExtension + line);
 	}
 	

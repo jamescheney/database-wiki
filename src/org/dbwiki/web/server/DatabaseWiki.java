@@ -60,7 +60,6 @@ import org.dbwiki.data.schema.AttributeSchemaNode;
 import org.dbwiki.data.schema.SchemaNode;
 import org.dbwiki.data.schema.GroupSchemaNode;
 import org.dbwiki.data.security.RolePolicy;
-import org.dbwiki.data.security.WikiPolicy;
 import org.dbwiki.data.wiki.SimpleWiki;
 import org.dbwiki.data.wiki.Wiki;
 import org.dbwiki.driver.rdbms.DatabaseConnector;
@@ -143,8 +142,6 @@ public abstract class DatabaseWiki implements Comparable<DatabaseWiki> {
 	protected String _template = null;
 	protected String _title;
 	protected Wiki _wiki;
-	//protected int _authenticationMode;
-	protected WikiPolicy _policy;
 	
 	//zhuowei
 	protected RolePolicy _rolePolicy;
@@ -176,7 +173,6 @@ public abstract class DatabaseWiki implements Comparable<DatabaseWiki> {
 		_id = id;
 		_name = name;
 		_title = title;
-		_policy = new WikiPolicy(authenticationMode, this);
 		_rolePolicy = new RolePolicy(authenticationMode, this);
 		_autoSchemaChanges = autoSchemaChanges;
 		_connector = connector;
@@ -192,7 +188,6 @@ public abstract class DatabaseWiki implements Comparable<DatabaseWiki> {
 		try {
 			Connection con = _connector.getConnection();
 			con.setAutoCommit(false);
-			_policy.initialize(con);
 			
 			//zhuowei
 			_rolePolicy.initialize(con);
@@ -220,10 +215,6 @@ public abstract class DatabaseWiki implements Comparable<DatabaseWiki> {
  		return new DatabaseWikiProperties(this);
  		
  	}
- 	
- 	public WikiPolicy policy() {
- 		return _policy;
- 	}
   	
  	//zhuowei
  	public RolePolicy rolePolicy() {
@@ -231,7 +222,7 @@ public abstract class DatabaseWiki implements Comparable<DatabaseWiki> {
  	}
  	
 	public int getAuthenticationMode() {
-		return _policy.getAuthenticationMode();
+		return _rolePolicy.getAuthenticationMode();
 	}
 	
 	public int getAutoSchemaChanges() {
@@ -332,7 +323,7 @@ public abstract class DatabaseWiki implements Comparable<DatabaseWiki> {
 	}
 
 	public void setAuthenticationMode(int authMode) {
-		_policy.setAuthenticationMode(authMode);
+		_rolePolicy.setAuthenticationMode(authMode);
 	}
 	/* 
 	 * Actions

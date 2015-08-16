@@ -55,7 +55,7 @@ public abstract class ContentIterator {
 		_position++;
 		
 		while (_position < _content.size()) {
-			DatabaseEntry entry = _content.get(_position);
+			DatabaseEntry entry = _content.getByIndex(_position);
 			if (this.matches(entry)) {
 				return entry;
 			} else {

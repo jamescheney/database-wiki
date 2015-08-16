@@ -21,6 +21,7 @@
 */
 package org.dbwiki.user;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Vector;
 
@@ -68,6 +69,16 @@ public class UserListing {
 			if(_userIndex.get(login).id() == userID) return true;
 		}
 		return false;
+	}
+	
+	public ArrayList<User> getAlikeUsers(String keyword) {
+		ArrayList<User> alikeUsers = new ArrayList<User>();
+		for(String temp : _userIndex.keySet()) {
+			if(temp.trim().toLowerCase().contains(keyword.trim().toLowerCase())) {
+				alikeUsers.add(_userIndex.get(temp));
+			}
+		}
+		return alikeUsers;
 	}
 	
 	public User get(int userID) {

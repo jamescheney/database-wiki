@@ -282,7 +282,7 @@ public class DatabasePackageExport {
 			}
 			if(wikiDirFile.isDirectory()) { 
 				for(int i = 0; i < wikiContent.size(); i++) {
-					WikiPageDescription wikiEntry = (WikiPageDescription)wikiContent.get(i);
+					WikiPageDescription wikiEntry = (WikiPageDescription)wikiContent.getByIndex(i);
 					
 					File wikiFile = new File(args.wikiDir+ File.separator + "page_" + i +".xml" );
 					OutputStream wikioutstream = new FileOutputStream(wikiFile);

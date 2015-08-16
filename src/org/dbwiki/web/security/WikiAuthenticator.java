@@ -51,7 +51,6 @@ import com.sun.net.httpserver.HttpPrincipal;
  * TODO: Refactor this and WikiServletAuthenticator to share authentication logic
  */
 
-@SuppressWarnings("restriction")
 public class WikiAuthenticator extends Authenticator {
     /*
      * Public Constants
@@ -108,7 +107,6 @@ public class WikiAuthenticator extends Authenticator {
     public Result authenticate(Exchange<HttpExchange> exchange) {
         // FIXME: #security: If the request is to log in then we should check the username and password no matter what!
         // Currently we don't if we happen to be at a page that doesn't require authentication.
-           
         if (_policy.allowedFileRequest(exchange)) {
             return accessGranted(exchange,User.UnknownUserName); 
         }
@@ -138,8 +136,6 @@ public class WikiAuthenticator extends Authenticator {
                 if (checkCredentials(uname, pass)) {
                 	if (exchange.getRequestURI().getPath().equals(WikiServer.SpecialFolderLogin)) {
                         return accessGranted(exchange, uname);
-                    } else if(exchange.getRequestURI().toString().contains("edit")) {
-                    	return accessGranted(exchange, uname);
                     } else if (_policy.checkRequest(user, exchange)) {
                 		return accessGranted(exchange, uname);
                 	} else {
@@ -153,6 +149,7 @@ public class WikiAuthenticator extends Authenticator {
                    
             }
         }
+    	
     }
     
  

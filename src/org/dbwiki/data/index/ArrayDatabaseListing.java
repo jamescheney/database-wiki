@@ -46,13 +46,22 @@ public class ArrayDatabaseListing implements DatabaseContent {
 	 * Public Methods
 	 */
 	
-	public DatabaseEntry get(int index) {
+	public DatabaseEntry getByIndex(int index) {
 		return _entries[index];
 	}
 
-	public DatabaseEntry get(String key) {
+	public DatabaseEntry getByName(String key) {
 		for (DatabaseEntry entry : _entries) {
 			if (entry.label().equals(key)) {
+				return entry;
+			}
+		}
+		return null;
+	}
+	
+	public DatabaseEntry getByID(int key) {
+		for (DatabaseEntry entry : _entries) {
+			if (entry.id() == key) {
 				return entry;
 			}
 		}
