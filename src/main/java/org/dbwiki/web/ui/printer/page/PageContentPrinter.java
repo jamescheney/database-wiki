@@ -19,6 +19,7 @@
     along with Database Wiki.  If not, see <http://www.gnu.org/licenses/>.
     END LICENSE BLOCK
 */
+
 package org.dbwiki.web.ui.printer.page;
 
 import java.text.SimpleDateFormat;
@@ -27,17 +28,17 @@ import java.util.Date;
 import org.dbwiki.data.database.Database;
 import org.dbwiki.data.time.TimestampPrinter;
 import org.dbwiki.data.wiki.DatabaseWikiPage;
-
 import org.dbwiki.user.User;
 import org.dbwiki.web.html.HtmlLinePrinter;
-
+import org.dbwiki.data.query.QueryResultSet;
 import org.dbwiki.web.request.WikiPageRequest;
-
 import org.dbwiki.web.ui.CSS;
 import org.dbwiki.web.ui.layout.DatabaseLayouter;
 import org.dbwiki.web.ui.printer.data.DataNodePrinter;
-
-import org.pegdown.ExtendedPegDownProcessor;
+import org.pegdown.*; 
+import org.pegdown.plugins.*;
+import org.dbwiki.parser.*;
+import org.parboiled.*;
 
 /** Prints wiki page content as HTML
  * FIXME #query: Make wiki page query evaluation independent of particular Database
@@ -51,7 +52,7 @@ public class PageContentPrinter extends DataNodePrinter {
 	
 	private WikiPageRequest _request;
 	
-	private ExtendedPegDownProcessor _pegDownProcessor;
+	private PegDownProcessor _pegDownProcessor;
 	
 	
 	/*
@@ -76,11 +77,16 @@ public class PageContentPrinter extends DataNodePrinter {
 		body.openTABLE(CSS.CSSPageFrame);
 		body.openTR();
 		body.openTD(CSS.CSSPageContent);
-
-		if(_pegDownProcessor == null)
-		  _pegDownProcessor = new ExtendedPegDownProcessor();
 		
-		String content = _pegDownProcessor.markdownToHtml(page.getContent(), this);
+		if(_pegDownProcessor == null){
+			PluginParser pluginParser = new PluginParser();
+			QueryNodeHtmlSerializer queryNodeHtmlSerializer = new QueryNodeHtmlSerializer(getDatabase(), this);
+			PegDownPlugins pegDownPlugins = PegDownPlugins.builder().withPlugin(PluginParser.class).withHtmlSerializer(queryNodeHtmlSerializer).build();
+			_pegDownProcessor = new PegDownProcessor(Extensions.NONE, pegDownPlugins);
+		}
+
+		String content = _pegDownProcessor.markdownToHtml(page.getContent());
+
 		body.add(content);
 				
 		body.closeTD();

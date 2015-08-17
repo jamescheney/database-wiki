@@ -19,55 +19,162 @@
     along with Database Wiki.  If not, see <http://www.gnu.org/licenses/>.
     END LICENSE BLOCK
 */
-package org.pegdown.ast;
+
+package org.dbwiki.parser;
+
+import org.pegdown.plugins.*;
+import org.dbwiki.parser.*;
+import org.dbwiki.web.ui.printer.page.PageContentPrinter;
+import org.pegdown.*;
+import org.pegdown.ast.*;
+import org.pegdown.ast.TextNode;
+import org.dbwiki.data.database.Database;
+import org.dbwiki.web.html.HtmlLinePrinter;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.dbwiki.data.database.Database;
 import org.dbwiki.data.database.DatabaseAttributeNode;
 import org.dbwiki.data.database.DatabaseElementList;
+
 import org.dbwiki.data.database.DatabaseGroupNode;
 import org.dbwiki.data.database.DatabaseTextNode;
 import org.dbwiki.data.query.QueryResultSet;
 import org.dbwiki.data.schema.GroupSchemaNode;
 import org.dbwiki.exception.WikiException;
 import org.dbwiki.exception.data.WikiQueryException;
-import org.dbwiki.web.html.HtmlLinePrinter;
 import org.dbwiki.web.html.HtmlPage;
 import org.dbwiki.web.request.parameter.RequestParameterVersion;
 import org.dbwiki.web.request.parameter.RequestParameterVersionCurrent;
 import org.dbwiki.web.request.parameter.RequestParameterVersionTimestamp;
 import org.dbwiki.web.ui.CSS;
 import org.dbwiki.web.ui.printer.SchemaNodeList;
-import org.dbwiki.web.ui.printer.page.PageContentPrinter;
 
-import org.pegdown.ExtendedPrinter;
-import org.pegdown.Printer;
+public class QueryNodeHtmlSerializer implements ToHtmlSerializerPlugin {
+  private Database _database; 
+  private PageContentPrinter _contentPrinter;
+  private String _queryString;
+  private ArrayList<String> _path = new ArrayList<String>(); 
+  private static int counter = 0;	
+	
 
-public class QueryNode extends Node {
-	private static int counter = 0;
-	private ArrayList<String> _path = new ArrayList<String>();
-	
-	private enum ChartType {Column, Pie, Map}; 
-	
+  private enum ChartType {Column, Pie, Map}; 
+
+  public QueryNodeHtmlSerializer(Database database, PageContentPrinter contentPrinter) {
+    _database = database;
+    _contentPrinter = contentPrinter;
+  }
+
+  public boolean visit(Node node, Visitor visitor, Printer printer) {
+
+	if(!(node instanceof InlinePluginNode) && !(node instanceof BlockPluginNode)) {
+		return false;
+	}
+      HtmlLinePrinter body = new HtmlLinePrinter();
+
+    	try {
+
+			String query=((TextNode)node).getText();
+				
+    		if(query.toLowerCase().startsWith("ignore:")) {
+    			return false;
+    		}
+    		else if(query.toLowerCase().startsWith("chart:") || query.toLowerCase().startsWith("chart(")) {
+    			//FIXME: should parse the arguments to charts in a more
+    			//sensible scalable way.
+    			query = query.substring("chart".length());
+    			String xSize = "800";
+    			String ySize = "600";
+    			if(query.startsWith("(")) {
+    				int comma = query.indexOf(",");
+    				int closeParen = query.indexOf(")", comma);
+    				int colon = query.indexOf(":", closeParen);
+    				
+
+    				if(comma == -1 || closeParen == -1 || colon != closeParen+1)
+    					throw new WikiQueryException(WikiQueryException.UnknownQueryFormat, _queryString);
+    				
+
+    				xSize = query.substring(1, comma);
+    				ySize = query.substring(comma+1, closeParen);
+    				query = query.substring(colon+1);
+    			} else {
+    				query = query.substring(1);
+    			}
+    			QueryResultSet rs = _database.query(query);
+    			body.openPARAGRAPH(CSS.CSSPageText);
+    			drawChart(ChartType.Column, xSize, ySize, rs, body);
+    		} else if(query.toLowerCase().startsWith("pie:") || query.toLowerCase().startsWith("pie(")) {
+    			//FIXME: should parse the arguments to charts in a more sensible scalable way.
+    			query = query.substring("pie".length());
+    			String xSize = "800";
+    			String ySize = "600";
+    			if(query.startsWith("(")) {
+    				int comma = query.indexOf(",");
+    				int closeParen = query.indexOf(")", comma);
+    				int colon = query.indexOf(":", closeParen);
+
+    				if(comma == -1 || closeParen == -1 || colon != closeParen+1)
+    					throw new WikiQueryException(WikiQueryException.UnknownQueryFormat, _queryString);
+
+    				xSize = query.substring(1, comma);
+    				ySize = query.substring(comma+1, closeParen);
+    				query = query.substring(colon+1);
+    			} else {
+    				query = query.substring(1);
+    			}
+    			QueryResultSet rs = _database.query(query);
+    			body.openPARAGRAPH(CSS.CSSPageText);
+    			drawChart(ChartType.Pie, xSize, ySize, rs, body);
+    		} else if(query.toLowerCase().startsWith("map:")) {
+
+    			query = query.substring("map:".length());
+    			QueryResultSet rs = _database.query(query);
+    			body.openPARAGRAPH(CSS.CSSPageText);
+    			drawMap(rs, body);
+    		} else {
+    			QueryResultSet rs = _database.query(query);
+    			if (!rs.isEmpty()) {
+    				body.openPARAGRAPH(CSS.CSSPageText);
+    				if (rs.isElement()) {
+    					RequestParameterVersion versionParameter = null;
+    					if (rs.hasTimestamp()) {
+    						versionParameter = new RequestParameterVersionTimestamp(rs.getTimestamp());
+    					} else {
+    						versionParameter = new RequestParameterVersionCurrent();
+    					}
+    					body.add(_contentPrinter.getLinesForNodeList(new SchemaNodeList(rs),
+    																versionParameter));
+											
+    				} else {
+    					for (int i = 0; i < rs.size(); i++) {
+    						_contentPrinter.printTextNode((DatabaseTextNode)rs.get(i), body);
+    					}
+    				}
+    			}
+
+    		}
+		} catch (org.dbwiki.exception.data.WikiQueryException queryException) {
+			queryException.printStackTrace();
+			body.paragraph("<b> " + queryException.toString() + "</b>", CSS.CSSPageText);
+		} catch (WikiException e) {
+			e.printStackTrace();
+		//	don't throw exception because we can't
+		}
+    	
+		
+		HtmlPage lines = body.lines();
+		for(int i = 0; i < lines.size(); i++)
+			printer.print(lines.get(i));
+
+    return true;
+  }
 	private String freshName(String prefix) {
 		counter++;
 		return prefix + counter;
 	}
 	
-	private String _queryString;
-	
-	public QueryNode(String queryString) {
-		_queryString = queryString;
-	}
-	
-    public QueryNode(Node path) {
-        for(Node n : path.getChildren())
-        	_path.add(n.getText());
-    }
-
     /**
      * Concatenate the collection of strings ss using delimiter delim.
      * 
@@ -288,119 +395,4 @@ public class QueryNode extends Node {
 		body.add("</script>");
     }
     
-    // TODO: Wire this up
-    /*
-    private VisualisationNode parseVisualisationQuery(String source) {
-    	org.dbwiki.data.query.visual.Parser parser =
-    		Parboiled.createParser(org.dbwiki.data.query.visual.Parser.class, Extensions.NONE);
-        ParsingResult<org.dbwiki.data.query.visual.Node> result = parser.parse(source);
-        if (result.hasErrors()) {
-            throw new RuntimeException("Internal error during markdown parsing:\n--- ParseErrors ---\n" +
-                    printParseErrors(result)
-            );
-        }
-
-        return (VisualisationNode)(result.resultValue);
-    }
-    */
-    
-    
-    /**  FIXME #wiki: Clean this up and make queries independent of database.
-     * Implements printing queries by finding the database associated with the printer and querying it.
-     */
-    @Override
-    public void print(Printer printer) {
-    	HtmlLinePrinter body = new HtmlLinePrinter();
-    	
-        PageContentPrinter contentPrinter = (PageContentPrinter)((ExtendedPrinter) printer).getExtension();
-        Database database = contentPrinter.getDatabase();
-    	
-    	try {  		
-    		String query = _queryString;
-    		if(query.toLowerCase().startsWith("ignore:")) {
-    			return;
-    		}
-    		else if(query.toLowerCase().startsWith("chart:") || query.toLowerCase().startsWith("chart(")) {
-    			// FIXME: should parse the arguments to charts in a more
-    			// sensible scalable way.
-    			query = query.substring("chart".length());
-    			String xSize = "800";
-    			String ySize = "600";
-    			if(query.startsWith("(")) {
-    				int comma = query.indexOf(",");
-    				int closeParen = query.indexOf(")", comma);
-    				int colon = query.indexOf(":", closeParen);
-    				
-    				if(comma == -1 || closeParen == -1 || colon != closeParen+1)
-    					throw new WikiQueryException(WikiQueryException.UnknownQueryFormat, _queryString);
-    				
-    				xSize = query.substring(1, comma);
-    				ySize = query.substring(comma+1, closeParen);
-    				query = query.substring(colon+1);
-    			} else {
-    				query = query.substring(1);
-    			}
-    			QueryResultSet rs = database.query(query);
-    			body.openPARAGRAPH(CSS.CSSPageText);
-    			drawChart(ChartType.Column, xSize, ySize, rs, body);		
-    		} else if(query.toLowerCase().startsWith("pie:") || query.toLowerCase().startsWith("pie(")) {
-    			// FIXME: should parse the arguments to charts in a more
-    			// sensible scalable way.
-    			query = query.substring("pie".length());
-    			String xSize = "800";
-    			String ySize = "600";
-    			if(query.startsWith("(")) {
-    				int comma = query.indexOf(",");
-    				int closeParen = query.indexOf(")", comma);
-    				int colon = query.indexOf(":", closeParen);
-
-    				if(comma == -1 || closeParen == -1 || colon != closeParen+1)
-    					throw new WikiQueryException(WikiQueryException.UnknownQueryFormat, _queryString);
-
-    				xSize = query.substring(1, comma);
-    				ySize = query.substring(comma+1, closeParen);
-    				query = query.substring(colon+1);
-    			} else {
-    				query = query.substring(1);
-    			}
-    			QueryResultSet rs = database.query(query);
-    			body.openPARAGRAPH(CSS.CSSPageText);
-    			drawChart(ChartType.Pie, xSize, ySize, rs, body);
-    		} else if(query.toLowerCase().startsWith("map:")) {
-    			query = query.substring("map:".length());
-    			QueryResultSet rs = database.query(query);
-    			body.openPARAGRAPH(CSS.CSSPageText);
-    			drawMap(rs, body);
-    		} else {
-    			QueryResultSet rs = database.query(query);
-    			if (!rs.isEmpty()) {
-    				body.openPARAGRAPH(CSS.CSSPageText);
-    				if (rs.isElement()) {
-    					RequestParameterVersion versionParameter = null;
-    					if (rs.hasTimestamp()) {
-    						versionParameter = new RequestParameterVersionTimestamp(rs.getTimestamp());
-    					} else {
-    						versionParameter = new RequestParameterVersionCurrent();
-    					}
-    					body.add(contentPrinter.getLinesForNodeList(new SchemaNodeList(rs),
-    																versionParameter));
-    				} else {
-    					for (int i = 0; i < rs.size(); i++) {
-    						contentPrinter.printTextNode((DatabaseTextNode)rs.get(i), body);
-    					}
-    				}
-    			}
-    		}
-		} catch (org.dbwiki.exception.data.WikiQueryException queryException) {
-			queryException.printStackTrace();
-			body.paragraph("<b> " + queryException.toString() + "</b>", CSS.CSSPageText);
-		} catch (WikiException e) {
-			e.printStackTrace();
-			// don't throw exception because we can't
-		}
-    	
-		HtmlPage lines = body.lines();
-		for(int i = 0; i < lines.size(); i++)
-			printer.print(lines.get(i));
-    }
 }
