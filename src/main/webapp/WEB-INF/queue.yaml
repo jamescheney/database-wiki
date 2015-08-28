@@ -1,0 +1,26 @@
+
+
+# Set the total storage limit for all queues to 120MB
+total_storage_limit: 120M
+queue:
+- name: foo
+  rate: 35/s
+
+# Change the refresh rate of the default queue from 5/s to 1/s
+- name: default
+  rate: 1/s
+  
+  queue:
+# Set the max number of concurrent requests to 50
+- name: optimize-queue
+  rate: 20/s
+  bucket_size: 40
+  max_concurrent_requests: 10
+  
+  queue:
+- name: pull-queue
+  mode: pull
+  acl:
+  - user_email: test@gmail.com      # can list, get, lease, delete, and update tasks
+  - writer_email: user@gmail.com 	# can insert tasks
+  - writer_email: test@gmail.com    # can insert tasks, in addition to rights granted by being a user_email above

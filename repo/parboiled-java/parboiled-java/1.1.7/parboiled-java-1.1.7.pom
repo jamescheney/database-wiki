@@ -4,5 +4,5 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>parboiled-java</groupId>
   <artifactId>parboiled-java</artifactId>
-  <version>0.10.0</version>
+  <version>1.1.7</version>
 </project>

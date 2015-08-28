@@ -21,31 +21,21 @@
     </prerequisites>
 
 	<repositories>
-    <repository>
-        <id>project.local</id>
-        <name>project</name>
-        <url>file:${project.basedir}/repo</url>
-    </repository>
-</repositories>
+		<repository>
+			<id>project.local</id>
+			<name>project</name>
+			<url>file:${project.basedir}/repo</url>
+		</repository>
+	</repositories>
 	
     <dependencies>
-        <!-- Compile/runtime dependencies -->
-<!--         <dependency>
-            <groupId>com.google.appengine</groupId>
-            <artifactId>appengine-api-1.0-sdk</artifactId>
-            <version>${appengine.version}</version>
-        </dependency> -->
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>
             <version>2.5</version>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>pegdown</groupId>
-            <artifactId>pegdown</artifactId>
-            <version>0.8.5.3</version>
-        </dependency>
+		
 
         <dependency>
             <groupId>appengine-api</groupId>
@@ -116,13 +106,19 @@
         <dependency>
             <groupId>parboiled-core</groupId>
             <artifactId>parboiled-core</artifactId>
-            <version>0.10.0</version>
+            <version>1.1.7</version>
         </dependency>
 																					
         <dependency>
             <groupId>parboiled-java</groupId>
             <artifactId>parboiled-java</artifactId>
-            <version>0.10.0</version>
+            <version>1.1.7</version>
+        </dependency>
+		
+        <dependency>
+            <groupId>pegdown</groupId>
+            <artifactId>pegdown</artifactId>
+            <version>1.5.0</version>
         </dependency>
 		
         <dependency>

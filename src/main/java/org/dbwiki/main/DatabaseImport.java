@@ -32,6 +32,18 @@ import org.dbwiki.data.io.StructureParser;
 import org.dbwiki.data.schema.DatabaseSchema;
 import org.dbwiki.web.server.WikiServer;
 import org.dbwiki.web.server.WikiServerStandalone;
+import com.google.appengine.api.utils.SystemProperty;
+import java.io.*;
+import java.sql.*;
+import javax.servlet.http.*;
+import javax.servlet.ServletException;
+import com.google.appengine.api.rdbms.AppEngineDriver;
+
+import com.google.appengine.api.taskqueue.Queue;
+import com.google.appengine.api.taskqueue.QueueFactory;
+import com.google.appengine.api.taskqueue.TaskOptions;
+
+
 
 /** Imports a database serialized as an XML file, infers a schema and creates a new DBWiki.
  * TODO: Remove this in favor of package import/export
@@ -63,7 +75,6 @@ public class DatabaseImport {
 		String user = args[5];
 	
 		try {
-			
 			Properties properties = org.dbwiki.lib.IO.loadProperties(configFile);
 
 			WikiServer server = new WikiServerStandalone("war", properties);
@@ -88,6 +99,9 @@ public class DatabaseImport {
 				throw structureParser.getException();
 			}
 			DatabaseSchema databaseSchema = structureParser.getDatabaseSchema(path);
+			
+			Queue queue = QueueFactory.getDefaultQueue();
+			queue.add(TaskOptions.Builder.withUrl("/worker").add(databaseSchema));
 			
 			// register the database with the server
 			server.registerDatabase(name, title, path, inputURL, databaseSchema, server.users().get(user), 1, 0);

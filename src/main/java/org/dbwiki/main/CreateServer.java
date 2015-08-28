@@ -48,7 +48,6 @@ public class CreateServer {
 	
 	private static final String commandLine = "CreateServer <config-file> <user-listing>";
 	
-	
 	/*
 	 * Public Methods
 	 */
@@ -59,18 +58,17 @@ public class CreateServer {
 			System.exit(0);
 		}
 
-
 		// Creates the following tables: _database, _presentation, _user
 		try {
-            Connection c = null;
-            DriverManager.registerDriver(new AppEngineDriver());
-            c = DriverManager.getConnection("jdbc:google:rdbms://database-wiki-cloudsql:intern/dbwiki");
-				File configFile = new File(args[0]);
-				File userFile = new File(args[1]);
-				Properties configProperties = org.dbwiki.lib.IO.loadProperties(configFile);
-				DatabaseConnector connector = new DatabaseConnectorFactory().getConnector(configProperties);
-				List<User> users = User.readUsers(userFile);
-				connector.createServer(users);
+			Connection c = null;
+			DriverManager.registerDriver(new AppEngineDriver());
+			c = DriverManager.getConnection("jdbc:google:rdbms://database-wiki-cloudsql:intern/dbwiki");
+			File configFile = new File(args[0]);
+			File userFile = new File(args[1]);
+			Properties configProperties = org.dbwiki.lib.IO.loadProperties(configFile);
+			DatabaseConnector connector = new DatabaseConnectorFactory().getConnector(configProperties);
+			List<User> users = User.readUsers(userFile);
+			connector.createServer(users);
 		} catch (Exception exception) {
 			exception.printStackTrace();
 			System.exit(0);
