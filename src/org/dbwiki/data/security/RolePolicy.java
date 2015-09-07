@@ -535,7 +535,7 @@ public class RolePolicy extends SimplePolicy {
 	}
 	
 	public boolean canBeAssigned(int userID, int roleID) {
-		if(this._userRoleMap.containsKey(userID)) {
+		if(this._userRoleMap.containsKey(userID) && !this._userRoleMap.get(userID).isEmpty()) {
 			for(int tempRoleID : this._userRoleMap.get(userID)) {
 				if(this.getRole(tempRoleID).isMutex(roleID) || this.getRole(roleID).isMutex(tempRoleID)) {
 					return false;
