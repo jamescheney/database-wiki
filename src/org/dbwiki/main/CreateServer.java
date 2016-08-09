@@ -23,6 +23,7 @@ package org.dbwiki.main;
 
 import java.io.File;
 import java.util.List;
+import java.util.Locale;
 import java.util.Properties;
 
 import org.dbwiki.driver.rdbms.DatabaseConnector;
@@ -48,6 +49,8 @@ public class CreateServer {
 	 */
 	
 	public static void main(String[] args) {
+		Locale.setDefault(Locale.ENGLISH);
+		
 		if (args.length != 2) {
 			System.out.println("Usage: " + commandLine);
 			System.exit(0);
