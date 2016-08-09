@@ -23,6 +23,7 @@ package org.dbwiki.main;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Locale;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -47,6 +48,8 @@ public class ServletInterface extends HttpServlet {
 	
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);		
+		Locale.setDefault(Locale.ENGLISH);
+
 		try {
 			_server = new WikiServerServlet(getServletContext().getRealPath("/"), org.dbwiki.lib.IO.loadProperties(new File(getServletContext().getRealPath("/resources/configuration/server/config"))));
 		} catch (Exception e) {

@@ -22,6 +22,7 @@
 package org.dbwiki.main;
 
 import java.io.File;
+import java.util.Locale;
 
 import org.dbwiki.lib.IO;
 import org.dbwiki.web.server.WikiServerHttpHandler;
@@ -44,6 +45,8 @@ public class StartServer {
 	 */
 	
 	public static void main(String[] args) {
+		Locale.setDefault(Locale.ENGLISH);
+
 		if (args.length != 1) {
 			System.out.println("Usage: " + commandLine);
 			System.exit(0);
